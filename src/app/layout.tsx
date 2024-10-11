@@ -1,9 +1,9 @@
 import "../styles/globals.css";
 import type { Metadata } from "next";
-// import { Inter } from "next/font/google";
-// const inter = Inter({ subsets: ["latin"] });
 import { Inter as FontSans } from "next/font/google"
 import { cn } from "@/lib/utils"
+import { ClerkProvider } from "@clerk/nextjs";
+import Navbar from "@/components/Navbar";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -21,12 +21,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <ClerkProvider>
     <html lang="en">
       <body  className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
-        )}>{children}</body>
+        )}>
+          <Navbar/>
+          {children}
+          </body>
     </html>
+    </ClerkProvider>
   );
 }
 
