@@ -14,6 +14,8 @@ import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { Calendar as CalendarIcon, Facebook, Twitter, Linkedin, Youtube, Trash2, Edit, Image as ImageIcon } from "lucide-react"
 import { useDropzone } from 'react-dropzone'
+import { toast } from "sonner"
+
 
 type Platform = 'Facebook' | 'Twitter' | 'LinkedIn' | 'YouTube'
 type ScheduledPost = {
@@ -237,7 +239,7 @@ export default function Component() {
                 ))}
               </div>
             </div>
-            <Button type="submit">{editingPost ? 'Update Post' : 'Schedule Post'}</Button>
+            <Button type="submit" onClick={(e:any) => toast("Post scheduled")}>{editingPost ? 'Update Post' : 'Schedule Post'}</Button>
           </form>
         </CardContent>
       </Card>
