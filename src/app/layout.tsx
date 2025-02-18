@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { ClerkProvider } from "@clerk/nextjs";
 
 import { Toaster } from "@/components/ui/sonner"
-import Navbar from "@/components/navbar";
+// import Navbar from "@/components/navbar-component";
 
 
 
@@ -41,7 +41,7 @@ export default function RootLayout({
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}>
-          <Navbar/>
+          {/* <Navbar/> */}
           {children}
           <Toaster />
           </body>
