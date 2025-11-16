@@ -1,9 +1,15 @@
-import { SignUp } from '@clerk/nextjs'
+import { SignUp } from "@clerk/nextjs";
+import { AuthPatternBackground } from "@/components/auth-pattern-background";
 
-export default function Page() {
-    return (
-        <div className="flex justify-center items-center h-screen">
-          <SignUp />
-        </div>
-      );
+export default function SignUpPage() {
+  return (
+    <div className="relative min-h-screen flex items-center justify-center">
+      <AuthPatternBackground />
+      
+      {/* Content wrapper */}
+      <div className="relative z-10 w-full max-w-md px-4">
+            <SignUp />
+      </div>
+    </div>
+  );
 }
