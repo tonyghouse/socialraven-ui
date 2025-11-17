@@ -71,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <SidebarMenuButton asChild>
                     <a href={item.url}>
                       <item.icon className="h-5 w-5 text-primary group-hover:text-primary transition-colors" />
-                       <span className="text-sm font-medium group-hover:text-foreground transition-colors">
+                       <span className="text-sm font-normal group-hover:text-foreground transition-colors">
                       {item.title}
                     </span>
                     </a>
@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <div className="flex items-center gap-3 px-2 py-2">
               {isSignedIn ? (
                 <div className="flex items-center gap-3 w-full group cursor-pointer">
-                  <div className="relative">
+                <SidebarMenuButton asChild>
                     <UserButton
                       appearance={{
                         elements: {
@@ -98,7 +98,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       }}
                     />
                    
-                  </div>
+                  </SidebarMenuButton>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
                       {user?.firstName || "User"} {" "} {user?.lastName || ""}
