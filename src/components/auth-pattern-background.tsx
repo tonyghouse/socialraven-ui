@@ -3,33 +3,31 @@
 export function AuthPatternBackground() {
   return (
     <div className="fixed inset-0 -z-20 overflow-hidden">
-      {/* Base gradient orbs */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-500 to-blue-700 opacity-5"></div>
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-cyan-400/5 rounded-full blur-3xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 opacity-5"></div>
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-300/5 rounded-full blur-3xl"></div>
 
       {/* Abstract SVG pattern */}
       <svg className="absolute inset-0 w-full h-full opacity-40" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 800">
         <defs>
-          {/* Sophisticated mesh gradient */}
           <linearGradient id="authGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#2563eb" />
-            <stop offset="35%" stopColor="#7c3aed" />
-            <stop offset="70%" stopColor="#06b6d4" />
-            <stop offset="100%" stopColor="#2563eb" />
+            <stop offset="0%" stopColor="#1e9df1" />
+            <stop offset="35%" stopColor="#1a7fb8" />
+            <stop offset="70%" stopColor="#0f5a8a" />
+            <stop offset="100%" stopColor="#1e9df1" />
           </linearGradient>
           
           {/* Subtle radial gradient for depth */}
           <radialGradient id="authDepthGlow" cx="40%" cy="40%">
-            <stop offset="0%" stopColor="#a78bfa" />
-            <stop offset="100%" stopColor="#1e40af" stopOpacity="0" />
+            <stop offset="0%" stopColor="#5ab7ff" />
+            <stop offset="100%" stopColor="#0d47a1" stopOpacity="0" />
           </radialGradient>
 
           {/* Smooth line gradient */}
           <linearGradient id="authLineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#06b6d4" />
-            <stop offset="100%" stopColor="#7c3aed" />
+            <stop offset="0%" stopColor="#1e9df1" />
+            <stop offset="100%" stopColor="#1a7fb8" />
           </linearGradient>
         </defs>
 

@@ -10,13 +10,13 @@ export default function Navbar() {
 
   return (
     <header className="relative">
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-950/10 via-purple-950/10 to-blue-950/10 backdrop-blur-md border-b border-cyan-500/20"></div>
+      <div className="absolute inset-0  backdrop-blur-md border border-primary/20"></div>
       
-      <nav className="relative px-4 lg:px-8 h-16 flex items-center justify-between max-w-7xl mx-auto">
+      <nav className="relative pr-2 lg:pr-2 h-16 flex items-center justify-between max-w-7xl mx-auto">
         {/* Logo */}
         <Link className="flex items-center gap-2 group" href="/">
-            <MessageSquareCode className="h-7 w-7 text-cyan-500" />
-          <span className="text-lg font-bold bg-gradient-to-r from-cyan-500 to-purple-500 bg-clip-text text-transparent">
+          <MessageSquareCode className="h-7 w-7 text-primary" />
+          <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
             SocialRaven
           </span>
         </Link>
@@ -38,7 +38,7 @@ export default function Navbar() {
               <Link href={"/sign-in"}>
                 <Button 
                   variant="ghost" 
-                  className="text-foreground hover:text-cyan-500 hover:bg-cyan-500/10 transition-all duration-300"
+                  className="text-foreground hover:text-primary hover:bg-primary/10 transition-all duration-300"
                 >
                   Sign In
                 </Button>
@@ -46,7 +46,7 @@ export default function Navbar() {
               
               <Link href={"/sign-up"}>
                 <Button 
-                  className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all duration-300"
+                  className="bg-gradient-to-r from-primary to-primary/50 hover:from-primary hover:to-primary/50 text-white shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300"
                 >
                   Sign Up
                 </Button>

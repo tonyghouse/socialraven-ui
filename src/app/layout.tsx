@@ -1,4 +1,4 @@
-import "../styles/globals.css";
+import "./globals.css";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google"
 import localfont from "next/font/local"
@@ -7,6 +7,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 import { Toaster } from "@/components/ui/sonner"
 import Navbar from "@/components/navbar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 
 
@@ -36,16 +37,17 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
+   
     <html lang="en">
       <body  className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}>
-         <Navbar/>
           {children}
           <Toaster />
           </body>
     </html>
+    
     </ClerkProvider>
   );
 }

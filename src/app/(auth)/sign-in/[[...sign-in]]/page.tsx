@@ -9,7 +9,7 @@ export default function SignInPage() {
       {/* Content wrapper */}
       <div className="relative z-10 w-full max-w-md px-4">
        
-            <SignIn />
+            <SignIn afterSignInUrl="/dashboard" />
           </div>
     </div>
   );
