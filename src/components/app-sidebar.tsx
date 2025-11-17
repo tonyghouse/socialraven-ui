@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, LucideGitGraph, Settings, MessageSquareCode, ChevronUp } from 'lucide-react';
+import { Calendar, Home, Inbox, LucideGitGraph, Settings, MessageSquareCode, GitGraphIcon } from 'lucide-react';
 import Link from "next/link";
 import {
   Sidebar,
@@ -34,7 +34,7 @@ const items = [
   {
     title: "Analytics",
     url: "/analytics",
-    icon: LucideGitGraph
+    icon: GitGraphIcon
   },
   {
     title: "Manage Accounts",
@@ -46,14 +46,14 @@ const items = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { isSignedIn, user } = useUser();
   return (
-    <Sidebar variant="floating" collapsible="icon" {...props} className="border-r border-primary">
+    <Sidebar collapsible="icon" {...props} className="border-r border-muted">
       <SidebarHeader className="border-b border-gray-200 pb-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
               <Link className="flex items-center gap-3 group" href="/dashboard">
-                  <MessageSquareCode className="h-7 w-7 text-primary " />
-                <span className="text-sm font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                  <MessageSquareCode className="h-full w-full text-primary " />
+                <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
                   Social Raven
                 </span>
               </Link>
