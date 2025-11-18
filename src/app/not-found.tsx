@@ -6,7 +6,7 @@ export default function NotFound() {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 text-center">
         <div className="flex flex-col items-center">
-          <AlertCircle className="h-16 w-16 text-orange-500" aria-hidden="true" />
+          <AlertCircle className="h-16 w-16 text-primary" aria-hidden="true" />
           <h1 className="mt-6 text-4xl font-extrabold text-gray-900">404 - Page Not Found</h1>
         </div>
         <p className="mt-2 text-lg text-gray-600">
@@ -15,7 +15,7 @@ export default function NotFound() {
         <div className="mt-8">
           <Link
             href="/"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-orange-500 hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition-colors duration-200"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary/90 hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
           >
             <ArrowLeft className="mr-2 h-5 w-5" aria-hidden="true" />
             Back to Home

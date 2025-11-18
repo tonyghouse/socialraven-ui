@@ -1,17 +1,17 @@
+"use client";
 
-import React from 'react'
+import React, { useEffect } from 'react';
+
 
 function DashboardPage() {
-  return (
-    <>
-    
-    <div>
-      DashboardPage
-    </div>
-    
 
-      </>
-  )
+
+
+    return (
+        <div>
+            <h1>Dashboard Page</h1>
+        </div>
+    );
 }
 
-export default DashboardPage
+export default DashboardPage;

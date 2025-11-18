@@ -37,8 +37,8 @@ const items = [
     icon: GitGraphIcon
   },
   {
-    title: "Manage Accounts",
-    url: "/manage-accounts",
+    title: "Connect Accounts",
+    url: "/connect-accounts",
     icon: Settings
   },
 ];

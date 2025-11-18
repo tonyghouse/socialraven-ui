@@ -1,0 +1,1 @@
+export type Platform = "instagram" | "twitter" | "linkedin" | "facebook" | "youtube";

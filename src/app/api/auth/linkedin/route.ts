@@ -6,9 +6,15 @@ export async function GET() {
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/linkedin/callback`
   );
 
-  const state = crypto.randomUUID(); // optional CSRF protection
+  const state = crypto.randomUUID();
 
-  const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=r_liteprofile%20r_emailaddress%20w_member_social&state=${state}`;
+  const scopes = ["openid", "profile", "email", "w_member_social"].join(" ");
+
+  const url =
+    `https://www.linkedin.com/oauth/v2/authorization` +
+    `?response_type=code&client_id=${clientId}` +
+    `&redirect_uri=${redirectUri}&scope=${encodeURIComponent(scopes)}` +
+    `&state=${state}`;
 
   return NextResponse.redirect(url);
 }
