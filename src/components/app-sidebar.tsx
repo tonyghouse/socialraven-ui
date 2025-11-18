@@ -1,6 +1,6 @@
 'use client';
 
-import { Calendar, Home, Inbox, Settings, MessageSquareCode, GitGraphIcon, Menu, X } from 'lucide-react';
+import { Calendar, LayoutDashboard, CalendarCheck2, MessageSquareCode, Cable, Menu, X , LineChart} from 'lucide-react';
 import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
@@ -11,7 +11,7 @@ const items = [
   {
     title: "Dashboard",
     url: "/dashboard",
-    icon: Home
+    icon: LayoutDashboard
   },
   {
     title: "Scheduled Posts",
@@ -21,17 +21,17 @@ const items = [
   {
     title: "Published Posts",
     url: "/published-posts",
-    icon: Inbox
+    icon: CalendarCheck2
   },
   {
     title: "Analytics",
     url: "/analytics",
-    icon: GitGraphIcon
+    icon: LineChart
   },
   {
     title: "Connect Accounts",
     url: "/connect-accounts",
-    icon: Settings
+    icon: Cable
   },
 ];
 
