@@ -1,7 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
-import ConnectedAccountsList from "./ConnectedAccountsList";
+import ConnectedAccountsList from "./connected-accounts-list";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { Skeleton } from "./ui/skeleton";
 import { useEffect, useState } from "react";
@@ -36,15 +36,6 @@ export default function ConnectedAccountsSection() {
 
   return (
     <>
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Connect Accounts
-        </h1>
-        <p className="text-muted-foreground">
-          Connect and manage your social media accounts
-        </p>
-      </div>
-
       {loading ? <Skeleton className="h-[20rem] w-full" /> : ""}
       {connectedAccounts.length > 0 && (
         <div className="mb-6">

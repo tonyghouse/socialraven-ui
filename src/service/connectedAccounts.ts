@@ -25,8 +25,8 @@ export async function fetchConnectedAccountsApi(
 
   const data = JSON.parse(body) as ConnectedAccount[];
 
-  // ⭐ LOG THE ARRAY HERE
-  console.log("Connected Accounts:", data);
+ 
+  //console.log("Connected Accounts:", data);
 
   return data;
 }

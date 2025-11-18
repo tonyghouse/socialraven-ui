@@ -24,8 +24,7 @@ export async function fetchConnectedAccountCountsApi(
 
   const data = JSON.parse(body) as ConnectedAccountCount[];
 
-  // ⭐ LOG THE ARRAY HERE
-  console.log("Connected Account Counts:", data);
+  //console.log("Connected Account Counts:", data);
 
   return data;
 }

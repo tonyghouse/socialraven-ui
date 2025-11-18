@@ -1,19 +1,11 @@
-import { Calendar, Home, Inbox, LucideGitGraph, Settings, MessageSquareCode, GitGraphIcon } from 'lucide-react';
+'use client';
+
+import { Calendar, Home, Inbox, Settings, MessageSquareCode, GitGraphIcon, Menu, X } from 'lucide-react';
 import Link from "next/link";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@/components/ui/sidebar";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 
 const items = [
   {
@@ -43,86 +35,137 @@ const items = [
   },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar() {
   const { isSignedIn, user } = useUser();
+  const isMobile = useIsMobile();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  if (isMobile) {
+    return (
+      <>
+        <div className="flex items-center justify-between h-16 w-full bg-sidebar border-b border-sidebar-border px-4">
+          <button
+            onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+            className="p-2 hover:bg-sidebar-accent rounded-md transition-colors"
+            aria-label="Toggle menu"
+          >
+            {isDrawerOpen ? (
+              <X className="h-6 w-6 text-foreground" />
+            ) : (
+              <Menu className="h-6 w-6 text-foreground" />
+            )}
+          </button>
+
+          <Link href="/dashboard" className="flex items-center gap-2 flex-1 justify-center">
+            <MessageSquareCode className="h-6 w-6 text-primary" />
+            <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+              Social Raven
+            </span>
+          </Link>
+          
+          {isSignedIn && (
+            <UserButton
+              appearance={{
+                elements: {
+                  avatarBox: "w-9 h-9 rounded-lg",
+                },
+              }}
+            />
+          )}
+        </div>
+
+        {isDrawerOpen && (
+          <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setIsDrawerOpen(false)} />
+        )}
+        <div
+          className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-sidebar border-r border-sidebar-border shadow-lg transform transition-transform duration-300 z-50 ${
+            isDrawerOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <nav className="flex flex-col gap-1 px-2 py-4 overflow-y-auto h-full">
+            <ul className="flex flex-col gap-1">
+              {items.map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <li key={item.title}>
+                    <Link
+                      href={item.url}
+                      onClick={() => setIsDrawerOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary transition-colors group"
+                    >
+                      <IconComponent className="h-5 w-5 text-primary flex-shrink-0" />
+                      <span className="truncate">{item.title}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+        </div>
+      </>
+    );
+  }
+
+  // Existing code for desktop view
   return (
-    <Sidebar collapsible="icon" {...props} className="border-r border-muted">
-      <SidebarHeader className="border-b border-gray-200 pb-3">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link className="flex items-center gap-3 group" href="/dashboard">
-                  <MessageSquareCode className="h-full w-full text-primary " />
-                <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Social Raven
-                </span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+    <div className="flex flex-col h-screen w-64 bg-sidebar border-r border-sidebar-border">
+      <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-200">
+        <MessageSquareCode className="h-6 w-6 text-primary flex-shrink-0" />
+        <Link href="/dashboard" className="flex-1 min-w-0">
+          <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent truncate block">
+            Social Raven
+          </span>
+        </Link>
+      </div>
 
-       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon className="h-5 w-5 text-primary group-hover:text-primary transition-colors" />
-                       <span className="text-sm font-normal group-hover:text-foreground transition-colors">
-                      {item.title}
-                    </span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-
-      <SidebarFooter className="border-t border-gray-200 pt-3">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <div className="flex items-center gap-3 px-2 py-2">
-              {isSignedIn ? (
-                <div className="flex items-center gap-3 w-full group cursor-pointer">
-                <SidebarMenuButton asChild>
-                    <UserButton
-                      appearance={{
-                        elements: {
-                          avatarBox: "w-9 h-9 rounded-lg",
-                        },
-                      }}
-                    />
-                   
-                  </SidebarMenuButton>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                      {user?.firstName || "User"} {" "} {user?.lastName || ""}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {user?.primaryEmailAddress?.emailAddress}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <Link href="/sign-in" className="w-full">
-                  <Button
-                    className="w-full bg-gradient-to-r from-primary to-primary/70 text-white hover:from-primary hover:to-primary/70 transition-all duration-300 rounded-lg font-medium"
-                  >
-                    Sign In
-                  </Button>
+      <nav className="flex-1 overflow-y-auto px-2 py-4">
+        <ul className="flex flex-col gap-1">
+          {items.map((item) => {
+            const IconComponent = item.icon;
+            return (
+              <li key={item.title}>
+                <Link 
+                  href={item.url}
+                  className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary transition-colors group"
+                >
+                  <IconComponent className="h-5 w-5 text-primary flex-shrink-0 group-hover:text-primary transition-colors" />
+                  <span className="truncate">{item.title}</span>
                 </Link>
-              )}
-            </div>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
-      <SidebarRail className="bg-gradient-to-b from-primary/0 via-primary/5 to-primary/0" />
-    </Sidebar>
+      <div className="border-t border-gray-200 px-2 py-3">
+        <div className="flex items-center gap-3 px-2 py-2">
+          {isSignedIn ? (
+            <div className="flex items-center gap-3 w-full group cursor-pointer min-w-0">
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-9 h-9 rounded-lg",
+                  },
+                }}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-sidebar-foreground truncate group-hover:text-primary transition-colors">
+                  {user?.firstName || "User"} {user?.lastName || ""}
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {user?.primaryEmailAddress?.emailAddress}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <Link href="/sign-in" className="w-full">
+              <Button className="w-full bg-gradient-to-r from-primary to-primary/70 text-white hover:from-primary hover:to-primary/70 transition-all duration-300 rounded-lg font-medium">
+                Sign In
+              </Button>
+            </Link>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
