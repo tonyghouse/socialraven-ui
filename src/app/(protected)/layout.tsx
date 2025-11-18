@@ -16,10 +16,7 @@ export default function ProtectedRootLayout({
     <>
       <SignedIn>
         <SidebarProvider
-          style={{
-            "--sidebar-width": "12.5rem",
-            "--sidebar-width-mobile": "12.5rem",
-          }}
+          
         >
           <AppSidebar />
           {isMobile ? <SidebarTrigger className="text-primary"/> : <></>}
