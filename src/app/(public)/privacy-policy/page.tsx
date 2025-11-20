@@ -34,8 +34,8 @@ export default function PrivacyPolicyPage() {
         {/* Intro */}
         <section className="space-y-3 text-sm leading-relaxed text-slate-700">
           <p>
-            Welcome to <span className="font-semibold">Social Raven</span> ("we",
-            "our", "us"). We are committed to protecting your privacy and
+            Welcome to <span className="font-semibold">Social Raven</span> (&quot;we&quot;,
+            &quot;our&quot;, &quot;us&quot;). We are committed to protecting your privacy and
             ensuring you have a safe experience while using our platform.
           </p>
           <p>
@@ -173,7 +173,7 @@ export default function PrivacyPolicyPage() {
             <li>Clerk (authentication)</li>
           </ul>
           <p className="text-sm text-slate-700">
-            Each integration follows the platform’s terms and permissions. You may
+            Each integration follows the platform&apos;s terms and permissions. You may
             revoke access at any time through the respective platform&apos;s
             security settings.
           </p>

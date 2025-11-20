@@ -14,19 +14,12 @@ export default function ManageAccountsPage() {
   const params = useSearchParams();
   const router = useRouter();
 
- const [toastShown, setToastShown] = useState(false);
-
   useEffect(() => {
 
     const provider = params.get("provider");
     const status = params.get("status");
 
     if (!provider || !status) {
-      return;
-    }
-
-    // Prevent double running in React Strict Mode
-    if (toastShown) {
       return;
     }
 
@@ -44,16 +37,11 @@ export default function ManageAccountsPage() {
       console.log(`⚠️ Error toast for: ${providerName}`);
       toast(`${providerName} connection failed!`);
     }
+    router.replace("/connect-accounts");
 
-    // Mark toast as shown BEFORE redirect
-    setToastShown(true);
   }, [params]);
 
-  // 👉 Separate redirect effect (will run AFTER toast appears)
-  useEffect(() => {
-    if (!toastShown) return;
-    router.replace("/connect-accounts");
-  }, [toastShown]);
+
 
 
   return (
