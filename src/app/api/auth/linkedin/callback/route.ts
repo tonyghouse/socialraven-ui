@@ -31,15 +31,14 @@ export async function GET(req: Request) {
     }
   );
 
-  if (!response.ok) {
-    const msg = await response.text();
-    return NextResponse.json(
-      { error: "Backend error", detail: msg },
-      { status: 500 }
+if (!response.ok) {
+    console.log("Backend returned error:", await response.text());
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=linkedin&status=error`
     );
   }
 
   return NextResponse.redirect(
-  `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?linkedin=success`
+  `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=linkedin&status=success`
   );
 }

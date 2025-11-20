@@ -43,7 +43,7 @@ export default function LinkNewAccountSection() {
           </button>
         </Link>
 
-        <Link href="/connect-accounts/later" className="w-full sm:w-auto">
+        <Link href="/api/auth/x" className="w-full sm:w-auto">
           <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-black hover:shadow-md hover:border-primary/30">
             <div className="p-3 rounded-lg bg-white">
               <Twitter className="h-6 w-6 text-black" />
@@ -52,7 +52,7 @@ export default function LinkNewAccountSection() {
           </button>
         </Link>
 
-        <Link href="/connect-accounts/later" className="w-full sm:w-auto">
+        <Link href="/api/auth/youtube" className="w-full sm:w-auto">
           <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-red-600 hover:shadow-md hover:border-primary/30">
             <div className="p-3 rounded-lg bg-white">
               <Youtube className="h-6 w-6 text-red-600" />
@@ -70,14 +70,14 @@ export default function LinkNewAccountSection() {
           </button>
         </Link>
 
-        <Link href="/connect-accounts/later" className="w-full sm:w-auto">
+        {/* <Link href="/connect-accounts/later" className="w-full sm:w-auto">
           <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-blue-600 hover:shadow-md hover:border-primary/30">
             <div className="p-3 rounded-lg bg-white">
               <Facebook className="h-6 w-6 text-blue-600" />
             </div>
             <span className="text-sm font-medium text-center">Facebook</span>
           </button>
-        </Link>
+        </Link> */}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google"
@@ -8,6 +9,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner"
 import Navbar from "@/components/navbar";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import ClientToaster from "@/components/ClientToaster";
 
 
 
@@ -43,8 +45,8 @@ export default function RootLayout({
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}>
+          <ClientToaster />
           {children}
-          <Toaster />
           </body>
     </html>
     
