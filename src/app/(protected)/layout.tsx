@@ -12,7 +12,6 @@ export default function ProtectedRootLayout({ children }: { children: React.Reac
       <SignedIn>
         {isMobile ? (
           <div> 
-            {/* Mobile navbar is fixed at top (your AppSidebar renders it) */}
             <AppSidebar />
             <main className="p-4">{children}</main>
           </div>
