@@ -10,13 +10,13 @@ export default function Navbar() {
 
   return (
     <header className="relative">
-      <div className="absolute inset-0  backdrop-blur-md border border-primary/20"></div>
+      <div className="absolute inset-0 border-primary/20  backdrop-blur-md border"></div>
       
       <nav className="relative pr-2 lg:pr-2 h-16 flex items-center justify-between max-w-7xl mx-auto">
         {/* Logo */}
         <Link className="flex items-center gap-2 group" href="/">
           <MessageSquareCode className="h-7 w-7 text-primary" />
-          <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary/50 bg-clip-text text-transparent">
+          <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">
             SocialRaven
           </span>
         </Link>

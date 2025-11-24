@@ -20,11 +20,21 @@ export default function LandingPage() {
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
 
+  // Redirect as soon as we know the auth state
   useEffect(() => {
     if (isLoaded && isSignedIn) {
-      router.push("/dashboard");
+      router.replace("/dashboard");
     }
-  }, [isLoaded, isSignedIn]);
+  }, [isLoaded, isSignedIn, router]);
+
+  // Prevent landing UI flash
+  if (!isLoaded) {
+    return <div className="h-screen w-full bg-white" />; // or a loader
+  }
+
+  if (isSignedIn) {
+    return null; // router.replace() will take over
+  }
 
   return (
     <>

@@ -7,7 +7,7 @@ export async function fetchConnectedAccountsApi(
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const token = await getToken();
 
-  const res = await fetch(`${backendUrl}/accounts/connected`, {
+  const res = await fetch(`${backendUrl}/profiles/connected`, {
     method: "GET",
     headers: {
       Accept: "application/json",
