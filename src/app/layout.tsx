@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils"
 import { ClerkProvider } from "@clerk/nextjs";
 
 import { Toaster } from "@/components/ui/sonner"
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import ClientToaster from "@/components/ClientToaster";
+import ClientToaster from "@/components/generic/ClientToaster";
 
 
 

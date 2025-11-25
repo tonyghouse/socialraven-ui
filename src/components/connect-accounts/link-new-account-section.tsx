@@ -43,15 +43,6 @@ export default function LinkNewAccountSection() {
           </button>
         </Link>
 
-        <Link href="/api/auth/youtube" className="w-full sm:w-auto">
-          <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-red-600 hover:shadow-md hover:border-primary/30">
-            <div className="p-3 rounded-lg bg-white">
-              <Youtube className="h-6 w-6 text-red-600" />
-            </div>
-            <span className="text-sm font-medium text-center">Youtube</span>
-          </button>
-        </Link>
-
         <Link href="/api/auth/linkedin" className="w-full sm:w-auto">
           <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-blue-600 hover:shadow-md hover:border-primary/30">
             <div className="p-3 rounded-lg bg-white">
@@ -61,14 +52,25 @@ export default function LinkNewAccountSection() {
           </button>
         </Link>
 
-                <Link href="/connect-accounts/later" className="w-full sm:w-auto">
+        <Link href="/api/auth/youtube" className="w-full sm:w-auto">
+          <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-red-600 hover:shadow-md hover:border-primary/30">
+            <div className="p-3 rounded-lg bg-white">
+              <Youtube className="h-6 w-6 text-red-600" />
+            </div>
+            <span className="text-sm font-medium text-center">Youtube</span>
+          </button>
+        </Link>
+
+
+
+                {/* <Link href="/connect-accounts/later" className="w-full sm:w-auto">
           <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-violet-600 hover:shadow-md hover:border-primary/30">
             <div className="p-3 rounded-lg bg-white">
               <Instagram className="h-6 w-6 text-violet-600" />
             </div>
             <span className="text-sm font-medium text-center">Instagram</span>
           </button>
-        </Link>
+        </Link> */}
 
         {/* <Link href="/connect-accounts/later" className="w-full sm:w-auto">
           <button className="w-full flex flex-col items-center gap-2 p-4 rounded-lg border border-gray-200 text-blue-600 hover:shadow-md hover:border-primary/30">

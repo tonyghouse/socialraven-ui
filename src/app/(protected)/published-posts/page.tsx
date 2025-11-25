@@ -1,10 +1,9 @@
 import React from 'react'
 
-function PublishedPostsPage() {
+function PubishedPosts() {
   return (
-    <div>PublishedPostsPage
-    </div>
+    <div>PubishedPosts</div>
   )
 }
 
-export default PublishedPostsPage
+export default PubishedPosts

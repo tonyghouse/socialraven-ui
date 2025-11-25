@@ -1,45 +1,55 @@
-import { NextResponse } from "next/server";
-import { auth } from "@clerk/nextjs/server";
+// app/api/auth/x/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
+import {
+  generateCodeVerifier,
+  generateCodeChallenge,
+} from "@/lib/x-oauth";
 
-export async function GET() {
-  const { getToken } = auth();
-  const token = await getToken();
+const X_CLIENT_ID = process.env.X_CLIENT_ID!;
+const X_REDIRECT_URI = process.env.X_REDIRECT_URI!;
+// e.g. https://your-app.com/api/auth/x/callback
 
-  if (!token) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
+export async function GET(req: NextRequest) {
+  // PKCE
+  const verifier = generateCodeVerifier();
+  const challenge = await generateCodeChallenge(verifier);
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/x/request-token`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }
+  // CSRF protection
+  const state = crypto.randomBytes(16).toString("hex");
+
+  const scope = encodeURIComponent(
+    "tweet.read users.read offline.access"
   );
 
-  if (!res.ok) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?x=error`
-    );
-  }
+  const authUrl =
+    "https://twitter.com/i/oauth2/authorize" +
+    `?response_type=code` +
+    `&client_id=${encodeURIComponent(X_CLIENT_ID)}` +
+    `&redirect_uri=${encodeURIComponent(X_REDIRECT_URI)}` +
+    `&scope=${scope}` +
+    `&state=${state}` +
+    `&code_challenge=${challenge}` +
+    `&code_challenge_method=S256`;
 
-  const data = await res.json();
+  const res = NextResponse.redirect(authUrl);
 
-  // Create redirect response
-  const response = NextResponse.redirect(data.auth_url);
 
-  // Attach cookie directly to redirect response
- response.cookies.set({
-  name: "x_oauth_token_secret",
-  value: data.oauth_token_secret,
+res.cookies.set("x_oauth_state", state, {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax",
+  maxAge: 10 * 60,
   path: "/",
 });
 
-  return response;
+res.cookies.set("x_oauth_verifier", verifier, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 10 * 60,
+  path: "/",
+});
+
+return res;
 }

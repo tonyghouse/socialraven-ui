@@ -1,7 +1,7 @@
 "use client";
 
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function ProtectedRootLayout({ children }: { children: React.ReactNode }) {

@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 
 export default function LandingPage() {
   const { isLoaded, isSignedIn, user } = useUser();
@@ -308,7 +308,7 @@ export default function LandingPage() {
         </main>
 
         <footer className=" border-gray-200 text-center text-sm text-gray-600 py-6">
-          <div>Crafted with ❤️ in Singapore 🇸🇬 by Tony Ghouse</div>
+          <div>Crafted with ❤️ by Tony Ghouse</div>
         </footer>
       </div>
     </>

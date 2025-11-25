@@ -1,13 +1,22 @@
 // src/service/connectedAccounts.ts
 import { ConnectedAccount } from "@/model/ConnectedAccount";
+import { Platform } from "@/model/Platform";
 
 export async function fetchConnectedAccountsApi(
-  getToken: () => Promise<string | null>
+  getToken: () => Promise<string | null>,
+  platform: Platform | null
 ): Promise<ConnectedAccount[]> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const token = await getToken();
 
-  const res = await fetch(`${backendUrl}/profiles/connected`, {
+  // Build URL with optional query param
+  const url = new URL(`${backendUrl}/profiles/connected`);
+
+  if (platform) {
+    url.searchParams.append("platform", platform);
+  }
+
+  const res = await fetch(url.toString(), {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -16,17 +25,11 @@ export async function fetchConnectedAccountsApi(
     },
   });
 
-  // Read only once
-  const body = await res.text();
+  const body = await res.text(); // Read only once
 
   if (!res.ok) {
     throw new Error(`Backend error: ${res.status} - ${body}`);
   }
 
-  const data = JSON.parse(body) as ConnectedAccount[];
-
- 
-  //console.log("Connected Accounts:", data);
-
-  return data;
+  return JSON.parse(body) as ConnectedAccount[];
 }

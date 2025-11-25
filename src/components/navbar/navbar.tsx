@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 import { UserButton, useUser } from "@clerk/nextjs"
-import { Button } from './ui/button'
+import { Button } from '../ui/button'
 import { MessageSquareCode } from 'lucide-react'
 
 export default function Navbar() {

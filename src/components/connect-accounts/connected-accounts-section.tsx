@@ -3,11 +3,12 @@
 import { Check } from "lucide-react";
 import ConnectedAccountsList from "./connected-accounts-list";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
+import InfoCard from "./info-card";
 
 export default function ConnectedAccountsSection() {
   const { getToken, isLoaded } = useAuth();
@@ -25,7 +26,7 @@ export default function ConnectedAccountsSection() {
   const loadAccounts = async () => {
     try {
       setLoading(true);
-      const accounts = await fetchConnectedAccountsApi(getToken);
+      const accounts = await fetchConnectedAccountsApi(getToken, null);
       setConnectedAccounts(accounts);
     } catch (err: any) {
       toast.error(err.message || "Failed to load accounts");
@@ -45,6 +46,7 @@ export default function ConnectedAccountsSection() {
               Connected Accounts
             </h2>
           </div>
+           <InfoCard />
 
           <ConnectedAccountsList accounts={connectedAccounts} />
         </div>

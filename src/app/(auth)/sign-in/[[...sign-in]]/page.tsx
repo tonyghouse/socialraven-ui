@@ -1,5 +1,5 @@
 import { SignIn } from "@clerk/nextjs";
-import { AuthPatternBackground } from "@/components/auth-pattern-background";
+import { AuthPatternBackground } from "@/components/generic/auth-pattern-background";
 
 export default function SignInPage() {
   return (
