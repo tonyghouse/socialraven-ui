@@ -181,7 +181,7 @@ export default function AnalyticsPage() {
           </ChartCard>
 
           {/* ✔ Activity Timeline */}
-          <ChartCard title="Activity Timeline" className="lg:col-span-2">
+          <ChartCard title="Activity Timeline" >
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={analytics.postsOverTime}>
                 <CartesianGrid
@@ -211,7 +211,7 @@ export default function AnalyticsPage() {
           </ChartCard>
 
           {/* ✔ Media Types */}
-          <ChartCard title="Media Types Used" className="lg:col-span-2">
+          <ChartCard title="Media Types Used" >
             <ResponsiveContainer width="100%" height={200}>
               <BarChart
                 layout="vertical"

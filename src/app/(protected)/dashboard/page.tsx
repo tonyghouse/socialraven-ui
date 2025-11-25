@@ -77,8 +77,8 @@ export default function DashboardPage() {
 
   const failCount = analytics.failedPosts;
 
-  const allActive = accounts.every((acc) => acc.isValid);
-  const failedAccounts = accounts.filter((a) => !a.isValid).length;
+  const allActive = accounts.every((acc) => acc.providerUserId);
+  const failedAccounts = accounts.filter((a) => !a.providerUserId).length;
 
   return (
     <main className="p-6 space-y-8 max-w-7xl mx-auto">
