@@ -6,30 +6,23 @@ interface StatsCardProps {
   value: string | number
   subtitle?: string
   icon: LucideIcon
-  trend?: number
   className?: string
 }
 
-export function StatsCard({ title, value, subtitle, icon: Icon, trend, className = "" }: StatsCardProps) {
+export function StatsCard({ title, value, subtitle, icon: Icon, className = "" }: StatsCardProps) {
   return (
-    <Card className={`bg-card/50 backdrop-blur-sm border-border/50 ${className}`}>
+    <Card className={`bg-card border border-border ${className}`}>
       <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <h3 className="text-3xl font-bold text-foreground mt-1">{value}</h3>
-            {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{title}</p>
+            <h3 className="text-4xl font-bold text-foreground mt-2">{value}</h3>
+            {subtitle && <p className="text-xs text-muted-foreground mt-2">{subtitle}</p>}
           </div>
-          <div className="p-3 rounded-lg bg-primary/10">
-            <Icon className="w-6 h-6 text-primary" />
+          <div className="p-3 rounded-lg bg-primary/10 ml-4">
+            <Icon className="w-5 h-5 text-primary" />
           </div>
         </div>
-        {trend !== undefined && (
-          <div className={`text-sm font-medium ${trend > 0 ? "text-green-600" : "text-red-600"}`}>
-            {trend > 0 ? "+" : ""}
-            {trend}% from last period
-          </div>
-        )}
       </CardContent>
     </Card>
   )

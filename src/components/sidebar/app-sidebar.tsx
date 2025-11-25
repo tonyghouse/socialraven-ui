@@ -66,7 +66,7 @@ export function AppSidebar() {
   if (isMobile) {
     return (
       <>
-        <div className="flex items-center justify-between h-16 w-full bg-sidebar border-b border-sidebar-border px-4">
+        <div className="flex items-center  justify-between h-16 w-full bg-background border-b border-sidebar-border px-4">
           <button
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
             className="p-2 hover:bg-sidebar-accent rounded-md transition-colors"
@@ -95,7 +95,7 @@ export function AppSidebar() {
 
         {isDrawerOpen && <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setIsDrawerOpen(false)} />}
         <div
-          className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-sidebar border-r border-sidebar-border shadow-lg transform transition-transform duration-300 z-50 ${
+          className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-background border-r border-sidebar-border shadow-lg transform transition-transform duration-300 z-50 ${
             isDrawerOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -125,7 +125,7 @@ export function AppSidebar() {
 
   return (
     <div
-      className={`flex flex-col h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300 ${isCollapsed ? "w-20" : "w-64"}`}
+      className={`flex flex-col h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300 ${isCollapsed ? "w-16" : "w-52"}`}
     >
       {/* Header */}
       <div
@@ -133,13 +133,13 @@ export function AppSidebar() {
       >
         {!isCollapsed && (
           <Link href="/dashboard" className="flex-1 min-w-0 flex items-center gap-2">
-            <MessageSquareCode className="h-6 w-6 text-primary flex-shrink-0" />
-            <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent truncate">
+            <MessageSquareCode className="h-5 w-5 text-primary flex-shrink-0" />
+            <span className="text-base font-bold tracking-tight bg-primary bg-clip-text text-transparent truncate">
               Social Raven
             </span>
           </Link>
         )}
-        {isCollapsed && <MessageSquareCode className="h-6 w-6 text-primary" />}
+        {isCollapsed && <MessageSquareCode className="h-5 w-5 text-primary" />}
 
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -147,7 +147,7 @@ export function AppSidebar() {
           aria-label="Toggle sidebar"
         >
           <ChevronLeft
-            className={`h-5 w-5 text-foreground transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+            className={`h-4 w-4 text-foreground transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
           />
         </button>
       </div>
@@ -164,7 +164,7 @@ export function AppSidebar() {
                   className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary transition-colors group"
                   title={isCollapsed ? item.title : undefined}
                 >
-                  <IconComponent className="h-5 w-5 text-primary flex-shrink-0 group-hover:text-primary transition-colors" />
+                  <IconComponent className="h-4 w-4 text-primary flex-shrink-0 group-hover:text-primary transition-colors" />
                   {!isCollapsed && <span className="truncate">{item.title}</span>}
                 </Link>
               </li>

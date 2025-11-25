@@ -9,7 +9,7 @@ interface ChartCardProps {
 
 export function ChartCard({ title, description, children }: ChartCardProps) {
   return (
-    <Card  className="bg-card/50 backdrop-blur-sm border-border/50 lg:col-span-2">
+    <Card className="bg-card/50 backdrop-blur-sm border-border/50 lg:col-span-2">
       <CardHeader>
         <CardTitle className="text-foreground">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

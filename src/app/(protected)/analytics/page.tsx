@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useAuth } from "@clerk/nextjs"
-
+import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 import {
   BarChart,
@@ -17,125 +16,126 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from "recharts"
-import { AlertCircle, BarChart3, Loader2, FileText, Calendar, CheckCircle2 } from "lucide-react"
-import { StatsCard } from "@/components/analytics/stats-card"
-import { ChartCard } from "@/components/analytics/chart-card"
-import { AnalyticsData, fetchAnalyticsData } from "@/service/analytics"
+} from "recharts";
+
+import {
+  Loader2,
+  AlertCircle,
+  TrendingUp,
+  CheckCircle2,
+  Clock,
+} from "lucide-react";
+
+import { fetchAnalyticsData, type AnalyticsData } from "@/service/analytics";
+import { StatsCard } from "@/components/analytics/stats-card";
+import { ChartCard } from "@/components/analytics/chart-card";
 
 export default function AnalyticsPage() {
-  const { getToken } = useAuth()
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const { getToken } = useAuth();
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const colors = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444"]
-  const providerColors = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981"]
+  // pastel palette
+  const colors = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"];
+  const providerColors = ["#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b"];
 
   useEffect(() => {
-    const loadAnalytics = async () => {
+    const load = async () => {
       try {
-        setLoading(true)
-        setError(null)
-        const data = await fetchAnalyticsData(getToken)
-        setAnalytics(data)
+        setLoading(true);
+        setError(null);
+        const data = await fetchAnalyticsData(getToken);
+        setAnalytics(data);
       } catch (err) {
-        console.error("Error loading analytics:", err)
-        setError("Failed to load analytics data")
+        setError("Failed to load analytics data");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    loadAnalytics()
-  }, [getToken])
+    load();
+  }, [getToken]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Loading analytics...</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Loading analytics…</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error || !analytics) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <AlertCircle className="w-8 h-8 text-destructive" />
-          <p className="text-muted-foreground">{error || "Failed to load analytics"}</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3">
+          <AlertCircle className="w-6 h-6 text-destructive" />
+          <p className="text-sm text-muted-foreground">{error}</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <main className="min-h-screen bg-background">
       {/* Header */}
-      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-lg bg-primary/10">
-              <BarChart3 className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Analytics</h1>
-              <p className="text-sm text-muted-foreground">Comprehensive insights into your posts</p>
-            </div>
-          </div>
+      <div className="border-b border-border px-6 py-5">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-2xl font-semibold text-foreground">Analytics</h1>
+          <p className="text-xs text-muted-foreground mt-1">
+            Overview of your posting activity and performance
+          </p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatsCard
             title="Total Posts"
             value={analytics.totalPosts}
-            icon={FileText}
-            subtitle={`${analytics.averageMediaPerPost.toFixed(1)} media avg`}
+            icon={TrendingUp}
+            subtitle={`${analytics.averageMediaPerPost.toFixed(1)} media / post`}
           />
           <StatsCard
             title="Published"
             value={analytics.publishedPosts}
             icon={CheckCircle2}
-            trend={12}
-            className="border-green-500/20 bg-green-500/5"
+            className="border-green-200/50 bg-green-50/50"
           />
           <StatsCard
-            title="Failed Posts"
-            value={analytics.failedPosts}
-            icon={AlertCircle}
-            trend={analytics.failedPosts > 0 ? -5 : 0}
-            className={analytics.failedPosts > 0 ? "border-red-500/20 bg-red-500/5" : ""}
+            title="Scheduled"
+            value={analytics.scheduledPosts}
+            icon={Clock}
+            className="border-blue-200/50 bg-blue-50/50"
           />
         </div>
 
         {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          {/* Status Distribution */}
-          <ChartCard title="Post Status Distribution" description="Breakdown of all posts by status">
-            <ResponsiveContainer width="100%" height={300}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* ✔ Status Distribution */}
+          <ChartCard title="Post Status Distribution">
+            <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie
-                  data={Object.entries(analytics.postStatusDistribution).map(([name, value]) => ({
-                    name: name.charAt(0).toUpperCase() + name.slice(1),
-                    value,
-                  }))}
+                  data={Object.entries(analytics.postStatusDistribution)
+                    .filter(([name]) => name !== "draft")
+                    .map(([name, value]) => ({
+                      name: name.charAt(0).toUpperCase() + name.slice(1),
+                      value,
+                    }))}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}`}
-                  outerRadius={100}
-                  fill="#3b82f6"
+                  outerRadius={65}
+                  paddingAngle={3}
                   dataKey="value"
                 >
-                  {colors.map((color, index) => (
-                    <Cell key={`cell-${index}`} fill={color} />
+                  {colors.map((color, i) => (
+                    <Cell key={i} fill={color} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -143,98 +143,141 @@ export default function AnalyticsPage() {
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Provider Distribution */}
-          <ChartCard title="Posts by Provider" description="Distribution across social media platforms">
-            <ResponsiveContainer width="100%" height={300}>
+          {/* ✔ Posts by Provider */}
+          <ChartCard title="Posts by Platform">
+            <ResponsiveContainer width="100%" height={220}>
               <BarChart
-                data={Object.entries(analytics.postsPerProvider).map(([provider, count]) => ({
-                  name: provider,
-                  count,
-                }))}
+                data={Object.entries(analytics.postsPerProvider).map(
+                  ([provider, count]) => ({
+                    name: provider.charAt(0).toUpperCase() + provider.slice(1),
+                    count,
+                  })
+                )}
+                barCategoryGap="40%"
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                  vertical={false}
                 />
-                <Bar dataKey="count" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+                <XAxis
+                  dataKey="name"
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: 12 }}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: 12 }}
+                />
+                <Tooltip cursor={{ fill: "rgba(59,130,246,0.08)" }} />
+                <Bar
+                  dataKey="count"
+                  barSize={22}
+                  radius={[8, 8, 0, 0]}
+                  fill="#3b82f6"
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Posts Over Time */}
-          <ChartCard title="Posts Over Time" description="Post activity in the last 14 days">
-            <ResponsiveContainer width="100%" height={300}>
+          {/* ✔ Activity Timeline */}
+          <ChartCard title="Activity Timeline" className="lg:col-span-2">
+            <ResponsiveContainer width="100%" height={200}>
               <LineChart data={analytics.postsOverTime}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" />
-                <YAxis stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                  vertical={false}
                 />
-                <Line type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} dot={{ fill: "#3b82f6" }} />
+                <XAxis
+                  dataKey="date"
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: 12 }}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: 12 }}
+                />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="count"
+                  stroke="#3b82f6"
+                  strokeWidth={2}
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Media Type Distribution */}
-          <ChartCard title="Media Types Used" description="Breakdown of media file types">
-            <ResponsiveContainer width="100%" height={300}>
+          {/* ✔ Media Types */}
+          <ChartCard title="Media Types Used" className="lg:col-span-2">
+            <ResponsiveContainer width="100%" height={200}>
               <BarChart
                 layout="vertical"
-                data={Object.entries(analytics.mediaTypeDistribution).map(([type, count]) => ({
-                  type: type.charAt(0).toUpperCase() + type.slice(1),
+                data={Object.entries(
+                  analytics.mediaTypeDistribution
+                ).map(([type, count]) => ({
+                  type: type.toUpperCase(),
                   count,
                 }))}
+                barCategoryGap="35%"
               >
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis type="number" stroke="hsl(var(--muted-foreground))" />
-                <YAxis dataKey="type" type="category" stroke="hsl(var(--muted-foreground))" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--card))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "8px",
-                  }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--border))"
+                  horizontal={false}
                 />
-                <Bar dataKey="count" fill="#8b5cf6" radius={[0, 8, 8, 0]} />
+                <XAxis
+                  type="number"
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: 12 }}
+                />
+                <YAxis
+                  dataKey="type"
+                  type="category"
+                  stroke="hsl(var(--muted-foreground))"
+                  width={60}
+                  style={{ fontSize: 12 }}
+                />
+                <Tooltip cursor={{ fill: "rgba(139,92,246,0.06)" }} />
+                <Bar
+                  dataKey="count"
+                  fill="#8b5cf6"
+                  barSize={18}
+                  radius={[0, 6, 6, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartCard>
         </div>
 
-        {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-card/50 backdrop-blur-sm rounded-lg border border-border/50">
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Engagement Rate</p>
-            <p className="text-2xl font-bold text-foreground">
-              {((analytics.publishedPosts / analytics.totalPosts) * 100).toFixed(1)}%
+        {/* Key Metrics */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+          <div className="p-6 bg-card border border-border rounded-lg">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+              Success Rate
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Of total posts published</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Average Media Items</p>
-            <p className="text-2xl font-bold text-foreground">{analytics.averageMediaPerPost.toFixed(1)}</p>
-            <p className="text-xs text-muted-foreground mt-1">Per post</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Total Media Files</p>
-            <p className="text-2xl font-bold text-foreground">
-              {Object.values(analytics.mediaTypeDistribution).reduce((a, b) => a + b, 0)}
+            <p className="text-3xl font-bold">
+              {(
+                (analytics.publishedPosts /
+                  (analytics.publishedPosts + analytics.failedPosts)) *
+                100
+              ).toFixed(0)}
+              %
             </p>
-            <p className="text-xs text-muted-foreground mt-1">Across all posts</p>
+          </div>
+
+          <div className="p-6 bg-card border border-border rounded-lg">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">
+              Avg Media Per Post
+            </p>
+            <p className="text-3xl font-bold">
+              {analytics.averageMediaPerPost.toFixed(1)}
+            </p>
           </div>
         </div>
       </div>
     </main>
-  )
+  );
 }
