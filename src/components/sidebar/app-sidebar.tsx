@@ -18,6 +18,7 @@ import { UserButton, useUser } from "@clerk/nextjs"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useState } from "react"
 import { Button } from "../ui/button"
+import { Badge } from "../ui/badge"
 
 const items = [
   {
@@ -75,12 +76,20 @@ export function AppSidebar() {
             {isDrawerOpen ? <X className="h-6 w-6 text-foreground" /> : <Menu className="h-6 w-6 text-foreground" />}
           </button>
 
-          <Link href="/dashboard" className="flex items-center gap-2 flex-1 justify-center">
-            <MessageSquareCode className="h-6 w-6 text-primary" />
-            <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              Social Raven
-            </span>
-          </Link>
+                 <Link className="flex items-center gap-2 group" href="/dashboard">
+          <MessageSquareCode className="h-6 w-6 text-primary" />
+
+          <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">
+            SocialRaven
+          </span>
+
+          <Badge
+            variant="outline"
+            className="border-red-500 text-red-600 px-1.5 py-0 text-xs leading-none rounded-md"
+          >
+            Beta
+          </Badge>
+        </Link>
 
           {isSignedIn && (
             <UserButton
