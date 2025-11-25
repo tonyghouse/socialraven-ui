@@ -75,7 +75,7 @@ export function ScheduledPostCard({ post }: ScheduledPostCardProps) {
             </div>
             <div className="flex flex-wrap gap-2 overflow-y-auto max-h-48">
               {post.media.map((m, idx) => (
-                <MediaPreview  media={m} />
+                <MediaPreview key={`${m.fileKey}-${idx}`} media={m} />
               ))}
             </div>
           </div>

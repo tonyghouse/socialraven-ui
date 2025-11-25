@@ -3,5 +3,6 @@ export interface MediaResponse {
   fileName: string;
   mimeType: string;
   size: number;
-  url: string;
+  fileUrl: string;
+  fileKey:string;
 }

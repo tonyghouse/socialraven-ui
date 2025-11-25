@@ -21,7 +21,7 @@ import {
 import { AlertCircle, BarChart3, Loader2, FileText, Calendar, CheckCircle2 } from "lucide-react"
 import { StatsCard } from "@/components/analytics/stats-card"
 import { ChartCard } from "@/components/analytics/chart-card"
-import { fetchAnalyticsData } from "@/service/analytics"
+import { AnalyticsData, fetchAnalyticsData } from "@/service/analytics"
 
 export default function AnalyticsPage() {
   const { getToken } = useAuth()
@@ -107,12 +107,6 @@ export default function AnalyticsPage() {
             className="border-green-500/20 bg-green-500/5"
           />
           <StatsCard
-            title="Scheduled"
-            value={analytics.scheduledPosts}
-            icon={Calendar}
-            subtitle={`${analytics.draftPosts} drafts`}
-          />
-          <StatsCard
             title="Failed Posts"
             value={analytics.failedPosts}
             icon={AlertCircle}
@@ -174,7 +168,7 @@ export default function AnalyticsPage() {
           </ChartCard>
 
           {/* Posts Over Time */}
-          <ChartCard title="Posts Over Time" description="Post activity in the last 14 days" className="lg:col-span-2">
+          <ChartCard title="Posts Over Time" description="Post activity in the last 14 days">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={analytics.postsOverTime}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
