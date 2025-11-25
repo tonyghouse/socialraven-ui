@@ -1,17 +1,15 @@
 import { format } from "date-fns"
-import { Calendar, User, FileText } from "lucide-react"
-
-
+import { Calendar, User, FileText, CheckCircle2 } from "lucide-react"
+import { MediaPreview } from "../scheduled-posts/media-preview"
 import type { PostResponse } from "@/model/PostResponse"
 import { cn } from "@/lib/utils"
-import { MediaPreview } from "./media-preview"
 import { PLATFORM_ICONS } from "../platform-icons"
 
-interface ScheduledPostCardProps {
+interface PublishedPostCardProps {
   post: PostResponse
 }
 
-export function ScheduledPostCard({ post }: ScheduledPostCardProps) {
+export function PublishedPostCard({ post }: PublishedPostCardProps) {
   const Icon = PLATFORM_ICONS[post.provider] || null
 
   const statusColors = {
@@ -22,9 +20,9 @@ export function ScheduledPostCard({ post }: ScheduledPostCardProps) {
     FAILED: "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800",
   }
 
-  const scheduledDate = new Date(post.scheduledTime)
-  const formattedDate = format(scheduledDate, "MMM dd, yyyy")
-  const formattedTime = format(scheduledDate, "HH:mm")
+  const publishedDate = new Date(post.scheduledTime)
+  const formattedDate = format(publishedDate, "MMM dd, yyyy")
+  const formattedTime = format(publishedDate, "HH:mm")
 
   return (
     <div className="group bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full">
@@ -44,19 +42,20 @@ export function ScheduledPostCard({ post }: ScheduledPostCardProps) {
           </div>
           <span
             className={cn(
-              "px-2.5 py-1 rounded-full text-xs font-medium border",
+              "px-2.5 py-1 rounded-full text-xs font-medium border flex items-center gap-1",
               statusColors[post.postStatus as keyof typeof statusColors] || statusColors.DRAFT,
             )}
           >
-            {post.postStatus}
+            <CheckCircle2 className="w-3 h-3" />
+            Published
           </span>
         </div>
 
-        {/* Scheduling Info */}
+        {/* Publishing Info */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Calendar className="w-4 h-4" />
           <span>
-            {formattedDate} at {formattedTime}
+            Published on {formattedDate} at {formattedTime}
           </span>
         </div>
       </div>
@@ -75,7 +74,7 @@ export function ScheduledPostCard({ post }: ScheduledPostCardProps) {
             </div>
             <div className="flex flex-wrap gap-2 overflow-y-auto max-h-48">
               {post.media.map((m, idx) => (
-                <MediaPreview  media={m} />
+                <MediaPreview key={`${m.fileKey}-${idx}`} media={m} />
               ))}
             </div>
           </div>
@@ -90,7 +89,7 @@ export function ScheduledPostCard({ post }: ScheduledPostCardProps) {
             {post.userNames.length} account{post.userNames.length !== 1 ? "s" : ""}
           </span>
         </div>
-        <div className="w-2 h-2 rounded-full bg-primary/40 group-hover:bg-primary transition-colors" />
+        <div className="w-2 h-2 rounded-full bg-green-500/60 group-hover:bg-green-500 transition-colors" />
       </div>
     </div>
   )
