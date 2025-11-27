@@ -3,66 +3,67 @@
 export function AuthPatternBackground() {
   return (
     <div className="fixed inset-0 -z-20 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 opacity-5"></div>
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute top-1/2 right-0 w-96 h-96 bg-blue-300/5 rounded-full blur-3xl"></div>
 
-      {/* Abstract SVG pattern */}
-      <svg className="absolute inset-0 w-full h-full opacity-40" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 800">
+      {/* BASE BACKDROP — very Apple grey */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white via-[#f8f9fb] to-[#eef1f4]" />
+
+      {/* FLOATING ABSTRACT MOTION SHAPES */}
+      <div className="absolute inset-0 pointer-events-none">
+
+        {/* soft grey orb left */}
+        <div className="absolute top-[5%] left-[12%] w-[520px] h-[520px] 
+                        bg-[#dfe4ea]/55 rounded-full blur-[160px]" />
+
+        {/* right dim orb */}
+        <div className="absolute bottom-[5%] right-[15%] w-[450px] h-[450px]
+                        bg-[#d6dae2]/45 rounded-full blur-[160px]" />
+
+        {/* hint of blue like iCloud login */}
+        <div className="absolute top-[35%] left-1/2 -translate-x-1/2 
+                        w-[520px] h-[520px] bg-primary/10 rounded-full blur-[170px]" />
+      </div>
+
+
+      {/* APPLE ABSTRACT GLYPH WAVE (super subtle, elegant) */}
+      <svg
+        className="absolute inset-0 w-full h-full opacity-[0.14]"
+        preserveAspectRatio="none"
+        viewBox="0 0 1200 800"
+      >
         <defs>
-          <linearGradient id="authGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1e9df1" />
-            <stop offset="35%" stopColor="#1a7fb8" />
-            <stop offset="70%" stopColor="#0f5a8a" />
-            <stop offset="100%" stopColor="#1e9df1" />
+          <linearGradient id="authLine" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="rgba(80,110,140,0.45)" />
+            <stop offset="100%" stopColor="rgba(110,140,170,0.25)" />
           </linearGradient>
-          
-          {/* Subtle radial gradient for depth */}
-          <radialGradient id="authDepthGlow" cx="40%" cy="40%">
-            <stop offset="0%" stopColor="#5ab7ff" />
-            <stop offset="100%" stopColor="#0d47a1" stopOpacity="0" />
-          </radialGradient>
 
-          {/* Smooth line gradient */}
-          <linearGradient id="authLineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#1e9df1" />
-            <stop offset="100%" stopColor="#1a7fb8" />
-          </linearGradient>
+          <radialGradient id="bigGlow" cx="50%" cy="50%">
+            <stop offset="0%" stopColor="rgba(120,160,200,0.25)" />
+            <stop offset="100%" stopColor="transparent" />
+          </radialGradient>
         </defs>
 
-        {/* Base gradient fill */}
-        <rect width="1200" height="800" fill="url(#authGradient)" opacity="0.08" />
-        
-        {/* Geometric shapes - large flowing curves */}
-        <path d="M0,400 Q300,200 600,350 T1200,400" stroke="url(#authLineGradient)" strokeWidth="2" fill="none" opacity="0.2" />
-        <path d="M0,250 Q300,500 600,200 T1200,350" stroke="url(#authLineGradient)" strokeWidth="1.5" fill="none" opacity="0.12" />
-        <path d="M0,550 Q400,400 800,600 T1200,500" stroke="url(#authLineGradient)" strokeWidth="2" fill="none" opacity="0.15" />
-        
-        {/* Subtle hexagons/geometric elements */}
-        <g opacity="0.06" stroke="url(#authLineGradient)" fill="none" strokeWidth="1">
-          <polygon points="200,150 250,125 300,150 300,200 250,225 200,200" />
-          <polygon points="900,600 950,575 1000,600 1000,650 950,675 900,650" />
-          <polygon points="400,700 430,685 460,700 460,730 430,745 400,730" />
+        {/* flowing macOS-style curves */}
+        <path d="M0 350 Q300 200 600 330 T1200 370" stroke="url(#authLine)" strokeWidth="1.6" fill="none"/>
+        <path d="M0 240 Q340 480 620 210 T1200 330" stroke="url(#authLine)" strokeWidth="1.2" fill="none" opacity=".65"/>
+        <path d="M0 520 Q360 370 820 580 T1200 460" stroke="url(#authLine)" strokeWidth="1.4" fill="none" opacity=".55"/>
+
+        {/* ultra faint dotted clusters — like iOS wallpaper */}
+        <g fill="rgba(120,150,180,0.25)">
+          <circle cx="160" cy="110" r="1.8" />
+          <circle cx="180" cy="122" r="1.4" />
+          <circle cx="148" cy="128" r="1.4" />
+
+          <circle cx="1020" cy="640" r="2" />
+          <circle cx="998" cy="658" r="1.5" />
+          <circle cx="1040" cy="665" r="1.5" />
+
+          <circle cx="610" cy="95" r="1.7" />
+          <circle cx="640" cy="112" r="1.4" />
         </g>
 
-        {/* Elegant dot clusters */}
-        <g fill="url(#authLineGradient)" opacity="0.12">
-          <circle cx="150" cy="100" r="3" />
-          <circle cx="170" cy="110" r="2" />
-          <circle cx="140" cy="120" r="2" />
-          
-          <circle cx="1000" cy="650" r="3" />
-          <circle cx="1020" cy="660" r="2" />
-          <circle cx="985" cy="665" r="2" />
-          
-          <circle cx="600" cy="80" r="2.5" />
-          <circle cx="620" cy="95" r="2" />
-        </g>
-
-        {/* Large subtle orbs for depth */}
-        <circle cx="200" cy="200" r="200" fill="url(#authDepthGlow)" opacity="0.06" />
-        <circle cx="1000" cy="600" r="250" fill="url(#authDepthGlow)" opacity="0.05" />
+        {/* subtle volumetric depth */}
+        <circle cx="200" cy="200" r="230" fill="url(#bigGlow)" opacity="0.20" />
+        <circle cx="980" cy="580" r="260" fill="url(#bigGlow)" opacity="0.18" />
       </svg>
     </div>
   );

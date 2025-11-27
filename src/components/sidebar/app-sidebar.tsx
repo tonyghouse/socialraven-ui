@@ -21,41 +21,12 @@ import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 
 const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-    {
-    title: "Schedule Post",
-    url: "/schedule-post",
-    icon: Send,
-  },
-  //     {
-  //   title: "Schedule Multi Post",
-  //   url: "/schedule-multi-post",
-  //   icon: Send,
-  // },
-  {
-    title: "Scheduled Posts",
-    url: "/scheduled-posts",
-    icon: Calendar,
-  },
-  {
-    title: "Published Posts",
-    url: "/published-posts",
-    icon: CalendarCheck2,
-  },
-  {
-    title: "Analytics",
-    url: "/analytics",
-    icon: LineChart,
-  },
-  {
-    title: "Connect Accounts",
-    url: "/connect-accounts",
-    icon: Cable,
-  },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Schedule Post", url: "/schedule-post", icon: Send },
+  { title: "Scheduled Posts", url: "/scheduled-posts", icon: Calendar },
+  { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
+  { title: "Analytics", url: "/analytics", icon: LineChart },
+  { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
 ]
 
 export function AppSidebar() {
@@ -64,155 +35,159 @@ export function AppSidebar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
 
+  /* ================= MOBILE NAV ================= */
   if (isMobile) {
     return (
       <>
-        <div className="flex items-center  justify-between h-16 w-full bg-background border-b border-sidebar-border px-4">
+        <div className="flex items-center justify-between h-16 w-full bg-white/80 backdrop-blur-xl border-b border-border px-4 shadow-sm">
           <button
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
-            className="p-2 hover:bg-sidebar-accent rounded-md transition-colors"
-            aria-label="Toggle menu"
+            className="p-2 hover:bg-black/5 rounded-xl transition"
           >
-            {isDrawerOpen ? <X className="h-6 w-6 text-foreground" /> : <Menu className="h-6 w-6 text-foreground" />}
+            {isDrawerOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
 
-                 <Link className="flex items-center gap-2 group" href="/dashboard">
-          <MessageSquareCode className="h-6 w-6 text-primary" />
+                  {/* LOGO */}
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <MessageSquareCode className="h-6 w-6 text-foreground/70 group-hover:text-accent transition" />
+            <span className="text-lg font-semibold text-foreground/70 group-hover:text-accent transition">
+              SocialRaven
+            </span>
 
-          <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">
-            SocialRaven
-          </span>
-
-          <Badge
-            variant="outline"
-            className="border-red-500 text-red-600 px-1.5 py-0 text-xs leading-none rounded-md"
-          >
-            Beta
-          </Badge>
-        </Link>
+            <sup>
+              <Badge
+                variant="outline"
+                className="border-red-500 text-red-600 py-0 px-1 text-[0.6rem] rounded-md"
+              >
+                Beta
+              </Badge>
+            </sup>
+          </Link>
 
           {isSignedIn && (
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-9 h-9 rounded-lg",
-                },
-              }}
-            />
+            <UserButton appearance={{ elements: { avatarBox: "w-9 h-9 rounded-xl" } }} />
           )}
         </div>
 
-        {isDrawerOpen && <div className="fixed inset-0 z-40 bg-black/50" onClick={() => setIsDrawerOpen(false)} />}
+        {isDrawerOpen && <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={() => setIsDrawerOpen(false)} />}
+
         <div
-          className={`fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-background border-r border-sidebar-border shadow-lg transform transition-transform duration-300 z-50 ${
+          className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-white/70 backdrop-blur-xl border-r border-border/40 shadow-xl z-50 rounded-r-2xl transition-transform duration-300 ${
             isDrawerOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <nav className="flex flex-col gap-1 px-2 py-4 overflow-y-auto h-full">
-            <ul className="flex flex-col gap-1">
-              {items.map((item) => {
-                const IconComponent = item.icon
-                return (
-                  <li key={item.title}>
-                    <Link
-                      href={item.url}
-                      onClick={() => setIsDrawerOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary transition-colors group"
-                    >
-                      <IconComponent className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className="truncate">{item.title}</span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
+          <nav className="px-3 py-5 space-y-1">
+            {items.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  href={item.url}
+                  key={item.title}
+                  onClick={() => setIsDrawerOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm text-foreground/70 hover:bg-black/5 hover:text-accent transition-all active:scale-[.99]"
+                >
+                  <Icon className="w-5 h-5 text-foreground/50 group-hover:text-accent" />
+                  {item.title}
+                </Link>
+              )
+            })}
           </nav>
         </div>
       </>
     )
   }
 
+  /* ================= DESKTOP ================= */
   return (
-    <div
-      className={`flex flex-col h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300 ${isCollapsed ? "w-16" : "w-52"}`}
-    >
-      {/* Header */}
       <div
-        className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} gap-3 px-4 py-4 border-b border-sidebar-border`}
-      >
-        {!isCollapsed && (
-          <Link href="/dashboard" className="flex-1 min-w-0 flex items-center gap-2">
-            <MessageSquareCode className="h-5 w-5 text-primary flex-shrink-0" />
-            <span className="text-base font-bold tracking-tight bg-primary bg-clip-text text-transparent truncate">
-              Social Raven
+    className={`
+      h-[calc(100vh-1rem)] 
+      m-2         
+      flex flex-col 
+      rounded-lg
+      bg-white/60 backdrop-blur-2xl 
+      border border-foreground/10
+      shadow-[0_8px_35px_-10px_rgba(15,23,42,0.28)]
+      transition-all duration-500
+
+      ${isCollapsed ? "w-20" : "w-56"}
+    `}
+  >
+      {/* HEADER */}
+      <div className="flex items-center justify-between px-4 py-4 border-b border-border/40">
+        {!isCollapsed ? (
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <MessageSquareCode className="h-6 w-6 text-foreground/70 group-hover:text-accent transition" />
+            <span className="text-lg font-semibold text-foreground/70 group-hover:text-accent transition">
+              SocialRaven
             </span>
+
+            <sup>
+              <Badge
+                variant="outline"
+                className="border-red-500 text-red-600 py-0 px-1 text-[0.6rem] rounded-md"
+              >
+                Beta
+              </Badge>
+            </sup>
           </Link>
+        ) : (
+          <MessageSquareCode className="h-5 w-5 text-primary mx-auto" />
         )}
-        {isCollapsed && <MessageSquareCode className="h-5 w-5 text-primary" />}
 
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 hover:bg-sidebar-accent rounded-md transition-colors flex-shrink-0"
-          aria-label="Toggle sidebar"
+          className="p-2 rounded-xl hover:bg-black/5 transition active:scale-95"
         >
           <ChevronLeft
-            className={`h-4 w-4 text-foreground transition-transform duration-300 ${isCollapsed ? "rotate-180" : ""}`}
+            className={`h-4 w-4 transition-transform ${isCollapsed ? "rotate-180" : ""}`}
           />
         </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-2 py-4">
-        <ul className="flex flex-col gap-1">
-          {items.map((item) => {
-            const IconComponent = item.icon
-            return (
-              <li key={item.title}>
-                <Link
-                  href={item.url}
-                  className="flex items-center gap-3 px-3 py-2 rounded-md text-sm font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-primary transition-colors group"
-                  title={isCollapsed ? item.title : undefined}
-                >
-                  <IconComponent className="h-4 w-4 text-primary flex-shrink-0 group-hover:text-primary transition-colors" />
-                  {!isCollapsed && <span className="truncate">{item.title}</span>}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
+      {/* NAVIGATION */}
+      <nav className="flex-1 px-3 py-6 space-y-1">
+        {items.map((item) => {
+          const Icon = item.icon
+          return (
+            <Link
+              href={item.url}
+              key={item.title}
+              title={isCollapsed ? item.title : undefined}
+              className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm text-foreground/70 hover:bg-black/5 hover:text-accent transition-all active:scale-[.98] ${
+                isCollapsed && "justify-center"
+              }`}
+            >
+              <Icon className="w-5 h-5 text-foreground/50" />
+              {!isCollapsed && <span>{item.title}</span>}
+            </Link>
+          )
+        })}
       </nav>
 
-      {/* User Section */}
-      <div className="border-t border-sidebar-border px-2 py-3">
-        <div className="flex items-center gap-3 px-2 py-2">
-          {isSignedIn ? (
-            <div
-              className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"} w-full group cursor-pointer min-w-0`}
-            >
-              <UserButton
-                appearance={{
-                  elements: {
-                    avatarBox: "w-9 h-9 rounded-lg",
-                  },
-                }}
-              />
-              {!isCollapsed && (
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-sidebar-foreground truncate group-hover:text-primary transition-colors">
-                    {user?.firstName || "User"} {user?.lastName || ""}
-                  </p>
-                  <p className="text-xs text-muted-foreground truncate">{user?.primaryEmailAddress?.emailAddress}</p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Link href="/sign-in" className="w-full">
-              <Button className="w-full bg-gradient-to-r from-primary to-primary/70 text-white hover:from-primary hover:to-primary/70 transition-all duration-300 rounded-lg font-medium">
-                {isCollapsed ? "Sign In" : "Sign In"}
-              </Button>
-            </Link>
-          )}
-        </div>
+      {/* USER SECTION */}
+      <div className="border-t border-border/40 px-4 py-5">
+        {isSignedIn ? (
+          <div className={`flex items-center gap-3 ${isCollapsed && "justify-center"}`}>
+            <UserButton appearance={{ elements: { avatarBox: "w-10 h-10 rounded-xl" } }} />
+            {!isCollapsed && (
+              <div>
+                <p className="text-sm font-medium leading-none">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-foreground/50">
+                  {user?.primaryEmailAddress?.emailAddress}
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link href="/sign-in">
+            <Button className="w-full rounded-xl bg-primary text-white hover:bg-accent transition-all">
+              Sign In
+            </Button>
+          </Link>
+        )}
       </div>
     </div>
   )
