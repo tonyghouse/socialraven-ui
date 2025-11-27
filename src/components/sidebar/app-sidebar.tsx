@@ -57,7 +57,7 @@ export function AppSidebar() {
             <sup>
               <Badge
                 variant="outline"
-                className="border-red-500 text-red-600 py-0 px-1 text-[0.6rem] rounded-md"
+                className="border-red-500 text-red-600 py-[0.4rem] px-[0.4rem] text-[0.6rem] rounded-md"
               >
                 Beta
               </Badge>
@@ -125,7 +125,7 @@ export function AppSidebar() {
             <sup>
               <Badge
                 variant="outline"
-                className="border-red-500 text-red-600 py-0 px-1 text-[0.6rem] rounded-md"
+                className="border-red-500 text-red-600 py-[0.4rem] px-[0.4rem] text-[0.6rem] rounded-md"
               >
                 Beta
               </Badge>
