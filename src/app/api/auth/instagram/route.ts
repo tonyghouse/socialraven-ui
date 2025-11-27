@@ -1,24 +1,24 @@
-import { NextResponse } from "next/server";
+// app/api/auth/instagram/route.ts
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
-  const clientId = process.env.FACEBOOK_APP_ID!;
-  const redirectUri = encodeURIComponent(
-    `${process.env.NEXT_PUBLIC_BASE_URL_FB}/api/auth/instagram/callback`
-  );
+export async function GET(request: NextRequest) {
+  const appId = process.env.INSTAGRAM_APP_ID;
+  const redirectUri = process.env.INSTAGRAM_REDIRECT_URI;
 
-  const scopes = [
-    "instagram_basic",
-    "instagram_content_publish",
-    "pages_show_list",
-    "pages_read_engagement"
-  ].join(",");
+  if (!appId || !redirectUri) {
+    return NextResponse.json(
+      { error: 'Instagram credentials not configured' },
+      { status: 500 }
+    );
+  }
 
-  const authUrl =
-    `https://www.facebook.com/v21.0/dialog/oauth` +
-    `?client_id=${clientId}` +
-    `&redirect_uri=${redirectUri}` +
-    `&response_type=code` +
-    `&scope=${scopes}`;
+  // Build Instagram-native OAuth URL (NOT Facebook)
+  const authUrl = new URL('https://api.instagram.com/oauth/authorize');
+  authUrl.searchParams.set('client_id', appId);
+  authUrl.searchParams.set('redirect_uri', redirectUri);
+  authUrl.searchParams.set('scope', 'instagram_business_basic,instagram_business_content_publish,instagram_business_manage_messages,instagram_business_manage_comments');
+  authUrl.searchParams.set('response_type', 'code');
 
-  return NextResponse.redirect(authUrl);
+  // Redirect user to Instagram OAuth (instagram.com, not facebook.com!)
+  return NextResponse.redirect(authUrl.toString());
 }

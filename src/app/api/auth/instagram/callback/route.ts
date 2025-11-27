@@ -1,22 +1,63 @@
-import { NextResponse } from "next/server";
+// app/api/auth/instagram/callback/route.ts
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: Request) {
-  const url = new URL(req.url);
-  const code = url.searchParams.get("code");
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const code = searchParams.get('code');
+  const error = searchParams.get('error');
+  const errorReason = searchParams.get('error_reason');
+  const errorDescription = searchParams.get('error_description');
 
-  if (!code) {
+  // Handle OAuth errors
+  if (error) {
+    console.error('Instagram OAuth error:', { error, errorReason, errorDescription });
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL_FB}/connected-accounts?provider=instagram&status=error`
+      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?error=${error}&reason=${errorReason}`
     );
   }
 
-  await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/instagram/callback`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code }),
-  });
+  if (!code) {
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?error=no_code`
+    );
+  }
 
-  return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL_FB}/connected-accounts?provider=instagram&status=success`
-  );
+  try {
+    // Get auth token (assuming you store JWT in cookie or header)
+    const authToken = request.cookies.get('auth_token')?.value;
+    
+    if (!authToken) {
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/login?error=unauthorized`
+      );
+    }
+
+    // Send code to your Spring backend
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/social/instagram/callback`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ code }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      throw new Error(errorData || 'Failed to connect Instagram');
+    }
+
+    // Success! Redirect to dashboard
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?instagram=connected`
+    );
+  } catch (error) {
+    console.error('Instagram callback error:', error);
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?error=connection_failed`
+    );
+  }
 }
