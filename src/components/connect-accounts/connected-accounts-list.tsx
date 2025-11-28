@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
+import { Instagram, Twitter, Linkedin, Youtube, Facebook } from "lucide-react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
@@ -14,9 +14,10 @@ const PLATFORM_META: Record<
   linkedin: { label: "LinkedIn", icon: Linkedin, accent: "text-accent" },
   youtube: { label: "YouTube", icon: Youtube, accent: "text-red-500" },
   instagram: { label: "Instagram", icon: Instagram, accent: "text-pink-500" },
+  facebook: { label: "Facebook", icon: Facebook, accent: "text-blue-700" },
 };
 
-const ORDER = ["x", "linkedin", "youtube", "instagram"];
+const ORDER = ["x", "linkedin", "youtube", "instagram", "facebook"];
 
 export default function ConnectedAccountsList({
   accounts,

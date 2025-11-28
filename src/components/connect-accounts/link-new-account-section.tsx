@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Linkedin, Twitter, Youtube, Link2 } from "lucide-react";
+import { Instagram, Linkedin, Twitter, Youtube, Link2, Facebook } from "lucide-react";
 
 export default function LinkNewAccountSection() {
   return (
@@ -118,6 +118,30 @@ export default function LinkNewAccountSection() {
             </div>
             <span className="text-sm font-medium text-foreground/90">
               YouTube
+            </span>
+          </button>
+        </Link>
+
+
+        {/* Facebook */}
+        <Link href="/api/auth/facebook">
+          <button
+            className="
+              frosted-border depth-ring
+              w-full flex flex-col items-center gap-3 p-5
+              rounded-[22px]
+              bg-white/65 backdrop-blur-xl
+              transition-all hover:scale-[1.02] active:scale-[0.99]
+            "
+          >
+            <div className="
+              h-12 w-12 rounded-xl bg-white shadow-sm 
+              flex items-center justify-center
+            ">
+              <Facebook className="h-5 w-5 text-blue-700" />
+            </div>
+            <span className="text-sm font-medium text-foreground/90">
+              Facebook
             </span>
           </button>
         </Link>

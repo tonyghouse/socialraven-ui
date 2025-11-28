@@ -19,6 +19,7 @@ export default function ManageAccountsPage() {
 
     const provider = params.get("provider");
     const status = params.get("status");
+    const reason = params.get("reason");
 
     if (!provider || !status) {
       return;
@@ -28,7 +29,6 @@ export default function ManageAccountsPage() {
       provider.charAt(0).toUpperCase() + provider.slice(1);
 
     if (status === "success") {
-      console.log(`🎉 Showing toast for: ${providerName}`);
       toast(`${providerName} connected!`, {
         description: `${providerName} account successfully connected.`,
       });
@@ -36,7 +36,7 @@ export default function ManageAccountsPage() {
 
     if (status === "error") {
       console.log(`⚠️ Error toast for: ${providerName}`);
-      toast(`${providerName} connection failed!`);
+      toast(`${providerName} connection failed! Reason: ${reason}`);
     }
     router.replace("/connect-accounts");
 
