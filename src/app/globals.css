@@ -9,7 +9,7 @@
 
 .frosted-border {
   position: relative;
-  overflow: hidden; /* ensures border stays clipped */
+  overflow: hidden;
 }
 
 .frosted-border::after {
@@ -17,33 +17,28 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px; /* border thickness */
+  padding: 1px;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.55),
-    rgba(255, 255, 255, 0.2),
-    rgba(210, 210, 210, 0.35),
-    rgba(255, 255, 255, 0.5)
+    rgba(255, 255, 255, 0.65),
+    rgba(255, 255, 255, 0.25)
   );
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-          mask-composite: exclude; /* actual border effect */
+          mask-composite: exclude;
   pointer-events: none;
 }
 
-/* /* ============================
-   Depth Shadow Ring (macOS)
-   ============================ */
 
-.depth-ring {
+.depth-soft {
   box-shadow:
-    0 0 0 0 rgba(0, 0, 0, 0), /* reset */
-    0px 2px 4px rgba(0,0,0,0.06),
-    0px 12px 32px rgba(0,0,0,0.08),
-    0px 24px 48px rgba(0,0,0,0.04);
-} 
+    0px 1px 3px rgba(0,0,0,0.06),
+    0px 6px 16px rgba(0,0,0,0.05);
+}
+
+
 
 
 

@@ -1,7 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { Instagram, Linkedin, Twitter, Youtube, Link2, Facebook } from "lucide-react";
+import {
+  Instagram,
+  Linkedin,
+  Twitter,
+  Youtube,
+  Link2,
+  Facebook,
+} from "lucide-react";
+
+const PROVIDERS = [
+  {
+    name: "Instagram",
+    href: "/api/auth/instagram",
+    icon: Instagram,
+    color: "text-pink-500",
+  },
+  {
+    name: "X / Twitter",
+    href: "/api/auth/x",
+    icon: Twitter,
+    color: "text-black",
+  },
+  {
+    name: "LinkedIn",
+    href: "/api/auth/linkedin",
+    icon: Linkedin,
+    color: "text-blue-600",
+  },
+  {
+    name: "YouTube",
+    href: "/api/auth/youtube",
+    icon: Youtube,
+    color: "text-red-600",
+  },
+  {
+    name: "Facebook",
+    href: "/api/auth/facebook",
+    icon: Facebook,
+    color: "text-blue-700",
+  },
+];
 
 export default function LinkNewAccountSection() {
   return (
@@ -17,7 +57,7 @@ export default function LinkNewAccountSection() {
         </p>
       </div>
 
-      {/* SECTION TITLE */}
+      {/* TITLE */}
       <div className="flex items-center gap-2 mb-1">
         <Link2 className="h-5 w-5 text-accent" />
         <h2 className="text-lg font-semibold text-foreground">
@@ -25,127 +65,37 @@ export default function LinkNewAccountSection() {
         </h2>
       </div>
 
-      {/* ICON GRID */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+      {/* ICON ROW — SUPER COMPACT, FIXED WIDTH */}
+      <div className="flex flex-wrap gap-3">
+        {PROVIDERS.map(({ name, href, icon: Icon, color }) => (
+          <Link key={name} href={href}>
+            <button
+              className="
+                w-[110px] h-[90px]
+                flex flex-col items-center justify-center
+                gap-2
+                rounded-[18px]
+                bg-white/70 backdrop-blur-xl
+                border border-foreground/10
+                shadow-sm
+                hover:bg-white/80 transition
+              "
+            >
+              <div
+                className="
+                  h-9 w-9 rounded-lg bg-white
+                  shadow-sm flex items-center justify-center
+                "
+              >
+                <Icon className={`h-5 w-5 ${color}`} />
+              </div>
 
-        {/* Instagram */}
-        <Link href="/api/auth/instagram">
-          <button
-            className="
-              frosted-border depth-ring
-              w-full flex flex-col items-center gap-3 p-5
-              rounded-[22px]
-              bg-white/65 backdrop-blur-xl
-              transition-all hover:scale-[1.02] active:scale-[0.99]
-            "
-          >
-            <div className="
-              h-12 w-12 
-              rounded-xl 
-              bg-white shadow-sm 
-              flex items-center justify-center
-            ">
-              <Instagram className="h-5 w-5 text-pink-500" />
-            </div>
-            <span className="text-sm font-medium text-foreground/90">
-              Instagram
-            </span>
-          </button>
-        </Link>
-
-        {/* X / Twitter */}
-        <Link href="/api/auth/x">
-          <button
-            className="
-              frosted-border depth-ring
-              w-full flex flex-col items-center gap-3 p-5
-              rounded-[22px]
-              bg-white/65 backdrop-blur-xl
-              transition-all hover:scale-[1.02] active:scale-[0.99]
-            "
-          >
-            <div className="
-              h-12 w-12 rounded-xl bg-white shadow-sm 
-              flex items-center justify-center
-            ">
-              <Twitter className="h-5 w-5 text-black" />
-            </div>
-            <span className="text-sm font-medium text-foreground/90">
-              X / Twitter
-            </span>
-          </button>
-        </Link>
-
-        {/* LinkedIn */}
-        <Link href="/api/auth/linkedin">
-          <button
-            className="
-              frosted-border depth-ring
-              w-full flex flex-col items-center gap-3 p-5
-              rounded-[22px]
-              bg-white/65 backdrop-blur-xl
-              transition-all hover:scale-[1.02] active:scale-[0.99]
-            "
-          >
-            <div className="
-              h-12 w-12 rounded-xl bg-white shadow-sm 
-              flex items-center justify-center
-            ">
-              <Linkedin className="h-5 w-5 text-blue-600" />
-            </div>
-            <span className="text-sm font-medium text-foreground/90">
-              LinkedIn
-            </span>
-          </button>
-        </Link>
-
-        {/* YouTube */}
-        <Link href="/api/auth/youtube">
-          <button
-            className="
-              frosted-border depth-ring
-              w-full flex flex-col items-center gap-3 p-5
-              rounded-[22px]
-              bg-white/65 backdrop-blur-xl
-              transition-all hover:scale-[1.02] active:scale-[0.99]
-            "
-          >
-            <div className="
-              h-12 w-12 rounded-xl bg-white shadow-sm 
-              flex items-center justify-center
-            ">
-              <Youtube className="h-5 w-5 text-red-600" />
-            </div>
-            <span className="text-sm font-medium text-foreground/90">
-              YouTube
-            </span>
-          </button>
-        </Link>
-
-
-        {/* Facebook */}
-        <Link href="/api/auth/facebook">
-          <button
-            className="
-              frosted-border depth-ring
-              w-full flex flex-col items-center gap-3 p-5
-              rounded-[22px]
-              bg-white/65 backdrop-blur-xl
-              transition-all hover:scale-[1.02] active:scale-[0.99]
-            "
-          >
-            <div className="
-              h-12 w-12 rounded-xl bg-white shadow-sm 
-              flex items-center justify-center
-            ">
-              <Facebook className="h-5 w-5 text-blue-700" />
-            </div>
-            <span className="text-sm font-medium text-foreground/90">
-              Facebook
-            </span>
-          </button>
-        </Link>
-
+              <span className="text-[12px] font-medium text-foreground/90 text-center truncate max-w-[90px]">
+                {name}
+              </span>
+            </button>
+          </Link>
+        ))}
       </div>
     </div>
   );
