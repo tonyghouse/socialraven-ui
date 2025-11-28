@@ -47,11 +47,10 @@ export default function ManageAccountsPage() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-6">
-      <div className="max-w-5xl mx-auto">
+     
         <LinkNewAccountSection />
-        <Separator className="mb-4"/>
+        <Separator className="my-8"/>
         <ConnectedAccountsSection />
-      </div>
     </div>
   );
 }

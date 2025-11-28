@@ -39,7 +39,7 @@ export function AppSidebar() {
   if (isMobile) {
     return (
       <>
-        <div className="flex items-center justify-between h-16 w-full bg-white/80 backdrop-blur-xl border-b border-border px-4 shadow-sm">
+        <div className="flex items-center justify-between h-16 w-full bg-white/80 backdrop-blur-xl border-b border-border px-4 shadow-sm frosted-border depth-ring">
           <button
             onClick={() => setIsDrawerOpen(!isDrawerOpen)}
             className="p-2 hover:bg-black/5 rounded-xl transition"

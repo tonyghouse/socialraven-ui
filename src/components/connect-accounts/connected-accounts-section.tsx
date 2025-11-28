@@ -13,9 +13,7 @@ import InfoCard from "./info-card";
 export default function ConnectedAccountsSection() {
   const { getToken, isLoaded } = useAuth();
 
-  const [connectedAccounts, setConnectedAccounts] = useState<
-    ConnectedAccount[]
-  >([]);
+  const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -37,17 +35,23 @@ export default function ConnectedAccountsSection() {
 
   return (
     <>
-      {loading ? <Skeleton className="h-[20rem] w-full" /> : ""}
-      {connectedAccounts.length > 0 && (
-        <div className="mb-6">
+      {loading && (
+        <Skeleton className="h-[22rem] w-full rounded-[28px] bg-white/40 backdrop-blur-xl" />
+      )}
+
+      {!loading && (
+        <div className="mb-6 space-y-4">
           <div className="flex items-center gap-2 mb-3">
             <Check className="h-5 w-5 text-green-500" />
             <h2 className="text-lg font-semibold text-foreground">
               Connected Accounts
             </h2>
           </div>
-           <InfoCard />
 
+          {/* Optional info card */}
+          <InfoCard />
+
+          {/* Always show all 4 groups - Apple-style */}
           <ConnectedAccountsList accounts={connectedAccounts} />
         </div>
       )}
