@@ -12,12 +12,6 @@ import {
 
 const PROVIDERS = [
   {
-    name: "Instagram",
-    href: "/api/auth/instagram",
-    icon: Instagram,
-    color: "text-pink-500",
-  },
-  {
     name: "X / Twitter",
     href: "/api/auth/x",
     icon: Twitter,
@@ -36,11 +30,11 @@ const PROVIDERS = [
     color: "text-red-600",
   },
   {
-    name: "Facebook",
-    href: "/api/auth/facebook",
-    icon: Facebook,
-    color: "text-blue-700",
-  },
+    name: "Instagram",
+    href: "/api/auth/instagram",
+    icon: Instagram,
+    color: "text-pink-500",
+  }
 ];
 
 export default function LinkNewAccountSection() {

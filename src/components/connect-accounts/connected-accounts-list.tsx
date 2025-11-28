@@ -13,10 +13,10 @@ const PLATFORM_META: Record<
   linkedin: { label: "LinkedIn", icon: Linkedin, accent: "text-accent" },
   youtube: { label: "YouTube", icon: Youtube, accent: "text-red-500" },
   instagram: { label: "Instagram", icon: Instagram, accent: "text-pink-500" },
-  facebook: { label: "Facebook", icon: Facebook, accent: "text-blue-700" },
+  // facebook: { label: "Facebook", icon: Facebook, accent: "text-blue-700" },
 };
 
-const ORDER = ["x", "linkedin", "youtube", "instagram", "facebook"];
+const ORDER = ["x", "linkedin", "youtube", "instagram"];
 
 export default function ConnectedAccountsList({
   accounts,
