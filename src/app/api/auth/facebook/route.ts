@@ -1,3 +1,4 @@
+// app/api/auth/facebook/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -11,11 +12,11 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Build Facebook OAuth URL
-  const authUrl = new URL('https://www.facebook.com/v21.0/dialog/oauth');
+  // Build Facebook OAuth URL (matching v22.0)
+  const authUrl = new URL('https://www.facebook.com/v22.0/dialog/oauth');
   authUrl.searchParams.set('client_id', appId);
   authUrl.searchParams.set('redirect_uri', redirectUri);
-  authUrl.searchParams.set('scope', 'pages_show_list,pages_read_engagement,pages_manage_posts,pages_manage_metadata,public_profile');
+  authUrl.searchParams.set('scope', 'pages_show_list,pages_read_engagement,pages_manage_posts,public_profile,business_management');
   authUrl.searchParams.set('response_type', 'code');
 
   // Redirect user to Facebook OAuth
