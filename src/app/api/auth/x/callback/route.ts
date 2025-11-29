@@ -1,3 +1,4 @@
+// app/api/auth/x/callback/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
@@ -19,11 +20,11 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // 🔥 Correct way: get cookies using NextRequest API
+  // Get cookies
   const expectedState = req.cookies.get("x_oauth_state")?.value || "";
   const codeVerifier = req.cookies.get("x_oauth_verifier")?.value || "";
 
-  // 🔥 Validate PKCE + CSRF
+  // Validate PKCE + CSRF
   if (!expectedState || !codeVerifier || expectedState !== state) {
     console.error("PKCE mismatch", {
       expectedState,
@@ -31,9 +32,13 @@ export async function GET(req: NextRequest) {
       codeVerifierExists: !!codeVerifier,
     });
 
-    return NextResponse.redirect(
+    // Delete cookies even on error
+    const errorResponse = NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=x&status=error`
     );
+    errorResponse.cookies.delete("x_oauth_state");
+    errorResponse.cookies.delete("x_oauth_verifier");
+    return errorResponse;
   }
 
   try {
@@ -56,20 +61,32 @@ export async function GET(req: NextRequest) {
     if (!response.ok) {
       console.error("X OAuth callback failed:", await response.text());
 
-      return NextResponse.redirect(
+      // Delete cookies on error
+      const errorResponse = NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=x&status=error`
       );
+      errorResponse.cookies.delete("x_oauth_state");
+      errorResponse.cookies.delete("x_oauth_verifier");
+      return errorResponse;
     }
 
-    // Success
-    return NextResponse.redirect(
+    // ✅ SUCCESS - DELETE COOKIES IMMEDIATELY TO PREVENT REUSE
+    const successResponse = NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=x&status=success`
     );
+    successResponse.cookies.delete("x_oauth_state");
+    successResponse.cookies.delete("x_oauth_verifier");
+    return successResponse;
+
   } catch (err) {
     console.error("X OAuth callback exception:", err);
 
-    return NextResponse.redirect(
+    // Delete cookies on exception
+    const errorResponse = NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=x&status=error`
     );
+    errorResponse.cookies.delete("x_oauth_state");
+    errorResponse.cookies.delete("x_oauth_verifier");
+    return errorResponse;
   }
 }
