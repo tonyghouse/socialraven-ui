@@ -1,59 +1,54 @@
-// app/api/auth/x/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
-import {
-  generateCodeVerifier,
-  generateCodeChallenge,
-} from "@/lib/x-oauth";
 
-const X_CLIENT_ID = process.env.X_CLIENT_ID!;
-const X_REDIRECT_URI = process.env.X_REDIRECT_URI!;
-// e.g. https://your-app.com/api/auth/x/callback
+const TOKEN_URL = "https://api.twitter.com/2/oauth2/token";
 
 export async function GET(req: NextRequest) {
-  // PKCE
-  const verifier = generateCodeVerifier();
-  const challenge = await generateCodeChallenge(verifier);
+  const url = new URL(req.url);
 
-  // CSRF protection
-  const state = crypto.randomBytes(16).toString("hex");
+  const code = url.searchParams.get("code");
+  const state = url.searchParams.get("state");
 
-  const scope = encodeURIComponent([
-  "tweet.write",
-  "tweet.read",
-  "users.read",
-  "offline.access",
-].join(" "));
+  const storedState = req.cookies.get("x_oauth_state")?.value;
+  const verifier = req.cookies.get("x_oauth_verifier")?.value;
 
+  if (!code || !state || !verifier) {
+    return NextResponse.json(
+      { error: "Invalid request", message: "Missing PKCE values" },
+      { status: 400 }
+    );
+  }
 
-  const authUrl =
-    "https://twitter.com/i/oauth2/authorize" +
-    `?response_type=code` +
-    `&client_id=${encodeURIComponent(X_CLIENT_ID)}` +
-    `&redirect_uri=${encodeURIComponent(X_REDIRECT_URI)}` +
-    `&scope=${scope}` +
-    `&state=${state}` +
-    `&code_challenge=${challenge}` +
-    `&code_challenge_method=S256`;
+  if (state !== storedState) {
+    return NextResponse.json(
+      { error: "State mismatch" },
+      { status: 400 }
+    );
+  }
 
-  const res = NextResponse.redirect(authUrl);
+  const body = new URLSearchParams({
+    grant_type: "authorization_code",
+    code,
+    client_id: process.env.X_CLIENT_ID!,
+    redirect_uri: process.env.X_REDIRECT_URI!,
+    code_verifier: verifier,
+  });
 
+  const tokenRes = await fetch(TOKEN_URL, {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body,
+  });
 
-res.cookies.set("x_oauth_state", state, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-  maxAge: 10 * 60,
-  path: "/",
-});
+  const tokenJson = await tokenRes.json();
 
-res.cookies.set("x_oauth_verifier", verifier, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-  maxAge: 10 * 60,
-  path: "/",
-});
+  if (!tokenRes.ok) {
+    return NextResponse.json(
+      { error: tokenJson.error, details: tokenJson },
+      { status: 400 }
+    );
+  }
 
-return res;
+  return NextResponse.json(tokenJson);
 }
