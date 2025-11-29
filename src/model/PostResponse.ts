@@ -1,3 +1,4 @@
+import { ConnectedAccount } from "./ConnectedAccount";
 import { MediaResponse } from "./MediaResponse";
 
 export interface PostResponse {
@@ -8,5 +9,5 @@ export interface PostResponse {
   postStatus: "SCHEDULED" | "PUBLISHED" | "FAILED"
   scheduledTime: string;
   media: MediaResponse[];
-  userNames: string[];
+  connectedAccounts: ConnectedAccount[];
 }

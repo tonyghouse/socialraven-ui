@@ -30,7 +30,7 @@ const PROVIDERS = [
     color: "text-red-600",
   },
   {
-    name: "Instagram",
+    name: "(Disabled) Instagram",
     href: "/api/auth/instagram",
     icon: Instagram,
     color: "text-pink-500",

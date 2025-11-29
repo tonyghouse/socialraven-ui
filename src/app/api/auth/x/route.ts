@@ -18,9 +18,13 @@ export async function GET(req: NextRequest) {
   // CSRF protection
   const state = crypto.randomBytes(16).toString("hex");
 
-  const scope = encodeURIComponent(
-    "tweet.read users.read offline.access"
-  );
+  const scope = encodeURIComponent([
+  "tweet.write",
+  "tweet.read",
+  "users.read",
+  "offline.access",
+].join(" "));
+
 
   const authUrl =
     "https://twitter.com/i/oauth2/authorize" +

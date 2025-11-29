@@ -1,10 +1,12 @@
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PostMedia } from "./PostMedia";
+import { PostType } from "./PostType";
 
 export interface SchedulePost {
   title: string;
   description: string;
-  media: PostMedia[]; // multiple media files as byte arrays
+  postType: PostType;
+  media: PostMedia[]; // multiple media files as byte arrays homogenous image or video either one
   connectedAccounts: ConnectedAccount[];
   scheduledTime: string; // ISO string
 }
