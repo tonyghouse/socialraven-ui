@@ -9,11 +9,14 @@ import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import InfoCard from "./info-card";
+import AppleSkeleton from "../generic/AppleSkelton";
 
 export default function ConnectedAccountsSection() {
   const { getToken, isLoaded } = useAuth();
 
-  const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
+  const [connectedAccounts, setConnectedAccounts] = useState<
+    ConnectedAccount[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -35,26 +38,28 @@ export default function ConnectedAccountsSection() {
 
   return (
     <>
-      {loading && (
-        <Skeleton className="h-[22rem] w-full rounded-[28px] bg-white/40 backdrop-blur-xl" />
-      )}
-
-      {!loading && (
-        <div className="mb-6 space-y-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Check className="h-5 w-5 text-green-500" />
-            <h2 className="text-lg font-semibold text-foreground">
-              Connected Accounts
-            </h2>
-          </div>
-
-          {/* Optional info card */}
-          <InfoCard />
-
-          {/* Always show all 4 groups - Apple-style */}
-          <ConnectedAccountsList accounts={connectedAccounts} />
+      <div className="mb-6 space-y-4">
+        <div className="flex items-center gap-2 mb-3">
+          <Check className="h-5 w-5 text-green-500" />
+          <h2 className="text-lg font-semibold text-foreground">
+            Connected Accounts
+          </h2>
         </div>
-      )}
+
+        {/* Optional info card */}
+        <InfoCard />
+
+        {loading ? (
+          <div className="grid grid-cols-2 gap-3">
+            <AppleSkeleton className="h-[10rem] w-full" />
+            <AppleSkeleton className="h-[10rem] w-full" />
+             <AppleSkeleton className="h-[10rem] w-full" />
+            <AppleSkeleton className="h-[10rem] w-full" />
+          </div>
+        ) : (
+          <ConnectedAccountsList accounts={connectedAccounts} />
+        )}
+      </div>
     </>
   );
 }

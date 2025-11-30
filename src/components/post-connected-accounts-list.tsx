@@ -10,11 +10,12 @@ import {
   Twitter,
   Youtube,
   Check,
+  ChevronRight,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const PLATFORM_ICONS: Record<Platform, LucideIcon> = {
   instagram: Instagram,
@@ -108,6 +109,30 @@ export function PostConnectedAccountsList({
   toggleAccount: (id: string) => void;
   loading: boolean;
 }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+
+  useEffect(() => {
+    const checkScroll = () => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        const isScrollable = scrollWidth > clientWidth;
+        const isAtEnd = scrollLeft + clientWidth >= scrollWidth - 10;
+        setShowScrollIndicator(isScrollable && !isAtEnd);
+      }
+    };
+
+    checkScroll();
+    const scrollEl = scrollRef.current;
+    scrollEl?.addEventListener("scroll", checkScroll);
+    window.addEventListener("resize", checkScroll);
+
+    return () => {
+      scrollEl?.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [accounts]);
+
   return (
     <div className="space-y-3">
       <label className="text-sm font-medium text-foreground">Select Accounts</label>
@@ -118,7 +143,10 @@ export function PostConnectedAccountsList({
       )}
 
       <div className="relative border rounded-lg px-3 py-2">
-        <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide pr-6 py-1">
+        <div 
+          ref={scrollRef}
+          className="flex items-center gap-4 overflow-x-auto scrollbar-hide pr-6 py-1"
+        >
           <TooltipProvider delayDuration={200}>
             {accounts.map((acc) => (
               <AccountItem
@@ -131,7 +159,15 @@ export function PostConnectedAccountsList({
           </TooltipProvider>
         </div>
 
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-background to-transparent" />
+        {/* Gradient fade and scroll indicator */}
+        {showScrollIndicator && (
+          <>
+            <div className="pointer-events-none absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-white via-white/80 to-transparent" />
+            <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 border border-gray-200 shadow-sm">
+              <ChevronRight className="w-4 h-4 text-gray-600 animate-pulse" />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

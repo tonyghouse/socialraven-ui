@@ -9,11 +9,11 @@ import { useAuth } from "@clerk/nextjs";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PostType } from "@/model/PostType";
-import PostTypeSelector from "@/components/schedule-a-post/post-type-selector";
+import PostTypeSelector from "@/components/schedule-post/post-type-selector";
 import { PostConnectedAccountsList } from "@/components/post-connected-accounts-list";
-import ScheduleImageForm from "@/components/schedule-a-post/schedule-image-form";
-import ScheduleVideoForm from "@/components/schedule-a-post/schedule-video-form";
-import ScheduleTextForm from "@/components/schedule-a-post/schedule-text-form";
+import ScheduleImageForm from "@/components/schedule-post/schedule-image-form";
+import ScheduleVideoForm from "@/components/schedule-post/schedule-video-form";
+import ScheduleTextForm from "@/components/schedule-post/schedule-text-form";
 
 export default function ScheduledPostsPage() {
   const { isLoaded, getToken } = useAuth();
@@ -42,19 +42,19 @@ export default function ScheduledPostsPage() {
   }
 
   return (
-    <main className="px-8 py-12 space-y-12">
+    <main className="px-4 py-6 space-y-6">
       
       {/* ---> Header */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-1">
           <div className="rounded-2xl p-3 bg-primary/10 backdrop-blur-sm">
-            <Calendar className="w-6 h-6 text-primary" />
+            <Calendar className="w-5 h-5 text-primary" />
           </div>
-          <h1 className="text-4xl font-bold tracking-tight">Schedule Post</h1>
+          <h1 className="text-3xl font-semibold text-foreground tracking-tight">Schedule Post</h1>
         </div>
       </div>
 
-      <Card className="backdrop-blur-2xl border-border/40 p-8 rounded-3xl shadow-[0_8px_32px_-4px_rgba(0,0,0,0.12)] space-y-10">
+      <Card className="backdrop-blur-2xl border-border/40 p-6 rounded-3xl shadow-[0_8px_32px_-4px_rgba(0,0,0,0.12)] space-y-6">
 
         {/* Step 1 → Post Type */}
         <PostTypeSelector postType={postType} setPostType={setPostType} />

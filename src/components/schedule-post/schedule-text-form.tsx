@@ -56,13 +56,9 @@ export default function ScheduleTextForm({ connectedAccounts, selectedIds, reset
 
   return (
     <div className="space-y-6">
-       <Input placeholder="Title"
-        className="w-full p-3 rounded-xl border"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}/>
       <textarea
         placeholder="Description"
-        className="w-full p-3 rounded-xl border min-h-36"
+        className="w-full p-3 rounded-xl border min-h-48"
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />

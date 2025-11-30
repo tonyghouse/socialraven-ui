@@ -35,7 +35,6 @@ export default function ManageAccountsPage() {
     }
 
     if (status === "error") {
-      console.log(`⚠️ Error toast for: ${providerName}`);
       toast(`${providerName} connection failed! Reason: ${reason}`);
     }
     router.replace("/connect-accounts");
