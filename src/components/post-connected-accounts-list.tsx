@@ -17,7 +17,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 const PLATFORM_ICONS: Record<Platform, LucideIcon> = {
   instagram: Instagram,
@@ -25,6 +27,36 @@ const PLATFORM_ICONS: Record<Platform, LucideIcon> = {
   linkedin: Linkedin,
   facebook: Facebook,
   youtube: Youtube,
+};
+
+// Helper function to get initials from username
+const getInitials = (username: string) => {
+  if (!username) return "?";
+  return username
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+// Helper function to get proxied or direct image URL
+const getImageUrl = (url: string | null | undefined) => {
+  if (!url) return null;
+
+  // List of domains that need proxying due to CORS
+  const needsProxy = ["linkedin.com", "licdn.com"];
+
+  // Check if URL needs proxying
+  const requiresProxy = needsProxy.some((domain) => url.includes(domain));
+
+  if (requiresProxy) {
+    // Use the proxy API route
+    return `/api/proxy-image?url=${encodeURIComponent(url)}`;
+  }
+
+  // Return direct URL for other platforms
+  return url;
 };
 
 export function PostConnectedAccountsList({
@@ -61,6 +93,9 @@ export function PostConnectedAccountsList({
             {accounts.map((acc) => {
               const Icon = PLATFORM_ICONS[acc.platform];
               const selected = selectedAccountIds.includes(acc.providerUserId);
+              const [imageError, setImageError] = useState(false);
+              const imageUrl = getImageUrl(acc.profilePicLink);
+              const initials = getInitials(acc.username);
 
               return (
                 <Tooltip key={acc.providerUserId}>
@@ -69,32 +104,29 @@ export function PostConnectedAccountsList({
                       onClick={() => toggleAccount(acc.providerUserId)}
                       className="relative flex-shrink-0 w-12 h-12 rounded-full group"
                     >
-                      <div className="relative flex-shrink-0 w-12 h-12 rounded-full">
-                        {/* fallback circle ALWAYS EXISTS behind image */}
-                        <div
-                          className={cn(
-                            "absolute inset-0 rounded-full",
-                            selected
-                              ? "border-primary ring-2 ring-primary border-[0.1rem]"
-                              : "border-[0.1rem] border-primary hover:border-primary/50"
-                          )}
-                        />
-
-                        {/* image sits on top → disappears only if broken */}
-                        {acc.profilePicLink && (
-                          <img
-                            src={acc.profilePicLink}
-                            className="absolute inset-0 w-full h-full rounded-full object-cover"
-                            onError={(e) =>
-                              (e.currentTarget.style.display = "none")
-                            } // hides ONLY this img
-                          />
+                      <Avatar
+                        className={cn(
+                          "w-12 h-12 transition-all",
+                          selected
+                            ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                            : "ring-2 ring-transparent hover:ring-primary/30"
                         )}
-                      </div>
+                      >
+                        {imageUrl && !imageError ? (
+                          <AvatarImage
+                            src={imageUrl}
+                            alt={acc.username}
+                            onError={() => setImageError(true)}
+                          />
+                        ) : null}
+                        <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
 
                       {/* Tick indicator */}
                       {selected && (
-                        <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center shadow">
+                        <div className="absolute -bottom-0.5 -right-0.5 bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-background">
                           <Check className="w-3 h-3" />
                         </div>
                       )}
@@ -104,7 +136,7 @@ export function PostConnectedAccountsList({
                   {/* Tooltip with username + provider */}
                   <TooltipContent className="px-3 py-2 text-sm shadow-md">
                     <p className="font-medium">{acc.username}</p>
-                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1 capitalize">
                       {Icon && <Icon className="w-3 h-3" />} {acc.platform}
                     </div>
                   </TooltipContent>
