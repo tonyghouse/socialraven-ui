@@ -16,24 +16,28 @@ const PROVIDERS = [
     href: "/api/auth/x",
     icon: Twitter,
     color: "text-black",
+    bgColor: "bg-white"
   },
   {
     name: "LinkedIn",
     href: "/api/auth/linkedin",
     icon: Linkedin,
     color: "text-blue-600",
+    bgColor: "bg-white"
   },
   {
     name: "YouTube",
     href: "/api/auth/youtube",
     icon: Youtube,
     color: "text-red-600",
+    bgColor: "bg-white"
   },
   {
-    name: "(Disabled) Instagram",
+    name: "Coming Soon",
     href: "/api/auth/instagram",
     icon: Instagram,
     color: "text-pink-500",
+    bgColor: "bg-gray-100"
   }
 ];
 
@@ -61,25 +65,25 @@ export default function LinkNewAccountSection() {
 
       {/* ICON ROW — SUPER COMPACT, FIXED WIDTH */}
       <div className="flex flex-wrap gap-3">
-        {PROVIDERS.map(({ name, href, icon: Icon, color }) => (
+        {PROVIDERS.map(({ name, href, icon: Icon, color, bgColor }) => (
           <Link key={name} href={href}>
             <button
-              className="
+              className={`
                 w-[110px] h-[90px]
                 flex flex-col items-center justify-center
                 gap-2
                 rounded-[18px]
-                bg-white/70 backdrop-blur-xl
+                ${bgColor} backdrop-blur-xl
                 border border-foreground/10
                 shadow-sm
                 hover:bg-white/80 transition
-              "
+              `}
             >
               <div
-                className="
+                className={`
                   h-9 w-9 rounded-lg bg-white
                   shadow-sm flex items-center justify-center
-                "
+                `}
               >
                 <Icon className={`h-5 w-5 ${color}`} />
               </div>
