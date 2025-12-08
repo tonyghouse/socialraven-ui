@@ -301,7 +301,7 @@ export default function LandingPage() {
 
 
         <footer className="py-6 text-center text-sm text-foreground/45">
-          Crafted with ❤️ in India 🇮🇳 by Tony Ghouse
+          Crafted with ❤️ by Tony Ghouse & Team
         </footer>
       </div>
     </>
