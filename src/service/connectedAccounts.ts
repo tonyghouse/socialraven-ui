@@ -10,7 +10,7 @@ export async function fetchConnectedAccountsApi(
   const token = await getToken();
 
   // Build URL with optional query param
-  const url = new URL(`${backendUrl}/profiles/connected`);
+  const url = new URL(`${backendUrl}/account-profiles/connected`);
 
   if (platform) {
     url.searchParams.append("platform", platform);

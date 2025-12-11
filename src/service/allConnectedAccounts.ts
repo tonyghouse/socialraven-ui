@@ -9,7 +9,7 @@ export async function fetchAllConnectedAccountsApi(
   const token = await getToken();
 
   // Build URL with optional query param
-  const url = new URL(`${backendUrl}/profiles/connected/all`);
+  const url = new URL(`${backendUrl}/account-profiles/connected/all`);
 
   const res = await fetch(url.toString(), {
     method: "GET",

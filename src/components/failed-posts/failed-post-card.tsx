@@ -1,16 +1,15 @@
 "use client";
 
-import { format } from "date-fns";
-import { Calendar, FileText, CheckCircle2 } from "lucide-react";
+import { Calendar, FileText, CalendarX2 } from "lucide-react";
 import { MediaPreview } from "../scheduled-posts/media-preview";
 import type { PostResponse } from "@/model/PostResponse";
 import { PLATFORM_ICONS } from "../generic/platform-icons";
 
-interface PublishedPostCardProps {
+interface FailedPostCardProps {
   post: PostResponse;
 }
 
-export function PublishedPostCard({ post }: PublishedPostCardProps) {
+export function FailedPostCard({ post }: FailedPostCardProps) {
   const Icon = PLATFORM_ICONS[post.provider] || null;
 
   // Apple-style formatting
@@ -61,11 +60,11 @@ export function PublishedPostCard({ post }: PublishedPostCardProps) {
           <span
             className="
               px-2.5 py-1 rounded-full text-xs font-medium 
-              bg-green-50 border border-green-200 text-green-700 
+              bg-red-50 border border-red-200 text-red-700 
               flex items-center gap-1
             "
           >
-            <CheckCircle2 className="h-3.5 w-3.5" /> Published
+            <CalendarX2 className="h-3.5 w-3.5" /> Failed
           </span>
         </div>
 
@@ -141,7 +140,7 @@ export function PublishedPostCard({ post }: PublishedPostCardProps) {
 
       {/* FOOTER */}
       <div className="px-4 py-3 border-t border-border/40 bg-white/50 flex items-center justify-end">
-        <div className="w-2 h-2 rounded-full bg-green-500/60 group-hover:bg-green-500 transition" />
+        <div className="w-2 h-2 rounded-full bg-red-500/60 group-hover:bg-red-500 transition" />
       </div>
     </div>
   );

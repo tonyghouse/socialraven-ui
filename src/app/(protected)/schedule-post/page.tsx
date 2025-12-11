@@ -10,7 +10,7 @@ import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PostType } from "@/model/PostType";
 import PostTypeSelector from "@/components/schedule-post/post-type-selector";
-import { PostConnectedAccountsList } from "@/components/post-connected-accounts-list";
+import { PostConnectedAccountsList } from "@/components/schedule-post/post-connected-accounts-list";
 import ScheduleImageForm from "@/components/schedule-post/schedule-image-form";
 import ScheduleVideoForm from "@/components/schedule-post/schedule-video-form";
 import ScheduleTextForm from "@/components/schedule-post/schedule-text-form";

@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import { Calendar, User, FileText } from "lucide-react";
-import { PLATFORM_ICONS } from "../platform-icons";
+import { PLATFORM_ICONS } from "../generic/platform-icons";
 import { MediaPreview } from "./media-preview";
 import { cn } from "@/lib/utils";
 import type { PostResponse } from "@/model/PostResponse";
