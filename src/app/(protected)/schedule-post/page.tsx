@@ -61,6 +61,7 @@ export default function ScheduledPostsPage() {
 
         {/* Step 2 → Account Selection */}
         <PostConnectedAccountsList
+          postType = {postType}
           accounts={connectedAccounts}
           selectedAccountIds={selectedAccountIds}
           toggleAccount={(id: string) =>

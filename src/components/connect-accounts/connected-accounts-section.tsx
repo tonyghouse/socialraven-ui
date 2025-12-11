@@ -50,7 +50,7 @@ export default function ConnectedAccountsSection() {
     try {
       setRefreshing(true);
       await loadAccounts();
-      toast.success("Accounts refreshed");
+      toast.success("Connected accounts loaded");
     } catch {
       // handled in loadAccounts
     } finally {

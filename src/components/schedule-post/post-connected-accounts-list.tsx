@@ -21,6 +21,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
+import { PostType } from "@/model/PostType";
 
 const PLATFORM_ICONS: Record<Platform, LucideIcon> = {
   instagram: Instagram,
@@ -52,31 +53,55 @@ function AccountItem({
   acc,
   isSelected,
   toggle,
+  postType,
 }: {
   acc: ConnectedAccount;
   isSelected: boolean;
   toggle: (id: string) => void;
+  postType: PostType;
 }) {
   const Icon = PLATFORM_ICONS[acc.platform];
   const [imageError, setImageError] = useState(false);
   const imageUrl = getImageUrl(acc.profilePicLink);
   const initials = getInitials(acc.username);
 
+  // Decide whether this account supports the current postType
+  const isAllowedForPost = acc.allowedFormats?.includes(postType);
+
+  // Visual classes when not allowed (grayed out)
+  const avatarFilterClass = isAllowedForPost ? "" : "filter grayscale opacity-60";
+
   return (
     <Tooltip>
-     
-        {/* Make the entire clickable area a vertical stack (avatar + label) so tooltip still works */}
+      {/* TooltipTrigger wraps the button so the tooltip still works when disabled */}
+      <TooltipTrigger asChild>
         <button
-          onClick={() => toggle(acc.providerUserId)}
-          className="relative flex flex-col items-center flex-shrink-0 w-14 group"
+          onClick={() => {
+            if (!isAllowedForPost) return;
+            toggle(acc.providerUserId);
+          }}
+          className={cn(
+            "relative flex flex-col items-center flex-shrink-0 w-14 group",
+            // when disabled show not-allowed cursor
+            !isAllowedForPost ? "cursor-not-allowed" : ""
+          )}
           aria-pressed={isSelected}
+          aria-disabled={!isAllowedForPost}
+          // disable native button behavior for keyboard when not allowed
+          disabled={!isAllowedForPost}
+          title={
+            isAllowedForPost
+              ? acc.username
+              : `${acc.username} — Not available for ${postType.toLowerCase()} posts`
+          }
         >
           <Avatar
             className={cn(
               "w-12 h-12 transition-all",
               isSelected
                 ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                : "ring-2 ring-transparent hover:ring-primary/30"
+                : "ring-2 ring-transparent hover:ring-primary/30",
+              avatarFilterClass
             )}
           >
             {imageUrl && !imageError && (
@@ -84,24 +109,29 @@ function AccountItem({
                 src={imageUrl}
                 alt={acc.username}
                 onError={() => setImageError(true)}
+                className={cn(avatarFilterClass)}
               />
             )}
-            <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white">
+            <AvatarFallback
+              className={cn(
+                "text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white",
+                avatarFilterClass
+              )}
+            >
               {initials}
             </AvatarFallback>
           </Avatar>
 
           {/* Selected check badge */}
-          {isSelected && (
+          {isSelected && isAllowedForPost && (
             <div className="absolute -bottom-0.5 -right-0.5 bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-background">
               <Check className="w-3 h-3" />
             </div>
           )}
 
-          <TooltipTrigger asChild>
           {/* Username + small platform icon under avatar */}
           <div className="mt-1 flex items-center gap-1 max-w-full">
-            {Icon && <Icon className="w-3 h-3 flex-shrink-0" />}
+            {Icon && <Icon className={cn("w-3 h-3 flex-shrink-0", avatarFilterClass)} />}
             <span
               className="text-xs text-muted-foreground truncate"
               style={{ maxWidth: "64px" }}
@@ -109,26 +139,30 @@ function AccountItem({
               {acc.username}
             </span>
           </div>
-          </TooltipTrigger>
         </button>
+      </TooltipTrigger>
 
-      {/* Tooltip still shows full username + platform */}
       <TooltipContent className="px-3 py-2 text-sm shadow-md">
         <p className="font-medium">{acc.username}</p>
         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1 capitalize">
           {Icon && <Icon className="w-3 h-3" />} {acc.platform}
         </div>
+        {!isAllowedForPost && (
+          <div className="mt-2 text-xs text-red-500">Not available for {postType.toLowerCase()} posts</div>
+        )}
       </TooltipContent>
     </Tooltip>
   );
 }
 
 export function PostConnectedAccountsList({
+  postType,
   accounts,
   selectedAccountIds,
   toggleAccount,
   loading,
 }: {
+  postType: PostType;
   accounts: ConnectedAccount[];
   selectedAccountIds: string[];
   toggleAccount: (id: string) => void;
@@ -179,6 +213,7 @@ export function PostConnectedAccountsList({
                 acc={acc}
                 isSelected={selectedAccountIds.includes(acc.providerUserId)}
                 toggle={toggleAccount}
+                postType={postType}
               />
             ))}
           </TooltipProvider>
