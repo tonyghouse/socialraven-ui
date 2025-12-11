@@ -17,14 +17,43 @@ type GridProps = {
   onReconnect?: (acc: ConnectedAccount) => void;
 };
 
-const PLATFORM_META = {
-  x: { label: "X / Twitter", Icon: Twitter, accent: "text-foreground/80", connectHref: "/api/auth/x" },
-  linkedin: { label: "LinkedIn", Icon: Linkedin, accent: "text-accent", connectHref: "/api/auth/linkedin" },
-  youtube: { label: "YouTube", Icon: Youtube, accent: "text-red-500", connectHref: "/api/auth/youtube" },
-  instagram: { label: "Instagram", Icon: Instagram, accent: "text-pink-500", connectHref: "/api/auth/instagram" }
+interface PlatformMeta {
+  label: string;
+  Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+  accent: string;
+  connectHref: string;
+}
+
+export type PlatformKey = "x" | "linkedin" | "youtube" | "instagram";
+
+export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
+  x: {
+    label: "X / Twitter",
+    Icon: Twitter,
+    accent: "text-foreground/80",
+    connectHref: "/api/auth/x",
+  },
+  linkedin: {
+    label: "LinkedIn",
+    Icon: Linkedin,
+    accent: "text-accent",
+    connectHref: "/api/auth/linkedin",
+  },
+  youtube: {
+    label: "YouTube",
+    Icon: Youtube,
+    accent: "text-red-500",
+    connectHref: "/api/auth/youtube",
+  },
+  instagram: {
+    label: "Instagram",
+    Icon: Instagram,
+    accent: "text-pink-500",
+    connectHref: "/api/auth/instagram",
+  },
 };
 
-const ORDER = ["x", "linkedin", "youtube", "instagram"];
+const ORDER: PlatformKey[] = ["x", "linkedin", "youtube", "instagram"];
 
 export default function ConnectedAccountsGrid({
   accounts,
