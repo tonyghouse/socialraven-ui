@@ -9,7 +9,7 @@ import { useAuth } from "@clerk/nextjs";
 import { uploadToS3 } from "@/service/uploadToS3";
 import { getPresignedUrl } from "@/service/presignUrl";
 import MediaUploader from "./media-uploader";
-import ScheduleDateTimePicker from "../date-time-picker";
+import ScheduleDateTimePicker from "./date-time-picker";
 import { Input } from "../ui/input";
 import { localToUTC } from "@/lib/timeUtil";
 

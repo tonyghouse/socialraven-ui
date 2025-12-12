@@ -21,6 +21,10 @@ export default function MediaUploader({ files, setFiles }: Props) {
     const selected = Array.from(e.target.files);
     const updated = [...files, ...selected].slice(0, 10);
     setFiles(updated);
+    // Reset input to allow selecting the same file again
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
   }
 
   const remove = (file: File) => setFiles(files.filter(f => f !== file));
@@ -72,66 +76,76 @@ export default function MediaUploader({ files, setFiles }: Props) {
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
             className="mt-5"
           >
-            <Reorder.Group
-              axis="x"
-              values={files}
-              onReorder={setFiles}
-              className="grid grid-cols-3 gap-3"
-            >
-              {files.map((file) => (
-                <Reorder.Item
-                  key={file.name}
-                  value={file}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ scale: 1.02, y: -2 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="relative group cursor-grab active:cursor-grabbing"
-                >
-                  {/* Card Container */}
-                  <div className="relative overflow-hidden rounded-[16px] bg-white/90 backdrop-blur-xl
-                  border border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)]
-                  group-hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)]
-                  transition-all duration-300">
-                    
-                    {/* Thumbnail */}
-                    <div className="aspect-square overflow-hidden">
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt="media"
-                        className="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-
-                    {/* Overlay Controls */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent 
-                    opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-1 px-1">
+              <Reorder.Group
+                axis="x"
+                values={files}
+                onReorder={setFiles}
+                className="flex gap-3 min-w-min"
+              >
+                {files.map((file) => (
+                  <Reorder.Item
+                    key={file.name + file.size + file.lastModified}
+                    value={file}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="relative group cursor-grab active:cursor-grabbing flex-shrink-0"
+                  >
+                    {/* Card Container */}
+                    <div className="relative overflow-hidden rounded-[16px] bg-white/90 backdrop-blur-xl
+                    border border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)]
+                    group-hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)]
+                    transition-all duration-300 w-32 h-32">
                       
-                      {/* Remove Button */}
-                      <motion.button
-                        onClick={() => remove(file)}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="absolute top-2 right-2 w-7 h-7 rounded-full 
-                        bg-white/95 backdrop-blur-xl shadow-lg
-                        flex items-center justify-center
-                        border border-black/[0.06]"
-                      >
-                        <X className="w-3.5 h-3.5 text-black/70" strokeWidth={2.5} />
-                      </motion.button>
+                      {/* Thumbnail */}
+                      <div className="w-full h-full flex items-center justify-center bg-gray-50/50">
+                        {file.type.startsWith('video/') ? (
+                          <video
+                            src={URL.createObjectURL(file)}
+                            className="w-full h-full object-contain"
+                            muted
+                          />
+                        ) : (
+                          <img
+                            src={URL.createObjectURL(file)}
+                            alt="media"
+                            className="w-full h-full object-contain"
+                          />
+                        )}
+                      </div>
 
-                      {/* Drag Handle */}
-                      <div className="absolute bottom-2 left-2 px-2 py-1 rounded-full 
-                      bg-white/95 backdrop-blur-xl shadow-md border border-black/[0.06]">
-                        <GripVertical className="w-3.5 h-3.5 text-black/50" strokeWidth={2.5} />
+                      {/* Overlay Controls */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent 
+                      opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        
+                        {/* Remove Button */}
+                        <motion.button
+                          onClick={() => remove(file)}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="absolute top-2 right-2 w-7 h-7 rounded-full 
+                          bg-white/95 backdrop-blur-xl shadow-lg
+                          flex items-center justify-center
+                          border border-black/[0.06]"
+                        >
+                          <X className="w-3.5 h-3.5 text-black/70" strokeWidth={2.5} />
+                        </motion.button>
+
+                        {/* Drag Handle */}
+                        <div className="absolute bottom-2 left-2 px-2 py-1 rounded-full 
+                        bg-white/95 backdrop-blur-xl shadow-md border border-black/[0.06]">
+                          <GripVertical className="w-3.5 h-3.5 text-black/50" strokeWidth={2.5} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { postConnectedAccountsApi } from "@/service/schedulePost";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import MediaUploader from "./media-uploader";
-import ScheduleDateTimePicker from "../date-time-picker";
+import ScheduleDateTimePicker from "./date-time-picker";
 import { getPresignedUrl } from "@/service/presignUrl";
 import { uploadToS3 } from "@/service/uploadToS3";
 import { useAuth } from "@clerk/nextjs";

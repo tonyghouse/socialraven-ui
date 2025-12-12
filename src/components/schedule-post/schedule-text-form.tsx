@@ -6,7 +6,7 @@ import { postConnectedAccountsApi } from "@/service/schedulePost";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
-import ScheduleDateTimePicker from "../date-time-picker";
+import ScheduleDateTimePicker from "./date-time-picker";
 import { Input } from "../ui/input";
 import { localToUTC } from "@/lib/timeUtil";
 

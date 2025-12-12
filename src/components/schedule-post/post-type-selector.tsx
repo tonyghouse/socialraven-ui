@@ -1,18 +1,26 @@
-export default function PostTypeSelector({ postType, setPostType } :any) {
-  return (
-    <div className="space-y-2">
-      <label className="text-sm text-muted-foreground mr-3">Post Type</label>
 
-      <select
-        value={postType}
-        onChange={e=> setPostType(e.target.value)}
-        className="px-4 py-3 rounded-xl bg-card border  border-border/30 
-        backdrop-blur-lg hover:border-primary/40 transition text-foreground shadow-sm"
-      >
-        <option value="IMAGE">Image</option>
-        <option value="VIDEO">Video</option>
-        <option value="TEXT">Text</option>
-      </select>
+export default function PostTypeSelector({ postType, setPostType }: any) {
+  const types = [
+    { value: 'IMAGE', label: 'Image' },
+    { value: 'VIDEO', label: 'Video' },
+    { value: 'TEXT', label: 'Text' }
+  ];
+
+  return (
+    <div className="inline-flex gap-1 p-1 bg-gray-100 rounded-lg">
+      {types.map(type => (
+        <button
+          key={type.value}
+          onClick={() => setPostType(type.value)}
+          className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-200 
+            ${postType === type.value 
+              ? 'bg-white text-gray-900 shadow-sm' 
+              : 'text-gray-600 hover:text-gray-900'
+            }`}
+        >
+          {type.label}
+        </button>
+      ))}
     </div>
   );
 }
