@@ -38,6 +38,10 @@ export async function GET(req: NextRequest) {
     `&code_challenge=${challenge}` +
     `&code_challenge_method=S256`;
 
+  console.log("🔍 Generated Auth URL:", authUrl);
+  console.log("🔍 Redirect URI:", X_REDIRECT_URI);
+  console.log("🔍 Client ID:", X_CLIENT_ID?.substring(0, 10) + "...");
+
   const res = NextResponse.redirect(authUrl);
 
   // ✅ DELETE ALL OLD OAUTH COOKIES (both OAuth 1.0a and 2.0)
