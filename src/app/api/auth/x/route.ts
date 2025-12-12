@@ -8,9 +8,11 @@ import {
 
 const X_CLIENT_ID = process.env.X_CLIENT_ID!;
 const X_REDIRECT_URI = process.env.X_REDIRECT_URI!;
-// e.g. https://your-app.com/api/auth/x/callback
+// e.g. http://localhost:3001/api/auth/x/callback
 
 export async function GET(req: NextRequest) {
+  console.log("🟢 Starting X OAuth flow");
+  
   // PKCE
   const verifier = generateCodeVerifier();
   const challenge = await generateCodeChallenge(verifier);
@@ -18,13 +20,13 @@ export async function GET(req: NextRequest) {
   // CSRF protection
   const state = crypto.randomBytes(16).toString("hex");
 
-const scope = [
-  "tweet.read",
-  "tweet.write",
-  "users.read",
-  "offline.access"
-].join(" ");
-
+  // ✅ URL-encode scope since it contains spaces
+  const scope = encodeURIComponent([
+    "tweet.read",
+    "tweet.write",
+    "users.read",
+    "offline.access"
+  ].join(" "));
 
   const authUrl =
     "https://twitter.com/i/oauth2/authorize" +
@@ -38,22 +40,32 @@ const scope = [
 
   const res = NextResponse.redirect(authUrl);
 
+  // ✅ DELETE ALL OLD OAUTH COOKIES (both OAuth 1.0a and 2.0)
+  // This prevents conflicts from previous auth attempts
+  res.cookies.delete("x_oauth_state");
+  res.cookies.delete("x_oauth_verifier");
+  res.cookies.delete("x_oauth_secret");
+  res.cookies.delete("x_oauth_token");
+  res.cookies.delete("x_oauth_token_secret");
 
-res.cookies.set("x_oauth_state", state, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-  maxAge: 10 * 60,
-  path: "/",
-});
+  // ✅ SET NEW COOKIES
+  res.cookies.set("x_oauth_state", state, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 10 * 60, // 10 minutes
+    path: "/",
+  });
 
-res.cookies.set("x_oauth_verifier", verifier, {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax",
-  maxAge: 10 * 60,
-  path: "/",
-});
+  res.cookies.set("x_oauth_verifier", verifier, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 10 * 60, // 10 minutes
+    path: "/",
+  });
 
-return res;
+  console.log("🟢 Redirecting to Twitter with state:", state.substring(0, 8) + "...");
+
+  return res;
 }
