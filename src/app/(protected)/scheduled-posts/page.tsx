@@ -43,28 +43,21 @@ export default function ScheduledPostsPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      {/* ================= HEADER ================= */}
-      <div
-        className="
-          sticky top-0 z-50 
-          border-b border-border/40 
-          bg-white/60 backdrop-blur-xl 
-          shadow-[0_5px_18px_-8px_rgba(0,0,0,0.12)]
-        "
-      >
+    <main className="min-h-screen bg-background">
+      {/* Header */}
+      <div className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-5">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <div className="h-10 w-10 rounded-lg bg-secondary flex items-center justify-center">
               <Calendar className="w-5 h-5 text-primary" />
             </div>
 
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">
+              <h1 className="text-2xl font-semibold text-foreground tracking-tight">
                 Scheduled Posts
               </h1>
 
-              <p className="text-sm text-foreground/50">
+              <p className="text-sm text-muted-foreground">
                 {posts.length} post{posts.length !== 1 ? "s" : ""} scheduled
               </p>
             </div>
@@ -72,25 +65,17 @@ export default function ScheduledPostsPage() {
         </div>
       </div>
 
-      {/* ================= CONTENT ================= */}
+      {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* ERROR ALERT */}
+        {/* Error Alert */}
         {error && (
-          <div
-            className="
-              mb-6 p-4 
-              rounded-xl 
-              bg-destructive/10 text-destructive 
-              border border-destructive/20 
-              flex gap-3 items-center
-            "
-          >
+          <div className="mb-6 p-4 rounded-lg bg-destructive/10 text-destructive border border-destructive/20 flex gap-3 items-center">
             <AlertCircle className="w-5 h-5 flex-shrink-0" />
             <p className="text-sm">{error}</p>
           </div>
         )}
 
-        {/* POSTS GRID */}
+        {/* Posts Grid */}
         {posts.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -99,21 +84,15 @@ export default function ScheduledPostsPage() {
               ))}
             </div>
 
-            {/* LOAD MORE */}
+            {/* Load More */}
             {hasMore && (
               <div className="flex justify-center pt-4">
                 <button
                   onClick={loadPosts}
                   disabled={loading}
-                  className="
-                    px-6 py-3
-                    rounded-full
-                    bg-primary text-primary-foreground 
-                    hover:bg-primary/90
-                    disabled:bg-muted disabled:text-muted-foreground
-                    transition-all shadow-md
-                    flex items-center gap-2 font-medium
-                  "
+                  className="px-6 py-3 rounded-lg bg-primary text-primary-foreground 
+                    hover:opacity-90 disabled:bg-muted disabled:text-muted-foreground
+                    transition-all shadow-sm flex items-center gap-2 font-medium"
                 >
                   {loading ? (
                     <>
@@ -128,15 +107,15 @@ export default function ScheduledPostsPage() {
             )}
           </>
         ) : (
-          /* EMPTY STATE */
+          /* Empty State */
           <div className="flex flex-col items-center justify-center py-16">
-            <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center mb-4">
+            <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center mb-4">
               <Calendar className="w-6 h-6 text-muted-foreground" />
             </div>
 
-            <h3 className="text-lg font-semibold mb-1">No scheduled posts yet</h3>
+            <h3 className="text-lg font-semibold text-foreground mb-1">No scheduled posts yet</h3>
 
-            <p className="text-sm text-foreground/50 text-center max-w-sm leading-relaxed">
+            <p className="text-sm text-muted-foreground text-center max-w-sm">
               Your scheduled posts will appear here. Start planning your content!
             </p>
           </div>

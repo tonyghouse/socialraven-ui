@@ -44,7 +44,7 @@
 
 :root {
   /* Core Surface + Typography */
-  --background: 0 0% 100%;
+  --background: #f9fafb;
   --foreground: 220 12% 18%;
   --card: 0 0% 100%;
   --card-foreground: 220 12% 18%;
