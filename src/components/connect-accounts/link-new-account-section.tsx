@@ -311,13 +311,6 @@ export default function LinkNewAccountSection() {
           );
         })}
       </div>
-
-      {/* HELPFUL TIP */}
-      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-xs text-blue-800">
-          💡 <strong>Tip:</strong> If you see "Rate limit exceeded", wait 15 minutes before trying again. Twitter limits authentication attempts.
-        </p>
-      </div>
     </div>
   );
 }
