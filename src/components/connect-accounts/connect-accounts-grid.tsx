@@ -24,7 +24,7 @@ interface PlatformMeta {
   connectHref: string;
 }
 
-export type PlatformKey = "x" | "linkedin" | "youtube" | "instagram";
+export type PlatformKey = "x" | "linkedin" | "youtube";
 
 export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
   x: {
@@ -44,16 +44,10 @@ export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
     Icon: Youtube,
     accent: "text-red-500",
     connectHref: "/api/auth/youtube",
-  },
-  instagram: {
-    label: "Instagram",
-    Icon: Instagram,
-    accent: "text-pink-500",
-    connectHref: "/api/auth/instagram",
-  },
+  }
 };
 
-const ORDER: PlatformKey[] = ["x", "linkedin", "youtube", "instagram"];
+const ORDER: PlatformKey[] = ["x", "linkedin", "youtube"];
 
 export default function ConnectedAccountsGrid({
   accounts,
