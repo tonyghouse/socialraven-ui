@@ -10,6 +10,12 @@ import {
   BarChart,
   ArrowRight,
   Sparkles,
+  Instagram,
+  Twitter,
+  Linkedin,
+  Youtube,
+  Facebook,
+  TrendingUp,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -33,133 +39,157 @@ export default function LandingPage() {
       <Navbar />
 
       <div className="flex flex-col min-h-screen bg-background text-foreground overflow-hidden">
-        {/* 🍏 ABSTRACT BACKGROUND (Apple Neutral + Subtle Blue Motion) */}
+        {/* ULTRA-MINIMAL BACKGROUND */}
         <div className="fixed inset-0 -z-20 pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-br from-white via-[#f6f7f8] to-[#eceef1]" />
-
+          <div className="absolute inset-0 bg-background" />
+          
           <motion.div
-            className="absolute top-[5%] left-[18%] w-[620px] h-[620px] bg-[#dfe3ea]/55 rounded-full blur-[200px]"
-            animate={{ y: [0, -12, 0] }}
-            transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          <motion.div
-            className="absolute bottom-[6%] right-[18%] w-[500px] h-[500px] bg-[#d7dae0]/45 rounded-full blur-[190px]"
-            animate={{ y: [0, 10, 0] }}
+            className="absolute top-[20%] left-[10%] w-[500px] h-[500px] bg-accent/[0.02] rounded-full blur-[100px]"
+            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
             transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          <motion.div
-            className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[520px] h-[520px] bg-accent/10 rounded-full blur-[170px]"
-            animate={{ x: [-10, 10, -10] }}
-            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
           />
         </div>
 
         <main className="flex-1 relative">
-          {/* =============== HERO ================= */}
-          <section className="w-full pt-24 pb-32 md:pt-28">
-            <div className="container px-6 md:px-10">
-              <div className="grid gap-10 lg:grid-cols-[1.2fr_1fr] items-center">
+          {/* HERO */}
+          <section className="w-full pt-32 pb-24 md:pt-40 md:pb-32">
+            <div className="container max-w-7xl px-6 md:px-8">
+              <div className="grid gap-16 lg:grid-cols-[1fr_0.9fr] items-center">
                 
-                {/* ================= HERO LEFT ================= */}
+                {/* HERO LEFT */}
                 <motion.div
-                  className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-8"
-                  initial={{ opacity: 0, y: 26 }}
+                  className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-10"
+                  initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
+                  transition={{ duration: 0.6, ease: [0.22, 0.61, 0.36, 1] }}
                 >
-                  <div className="inline-flex items-center gap-2 rounded-full border border-foreground/10 bg-white/60 backdrop-blur-lg px-5 py-2 shadow-sm">
-                    <Sparkles className="w-4 h-4 text-foreground/60" />
-                    <span className="text-xs md:text-sm font-medium tracking-tight text-foreground/65">
-                      Quiet power for your social media
+                  <div className="inline-flex items-center gap-2.5 rounded-full border border-border/50 bg-card/50 backdrop-blur-xl px-4 py-2 shadow-sm">
+                    <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                    <span className="text-[13px] font-medium text-muted-foreground tracking-tight">
+                      Trusted by 10,000+ creators
                     </span>
                   </div>
 
-                  <div className="space-y-5 max-w-xl">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.07] text-foreground">
-                      Automate Your{" "}
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-foreground/65 to-accent/60">
-                        Social Presence
+                  <div className="space-y-7">
+                    <h1 className="text-[56px] md:text-[72px] lg:text-[84px] font-semibold tracking-[-0.03em] leading-[0.95] text-foreground">
+                      Social media,{" "}
+                      <span className="text-primary/80">
+                        on autopilot
                       </span>
                     </h1>
 
-                    <p className="text-lg md:text-xl text-foreground/55 leading-relaxed">
-                      Effortless scheduling, publishing, and analytics. Designed
-                      to stay out of your way and keep you ahead.
+                    <p className="text-[19px] md:text-[21px] text-muted-foreground/80 leading-[1.5] font-normal max-w-lg">
+                      Schedule posts, grow your audience, and track performance—all from one beautifully simple dashboard.
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                    <Link href="/sign-up">
-                      <Button className="h-12 px-10 rounded-full text-white bg-accent hover:bg-accent/85 transition shadow-[0_12px_30px_-12px_rgba(14,122,255,0.45)]">
-                        Get Started <ArrowRight className="w-4 h-4 ml-1" />
+                  <div className="flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
+                    <Link href="/sign-up" className="w-full sm:w-auto">
+                      <Button size="lg" className="h-[52px] px-8 rounded-[14px] text-[15px] font-semibold w-full sm:w-auto shadow-sm hover:shadow-md transition-all">
+                        Get started for free
                       </Button>
                     </Link>
 
-                    <Link href="#features">
+                    <Link href="#features" className="w-full sm:w-auto">
                       <Button
                         variant="outline"
-                        className="h-12 px-10 rounded-full border-foreground/10 text-foreground/80 hover:bg-foreground/5"
+                        size="lg"
+                        className="h-[52px] px-8 rounded-[14px] text-[15px] font-semibold border-border/60 bg-card/30 backdrop-blur-sm w-full sm:w-auto hover:bg-card/60 transition-all"
                       >
-                        Learn More
+                        See how it works
                       </Button>
                     </Link>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-4 pt-3 text-xs md:text-sm text-foreground/50">
-                    <span>📈 Avg 32% Engagement Boost</span>
-                    <span className="h-1 w-1 rounded-full bg-foreground/30" />
-                    <span>🔒 Secure & Private</span>
+                  <div className="flex flex-wrap items-center gap-6 pt-2 text-[14px] text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-accent" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>Free 14-day trial</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-accent" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>No credit card required</span>
+                    </div>
                   </div>
                 </motion.div>
 
-                {/* ================= HERO RIGHT GLASS PANEL ================= */}
+                {/* HERO RIGHT - PREMIUM DASHBOARD */}
                 <motion.div
                   className="relative flex justify-center lg:justify-end"
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.9, ease: "easeOut", delay: 0.15 }}
+                  transition={{ duration: 0.8, ease: [0.22, 0.61, 0.36, 1], delay: 0.2 }}
                 >
                   <motion.div
-                    className="w-full max-w-md rounded-[32px] border border-foreground/10 bg-white/70 backdrop-blur-2xl shadow-[0_22px_60px_-30px_rgba(20,23,42,0.6)] p-6 flex flex-col gap-4"
-                    animate={{ y: [0, -8, 0] }}
-                    transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-full max-w-md rounded-[28px] border border-border/60 bg-card/80 backdrop-blur-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-8"
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
                   >
-
-                    {/* CARD CONTENT */}
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-foreground/70">Today&apos;s Snapshot</span>
-                      <span className="text-xs text-foreground/45">Social Raven</span>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-[12px] bg-gradient-to-br from-accent/10 to-accent/5 flex items-center justify-center ring-1 ring-accent/10">
+                          <TrendingUp className="w-5 h-5 text-accent" />
+                        </div>
+                        <div>
+                          <span className="text-[15px] font-semibold text-foreground">Overview</span>
+                          <p className="text-[13px] text-muted-foreground">Last 7 days</p>
+                        </div>
+                      </div>
+                      <motion.div
+                        className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_rgba(59,130,246,0.5)]"
+                        animate={{ opacity: [1, 0.4, 1] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 text-xs">
-                      <div className="rounded-2xl bg-foreground/3 border border-foreground/5 px-3 py-3">
-                        <p className="text-foreground/50 mb-1">Scheduled</p>
-                        <p className="text-base font-semibold">18 posts</p>
-                        <p className="text-[11px] text-foreground/45 mt-1">next at 4:15 PM</p>
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 gap-4 mb-6">
+                      <div className="rounded-[18px] bg-muted/40 border border-border/40 p-5">
+                        <p className="text-[13px] text-muted-foreground font-medium mb-2">Posts</p>
+                        <p className="text-[32px] font-semibold tracking-tight text-foreground leading-none">247</p>
+                        <div className="flex items-center gap-1.5 mt-3">
+                          <ArrowRight className="w-3.5 h-3.5 text-accent rotate-[-45deg]" />
+                          <span className="text-[13px] text-accent font-medium">+18%</span>
+                        </div>
                       </div>
 
-                      <div className="rounded-2xl bg-foreground/3 border border-foreground/5 px-3 py-3">
-                        <p className="text-foreground/50 mb-1">Engagement</p>
-                        <p className="text-base font-semibold text-accent">+27%</p>
-                        <p className="text-[11px] text-foreground/45 mt-1">vs last week</p>
+                      <div className="rounded-[18px] bg-muted/40 border border-border/40 p-5">
+                        <p className="text-[13px] text-muted-foreground font-medium mb-2">Reach</p>
+                        <p className="text-[32px] font-semibold tracking-tight text-foreground leading-none">8.4K</p>
+                        <div className="flex items-center gap-1.5 mt-3">
+                          <ArrowRight className="w-3.5 h-3.5 text-accent rotate-[-45deg]" />
+                          <span className="text-[13px] text-accent font-medium">+32%</span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="mt-1 rounded-2xl border border-foreground/5 bg-foreground/2 px-3 py-3 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs text-foreground/55">Next auto-post</p>
-                        <p className="text-sm font-medium text-foreground">Today · 7:30 PM</p>
+                    {/* Next Post */}
+                    <div className="rounded-[18px] border border-border/40 bg-muted/30 p-5">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <p className="text-[13px] text-muted-foreground font-medium mb-1">Next scheduled</p>
+                          <p className="text-[15px] font-semibold text-foreground">Today at 7:30 PM</p>
+                        </div>
+                        <Clock className="w-4 h-4 text-muted-foreground" />
                       </div>
 
-                      <div className="flex flex-col items-end">
-                        <span className="text-[11px] text-foreground/45 mb-1">Channels</span>
-
-                        <div className="flex -space-x-2">
-                          <span className="h-6 w-6 rounded-full bg-black/5 flex items-center justify-center text-[10px] text-foreground/60">IG</span>
-                          <span className="h-6 w-6 rounded-full bg-black/5 flex items-center justify-center text-[10px] text-foreground/60">X</span>
-                          <span className="h-6 w-6 rounded-full bg-black/5 flex items-center justify-center text-[10px] text-foreground/60">LI</span>
+                      <div className="flex items-center justify-between pt-3 border-t border-border/30">
+                        <span className="text-[13px] text-muted-foreground">Platforms</span>
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-pink-500/10 to-purple-500/10 flex items-center justify-center ring-1 ring-pink-500/20">
+                            <Instagram className="w-3.5 h-3.5 text-pink-600" />
+                          </div>
+                          <div className="w-7 h-7 rounded-full bg-foreground/5 flex items-center justify-center ring-1 ring-foreground/10">
+                            <Twitter className="w-3.5 h-3.5 text-foreground" />
+                          </div>
+                          <div className="w-7 h-7 rounded-full bg-blue-500/10 flex items-center justify-center ring-1 ring-blue-500/20">
+                            <Linkedin className="w-3.5 h-3.5 text-blue-600" />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -170,138 +200,147 @@ export default function LandingPage() {
           </section>
 
 
-          {/* ================= FEATURES ================= */}
-          <section id="features" className="pb-28">
-            <div className="container px-6 md:px-10">
-              <div className="text-center space-y-3 mb-14">
-                <h2 className="text-4xl font-semibold tracking-tight">Everything You Need</h2>
-                <p className="text-foreground/55 max-w-xl mx-auto text-lg">Calm, powerful, Apple-level execution.</p>
+          {/* FEATURES */}
+          <section id="features" className="pb-32">
+            <div className="container max-w-7xl px-6 md:px-8">
+              <div className="text-center space-y-4 mb-16">
+                <h2 className="text-[42px] md:text-[52px] font-semibold tracking-[-0.02em]">Everything you need</h2>
+                <p className="text-[19px] text-muted-foreground/80 max-w-2xl mx-auto">Powerful features designed to save you time and grow your reach.</p>
               </div>
 
-              <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {[
-                  { icon: <Calendar className="text-foreground/60" />, title: "Smart Scheduling", desc: "Perfect timing always." },
-                  { icon: <Clock className="text-foreground/60" />, title: "Auto-Posting", desc: "Runs even while you sleep." },
-                  { icon: <Feather className="text-foreground/60" />, title: "Content Ideas", desc: "AI-powered creativity." },
-                  { icon: <BarChart className="text-foreground/60" />, title: "Analytics", desc: "Clarity behind growth." },
+                  { icon: <Calendar className="w-5 h-5" />, title: "Smart Scheduling", desc: "AI-powered timing for maximum engagement." },
+                  { icon: <Clock className="w-5 h-5" />, title: "Auto-Posting", desc: "Set it once, let it run on autopilot." },
+                  { icon: <Feather className="w-5 h-5" />, title: "AI Content", desc: "Get inspired with AI-generated ideas." },
+                  { icon: <BarChart className="w-5 h-5" />, title: "Analytics", desc: "Clear insights into what's working." },
                 ].map((f, i) => (
-                  <div
+                  <motion.div
                     key={i}
-                    className="p-8 rounded-[28px] border border-foreground/10 bg-white/60 backdrop-blur-xl shadow-sm hover:border-accent/30 hover:shadow-md transition-all"
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="group p-8 rounded-[22px] border border-border/50 bg-card/50 backdrop-blur-sm hover:border-accent/30 hover:bg-card/80 transition-all"
                   >
-                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-foreground/5 mb-5">
+                    <div className="w-11 h-11 rounded-[13px] flex items-center justify-center bg-accent/10 text-accent mb-6 group-hover:scale-110 transition-transform">
                       {f.icon}
                     </div>
-                    <h3 className="font-semibold text-xl">{f.title}</h3>
-                    <p className="text-sm text-foreground/60 mt-2">{f.desc}</p>
-                  </div>
+                    <h3 className="font-semibold text-[17px] mb-2 text-foreground">{f.title}</h3>
+                    <p className="text-[15px] text-muted-foreground/80 leading-relaxed">{f.desc}</p>
+                  </motion.div>
                 ))}
               </div>
             </div>
           </section>
 
 
-          {/* ================= WHY SECTION ================= */}
-          <section className="py-16 border-t border-foreground/5">
-            <div className="container px-6 md:px-10 text-center space-y-12">
-              <motion.h2
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-4xl font-semibold"
-              >
-                Why Teams Love Social Raven
-              </motion.h2>
+          {/* INTEGRATIONS */}
+          <section className="py-32 border-y border-border/50">
+            <div className="container max-w-7xl px-6 md:px-8">
+              <div className="text-center space-y-4 mb-16">
+                <h2 className="text-[42px] md:text-[52px] font-semibold tracking-[-0.02em]">All your platforms.<br />One dashboard.</h2>
+                <p className="text-[19px] text-muted-foreground/80 max-w-2xl mx-auto">Connect once, post everywhere.</p>
+              </div>
 
-              <motion.div
-                className="grid gap-8 md:grid-cols-3"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              >
+              <div className="flex flex-wrap items-center justify-center gap-4 mb-8">
                 {[
-                  { title: "Creators", desc: "Batch content, auto-post, track growth effortlessly." },
-                  { title: "Businesses", desc: "Agencies + brands run all platforms in one hub." },
-                  { title: "Teams", desc: "Roles, permissions, scheduling approvals, performance." },
-                ].map((x, i) => (
-                  <div
+                  { icon: <Instagram className="w-5 h-5" />, name: "Instagram", color: "from-pink-500/10 to-purple-500/10 ring-pink-500/20 text-pink-600" },
+                  { icon: <Twitter className="w-5 h-5" />, name: "Twitter", color: "bg-foreground/5 ring-foreground/10 text-foreground" },
+                  { icon: <Linkedin className="w-5 h-5" />, name: "LinkedIn", color: "from-blue-500/10 to-blue-600/10 ring-blue-500/20 text-blue-600" },
+                  { icon: <Youtube className="w-5 h-5" />, name: "YouTube", color: "from-red-500/10 to-red-600/10 ring-red-500/20 text-red-600" },
+                  { icon: <Facebook className="w-5 h-5" />, name: "Facebook", color: "from-blue-600/10 to-blue-700/10 ring-blue-600/20 text-blue-700" },
+                ].map((platform, i) => (
+                  <motion.div
                     key={i}
-                    className="p-10 rounded-[32px] bg-white/60 backdrop-blur-2xl border border-foreground/10 shadow-sm hover:border-accent/35 transition-all text-left"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className="group"
                   >
-                    <h3 className="text-xl font-semibold mb-3">{x.title}</h3>
-                    <p className="text-sm/relaxed text-foreground/60">{x.desc}</p>
-                  </div>
+                    <div className={`flex items-center gap-3 px-6 py-4 rounded-[16px] border border-border/50 bg-gradient-to-br ${platform.color} backdrop-blur-sm hover:scale-105 transition-all cursor-pointer ring-1`}>
+                      {platform.icon}
+                      <span className="text-[15px] font-semibold">{platform.name}</span>
+                    </div>
+                  </motion.div>
                 ))}
-              </motion.div>
-            </div>
-          </section>
+              </div>
 
-
-          {/* ================= INTEGRATIONS ================= */}
-          <section className="py-16">
-            <div className="container px-6 md:px-10 text-center space-y-10">
-              <motion.h2
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-3xl md:text-4xl font-semibold"
-              >
-                Connect Your World Seamlessly
-              </motion.h2>
-
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 0.9 }}
-                className="flex flex-wrap items-center justify-center gap-6 md:gap-10"
-              >
-                {["Instagram", "Twitter / X", "LinkedIn", "YouTube", "Facebook"].map((p, i) => (
-                  <div
-                    key={i}
-                    className="px-6 py-4 rounded-2xl border border-foreground/10 bg-white/70 backdrop-blur-xl 
-                      text-sm font-medium text-foreground/70 hover:text-accent hover:border-accent/30 transition-all shadow-sm"
-                  >
-                    {p}
-                  </div>
-                ))}
-              </motion.div>
-
-              <p className="text-foreground/55 text-sm max-w-md mx-auto">
-                More platforms coming soon — AI rewriting, cross-posting & automation.
+              <p className="text-center text-[15px] text-muted-foreground/60">
+                More platforms coming soon
               </p>
             </div>
           </section>
 
 
-          {/* ================= CTA ================= */}
-          <section className="py-24 relative text-white">
-            <div className="absolute inset-0 bg-gradient-to-br from-accent to-accent/75" />
-            <div className="relative container px-6 md:px-10 text-center space-y-6 z-10">
-              <h2 className="text-4xl md:text-5xl font-semibold">Ready to Begin?</h2>
-              <p className="text-white/85 text-lg max-w-md mx-auto">
-                Join creators scaling effortlessly.
+          {/* SOCIAL PROOF */}
+          <section className="py-32">
+            <div className="container max-w-7xl px-6 md:px-8">
+              <div className="text-center space-y-4 mb-16">
+                <h2 className="text-[42px] md:text-[52px] font-semibold tracking-[-0.02em]">Loved by creators</h2>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-3">
+                {[
+                  { title: "Creators", desc: "Focus on creating. Let us handle the posting schedule." },
+                  { title: "Agencies", desc: "Manage multiple clients from a single, powerful dashboard." },
+                  { title: "Businesses", desc: "Scale your social presence without scaling your team." },
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="p-10 rounded-[22px] border border-border/50 bg-card/50 backdrop-blur-sm hover:border-accent/30 hover:bg-card/80 transition-all text-left"
+                  >
+                    <h3 className="text-[21px] font-semibold mb-3 text-foreground">{item.title}</h3>
+                    <p className="text-[15px] text-muted-foreground/80 leading-relaxed">{item.desc}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+
+          {/* CTA */}
+          <section className="py-24 relative">
+            <div className="absolute inset-0 bg-accent" />
+            <div className="relative container max-w-4xl px-6 md:px-8 text-center space-y-8 z-10">
+              <h2 className="text-[42px] md:text-[52px] font-semibold tracking-[-0.02em] text-white">
+                Start growing today
+              </h2>
+              <p className="text-[19px] text-white/80 max-w-xl mx-auto">
+                Join thousands of creators who've transformed their social media workflow.
               </p>
 
-              <form className="w-full max-w-sm mx-auto">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Input
-                    placeholder="Email"
-                    className="flex-1 h-12 rounded-full bg-white/25 border-white/40 text-white placeholder-white/60 focus:bg-white/35"
-                  />
-                  <Link href="/sign-up">
-                    <Button className="h-12 px-8 rounded-full bg-white text-accent hover:bg-white/90">
-                      Start
-                    </Button>
-                  </Link>
-                </div>
-              </form>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-4">
+                <Input
+                  placeholder="Enter your email"
+                  className="max-w-xs h-[52px] rounded-[14px] bg-white/15 border-white/25 text-white placeholder:text-white/50 focus-visible:ring-white/30 backdrop-blur-sm text-[15px]"
+                />
+                <Link href="/sign-up">
+                  <Button size="lg" className="h-[52px] px-8 rounded-[14px] bg-white text-accent hover:bg-white/95 font-semibold text-[15px] shadow-lg">
+                    Get started free
+                  </Button>
+                </Link>
+              </div>
+
+              <p className="text-[13px] text-white/60">
+                14-day free trial · No credit card required
+              </p>
             </div>
           </section>
         </main>
 
 
-        <footer className="py-6 text-center text-sm text-foreground/45">
-          Crafted with ❤️ by Tony Ghouse & Team
+        <footer className="py-8 border-t border-border/50">
+          <div className="container max-w-7xl px-6 md:px-8 text-center">
+            <p className="text-[14px] text-muted-foreground">
+              © 2025 Social Raven. Crafted by Tony Ghouse & Team
+            </p>
+          </div>
         </footer>
       </div>
     </>
