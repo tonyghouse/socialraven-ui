@@ -22,32 +22,15 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { PostType } from "@/model/PostType";
+import { PLATFORM_ICONS } from "../generic/platform-icons";
+import { getImageUrl } from "@/service/getImageUrl";
+import { getInitials } from "@/service/getInitials";
 
-const PLATFORM_ICONS: Record<Platform, LucideIcon> = {
-  instagram: Instagram,
-  x: Twitter,
-  linkedin: Linkedin,
-  facebook: Facebook,
-  youtube: Youtube,
-};
+
 
 // Helpers
-const getInitials = (username: string) => {
-  if (!username) return "?";
-  return username
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-};
 
-const getImageUrl = (url: string | null | undefined) => {
-  if (!url) return null;
-  const needsProxy = ["linkedin.com", "licdn.com"];
-  const requiresProxy = needsProxy.some((d) => url.includes(d));
-  return requiresProxy ? `/api/proxy-image?url=${encodeURIComponent(url)}` : url;
-};
+
 
 function AccountItem({
   acc,
