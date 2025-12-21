@@ -10,6 +10,7 @@ import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import ConnectedAccountsGrid from "./connect-accounts-grid";
+import { deleteConnectedAccountApi } from "@/service/deleteConnectedAccountApi";
 
 /**
  * ConnectedAccountsSection (improved)
@@ -58,35 +59,29 @@ export default function ConnectedAccountsSection() {
     }
   };
 
-  // Optimistic remove — replace with actual API call
-  const handleRemove = async (acc: ConnectedAccount) => {
-    const ok = window.confirm(
-      `Remove account ${acc.username}? This will disconnect it from Social Raven.`
-    );
-    if (!ok) return;
+const handleRemove = async (acc: ConnectedAccount) => {
+  const ok = window.confirm(
+    `Remove account ${acc.username}? This will disconnect it from Social Raven.`
+  );
+  if (!ok) return;
 
-    // optimistic remove
-    const prev = connectedAccounts;
-    setConnectedAccounts(prev.filter((a) => a.providerUserId !== acc.providerUserId));
-    toast.promise(
-      (async () => {
-        try {
-          // TODO: call your DELETE endpoint here, e.g.
-          // await deleteConnectedAccountApi(getToken, acc.providerUserId);
-          await new Promise((r) => setTimeout(r, 600)); // simulate
-          toast.success("Account removed");
-        } catch (e) {
-          setConnectedAccounts(prev); // rollback
-          throw e;
-        }
-      })(),
-      {
-        loading: "Removing…",
-        success: "Removed",
-        error: "Failed to remove",
-      }
-    );
-  };
+  toast.promise(
+    (async () => {
+      await deleteConnectedAccountApi(getToken, acc.providerUserId);
+
+      // remove ONLY after backend confirms
+      setConnectedAccounts((prev) =>
+        prev.filter((a) => a.providerUserId !== acc.providerUserId)
+      );
+    })(),
+    {
+      loading: "Removing…",
+      success: "Account removed",
+      error: "Failed to remove",
+    }
+  );
+};
+
 
   // Reconnect handler — open connect route or refresh token flow
   const handleReconnect = async (acc: ConnectedAccount) => {
@@ -101,14 +96,11 @@ export default function ConnectedAccountsSection() {
   return (
     <div className="mb-6 space-y-4">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-center justify-between gap-3 my-6 p-4  rounded-lg frosted-border depth-soft">
         <div className="flex items-center gap-2">
-          <Check className="h-5 w-5 text-green-500" />
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Connected Accounts</h2>
-            <p className="text-xs text-muted-foreground">
-              Manage social accounts connected to Social Raven
-            </p>
+            <h2 className="text-sm text-foreground"> Connect multiple accounts to schedule posts across all platforms at once.
+        Your accounts are securely encrypted and stored.</h2>
           </div>
         </div>
 
@@ -126,9 +118,6 @@ export default function ConnectedAccountsSection() {
           </button>
         </div>
       </div>
-
-      {/* Optional Info Card */}
-      <InfoCard />
 
       {/* Content area */}
       {loading ? (

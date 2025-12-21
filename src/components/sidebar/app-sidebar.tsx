@@ -65,7 +65,7 @@ export function AppSidebar() {
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center gap-2">
             <MessageSquareCode className="h-6 w-6 text-foreground/70" />
-            <span className="font-semibold text-foreground/70">
+            <span className="font-medium text-[15px] text-foreground/80 tracking-tight">
               SocialRaven
             </span>
             <Badge
@@ -147,32 +147,39 @@ export function AppSidebar() {
       {/* HEADER */}
       <div className="flex items-center justify-between px-4 py-4 border-b border-foreground/10">
         {!isCollapsed ? (
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <MessageSquareCode className="h-6 w-6 text-foreground/70" />
-            <span className="font-semibold text-foreground/70">
-              SocialRaven
-            </span>
-            <Badge
-              variant="outline"
-              className="border-red-500 text-red-600 text-[0.6rem] rounded-md px-1"
+          <>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <MessageSquareCode className="h-6 w-6 text-foreground/70" />
+              <span className="font-medium text-[15px] text-foreground/80 tracking-tight">
+                SocialRaven
+              </span>
+              <Badge
+                variant="outline"
+                className="border-red-500 text-red-600 text-[0.6rem] rounded-md px-1"
+              >
+                Beta
+              </Badge>
+            </Link>
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 rounded-xl hover:bg-black/5 transition"
             >
-              Beta
-            </Badge>
-          </Link>
+              <ChevronLeft className="h-4 w-4 text-foreground/50 transition-transform" />
+            </button>
+          </>
         ) : (
-          <MessageSquareCode className="h-6 w-6 text-foreground/60 mx-auto" />
+          <div className="flex flex-col items-center gap-3 w-full">
+            <Link href="/dashboard">
+              <MessageSquareCode className="h-6 w-6 text-foreground/70" />
+            </Link>
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 rounded-xl hover:bg-black/5 transition"
+            >
+              <ChevronLeft className="h-4 w-4 text-foreground/50 transition-transform rotate-180" />
+            </button>
+          </div>
         )}
-
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 rounded-xl hover:bg-black/5 transition"
-        >
-          <ChevronLeft
-            className={`h-4 w-4 text-foreground/50 transition-transform ${
-              isCollapsed ? "rotate-180" : ""
-            }`}
-          />
-        </button>
       </div>
 
       {/* NAVIGATION */}
@@ -209,11 +216,11 @@ export function AppSidebar() {
               appearance={{ elements: { avatarBox: "w-10 h-10 rounded-xl" } }}
             />
             {!isCollapsed && (
-              <div className="w-56">
-                <p className="text-sm font-medium text-foreground/80 overflow-hidden whitespace-nowrap text-ellipsis">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground/80 truncate">
                   {user?.firstName} {user?.lastName}
                 </p>
-                <p className="text-xs text-foreground/50 overflow-hidden whitespace-nowrap text-ellipsis">
+                <p className="text-xs text-foreground/50 truncate">
                   {user?.primaryEmailAddress?.emailAddress}
                 </p>
               </div>
