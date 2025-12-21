@@ -53,17 +53,7 @@ export default function LinkNewAccountSection() {
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <div className="space-y-6">
-      {/* HEADER */}
-      <div>
-        <h1 className="text-3xl font-semibold text-foreground tracking-tight">
-          Connect Accounts
-        </h1>
-        <p className="text-muted-foreground text-sm mt-1">
-          Connect and manage your social media profiles
-        </p>
-      </div>
-
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       {/* ERROR ALERT */}
       {error && (
         <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -79,15 +69,6 @@ export default function LinkNewAccountSection() {
           </button>
         </div>
       )}
-
-      {/* TITLE */}
-      <div className="flex items-center gap-2 mb-1">
-        <Link2 className="h-5 w-5 text-accent" />
-        <h2 className="text-lg font-semibold text-foreground">
-          Link New Account
-        </h2>
-      </div>
-
       {/* ICON ROW */}
       <div className="flex flex-wrap gap-3">
         {PROVIDERS.map((provider) => (

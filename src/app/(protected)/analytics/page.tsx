@@ -81,18 +81,28 @@ export default function AnalyticsPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border px-6 py-5">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl font-semibold text-foreground">Analytics</h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            Overview of your posting activity and performance
-          </p>
+     <div className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl shadow-sm">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <LineChart className="w-5 h-5 text-primary" />
+              </div>
+
+              <div>
+                <h1 className="text-xl font-semibold text-foreground tracking-tight">
+                  Analytics
+                </h1>
+
+                <p className="text-sm text-muted-foreground">&nbsp;&nbsp;</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatsCard

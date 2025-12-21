@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Clock, Calendar, BarChart, Link2, PlusCircle, AlertTriangle, CheckCircle } from "lucide-react";
 
 import { fetchAnalyticsData } from "@/service/analytics";
-import { fetchScheduledPostsApi } from "@/service/posts";
+import { fetchPaginatedPostsApi } from "@/service/pagingatedPosts";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 
 import type { AnalyticsData } from "@/service/analytics";
@@ -42,7 +42,7 @@ export default function DashboardPage() {
 
         const [analyticsRes, upcomingRes, accountsRes] = await Promise.all([
           fetchAnalyticsData(tokenFn),
-          fetchScheduledPostsApi(tokenFn, 0, "SCHEDULED"),
+          fetchPaginatedPostsApi(tokenFn, 0, "SCHEDULED"),
           fetchConnectedAccountsApi(tokenFn, null),
         ]);
 
@@ -77,14 +77,28 @@ export default function DashboardPage() {
   const failedAccounts = accounts.filter((a) => !a.providerUserId).length;
 
   return (
-    <main className="min-h-screen bg-background p-6 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <main className="min-h-screen bg-background">
+            <div className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl shadow-sm">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-primary" />
+              </div>
 
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-semibold text-foreground tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Monitor your social media performance</p>
+              <div>
+                <h1 className="text-xl font-semibold text-foreground tracking-tight">
+                  Dashboard
+                </h1>
+
+                <p className="text-sm text-muted-foreground">&nbsp;&nbsp;</p>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -8,6 +8,7 @@ import InfoCard from "@/components/connect-accounts/info-card";
 import ConnectedAccountsSection from "@/components/connect-accounts/connected-accounts-section";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "lucide-react";
 
 
 
@@ -45,7 +46,27 @@ export default function ManageAccountsPage() {
 
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 p-6">
+    <div className="w-full min-h-screen">
+
+        <div className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl shadow-sm">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                <Link className="w-5 h-5 text-primary" />
+              </div>
+
+              <div>
+                <h1 className="text-xl font-semibold text-foreground tracking-tight">
+                  Connect Accounts
+                </h1>
+
+                <p className="text-sm text-muted-foreground">&nbsp;&nbsp;</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
      
         <LinkNewAccountSection />
         <Separator className="my-8"/>

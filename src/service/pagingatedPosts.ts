@@ -1,7 +1,7 @@
 // src/service/posts.ts
 import { PostResponsePage } from "@/model/PostResponsePage"; // you will create this
 
-export async function fetchScheduledPostsApi(
+export async function fetchPaginatedPostsApi(
   getToken: () => Promise<string | null>,
   page: number,
   postStatus : string| null

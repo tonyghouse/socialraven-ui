@@ -87,7 +87,7 @@ export function AppSidebar() {
         {/* Overlay */}
         {isDrawerOpen && (
           <div
-            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/30 backdrop-blur-sm z-100"
             onClick={() => setIsDrawerOpen(false)}
           />
         )}
