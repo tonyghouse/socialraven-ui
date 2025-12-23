@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { FileImage, FileVideo, File, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 interface Media {
   url: string;
@@ -52,7 +53,7 @@ export function MediaPreview({
       >
         {!hasError && isImage ? (
           <>
-            <img
+            <Image
               src={media.url}
               alt={media.name || "Media preview"}
               onError={handleError}
@@ -108,7 +109,7 @@ export function MediaPreview({
 
           <div className="max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
             {isImage ? (
-              <img
+              <Image
                 src={media.url}
                 alt={media.name || "Media preview"}
                 className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"

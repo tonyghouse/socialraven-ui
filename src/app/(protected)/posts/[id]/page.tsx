@@ -76,7 +76,7 @@ export default function PostDetailPage() {
             <AlertCircle className="h-6 w-6 text-red-500 flex-shrink-0" />
             <div>
               <p className="font-semibold text-zinc-900 mb-1">Failed to load post</p>
-              <p className="text-sm text-zinc-600 mb-4">The post you're looking for couldn't be found.</p>
+              <p className="text-sm text-zinc-600 mb-4">The post you&apos;re looking for couldn&apos;t be found.</p>
               <button
                 onClick={() => router.back()}
                 className="text-sm font-medium text-blue-600 hover:text-blue-700"

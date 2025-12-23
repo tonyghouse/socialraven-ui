@@ -7,6 +7,7 @@ import { MediaPreview } from "../generic/media-preview";
 import { cn } from "@/lib/utils";
 import type { PostResponse } from "@/model/PostResponse";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
+import Image from "next/image";
 
 export function ScheduledPostCard({ post }: { post: PostResponse }) {
   const router = useRouter();
@@ -88,7 +89,7 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
                         className="relative group/avatar"
                         style={{ zIndex: maxVisibleAccounts - idx }}
                       >
-                        <img
+                        <Image
                           src={acc.profilePicLink || "/default-avatar.png"}
                           alt={acc.username}
                           className="h-7 w-7 rounded-full object-cover border-2 border-background 

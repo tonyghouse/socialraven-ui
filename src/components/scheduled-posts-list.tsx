@@ -5,7 +5,7 @@ import type React from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Twitter, Linkedin, Facebook, Instagram, Trash2, Clock, CheckCircle } from "lucide-react"
-
+import Image from "next/image";
 interface ScheduledPost {
   id: string
   content: string
@@ -105,7 +105,7 @@ export default function ScheduledPostsList({ posts, onDelete }: ScheduledPostsLi
                   {post.mediaName?.startsWith("blob:") || !post.mediaName ? null : (
                     <>
                       {post.mediaName?.includes("image") || post.media.includes("data:image") ? (
-                        <img
+                        <Image
                           src={post.media || "/placeholder.svg"}
                           alt="Post media"
                           className="w-full h-40 object-cover rounded-lg"

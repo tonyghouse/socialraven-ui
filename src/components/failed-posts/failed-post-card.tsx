@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Calendar, User, FileText, ArrowRight } from "lucide-react";
 import { PLATFORM_ICONS } from "../generic/platform-icons";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 import type { PostResponse } from "@/model/PostResponse";
@@ -93,7 +94,7 @@ export function FailedPostCard({ post }: { post: PostResponse }) {
                         className="relative group/avatar"
                         style={{ zIndex: maxVisibleAccounts - idx }}
                       >
-                        <img
+                        <Image
                           src={acc.profilePicLink || "/default-avatar.png"}
                           alt={acc.username}
                           className="h-7 w-7 rounded-full object-cover border-2 border-background 

@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { X, Plus, GripVertical } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
-
+import Image from "next/image";
 interface Props {
   files: File[];
   setFiles: (v: File[]) => void;
@@ -110,7 +110,7 @@ export default function MediaUploader({ files, setFiles }: Props) {
                             muted
                           />
                         ) : (
-                          <img
+                          <Image
                             src={URL.createObjectURL(file)}
                             alt="media"
                             className="w-full h-full object-contain"
