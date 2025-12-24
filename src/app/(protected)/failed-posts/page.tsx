@@ -8,7 +8,7 @@ import type { PostResponse } from "@/model/PostResponse";
 import { useAuth } from "@clerk/nextjs";
 import { CalendarX2, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { Pagination } from "@/components/generic/pagination";
-import { FailedPostCard } from "@/components/failed-posts/failed-post-card";
+import { PostCard } from "@/components/posts/post-card";
 
 
 
@@ -211,7 +211,7 @@ export default function FailedPostsPage() {
             {/* Posts Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {posts.map((post) => (
-                <FailedPostCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} />
               ))}
             </div>
 

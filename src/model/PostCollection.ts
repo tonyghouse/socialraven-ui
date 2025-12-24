@@ -2,7 +2,7 @@ import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PostMedia } from "./PostMedia";
 import { PostType } from "./PostType";
 
-export interface SchedulePost {
+export interface PostCollection {
   title: string;
   description: string;
   postType: PostType;

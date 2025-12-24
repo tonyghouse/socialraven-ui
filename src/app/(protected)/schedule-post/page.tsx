@@ -15,7 +15,7 @@ import ScheduleImageForm from "@/components/schedule-post/schedule-image-form";
 import ScheduleVideoForm from "@/components/schedule-post/schedule-video-form";
 import ScheduleTextForm from "@/components/schedule-post/schedule-text-form";
 
-export default function ScheduledPostsPage() {
+export default function ScheduledPostCollectionPage() {
   const { isLoaded, getToken } = useAuth();
 
   const [postType, setPostType] = useState<PostType>("IMAGE");

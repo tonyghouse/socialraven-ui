@@ -105,11 +105,15 @@ export default function ScheduledPostsList({ posts, onDelete }: ScheduledPostsLi
                   {post.mediaName?.startsWith("blob:") || !post.mediaName ? null : (
                     <>
                       {post.mediaName?.includes("image") || post.media.includes("data:image") ? (
-                        <Image
-                          src={post.media || "/placeholder.svg"}
-                          alt="Post media"
-                          className="w-full h-40 object-cover rounded-lg"
-                        />
+                        <div className="relative w-full h-40 rounded-lg overflow-hidden">
+  <Image
+    src={post.media || "/placeholder.svg"}
+    alt="Post media"
+    fill
+    className="object-cover"
+  />
+</div>
+
                       ) : (
                         <video src={post.media} className="w-full h-40 object-cover rounded-lg" controls />
                       )}

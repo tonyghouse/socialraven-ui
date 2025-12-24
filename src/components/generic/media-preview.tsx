@@ -57,6 +57,7 @@ export function MediaPreview({
               src={media.url}
               alt={media.name || "Media preview"}
               onError={handleError}
+              fill
               className="w-full h-full object-cover group-hover:scale-105 transition-transform"
             />
             {showLightbox && (
@@ -112,6 +113,7 @@ export function MediaPreview({
               <Image
                 src={media.url}
                 alt={media.name || "Media preview"}
+                fill
                 className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
                 onClick={(e) => e.stopPropagation()}
               />

@@ -47,11 +47,6 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
     }
   };
 
-  // Get the accounts to display (max 3 visible + counter)
-  const maxVisibleAccounts = 3;
-  const accountsToShow = post.connectedAccounts?.slice(0, maxVisibleAccounts) || [];
-  const remainingCount = (post.connectedAccounts?.length || 0) - maxVisibleAccounts;
-
   return (
     <article
       onClick={handleCardClick}
@@ -79,58 +74,6 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
                 {post.provider}
               </p>
 
-              {/* Stacked Profile Pictures */}
-              {post.connectedAccounts && post.connectedAccounts.length > 0 && (
-                <div className="flex items-center">
-                  <div className="flex -space-x-2">
-                    {accountsToShow.map((acc, idx) => (
-                      <div
-                        key={idx}
-                        className="relative group/avatar"
-                        style={{ zIndex: maxVisibleAccounts - idx }}
-                      >
-                        <Image
-                          src={acc.profilePicLink || "/default-avatar.png"}
-                          alt={acc.username}
-                          className="h-7 w-7 rounded-full object-cover border-2 border-background 
-                            shadow-sm transition-transform group-hover/avatar:scale-110"
-                        />
-
-                        {/* Hover Tooltip */}
-                        <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 
-                          opacity-0 group-hover/avatar:opacity-100 transition-opacity pointer-events-none z-50
-                          bg-popover border border-border shadow-lg rounded-md px-2.5 py-1.5 
-                          text-[11px] text-popover-foreground whitespace-nowrap">
-                          <div className="font-medium">{acc.username}</div>
-                          <div className="text-muted-foreground text-[10px] capitalize">{acc.platform}</div>
-                          {/* Arrow */}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-px">
-                            <div className="border-4 border-transparent border-t-popover" />
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-
-                    {/* Counter Badge */}
-                    {remainingCount > 0 && (
-                      <div
-                        className="h-7 w-7 rounded-full bg-muted border-2 border-background 
-                          flex items-center justify-center shadow-sm"
-                        style={{ zIndex: 0 }}
-                      >
-                        <span className="text-[10px] font-semibold text-muted-foreground">
-                          +{remainingCount}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Account count text */}
-                  <span className="ml-2 text-xs text-muted-foreground">
-                    {post.connectedAccounts.length} account{post.connectedAccounts.length !== 1 ? "s" : ""}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
 
@@ -199,9 +142,6 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
         flex items-center justify-between group-hover:bg-primary/5 transition-colors">
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <User className="h-3.5 w-3.5" />
-          <span>
-            {post.connectedAccounts?.length || 0} account{post.connectedAccounts?.length !== 1 ? "s" : ""}
-          </span>
         </div>
 
         <div className="flex items-center gap-1.5 text-xs font-medium text-primary 

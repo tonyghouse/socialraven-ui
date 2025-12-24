@@ -113,6 +113,7 @@ export default function MediaUploader({ files, setFiles }: Props) {
                           <Image
                             src={URL.createObjectURL(file)}
                             alt="media"
+                            fill
                             className="w-full h-full object-contain"
                           />
                         )}

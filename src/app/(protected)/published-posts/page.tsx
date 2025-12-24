@@ -8,7 +8,7 @@ import type { PostResponse } from "@/model/PostResponse";
 import { useAuth } from "@clerk/nextjs";
 import { CalendarCheck2, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { Pagination } from "@/components/generic/pagination";
-import { PublishedPostCard } from "@/components/published-posts/published-post-card";
+import { PostCard } from "@/components/posts/post-card";
 
 
 const REFRESH_INTERVAL = 30 * 1000; // 30 seconds
@@ -210,7 +210,7 @@ export default function PublishedPostsPage() {
             {/* Posts Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {posts.map((post) => (
-                <PublishedPostCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} />
               ))}
             </div>
 

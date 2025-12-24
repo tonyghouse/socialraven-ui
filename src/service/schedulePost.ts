@@ -1,14 +1,14 @@
 // src/service/connectedAccounts.ts
-import { SchedulePost } from "@/model/SchedulePost";
+import { PostCollection } from "@/model/PostCollection";
 
 export async function postConnectedAccountsApi(
   getToken: () => Promise<string | null>,
-  post: SchedulePost
-): Promise<SchedulePost> {
+  post: PostCollection
+): Promise<PostCollection> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const token = await getToken();
 
-  const res = await fetch(`${backendUrl}/posts/schedule`, {
+  const res = await fetch(`${backendUrl}/post-collections/schedule`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -25,7 +25,7 @@ export async function postConnectedAccountsApi(
   }
 
   // backend returns string → parse safely
-  const parsed = JSON.parse(body) as SchedulePost;
+  const parsed = JSON.parse(body) as PostCollection;
 
   return parsed;
 }

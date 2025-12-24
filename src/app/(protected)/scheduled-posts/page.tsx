@@ -7,7 +7,7 @@ import type { PostResponse } from "@/model/PostResponse";
 
 import { useAuth } from "@clerk/nextjs";
 import { Calendar, Loader2, AlertCircle, RefreshCw } from "lucide-react";
-import { ScheduledPostCard } from "@/components/scheduled-posts/scheduled-post-card";
+import { PostCard } from "@/components/posts/post-card";
 import { Pagination } from "@/components/generic/pagination";
 
 
@@ -211,7 +211,7 @@ export default function ScheduledPostsPage() {
             {/* Posts Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {posts.map((post) => (
-                <ScheduledPostCard key={post.id} post={post} />
+                <PostCard key={post.id} post={post} />
               ))}
             </div>
 

@@ -3,11 +3,12 @@ import { MediaResponse } from "./MediaResponse";
 
 export interface PostResponse {
   id: number;
+  postCollectionId: number;
   title: string;
   description: string;
   provider: string;
   postStatus: "SCHEDULED" | "PUBLISHED" | "FAILED"
   scheduledTime: string;
   media: MediaResponse[];
-  connectedAccounts: ConnectedAccount[];
+  connectedAccount: ConnectedAccount;
 }
