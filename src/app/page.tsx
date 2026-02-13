@@ -386,9 +386,11 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="py-8 text-center text-xs text-gray-500 bg-white border-t border-gray-200">
-        © 2025 Social Raven. Crafted by Tony Ghouse & Team
-      </footer>
+<footer className="py-8 text-center text-xs text-gray-500 bg-white border-t border-gray-200">
+  © 2025 Social Raven. Designed and built in Europe 🇪🇺 for the world 🌏.
+</footer>
+
+
       </div>
     </>
   );
