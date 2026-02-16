@@ -6,6 +6,8 @@ export async function fetchAllConnectedAccountsApi(
   getToken: () => Promise<string | null>,
 ): Promise<ConnectedAccount[]> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+  console.log("\n\n\n\n\n BackendUrl: ",backendUrl);
+  
   const token = await getToken();
 
   // Build URL with optional query param
