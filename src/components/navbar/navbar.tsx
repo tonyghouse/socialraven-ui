@@ -23,9 +23,13 @@ export default function Navbar() {
         "
       >
         <nav className="h-16 px-6 flex items-center justify-between">
-          {/* LOGO */}
           <Link href="/" className="flex items-center gap-2">
-            <MessageSquareCode className="h-6 w-6 text-foreground/70 group-hover:text-accent transition" />
+            <img
+              src="/SocialRavenLogo.svg"
+              alt="SocialRaven logo"
+              className="h-6 w-6"
+            />
+
             <span className="text-lg font-semibold text-foreground/70 group-hover:text-accent transition">
               SocialRaven
             </span>
