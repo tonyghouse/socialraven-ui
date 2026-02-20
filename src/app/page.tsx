@@ -244,7 +244,7 @@ export default function LandingPage() {
                 <div className="space-y-7 text-center lg:text-left">
                   <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-white px-3.5 py-1.5 text-xs font-medium text-[hsl(var(--muted-foreground))]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--accent))]" />
-                    Now in Beta · Trusted by 10,000+ creators
+                    Trusted by 10,000+ creators
                   </div>
 
                   <h1 className="text-5xl md:text-6xl lg:text-[72px] font-semibold tracking-[-0.04em] leading-[1.05] text-[hsl(var(--foreground))]">

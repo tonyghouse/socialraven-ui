@@ -33,15 +33,6 @@ export default function Navbar() {
             <span className="text-lg font-semibold text-foreground/70 group-hover:text-accent transition">
               SocialRaven
             </span>
-
-            <sup>
-              <Badge
-                variant="outline"
-                className="border-red-500 text-red-600 py-[0.4rem] px-[0.4rem] text-[0.6rem] rounded-md"
-              >
-                Beta
-              </Badge>
-            </sup>
           </Link>
 
           {/* RIGHT SIDE */}

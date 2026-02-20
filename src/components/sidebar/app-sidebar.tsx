@@ -68,12 +68,6 @@ export function AppSidebar() {
             <span className="font-medium text-[15px] text-foreground/80 tracking-tight">
               SocialRaven
             </span>
-            <Badge
-              variant="outline"
-              className="border-red-500 text-red-600 text-[0.6rem] rounded-md px-1"
-            >
-              Beta
-            </Badge>
           </Link>
 
           {/* Profile */}
@@ -153,12 +147,6 @@ export function AppSidebar() {
               <span className="font-medium text-[15px] text-foreground/80 tracking-tight">
                 SocialRaven
               </span>
-              <Badge
-                variant="outline"
-                className="border-red-500 text-red-600 text-[0.6rem] rounded-md px-1"
-              >
-                Beta
-              </Badge>
             </Link>
             <button
               onClick={() => setIsCollapsed(!isCollapsed)}
