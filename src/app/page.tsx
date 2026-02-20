@@ -183,7 +183,7 @@ const FAQ = [
   {
     question: "Is Social Raven GDPR compliant?",
     answer:
-      "Yes. Social Raven is built in Europe with GDPR compliance by design. All data is stored in EU data centres and we never sell your data to third parties.",
+      "Yes. Social Raven is built in Europe with GDPR compliance by design. All data is stored in US & EU data centres and we never sell your data to third parties.",
   },
   {
     question: "How does the free trial work?",
@@ -244,7 +244,7 @@ export default function LandingPage() {
                 <div className="space-y-7 text-center lg:text-left">
                   <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-white px-3.5 py-1.5 text-xs font-medium text-[hsl(var(--muted-foreground))]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--accent))]" />
-                    Trusted by 10,000+ creators
+                     Trusted by 10,000+ creators
                   </div>
 
                   <h1 className="text-5xl md:text-6xl lg:text-[72px] font-semibold tracking-[-0.04em] leading-[1.05] text-[hsl(var(--foreground))]">
@@ -651,7 +651,7 @@ export default function LandingPage() {
                 </p>
                 <div className="mt-4 flex items-center gap-1.5 text-xs text-[hsl(var(--muted-foreground))]">
                   <Lock className="w-3 h-3" />
-                  GDPR Compliant · Data stored in EU 🇪🇺
+                  GDPR Compliant · Data stored in  US 🇺🇸 & EU 🇪🇺
                 </div>
               </div>
 
