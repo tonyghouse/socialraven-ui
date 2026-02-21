@@ -244,7 +244,7 @@ export default function LandingPage() {
                 <div className="space-y-7 text-center lg:text-left">
                   <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-white px-3.5 py-1.5 text-xs font-medium text-[hsl(var(--muted-foreground))]">
                     <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--accent))]" />
-                     Trusted by 10,000+ creators
+                    Trusted by 10,000+ creators
                   </div>
 
                   <h1 className="text-5xl md:text-6xl lg:text-[72px] font-semibold tracking-[-0.04em] leading-[1.05] text-[hsl(var(--foreground))]">
@@ -499,11 +499,10 @@ export default function LandingPage() {
                 {PRICING_TIERS.map(({ name, price, period, description, features, cta, ctaHref, popular }) => (
                   <div
                     key={name}
-                    className={`rounded-2xl border p-7 transition-all ${
-                      popular
+                    className={`rounded-2xl border p-7 transition-all ${popular
                         ? "border-[hsl(var(--accent))] bg-white shadow-xl shadow-[hsl(var(--accent))]/10 md:scale-[1.03]"
                         : "border-[hsl(var(--border))] bg-white hover:shadow-md"
-                    }`}
+                      }`}
                   >
                     {popular && (
                       <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))] text-xs font-semibold mb-4">
@@ -540,11 +539,10 @@ export default function LandingPage() {
 
                     <Link href={ctaHref}>
                       <Button
-                        className={`w-full h-11 rounded-full font-medium text-sm ${
-                          popular
+                        className={`w-full h-11 rounded-full font-medium text-sm ${popular
                             ? "bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent))]/90 shadow-md"
                             : "bg-[hsl(var(--foreground))] text-white hover:bg-[hsl(var(--foreground))]/90"
-                        }`}
+                          }`}
                       >
                         {cta}
                       </Button>
@@ -716,7 +714,7 @@ export default function LandingPage() {
                 © 2026 Social Raven. All rights reserved.
               </p>
               <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                Designed and built in Europe 🇪🇺 for the world.
+                Built for global businesses — empowering teams across the US, Europe, and beyond.
               </p>
             </div>
           </div>
