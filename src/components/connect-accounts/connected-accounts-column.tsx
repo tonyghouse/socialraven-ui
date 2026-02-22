@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { Trash2, RefreshCw, Plus } from "lucide-react";
+import { Trash2, RefreshCw, Plus, ArrowRight } from "lucide-react";
 
 type Props = {
   platformKey: string;
@@ -19,14 +19,9 @@ type Props = {
 
 const needsProxyDomains = ["linkedin.com", "licdn.com"];
 
-/**
- * If URL belongs to certain domains (LinkedIn) use a server-side proxy route
- * to avoid CORS issues. Otherwise return original URL.
- */
 const getImageUrl = (url?: string | null) => {
   if (!url) return null;
   try {
-    // quick guard — treat relative urls as safe
     const lower = url.toLowerCase();
     const requiresProxy = needsProxyDomains.some((d) => lower.includes(d));
     if (requiresProxy) {
@@ -48,6 +43,14 @@ const getInitials = (username?: string) =>
         .slice(0, 2)
         .toUpperCase();
 
+const PLATFORM_ICON_STYLE: Record<string, { bg: string; ring: string }> = {
+  x:         { bg: "bg-slate-100",  ring: "ring-slate-200/80" },
+  linkedin:  { bg: "bg-blue-50",    ring: "ring-blue-100" },
+  youtube:   { bg: "bg-red-50",     ring: "ring-red-100" },
+  instagram: { bg: "bg-pink-50",    ring: "ring-pink-100" },
+  facebook:  { bg: "bg-blue-50",    ring: "ring-blue-100" },
+};
+
 export default function ConnectedAccountsColumn({
   platformKey,
   label,
@@ -58,81 +61,81 @@ export default function ConnectedAccountsColumn({
   onRemove,
   onReconnect,
 }: Props) {
-  // show two items worth of height, but allow vertical scroll if more exist
-  // h-14 per item + gaps => max-h around 14*2 + padding => ~120px
-  const maxListHeight = "max-h-[128px]";
+  const iconStyle = PLATFORM_ICON_STYLE[platformKey] ?? {
+    bg: "bg-foreground/5",
+    ring: "ring-foreground/10",
+  };
 
   return (
-    <div
-      className="
-        rounded-2xl bg-white/65 backdrop-blur-xl
-        border border-foreground/10 p-4
-        shadow-[0_8px_28px_-12px_rgba(0,0,0,0.12)]
-      "
-    >
-      {/* header */}
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className={`h-5 w-5 ${accent ?? "text-foreground/80"}`} />
-        <div>
+    <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-foreground/8 shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col">
+      {/* Platform header */}
+      <div className="flex items-center gap-3 px-5 pt-5 pb-4 border-b border-foreground/6">
+        <div
+          className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${iconStyle.bg} ring-1 ${iconStyle.ring}`}
+        >
+          <Icon className={`h-[18px] w-[18px] ${accent ?? "text-foreground/80"}`} />
+        </div>
+        <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold text-foreground">{label}</div>
-          <div className="text-xs text-muted-foreground">
-            {accounts.length} account{accounts.length !== 1 ? "s" : ""}
+          <div className="text-xs text-muted-foreground mt-0.5">
+            {accounts.length === 0
+              ? "No accounts connected"
+              : `${accounts.length} account${accounts.length !== 1 ? "s" : ""} connected`}
           </div>
         </div>
-      </div>
-
-      {/* list area - fixed visible ~2 items height, scroll if more */}
-      <div className={`space-y-2 overflow-y-auto pr-2 ${maxListHeight} scrollbar-thin`}>
-        {accounts.length === 0 ? (
-          // show two dashed placeholders when empty
-          <>
-            {[0, 1].map((i) => (
-              <Link
-                key={`empty-${i}`}
-                href={connectHref}
-                className="
-                  flex items-center gap-3
-                  p-2 rounded-lg
-                  border border-dashed border-foreground/15
-                  bg-white/50
-                  hover:border-accent/30 hover:text-accent
-                  transition
-                "
-              >
-                <div className="h-10 w-10 rounded-full flex items-center justify-center border border-foreground/10 text-muted-foreground">
-                  <Plus className="w-5 h-5" />
-                </div>
-
-                <div className="min-w-0">
-                  <div className="h-3 w-36 rounded bg-foreground/10" />
-                  <div className="h-2 w-24 mt-1 rounded bg-foreground/6" />
-                </div>
-
-                <div className="ml-auto">
-                  <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-xs border border-primary/20">
-                    Connect
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </>
-        ) : (
-          // map actual accounts (all of them) into vertically stacked rows
-          accounts.map((acc) => (
-            <AccountRow
-              key={acc.providerUserId}
-              acc={acc}
-              onRemove={onRemove}
-              onReconnect={onReconnect}
-            />
-          ))
+        {accounts.length > 0 && (
+          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-foreground/6 text-foreground/50 text-[11px] font-semibold flex-shrink-0">
+            {accounts.length}
+          </span>
         )}
       </div>
 
-      {/* footer note when more than 2 */}
-      {accounts.length > 2 && (
-        <div className="mt-3 text-xs text-muted-foreground text-center">
-          + {accounts.length - 2} more
+      {/* Account list / empty state */}
+      <div className="px-4 py-3 flex-1">
+        {accounts.length === 0 ? (
+          <Link
+            href={connectHref}
+            className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/15 hover:border-accent/35 hover:bg-accent/3 transition-all duration-200 group"
+          >
+            <div
+              className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconStyle.bg} transition-all`}
+            >
+              <Plus className="w-4 h-4 text-foreground/40 group-hover:text-accent transition-colors" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground/65 group-hover:text-foreground transition-colors">
+                Connect {label}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Click to authorize your account
+              </p>
+            </div>
+            <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-accent group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+          </Link>
+        ) : (
+          <div className="space-y-1.5 overflow-y-auto max-h-[200px] pr-0.5 scrollbar-thin">
+            {accounts.map((acc) => (
+              <AccountRow
+                key={acc.providerUserId}
+                acc={acc}
+                onRemove={onRemove}
+                onReconnect={onReconnect}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Footer: add more */}
+      {accounts.length > 0 && (
+        <div className="px-4 pb-4">
+          <Link
+            href={connectHref}
+            className="flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-accent hover:bg-accent/5 border border-dashed border-foreground/10 hover:border-accent/20 transition-all duration-200"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            Add another account
+          </Link>
         </div>
       )}
     </div>
@@ -152,56 +155,45 @@ function AccountRow({
   const src = getImageUrl(acc.profilePicLink);
 
   return (
-    <div
-      className="
-        flex items-center gap-3 p-2
-        rounded-lg bg-white/60 backdrop-blur-lg
-        border border-foreground/10
-        hover:bg-foreground/5 transition
-      "
-    >
-      <div className="relative">
-        <Avatar className="h-10 w-10">
-          {!imgError && src ? (
-            <AvatarImage
-              src={src}
-              alt={acc.username}
-              onError={() => {
-                // fallback to initials if proxied or remote image fails
-                setImgError(true);
-              }}
-            />
-          ) : (
-            <AvatarFallback className="bg-accent text-white">
-              {getInitials(acc.username)}
-            </AvatarFallback>
-          )}
-        </Avatar>
-      </div>
+    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-foreground/[0.03] hover:bg-foreground/[0.06] transition-colors group">
+      <Avatar className="h-8 w-8 flex-shrink-0">
+        {!imgError && src ? (
+          <AvatarImage
+            src={src}
+            alt={acc.username}
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <AvatarFallback className="bg-gradient-to-br from-accent/25 to-accent/10 text-accent text-[11px] font-semibold">
+            {getInitials(acc.username)}
+          </AvatarFallback>
+        )}
+      </Avatar>
 
-      <div className="min-w-0">
-        <div className="text-sm font-medium truncate">{acc.username}</div>
-        <div className="text-xs text-muted-foreground truncate capitalize">
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-medium text-foreground truncate leading-tight">
+          {acc.username}
+        </div>
+        <div className="text-[11px] text-muted-foreground capitalize truncate mt-0.5">
           {acc.platform}
         </div>
       </div>
 
-      {/* actions */}
-      <div className="ml-auto flex items-center gap-2">
+      {/* Actions revealed on hover */}
+      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
         <button
           onClick={() => onReconnect?.(acc)}
           aria-label="Reconnect account"
-          className="p-1.5 rounded-full hover:bg-white/80 transition"
+          className="p-1.5 rounded-lg hover:bg-white text-foreground/40 hover:text-foreground/70 transition-all"
         >
-          <RefreshCw className="w-4 h-4 text-foreground/70" />
+          <RefreshCw className="w-3.5 h-3.5" />
         </button>
-
         <button
           onClick={() => onRemove?.(acc)}
           aria-label="Remove account"
-          className="p-1.5 rounded-full hover:bg-red-50 transition"
+          className="p-1.5 rounded-lg hover:bg-red-50 text-foreground/40 hover:text-red-500 transition-all"
         >
-          <Trash2 className="w-4 h-4 text-red-500" />
+          <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
