@@ -17,9 +17,9 @@ import {
 LineChart,
 CalendarX2
 } from "lucide-react";
-import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
+import { UserAvatar } from "./UserAvatar";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -56,28 +56,27 @@ export function MobileBottomBar() {
   }, []);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 h-16 border-t border-border bg-background">
+    <nav className="fixed bottom-0 left-0 right-0 z-[200] h-16 border-t border-border bg-white dark:bg-background">
       <div className="relative h-full">
-        {/* Scroll container */}
+        {/* Profile avatar — outside scroll container to prevent overflow clipping */}
+        <div
+          className="
+            absolute left-0 top-0 z-[201]
+            flex items-center justify-center
+            w-[64px] h-full
+          "
+        >
+          <UserAvatar size="sm" collapsed={true} />
+        </div>
+
+        {/* Scroll container — offset left to leave room for avatar */}
         <div
           ref={scrollRef}
           className="
-            flex items-center h-full gap-1 px-2
+            flex items-center h-full gap-1 pl-[64px] pr-2
             overflow-x-auto scrollbar-none
           "
         >
-          {/* Profile at start */}
-          <div
-            className="
-              flex items-center justify-center
-              min-w-[64px] h-full
-              active:scale-90
-              transition-transform duration-150 ease-out
-            "
-          >
-            <UserButton appearance={{ elements: { avatarBox: "w-7 h-7" } }} />
-          </div>
-
           {items.map(({ title, url, icon: Icon }) => {
             const isActive = pathname.startsWith(url);
 
