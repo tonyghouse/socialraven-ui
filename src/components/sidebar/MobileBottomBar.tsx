@@ -22,7 +22,6 @@ import { useClerk, useUser } from "@clerk/nextjs";
 // ── Items that live inside the More drawer ────────────────────────────────────
 const drawerItems = [
   { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
-  { title: "Failed Posts", url: "/failed-posts", icon: CalendarX2 },
   { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
 ];
 

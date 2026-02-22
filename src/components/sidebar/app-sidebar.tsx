@@ -28,8 +28,7 @@ const navGroups = [
     items: [
       { title: "Schedule Post", url: "/schedule-post", icon: Send },
       { title: "Scheduled Posts", url: "/scheduled-posts", icon: Calendar },
-      { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
-      { title: "Failed Posts", url: "/failed-posts", icon: CalendarX2 },
+      { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 }
     ],
   },
   {
