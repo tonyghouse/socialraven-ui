@@ -1,87 +1,50 @@
-import { Plan, PlanType, UserPlan } from "@/model/Plan";
+import { PlanType, UsageStats, UserPlan } from "@/model/Plan";
+import { PLANS } from "@/constants/plans";
 
-// Mock plan catalog
-export const PLANS: Plan[] = [
-  {
-    type: "BASE",
-    name: "Base",
-    price: 0,
-    description: "Get started with social scheduling",
-    features: [
-      "15 scheduled posts / month",
-      "2 connected accounts",
-      "1 team member",
-      "Basic analytics",
-      "Image & text posts",
-    ],
-    limits: {
-      scheduledPostsPerMonth: 15,
-      connectedAccounts: 2,
-      teamMembers: 1,
-    },
-  },
-  {
-    type: "PRO",
-    name: "Pro",
-    price: 19,
-    description: "For creators growing their audience",
-    features: [
-      "150 scheduled posts / month",
-      "10 connected accounts",
-      "5 team members",
-      "Advanced analytics",
-      "Image, video & text posts",
-      "Priority support",
-    ],
-    limits: {
-      scheduledPostsPerMonth: 150,
-      connectedAccounts: 10,
-      teamMembers: 5,
-    },
-  },
-  {
-    type: "ENTERPRISE",
-    name: "Enterprise",
-    price: 49,
-    description: "For teams managing multiple brands",
-    features: [
-      "Unlimited scheduled posts",
-      "Unlimited connected accounts",
-      "Unlimited team members",
-      "Advanced analytics",
-      "All post types",
-      "Dedicated support",
-      "Custom branding",
-    ],
-    limits: {
-      scheduledPostsPerMonth: "Unlimited",
-      connectedAccounts: "Unlimited",
-      teamMembers: "Unlimited",
-    },
-  },
-];
+export { PLANS };
 
-// Mock: returns BASE as the current plan
-export async function fetchUserPlanApi(
-  _getToken: () => Promise<string | null>
-): Promise<UserPlan> {
+type GetToken = () => Promise<string | null>;
+
+// ---------------------------------------------------------------------------
+// Mock APIs — replace each body with a real fetch() once backend is ready
+// ---------------------------------------------------------------------------
+
+/** GET /plans/me */
+export async function fetchUserPlanApi(_getToken: GetToken): Promise<UserPlan> {
   await new Promise((r) => setTimeout(r, 400));
+  // Mock: user is 7 days into their 14-day trial
   return {
-    currentPlan: "BASE",
-    renewalDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    status: "ACTIVE",
+    currentPlan: "TRIAL",
+    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    renewalDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+    status: "TRIALING",
+    cancelAtPeriodEnd: false,
   };
 }
 
-// Mock: simulates a plan change
+/** PATCH /plans/me */
 export async function changeUserPlanApi(
-  _getToken: () => Promise<string | null>,
+  _getToken: GetToken,
   newPlan: PlanType
 ): Promise<UserPlan> {
-  await new Promise((r) => setTimeout(r, 600));
+  await new Promise((r) => setTimeout(r, 700));
   return {
     currentPlan: newPlan,
+    startDate: new Date().toISOString(),
     renewalDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     status: "ACTIVE",
+    cancelAtPeriodEnd: false,
+  };
+}
+
+/** GET /plans/usage */
+export async function fetchUsageStatsApi(_getToken: GetToken): Promise<UsageStats> {
+  await new Promise((r) => setTimeout(r, 300));
+  return {
+    postsUsedThisMonth: 12,
+    postsLimit: 50,
+    connectedAccountsCount: 2,
+    connectedAccountsLimit: 5,
   };
 }

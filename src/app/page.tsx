@@ -30,6 +30,7 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { PLANS } from "@/constants/plans";
 
 /* ─────────────────────────────────────────────────────────
    Data
@@ -128,56 +129,7 @@ const TESTIMONIALS = [
   },
 ];
 
-const PRICING_TIERS = [
-  {
-    name: "Trial",
-    price: "0",
-    period: "Free forever",
-    description: "Explore the platform with no commitment",
-    features: [
-      "Up to 3 social accounts",
-      "100 scheduled posts / month",
-      "Basic analytics",
-      "Email support",
-    ],
-    cta: "Get started free",
-    ctaHref: "/sign-up",
-    popular: false,
-  },
-  {
-    name: "Pro",
-    price: "8",
-    period: "/ month",
-    description: "For creators and growing teams",
-    features: [
-      "Up to 25 social accounts",
-      "Unlimited scheduled posts",
-      "Advanced analytics & reports",
-      "AI content suggestions",
-      "Priority support",
-    ],
-    cta: "Start 14-day free trial",
-    ctaHref: "/sign-up",
-    popular: true,
-  },
-  {
-    name: "Enterprise",
-    price: null,
-    period: "Custom pricing",
-    description: "For agencies and large organisations",
-    features: [
-      "Unlimited accounts",
-      "White-label reports",
-      "Team collaboration",
-      "Dedicated account manager",
-      "24/7 phone & email support",
-      "SLA guarantee",
-    ],
-    cta: "Contact sales",
-    ctaHref: "/contact",
-    popular: false,
-  },
-];
+const PAID_PLANS = PLANS.filter((p) => p.type !== "TRIAL");
 
 const FAQ = [
   {
@@ -496,59 +448,60 @@ export default function LandingPage() {
               </div>
 
               <div className="grid md:grid-cols-3 gap-4 items-start">
-                {PRICING_TIERS.map(({ name, price, period, description, features, cta, ctaHref, popular }) => (
-                  <div
-                    key={name}
-                    className={`rounded-2xl border p-7 transition-all ${popular
-                        ? "border-[hsl(var(--accent))] bg-white shadow-xl shadow-[hsl(var(--accent))]/10 md:scale-[1.03]"
-                        : "border-[hsl(var(--border))] bg-white hover:shadow-md"
-                      }`}
-                  >
-                    {popular && (
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))] text-xs font-semibold mb-4">
-                        <Sparkles className="w-3 h-3" />
-                        Most Popular
-                      </div>
-                    )}
+                {PAID_PLANS.map((plan) => {
+                  const isEnterprise = plan.type === "ENTERPRISE";
+                  const cta     = isEnterprise ? "Contact sales" : "Start 14-day free trial";
+                  const ctaHref = isEnterprise
+                    ? "mailto:sales@socialraven.io?subject=Enterprise%20Plan%20Enquiry"
+                    : "/sign-up";
 
-                    <h3 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-1">{name}</h3>
-                    <p className="text-sm text-[hsl(var(--muted-foreground))] mb-5">{description}</p>
-
-                    <div className="mb-6">
-                      {price !== null ? (
-                        <>
-                          <span className="text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">${price}</span>
-                          <span className="text-sm text-[hsl(var(--muted-foreground))] ml-1">{period}</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="text-2xl font-semibold text-[hsl(var(--foreground))]">Custom</span>
-                          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5">{period}</p>
-                        </>
+                  return (
+                    <div
+                      key={plan.type}
+                      className={`rounded-2xl border p-7 transition-all ${plan.popular
+                          ? "border-[hsl(var(--accent))] bg-white shadow-xl shadow-[hsl(var(--accent))]/10 md:scale-[1.03]"
+                          : "border-[hsl(var(--border))] bg-white hover:shadow-md"
+                        }`}
+                    >
+                      {plan.popular && (
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))] text-xs font-semibold mb-4">
+                          <Sparkles className="w-3 h-3" />
+                          Most Popular
+                        </div>
                       )}
+
+                      <h3 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-1">{plan.name}</h3>
+                      <p className="text-sm text-[hsl(var(--muted-foreground))] mb-5">{plan.description}</p>
+
+                      <div className="mb-6">
+                        <span className="text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
+                          ${plan.price}
+                        </span>
+                        <span className="text-sm text-[hsl(var(--muted-foreground))] ml-1">/ month</span>
+                      </div>
+
+                      <ul className="space-y-3 mb-7">
+                        {plan.features.map((feature) => (
+                          <li key={feature} className="flex items-start gap-2.5 text-sm text-[hsl(var(--foreground))]/80">
+                            <CheckCircle2 className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0 mt-0.5" />
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Link href={ctaHref}>
+                        <Button
+                          className={`w-full h-11 rounded-full font-medium text-sm ${plan.popular
+                              ? "bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent))]/90 shadow-md"
+                              : "bg-[hsl(var(--foreground))] text-white hover:bg-[hsl(var(--foreground))]/90"
+                            }`}
+                        >
+                          {cta}
+                        </Button>
+                      </Link>
                     </div>
-
-                    <ul className="space-y-3 mb-7">
-                      {features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2.5 text-sm text-[hsl(var(--foreground))]/80">
-                          <CheckCircle2 className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0 mt-0.5" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Link href={ctaHref}>
-                      <Button
-                        className={`w-full h-11 rounded-full font-medium text-sm ${popular
-                            ? "bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent))]/90 shadow-md"
-                            : "bg-[hsl(var(--foreground))] text-white hover:bg-[hsl(var(--foreground))]/90"
-                          }`}
-                      >
-                        {cta}
-                      </Button>
-                    </Link>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <p className="text-center text-xs text-[hsl(var(--muted-foreground))] mt-8">
