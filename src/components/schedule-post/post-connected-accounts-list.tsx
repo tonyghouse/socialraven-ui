@@ -1,17 +1,7 @@
 "use client";
 
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { Platform } from "@/model/Platform";
-import type { LucideIcon } from "lucide-react";
-import {
-  Facebook,
-  Instagram,
-  Linkedin,
-  Twitter,
-  Youtube,
-  Check,
-  ChevronRight,
-} from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -25,12 +15,7 @@ import { PostType } from "@/model/PostType";
 import { PLATFORM_ICONS } from "../generic/platform-icons";
 import { getImageUrl } from "@/service/getImageUrl";
 import { getInitials } from "@/service/getInitials";
-
-
-
-// Helpers
-
-
+import { Skeleton } from "@/components/ui/skeleton";
 
 function AccountItem({
   acc,
@@ -43,95 +28,89 @@ function AccountItem({
   toggle: (id: string) => void;
   postType: PostType;
 }) {
-  const Icon = PLATFORM_ICONS[acc.platform];
+  const Icon = PLATFORM_ICONS[acc.platform] ?? PLATFORM_ICONS[acc.platform?.toUpperCase()];
   const [imageError, setImageError] = useState(false);
   const imageUrl = getImageUrl(acc.profilePicLink);
   const initials = getInitials(acc.username);
-
-  // Decide whether this account supports the current postType
-  const isAllowedForPost = acc.allowedFormats?.includes(postType);
-
-  // Visual classes when not allowed (grayed out)
-  const avatarFilterClass = isAllowedForPost ? "" : "filter grayscale opacity-60";
+  const isAllowed = acc.allowedFormats?.includes(postType);
 
   return (
     <Tooltip>
-      {/* TooltipTrigger wraps the button so the tooltip still works when disabled */}
       <TooltipTrigger asChild>
         <button
-          onClick={() => {
-            if (!isAllowedForPost) return;
-            toggle(acc.providerUserId);
-          }}
-          className={cn(
-            "relative flex flex-col items-center flex-shrink-0 w-14 group",
-            // when disabled show not-allowed cursor
-            !isAllowedForPost ? "cursor-not-allowed" : ""
-          )}
+          onClick={() => { if (isAllowed) toggle(acc.providerUserId); }}
+          disabled={!isAllowed}
           aria-pressed={isSelected}
-          aria-disabled={!isAllowedForPost}
-          // disable native button behavior for keyboard when not allowed
-          disabled={!isAllowedForPost}
-          title={
-            isAllowedForPost
-              ? acc.username
-              : `${acc.username} — Not available for ${postType.toLowerCase()} posts`
-          }
+          aria-disabled={!isAllowed}
+          className={cn(
+            "relative flex flex-col items-center flex-shrink-0 w-16 gap-1.5 group focus-visible:outline-none",
+            !isAllowed && "cursor-not-allowed"
+          )}
         >
-          <Avatar
-            className={cn(
-              "w-12 h-12 transition-all",
-              isSelected
-                ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                : "ring-2 ring-transparent hover:ring-primary/30",
-              avatarFilterClass
-            )}
-          >
-            {imageUrl && !imageError && (
-              <AvatarImage
-                src={imageUrl}
-                alt={acc.username}
-                onError={() => setImageError(true)}
-                className={cn(avatarFilterClass)}
-              />
-            )}
-            <AvatarFallback
+          <div className="relative">
+            <Avatar
               className={cn(
-                "text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white",
-                avatarFilterClass
+                "w-12 h-12 transition-all duration-200",
+                isSelected
+                  ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                  : isAllowed
+                    ? "ring-2 ring-transparent group-hover:ring-primary/30"
+                    : "ring-2 ring-transparent",
+                !isAllowed && "opacity-40 grayscale"
               )}
             >
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+              {imageUrl && !imageError && (
+                <AvatarImage
+                  src={imageUrl}
+                  alt={acc.username}
+                  onError={() => setImageError(true)}
+                />
+              )}
+              <AvatarFallback className="text-xs font-medium bg-gradient-to-br from-violet-500 to-indigo-500 text-white">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
 
-          {/* Selected check badge */}
-          {isSelected && isAllowedForPost && (
-            <div className="absolute -bottom-0.5 -right-0.5 bg-primary text-primary-foreground w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-background">
-              <Check className="w-3 h-3" />
-            </div>
-          )}
+            {/* Platform badge */}
+            {Icon && (
+              <div className={cn(
+                "absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full bg-background border border-border flex items-center justify-center shadow-sm",
+                !isAllowed && "opacity-40 grayscale"
+              )}>
+                <Icon className="w-3 h-3 text-foreground" />
+              </div>
+            )}
 
-          {/* Username + small platform icon under avatar */}
-          <div className="mt-1 flex items-center gap-1 max-w-full">
-            {Icon && <Icon className={cn("w-3 h-3 flex-shrink-0", avatarFilterClass)} />}
-            <span
-              className="text-xs text-muted-foreground truncate"
-              style={{ maxWidth: "64px" }}
-            >
-              {acc.username}
-            </span>
+            {/* Selected check */}
+            {isSelected && isAllowed && (
+              <div className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md border-2 border-background z-10">
+                <Check className="w-2.5 h-2.5" strokeWidth={3} />
+              </div>
+            )}
           </div>
+
+          <span
+            className={cn(
+              "text-xs text-muted-foreground text-center leading-tight",
+              !isAllowed && "opacity-40"
+            )}
+            style={{ maxWidth: "64px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+          >
+            {acc.username}
+          </span>
         </button>
       </TooltipTrigger>
 
-      <TooltipContent className="px-3 py-2 text-sm shadow-md">
-        <p className="font-medium">{acc.username}</p>
-        <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1 capitalize">
-          {Icon && <Icon className="w-3 h-3" />} {acc.platform}
+      <TooltipContent className="px-3 py-2 text-sm shadow-lg max-w-[200px]">
+        <p className="font-semibold">{acc.username}</p>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1 capitalize">
+          {Icon && <Icon className="w-3 h-3" />}
+          {acc.platform}
         </div>
-        {!isAllowedForPost && (
-          <div className="mt-2 text-xs text-red-500">Not available for {postType.toLowerCase()} posts</div>
+        {!isAllowed && (
+          <p className="mt-1.5 text-xs text-red-500 font-medium">
+            Not available for {postType.toLowerCase()} posts
+          </p>
         )}
       </TooltipContent>
     </Tooltip>
@@ -152,66 +131,81 @@ export function PostConnectedAccountsList({
   loading: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [showScrollIndicator, setShowScrollIndicator] = useState(false);
+  const [showScrollHint, setShowScrollHint] = useState(false);
 
   useEffect(() => {
-    const checkScroll = () => {
-      if (scrollRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-        const isScrollable = scrollWidth > clientWidth;
-        const isAtEnd = scrollLeft + clientWidth >= scrollWidth - 10;
-        setShowScrollIndicator(isScrollable && !isAtEnd);
-      }
-    };
-
-    checkScroll();
-    const scrollEl = scrollRef.current;
-    scrollEl?.addEventListener("scroll", checkScroll);
-    window.addEventListener("resize", checkScroll);
-
-    return () => {
-      scrollEl?.removeEventListener("scroll", checkScroll);
-      window.removeEventListener("resize", checkScroll);
-    };
+    function check() {
+      if (!scrollRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+      setShowScrollHint(scrollWidth > clientWidth && scrollLeft + clientWidth < scrollWidth - 10);
+    }
+    check();
+    const el = scrollRef.current;
+    el?.addEventListener("scroll", check);
+    window.addEventListener("resize", check);
+    return () => { el?.removeEventListener("scroll", check); window.removeEventListener("resize", check); };
   }, [accounts]);
+
+  const selectedCount  = selectedAccountIds.length;
+  const availableCount = accounts.filter((a) => a.allowedFormats?.includes(postType)).length;
 
   return (
     <div className="space-y-3">
-      <label className="text-sm font-medium text-foreground">Select Accounts</label>
-
-      {loading && <p className="text-sm text-muted-foreground">Loading accounts...</p>}
-      {!loading && accounts.length === 0 && (
-        <p className="text-sm text-muted-foreground">No connected accounts found.</p>
-      )}
-
-      <div className="relative border rounded-lg px-3 py-2">
-        <div
-          ref={scrollRef}
-          className="flex items-center gap-4 overflow-x-auto scrollbar-hide pr-6 py-1"
-        >
-          <TooltipProvider delayDuration={200}>
-            {accounts.map((acc) => (
-              <AccountItem
-                key={acc.providerUserId}
-                acc={acc}
-                isSelected={selectedAccountIds.includes(acc.providerUserId)}
-                toggle={toggleAccount}
-                postType={postType}
-              />
-            ))}
-          </TooltipProvider>
-        </div>
-
-        {/* Gradient fade and scroll indicator */}
-        {showScrollIndicator && (
-          <>
-            <div className="pointer-events-none absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-white via-white/80 to-transparent" />
-            <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 border border-gray-200 shadow-sm">
-              <ChevronRight className="w-4 h-4 text-gray-600 animate-pulse" />
-            </div>
-          </>
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-semibold text-foreground">Select Accounts</label>
+        {selectedCount > 0 && (
+          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+            {selectedCount} of {availableCount} selected
+          </span>
         )}
       </div>
+
+      {loading && (
+        <div className="flex gap-4 py-2 px-3">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-1.5 w-16 flex-shrink-0">
+              <Skeleton className="w-12 h-12 rounded-full" />
+              <Skeleton className="w-10 h-3 rounded" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {!loading && accounts.length === 0 && (
+        <div className="flex items-center justify-center py-8 border border-dashed border-border rounded-xl">
+          <p className="text-sm text-muted-foreground">No connected accounts found.</p>
+        </div>
+      )}
+
+      {!loading && accounts.length > 0 && (
+        <div className="relative border border-border rounded-xl bg-card/50">
+          <div
+            ref={scrollRef}
+            className="flex items-start gap-3 overflow-x-auto scrollbar-hide px-4 py-4 pr-10"
+          >
+            <TooltipProvider delayDuration={300}>
+              {accounts.map((acc) => (
+                <AccountItem
+                  key={acc.providerUserId}
+                  acc={acc}
+                  isSelected={selectedAccountIds.includes(acc.providerUserId)}
+                  toggle={toggleAccount}
+                  postType={postType}
+                />
+              ))}
+            </TooltipProvider>
+          </div>
+
+          {showScrollHint && (
+            <>
+              <div className="pointer-events-none absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-card to-transparent rounded-r-xl" />
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-card border border-border shadow-md flex items-center justify-center">
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground animate-pulse" />
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }

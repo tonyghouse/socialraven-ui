@@ -1,1 +1,1 @@
-export type Platform = "instagram" | "x" | "linkedin" | "facebook" | "youtube";
+export type Platform = "instagram" | "x" | "linkedin" | "facebook" | "youtube" | "threads" | "tiktok";

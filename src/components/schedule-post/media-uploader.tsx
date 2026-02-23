@@ -1,15 +1,23 @@
 "use client";
 
 import { useRef } from "react";
-import { X, Plus, GripVertical } from "lucide-react";
+import { X, Plus, GripVertical, Upload } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import Image from "next/image";
+
 interface Props {
   files: File[];
   setFiles: (v: File[]) => void;
+  accept?: string;
+  label?: string;
 }
 
-export default function MediaUploader({ files, setFiles }: Props) {
+export default function MediaUploader({
+  files,
+  setFiles,
+  accept = "image/*,video/*",
+  label = "Add Media",
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   function pickMedia() {
@@ -19,91 +27,86 @@ export default function MediaUploader({ files, setFiles }: Props) {
   function onSelect(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     const selected = Array.from(e.target.files);
-    const updated = [...files, ...selected].slice(0, 10);
+    const updated  = [...files, ...selected].slice(0, 10);
     setFiles(updated);
-    // Reset input to allow selecting the same file again
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
+    if (inputRef.current) inputRef.current.value = "";
   }
 
-  const remove = (file: File) => setFiles(files.filter(f => f !== file));
+  const remove = (file: File) => setFiles(files.filter((f) => f !== file));
 
   return (
-    <div className="w-full mx-auto">
+    <div className="space-y-3">
       <input
         ref={inputRef}
         type="file"
-        accept="image/*,video/*"
+        accept={accept}
         multiple
         onChange={onSelect}
         hidden
       />
 
-      {/* Upload Area */}
       <motion.button
         onClick={pickMedia}
         type="button"
-        whileHover={{ scale: 1.002 }}
-        whileTap={{ scale: 0.998 }}
-        className="w-full group relative overflow-hidden rounded-[18px] bg-white/80 backdrop-blur-2xl
-        border border-black/[0.08] hover:border-black/[0.12] 
-        shadow-[0_1px_2px_rgba(0,0,0,0.04),0_8px_24px_rgba(0,0,0,0.04)]
-        hover:shadow-[0_1px_3px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.06)]
-        transition-all duration-300 ease-out"
+        whileHover={{ scale: 1.005 }}
+        whileTap={{ scale: 0.995 }}
+        className={`w-full group relative overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200
+          ${files.length === 0
+            ? "border-border hover:border-primary/50 bg-muted/30 hover:bg-primary/3 py-8"
+            : "border-border hover:border-primary/40 bg-card py-3"
+          }`}
       >
-        <div className="flex items-center justify-center gap-2.5 py-4 px-6">
-          <div className="relative">
-            <div className="absolute inset-0 bg-blue-500/20 rounded-full blur-xl group-hover:blur-2xl transition-all" />
-            <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 
-            flex items-center justify-center shadow-lg shadow-blue-500/25">
-              <Plus className="w-4.5 h-4.5 text-white" strokeWidth={2.5} />
+        <div className="flex items-center justify-center gap-3">
+          <div className={`relative flex-shrink-0 ${files.length === 0 ? "w-10 h-10" : "w-8 h-8"}`}>
+            <div className="absolute inset-0 bg-primary/15 rounded-full blur-lg group-hover:blur-xl transition-all" />
+            <div className={`relative rounded-full bg-primary/10 group-hover:bg-primary/15 flex items-center justify-center transition-colors w-full h-full`}>
+              {files.length === 0
+                ? <Upload className="w-5 h-5 text-primary" />
+                : <Plus className="w-4 h-4 text-primary" />
+              }
             </div>
           </div>
-          <span className="text-[15px] font-semibold tracking-[-0.01em] text-black/85">
-            Add Media
-          </span>
+          <div className="text-left">
+            <p className="text-sm font-semibold text-foreground">{label}</p>
+            {files.length === 0 && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Drag & drop or click to browse — up to 10 files
+              </p>
+            )}
+          </div>
         </div>
       </motion.button>
 
-      {/* Preview Grid */}
       <AnimatePresence>
         {files.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="mt-5"
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="overflow-x-auto overflow-y-hidden pb-2 -mx-1 px-1">
+            <div className="overflow-x-auto pb-1 -mx-1 px-1">
               <Reorder.Group
                 axis="x"
                 values={files}
                 onReorder={setFiles}
-                className="flex gap-3 min-w-min"
+                className="flex gap-2.5 min-w-min"
               >
                 {files.map((file) => (
                   <Reorder.Item
                     key={file.name + file.size + file.lastModified}
                     value={file}
-                    initial={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, scale: 0.88 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    whileTap={{ scale: 0.98 }}
+                    exit={{ opacity: 0, scale: 0.88 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={{ scale: 1.03, y: -2 }}
+                    whileTap={{ scale: 0.97 }}
                     className="relative group cursor-grab active:cursor-grabbing flex-shrink-0"
                   >
-                    {/* Card Container */}
-                    <div className="relative overflow-hidden rounded-[16px] bg-white/90 backdrop-blur-xl
-                    border border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_4px_16px_rgba(0,0,0,0.04)]
-                    group-hover:shadow-[0_2px_4px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)]
-                    transition-all duration-300 w-32 h-32">
-                      
-                      {/* Thumbnail */}
-                      <div className="w-full h-full flex items-center justify-center bg-gray-50/50">
-                        {file.type.startsWith('video/') ? (
+                    <div className="relative overflow-hidden rounded-xl border border-border bg-card shadow-sm group-hover:shadow-md transition-shadow w-28 h-28">
+                      <div className="w-full h-full flex items-center justify-center bg-muted/30">
+                        {file.type.startsWith("video/") ? (
                           <video
                             src={URL.createObjectURL(file)}
                             className="w-full h-full object-contain"
@@ -112,34 +115,25 @@ export default function MediaUploader({ files, setFiles }: Props) {
                         ) : (
                           <Image
                             src={URL.createObjectURL(file)}
-                            alt="media"
+                            alt="preview"
                             fill
-                            className="w-full h-full object-contain"
+                            className="object-contain"
                           />
                         )}
                       </div>
 
-                      {/* Overlay Controls */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent 
-                      opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                        
-                        {/* Remove Button */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <motion.button
                           onClick={() => remove(file)}
                           whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="absolute top-2 right-2 w-7 h-7 rounded-full 
-                          bg-white/95 backdrop-blur-xl shadow-lg
-                          flex items-center justify-center
-                          border border-black/[0.06]"
+                          whileTap={{ scale: 0.9 }}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/95 shadow-md flex items-center justify-center border border-black/10"
                         >
-                          <X className="w-3.5 h-3.5 text-black/70" strokeWidth={2.5} />
+                          <X className="w-3 h-3 text-gray-700" strokeWidth={2.5} />
                         </motion.button>
 
-                        {/* Drag Handle */}
-                        <div className="absolute bottom-2 left-2 px-2 py-1 rounded-full 
-                        bg-white/95 backdrop-blur-xl shadow-md border border-black/[0.06]">
-                          <GripVertical className="w-3.5 h-3.5 text-black/50" strokeWidth={2.5} />
+                        <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full bg-white/90 shadow-sm">
+                          <GripVertical className="w-3 h-3 text-gray-600" strokeWidth={2.5} />
                         </div>
                       </div>
                     </div>
@@ -147,6 +141,12 @@ export default function MediaUploader({ files, setFiles }: Props) {
                 ))}
               </Reorder.Group>
             </div>
+
+            {files.length >= 2 && (
+              <p className="text-xs text-muted-foreground mt-2">
+                Drag to reorder · {files.length} file{files.length !== 1 ? "s" : ""} added
+              </p>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
