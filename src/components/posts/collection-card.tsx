@@ -1,17 +1,26 @@
 "use client";
 
-import { Calendar, Image as ImageIcon, Video, FileText, Users, CheckCircle2, Clock, XCircle, AlertTriangle, ArrowRight } from "lucide-react";
+import {
+  Calendar,
+  Image as ImageIcon,
+  Video,
+  FileText,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  AlertTriangle,
+  ArrowRight,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 import { PLATFORM_ICONS } from "../generic/platform-icons";
-import NextImage from "next/image";
 import { cn } from "@/lib/utils";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
-import type { PostResponse } from "@/model/PostResponse";
 import { MediaPreview } from "../generic/media-preview";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
-import { getImageUrl } from "@/service/getImageUrl";
 
 interface CollectionCardProps {
   collection: PostCollectionResponse;
+  href?: string;
 }
 
 const overallStatusConfig: Record<
@@ -44,13 +53,6 @@ const overallStatusConfig: Record<
   },
 };
 
-const postStatusDotClass: Record<string, string> = {
-  SCHEDULED: "bg-blue-500",
-  POSTED: "bg-emerald-500",
-  PUBLISHED: "bg-emerald-500",
-  FAILED: "bg-red-500",
-};
-
 const typeConfig: Record<
   string,
   { label: string; Icon: typeof ImageIcon; className: string }
@@ -58,85 +60,39 @@ const typeConfig: Record<
   IMAGE: {
     label: "Image",
     Icon: ImageIcon,
-    className: "text-violet-600 bg-violet-50 border-violet-100 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800/30",
+    className:
+      "text-violet-600 bg-violet-50 border-violet-100 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800/30",
   },
   VIDEO: {
     label: "Video",
     Icon: Video,
-    className: "text-rose-600 bg-rose-50 border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/30",
+    className:
+      "text-rose-600 bg-rose-50 border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/30",
   },
   TEXT: {
     label: "Text",
     Icon: FileText,
-    className: "text-slate-600 bg-slate-50 border-slate-100 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700/30",
+    className:
+      "text-slate-600 bg-slate-50 border-slate-100 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700/30",
   },
 };
 
 const platformIconColor: Record<string, string> = {
-  YOUTUBE: "text-red-600 bg-red-50 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
-  INSTAGRAM: "text-pink-600 bg-pink-50 border-pink-100 dark:bg-pink-900/20 dark:text-pink-400 dark:border-pink-800/30",
-  FACEBOOK: "text-blue-600 bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30",
-  LINKEDIN: "text-sky-600 bg-sky-50 border-sky-100 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800/30",
+  YOUTUBE:
+    "text-red-600 bg-red-50 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
+  INSTAGRAM:
+    "text-pink-600 bg-pink-50 border-pink-100 dark:bg-pink-900/20 dark:text-pink-400 dark:border-pink-800/30",
+  FACEBOOK:
+    "text-blue-600 bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30",
+  LINKEDIN:
+    "text-sky-600 bg-sky-50 border-sky-100 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800/30",
   X: "text-neutral-800 bg-neutral-50 border-neutral-100 dark:bg-neutral-800/30 dark:text-neutral-300 dark:border-neutral-700/30",
 };
 
-function PlatformRow({ post }: { post: PostResponse }) {
-  const Icon = PLATFORM_ICONS[post.provider] || null;
-  const profileSrc = getImageUrl(post.connectedAccount?.profilePicLink);
-  const dotClass = postStatusDotClass[post.postStatus] ?? "bg-muted-foreground";
-
-  return (
-    <div className="flex items-center justify-between py-1.5 px-3 rounded-lg hover:bg-muted/40 transition-colors">
-      <div className="flex items-center gap-2.5 min-w-0">
-        {/* Avatar */}
-        <div className="relative h-7 w-7 rounded-full overflow-hidden border border-border/40 flex-shrink-0">
-          {profileSrc ? (
-            <NextImage
-              src={profileSrc}
-              alt={post.connectedAccount?.username ?? ""}
-              fill
-              sizes="28px"
-              className="object-cover"
-            />
-          ) : (
-            <div className="h-full w-full flex items-center justify-center bg-muted">
-              <Users className="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
-          )}
-        </div>
-
-        {/* Username */}
-        <span className="text-[13px] font-medium text-foreground truncate">
-          {post.connectedAccount?.username ?? post.provider}
-        </span>
-
-        {/* Platform Icon */}
-        {Icon && (
-          <span
-            className={cn(
-              "h-5 w-5 rounded-md border flex items-center justify-center flex-shrink-0",
-              platformIconColor[post.provider] ??
-                "text-muted-foreground bg-muted/50 border-border/60"
-            )}
-          >
-            <Icon className="h-3 w-3" />
-          </span>
-        )}
-      </div>
-
-      {/* Status dot */}
-      <span className="flex items-center gap-1.5 flex-shrink-0">
-        <span className={cn("h-2 w-2 rounded-full", dotClass)} />
-        <span className="text-[11px] text-muted-foreground capitalize">
-          {["POSTED", "PUBLISHED"].includes(post.postStatus) ? "Published" : post.postStatus.charAt(0) + post.postStatus.slice(1).toLowerCase()}
-        </span>
-      </span>
-    </div>
-  );
-}
-
-export function CollectionCard({ collection }: CollectionCardProps) {
-  const statusCfg = overallStatusConfig[collection.overallStatus] ?? overallStatusConfig.SCHEDULED;
+export function CollectionCard({ collection, href }: CollectionCardProps) {
+  const router = useRouter();
+  const statusCfg =
+    overallStatusConfig[collection.overallStatus] ?? overallStatusConfig.SCHEDULED;
   const typeCfg = typeConfig[collection.postCollectionType] ?? typeConfig.TEXT;
   const StatusIcon = statusCfg.Icon;
   const TypeIcon = typeCfg.Icon;
@@ -153,16 +109,31 @@ export function CollectionCard({ collection }: CollectionCardProps) {
     hour12: true,
   }).format(localDate);
 
-  const visiblePosts = collection.posts.slice(0, 4);
-  const remainingPosts = collection.posts.length - visiblePosts.length;
+  // Unique platforms (preserving first-seen order)
+  const uniquePlatforms = Array.from(new Set(collection.posts.map((p) => p.provider)));
+  const visiblePlatforms = uniquePlatforms.slice(0, 7);
+  const hiddenPlatformCount = uniquePlatforms.length - visiblePlatforms.length;
+
+  const handleClick = () => {
+    router.push(href ?? `/scheduled-posts/${collection.id}`);
+  };
 
   return (
     <article
+      onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") handleClick();
+      }}
+      tabIndex={0}
+      role="button"
+      aria-label={`View collection: ${collection.title}`}
       className={cn(
-        "group relative flex flex-col rounded-2xl bg-white border border-border/60 shadow-sm overflow-hidden",
+        "group relative flex flex-col rounded-2xl bg-white border border-border/60 shadow-sm overflow-hidden cursor-pointer",
         "hover:shadow-xl hover:border-border/80 hover:-translate-y-0.5",
+        "active:scale-[0.99]",
         "transition-all duration-300 ease-out",
-        "dark:bg-card dark:border-border/50"
+        "dark:bg-card dark:border-border/50",
+        "focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-1"
       )}
       style={{
         boxShadow: "0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)",
@@ -170,7 +141,6 @@ export function CollectionCard({ collection }: CollectionCardProps) {
     >
       {/* Top badges row */}
       <div className="flex items-center justify-between px-5 pt-5">
-        {/* Type badge */}
         <span
           className={cn(
             "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border",
@@ -181,7 +151,6 @@ export function CollectionCard({ collection }: CollectionCardProps) {
           {typeCfg.label}
         </span>
 
-        {/* Status badge */}
         <span
           className={cn(
             "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border",
@@ -195,7 +164,7 @@ export function CollectionCard({ collection }: CollectionCardProps) {
 
       {/* Content */}
       <div className="px-5 pt-3 pb-4">
-        <h3 className="text-[17px] font-semibold text-card-foreground mb-1.5 line-clamp-2 tracking-tight leading-snug">
+        <h3 className="text-[17px] font-semibold text-card-foreground mb-1.5 line-clamp-2 tracking-tight leading-snug group-hover:text-accent transition-colors duration-200">
           {collection.title}
         </h3>
 
@@ -205,7 +174,6 @@ export function CollectionCard({ collection }: CollectionCardProps) {
           </p>
         )}
 
-        {/* Scheduled time */}
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/40 border border-border/30 w-fit">
           <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
           <time
@@ -246,24 +214,31 @@ export function CollectionCard({ collection }: CollectionCardProps) {
       </div>
 
       {/* Platforms section */}
-      <div className="flex-1 px-2 py-3">
-        <div className="flex items-center gap-2 px-3 mb-2">
-          <Users className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-            {collection.posts.length} Platform{collection.posts.length !== 1 ? "s" : ""}
-          </span>
-        </div>
-
-        <div className="space-y-0.5">
-          {visiblePosts.map((post) => (
-            <PlatformRow key={post.id} post={post} />
-          ))}
-          {remainingPosts > 0 && (
-            <div className="px-3 py-1">
-              <span className="text-[11px] text-muted-foreground font-medium">
-                +{remainingPosts} more platform{remainingPosts !== 1 ? "s" : ""}
+      <div className="flex-1 px-5 py-4">
+        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2.5">
+          Platforms
+        </p>
+        <div className="flex items-center flex-wrap gap-2">
+          {visiblePlatforms.map((platform) => {
+            const Icon = PLATFORM_ICONS[platform];
+            return Icon ? (
+              <span
+                key={platform}
+                title={platform}
+                className={cn(
+                  "h-8 w-8 rounded-xl border flex items-center justify-center shadow-sm",
+                  platformIconColor[platform] ??
+                    "text-muted-foreground bg-muted/50 border-border/60"
+                )}
+              >
+                <Icon className="h-4 w-4" />
               </span>
-            </div>
+            ) : null;
+          })}
+          {hiddenPlatformCount > 0 && (
+            <span className="h-8 px-2.5 rounded-xl bg-muted/60 border border-border/40 flex items-center justify-center text-[11px] font-semibold text-muted-foreground shadow-sm">
+              +{hiddenPlatformCount}
+            </span>
           )}
         </div>
       </div>
@@ -271,11 +246,12 @@ export function CollectionCard({ collection }: CollectionCardProps) {
       {/* Footer */}
       <div className="px-5 py-3.5 bg-gradient-to-b from-muted/20 to-muted/40 border-t border-border/40 flex items-center justify-between">
         <span className="text-xs text-muted-foreground font-medium">
-          {collection.posts.length} post{collection.posts.length !== 1 ? "s" : ""} across platforms
+          {collection.posts.length} account{collection.posts.length !== 1 ? "s" : ""} ·{" "}
+          {uniquePlatforms.length} platform{uniquePlatforms.length !== 1 ? "s" : ""}
         </span>
 
         <div className="flex items-center gap-1.5 text-xs font-semibold text-accent opacity-0 group-hover:opacity-100 transition-all duration-200">
-          <span>View details</span>
+          <span>View posts</span>
           <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
         </div>
       </div>

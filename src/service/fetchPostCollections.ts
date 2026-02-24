@@ -2,13 +2,15 @@ import { PostCollectionResponsePage } from "@/model/PostCollectionResponse";
 
 export async function fetchPostCollectionsApi(
   getToken: () => Promise<string | null>,
-  page: number
+  page: number,
+  type?: "scheduled" | "published"
 ): Promise<PostCollectionResponsePage> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const token = await getToken();
 
   const url = new URL(`${backendUrl}/post-collections`);
   url.searchParams.append("page", page.toString());
+  if (type) url.searchParams.append("type", type);
 
   const res = await fetch(url.toString(), {
     method: "GET",
