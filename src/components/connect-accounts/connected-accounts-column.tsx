@@ -13,6 +13,7 @@ type Props = {
   accent?: string;
   connectHref?: string;
   accounts: ConnectedAccount[];
+  comingSoon?: boolean;
   onRemove?: (acc: ConnectedAccount) => void;
   onReconnect?: (acc: ConnectedAccount) => void;
 };
@@ -49,6 +50,8 @@ const PLATFORM_ICON_STYLE: Record<string, { bg: string; ring: string }> = {
   youtube:   { bg: "bg-red-50",     ring: "ring-red-100" },
   instagram: { bg: "bg-pink-50",    ring: "ring-pink-100" },
   facebook:  { bg: "bg-blue-50",    ring: "ring-blue-100" },
+  tiktok:    { bg: "bg-slate-100",  ring: "ring-slate-200/80" },
+  threads:   { bg: "bg-slate-100",  ring: "ring-slate-200/80" },
 };
 
 export default function ConnectedAccountsColumn({
@@ -58,6 +61,7 @@ export default function ConnectedAccountsColumn({
   accent,
   connectHref = "#",
   accounts = [],
+  comingSoon,
   onRemove,
   onReconnect,
 }: Props) {
@@ -78,21 +82,38 @@ export default function ConnectedAccountsColumn({
         <div className="flex-1 min-w-0">
           <div className="text-sm font-semibold text-foreground">{label}</div>
           <div className="text-xs text-muted-foreground mt-0.5">
-            {accounts.length === 0
+            {comingSoon
+              ? "Coming soon"
+              : accounts.length === 0
               ? "No accounts connected"
               : `${accounts.length} account${accounts.length !== 1 ? "s" : ""} connected`}
           </div>
         </div>
-        {accounts.length > 0 && (
+        {comingSoon ? (
+          <span className="px-1.5 py-0.5 text-[9px] font-bold bg-foreground/8 text-foreground/45 rounded-md tracking-widest uppercase flex-shrink-0">
+            Soon
+          </span>
+        ) : accounts.length > 0 ? (
           <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-foreground/6 text-foreground/50 text-[11px] font-semibold flex-shrink-0">
             {accounts.length}
           </span>
-        )}
+        ) : null}
       </div>
 
       {/* Account list / empty state */}
       <div className="px-4 py-3 flex-1">
-        {accounts.length === 0 ? (
+        {comingSoon ? (
+          <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/8 bg-foreground/[0.015]">
+            <div className="flex-1 min-w-0 text-center">
+              <p className="text-sm font-medium text-foreground/35">
+                Coming soon
+              </p>
+              <p className="text-xs text-muted-foreground/60 mt-0.5">
+                {label} support is on the way
+              </p>
+            </div>
+          </div>
+        ) : accounts.length === 0 ? (
           <Link
             href={connectHref}
             className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/15 hover:border-accent/35 hover:bg-accent/3 transition-all duration-200 group"
@@ -127,7 +148,7 @@ export default function ConnectedAccountsColumn({
       </div>
 
       {/* Footer: add more */}
-      {accounts.length > 0 && (
+      {!comingSoon && accounts.length > 0 && (
         <div className="px-4 pb-4">
           <Link
             href={connectHref}

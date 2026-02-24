@@ -45,7 +45,7 @@ export default function ManageAccountsPage() {
                 Connect Accounts
               </h1>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Manage your social media connections
+                Manage your social media account connections
               </p>
             </div>
           </div>
