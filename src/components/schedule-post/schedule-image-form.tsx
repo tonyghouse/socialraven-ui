@@ -21,15 +21,17 @@ interface Props {
   selectedIds: string[];
   resetSelection: () => void;
   postType: "IMAGE";
+  initialDate?: string;
+  initialTime?: string;
 }
 
 const MAX_CHARS = 2200;
 
-export default function ScheduleImageForm({ connectedAccounts, selectedIds, resetSelection }: Props) {
+export default function ScheduleImageForm({ connectedAccounts, selectedIds, resetSelection, initialDate = "", initialTime = "" }: Props) {
   const [description, setDescription] = useState("");
   const [files, setFiles] = useState<File[]>([]);
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState(initialDate);
+  const [time, setTime] = useState(initialTime);
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>({});
   const [loading, setLoading] = useState(false);
   const { getToken } = useAuth();

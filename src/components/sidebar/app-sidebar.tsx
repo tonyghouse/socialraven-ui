@@ -9,6 +9,7 @@ import {
   ChevronLeft,
   Send,
   CalendarX2,
+  CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -27,8 +28,9 @@ const navGroups = [
     label: "Content",
     items: [
       { title: "Schedule Post", url: "/schedule-post", icon: Send },
+      { title: "Calendar", url: "/calendar", icon: CalendarDays },
       { title: "Scheduled Posts", url: "/scheduled-posts", icon: Calendar },
-      { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 }
+      { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
     ],
   },
   {

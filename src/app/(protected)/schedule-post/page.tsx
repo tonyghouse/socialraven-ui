@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { CalendarClock, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
+import { useSearchParams } from "next/navigation";
 
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
@@ -60,6 +61,11 @@ const POST_TYPE_DESCRIPTIONS: Record<PostType, string> = {
 
 export default function ScheduledPostCollectionPage() {
   const { isLoaded, getToken } = useAuth();
+  const searchParams = useSearchParams();
+
+  // Pre-fill date/time from calendar navigation
+  const initialDate = searchParams.get("date") ?? "";
+  const initialTime = searchParams.get("time") ?? "";
 
   const [postType, setPostType] = useState<PostType>("IMAGE");
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
@@ -114,7 +120,9 @@ export default function ScheduledPostCollectionPage() {
                 Schedule Post
               </h1>
               <p className="text-xs text-muted-foreground leading-tight">
-                Create once · publish to 7 platforms simultaneously
+                {initialDate && initialTime
+                  ? `Pre-filled from calendar · ${initialDate} at ${initialTime}`
+                  : "Create once · publish to 7 platforms simultaneously"}
               </p>
             </div>
             {selectedCount > 0 && (
@@ -181,6 +189,8 @@ export default function ScheduledPostCollectionPage() {
               selectedIds={selectedAccountIds}
               resetSelection={resetSelection}
               postType="IMAGE"
+              initialDate={initialDate}
+              initialTime={initialTime}
             />
           )}
           {postType === "VIDEO" && (
@@ -189,6 +199,8 @@ export default function ScheduledPostCollectionPage() {
               selectedIds={selectedAccountIds}
               resetSelection={resetSelection}
               postType="VIDEO"
+              initialDate={initialDate}
+              initialTime={initialTime}
             />
           )}
           {postType === "TEXT" && (
@@ -197,6 +209,8 @@ export default function ScheduledPostCollectionPage() {
               selectedIds={selectedAccountIds}
               resetSelection={resetSelection}
               postType="TEXT"
+              initialDate={initialDate}
+              initialTime={initialTime}
             />
           )}
         </StepCard>

@@ -18,14 +18,16 @@ interface Props {
   selectedIds: string[];
   resetSelection: () => void;
   postType: "TEXT";
+  initialDate?: string;
+  initialTime?: string;
 }
 
 const MAX_CHARS = 2200;
 
-export default function ScheduleTextForm({ connectedAccounts, selectedIds, resetSelection }: Props) {
+export default function ScheduleTextForm({ connectedAccounts, selectedIds, resetSelection, initialDate = "", initialTime = "" }: Props) {
   const [content, setContent] = useState("");
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [date, setDate] = useState(initialDate);
+  const [time, setTime] = useState(initialTime);
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>({});
   const [loading, setLoading] = useState(false);
   const { getToken } = useAuth();
