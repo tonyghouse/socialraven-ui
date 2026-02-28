@@ -14,6 +14,7 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 import { CollectionCard } from "@/components/posts/collection-card";
+import { PostCollectionFilters } from "@/components/posts/post-collection-filters";
 import { Pagination } from "@/components/generic/pagination";
 import { cn } from "@/lib/utils";
 
@@ -34,8 +35,16 @@ export default function PublishedPostsPage() {
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // Filter state — stored in refs so loadCollections closure always reads latest
+  const activeSearchRef = useRef("");
+  const activeProviderUserIdsRef = useRef<string[]>([]);
+
   const loadingRef = useRef(false);
   const needsRefreshRef = useRef(false);
+
+  // Tracks whether the upcoming [currentPage] effect was triggered by a filter change
+  // (to avoid double-loading when we navigate to page=1 after filter change)
+  const skipNextPageEffectRef = useRef(false);
 
   const loadCollections = useCallback(
     async (page: number, isManualRefresh = false) => {
@@ -45,8 +54,17 @@ export default function PublishedPostsPage() {
       else setLoading(true);
       setError(null);
 
+      const search = activeSearchRef.current;
+      const providerUserIds = activeProviderUserIdsRef.current;
+
       try {
-        const res = await fetchPostCollectionsApi(getToken, page - 1, "published");
+        const res = await fetchPostCollectionsApi(
+          getToken,
+          page - 1,
+          "published",
+          search || undefined,
+          providerUserIds.length > 0 ? providerUserIds : undefined
+        );
         setCollections(res.content);
         setTotalPages(res.totalPages);
         setTotalElements(res.totalElements);
@@ -69,11 +87,17 @@ export default function PublishedPostsPage() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
+  // Load on URL page change
   useEffect(() => {
+    if (skipNextPageEffectRef.current) {
+      skipNextPageEffectRef.current = false;
+      return;
+    }
     loadCollections(currentPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
+  // Auto-refresh
   useEffect(() => {
     const interval = setInterval(() => {
       if (!document.hidden) loadCollections(currentPage, true);
@@ -90,9 +114,31 @@ export default function PublishedPostsPage() {
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
+
+  // Called by PostCollectionFilters when search or account selection changes
+  const handleFiltersChange = useCallback(
+    (search: string, providerUserIds: string[]) => {
+      activeSearchRef.current = search;
+      activeProviderUserIdsRef.current = providerUserIds;
+
+      // If not already on page 1, navigate there and skip the resulting page effect
+      if (currentPage !== 1) {
+        skipNextPageEffectRef.current = true;
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", "1");
+        router.replace(`?${params.toString()}`, { scroll: false });
+      }
+
+      // Always load immediately with the updated filters from page 1
+      loadCollections(1);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentPage, searchParams, router]
+  );
 
   const formatLastRefresh = () => {
     const diffMins = Math.floor((Date.now() - lastRefresh.getTime()) / 60000);
@@ -156,6 +202,13 @@ export default function PublishedPostsPage() {
         </div>
       </header>
 
+      {/* Filter bar */}
+      <div className="border-b border-border/50 bg-background/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+          <PostCollectionFilters onFiltersChange={handleFiltersChange} />
+        </div>
+      </div>
+
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {error && (
@@ -178,7 +231,9 @@ export default function PublishedPostsPage() {
             <div className="h-12 w-12 rounded-2xl bg-primary/[0.08] flex items-center justify-center mb-4 border border-border/20">
               <Loader2 className="h-5 w-5 animate-spin text-primary" />
             </div>
-            <p className="text-sm text-muted-foreground font-medium">Loading collections…</p>
+            <p className="text-sm text-muted-foreground font-medium">
+              Loading collections…
+            </p>
           </div>
         ) : !isEmpty ? (
           <>
@@ -226,8 +281,8 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
       </h3>
 
       <p className="text-sm text-muted-foreground max-w-xs mb-8 leading-relaxed">
-        Once your scheduled posts are published across platforms, each campaign will appear here
-        as a collection.
+        Once your scheduled posts are published across platforms, each campaign
+        will appear here as a collection.
       </p>
 
       <button
