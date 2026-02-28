@@ -4,31 +4,18 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 
-import { Clock, Calendar, BarChart, Link2, PlusCircle, AlertTriangle, CheckCircle } from "lucide-react";
+import { Clock, Calendar, Link2, PlusCircle, AlertTriangle, CheckCircle } from "lucide-react";
 
-import { fetchAnalyticsData } from "@/service/analytics";
 import { fetchPaginatedPostsApi } from "@/service/pagingatedPosts";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 
-import type { AnalyticsData } from "@/service/analytics";
 import type { PostResponse } from "@/model/PostResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
-
-import {
-  LineChart,
-  Line,
-  ResponsiveContainer,
-  Tooltip,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-} from "recharts";
 
 export default function DashboardPage() {
   const { getToken } = useAuth();
 
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
-  const [upcomingPosts, setUpcomingPosts] = useState<PostResponse[]>([]);
+  const [scheduledPosts, setScheduledPosts] = useState<PostResponse[]>([]);
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
 
   const [loading, setLoading] = useState(true);
@@ -40,14 +27,12 @@ export default function DashboardPage() {
 
         const tokenFn = getToken;
 
-        const [analyticsRes, upcomingRes, accountsRes] = await Promise.all([
-          fetchAnalyticsData(tokenFn),
+        const [upcomingRes, accountsRes] = await Promise.all([
           fetchPaginatedPostsApi(tokenFn, 0, "SCHEDULED"),
           fetchConnectedAccountsApi(tokenFn, null),
         ]);
 
-        setAnalytics(analyticsRes);
-        setUpcomingPosts(upcomingRes.content.slice(0, 5));
+        setScheduledPosts(upcomingRes.content);
         setAccounts(accountsRes);
       } catch (err) {
         console.error("Error loading dashboard:", err);
@@ -59,7 +44,7 @@ export default function DashboardPage() {
     load();
   }, [getToken]);
 
-  if (loading || !analytics) {
+  if (loading) {
     return (
       <main className="p-8 flex justify-center items-center min-h-screen bg-background">
         <p className="text-muted-foreground text-sm">Loading dashboard...</p>
@@ -67,11 +52,17 @@ export default function DashboardPage() {
     );
   }
 
-  const scheduledToday = analytics.postsOverTime.find(
-    (p) => p.date === new Date().toISOString().slice(0, 10)
-  )?.count || 0;
+  const today = new Date().toISOString().slice(0, 10);
+  const scheduledToday = scheduledPosts.filter((p) =>
+    p.scheduledTime?.startsWith(today)
+  ).length;
 
-  const failCount = analytics.failedPosts;
+  const weekFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const scheduledThisWeek = scheduledPosts.filter((p) =>
+    p.scheduledTime && p.scheduledTime <= weekFromNow
+  ).length;
+
+  const upcomingPosts = scheduledPosts.slice(0, 5);
 
   const allActive = accounts.every((acc) => acc.providerUserId);
   const failedAccounts = accounts.filter((a) => !a.providerUserId).length;
@@ -111,20 +102,13 @@ export default function DashboardPage() {
           <StatsCard
             icon={Clock}
             title="This Week"
-            value={analytics.postsOverTime.slice(-7).reduce((a, b) => a + b.count, 0)}
+            value={scheduledThisWeek}
           />
 
           <StatsCard
             icon={Link2}
             title="Connected Accounts"
             value={accounts.length}
-          />
-
-          <StatsCard
-            icon={AlertTriangle}
-            title="Failed Posts"
-            value={failCount}
-            danger={failCount > 0}
           />
         </div>
 
@@ -142,13 +126,6 @@ export default function DashboardPage() {
               <button className="px-4 py-2.5 bg-secondary text-secondary-foreground text-sm font-medium rounded-lg
                 hover:bg-muted transition-colors duration-200 flex items-center gap-2">
                 <Clock className="w-4 h-4" /> Scheduled Posts
-              </button>
-            </Link>
-
-            <Link href="/analytics">
-              <button className="px-4 py-2.5 bg-secondary text-secondary-foreground text-sm font-medium rounded-lg
-                hover:bg-muted transition-colors duration-200 flex items-center gap-2">
-                <BarChart className="w-4 h-4" /> Analytics
               </button>
             </Link>
 
@@ -237,44 +214,6 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Activity Chart */}
-        <div className="bg-card rounded-lg p-6 shadow-sm border border-border">
-          <h2 className="text-lg font-semibold text-card-foreground mb-6">Activity (Last 7 Days)</h2>
-
-          <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={analytics.postsOverTime.slice(-7)}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis
-                dataKey="date"
-                stroke="hsl(var(--muted-foreground))"
-                style={{ fontSize: 12 }}
-                tickLine={false}
-              />
-              <YAxis 
-                stroke="hsl(var(--muted-foreground))" 
-                style={{ fontSize: 12 }} 
-                tickLine={false} 
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: 'calc(var(--radius) - 2px)',
-                  fontSize: '12px'
-                }}
-              />
-              <Line
-                type="monotone"
-                dataKey="count"
-                stroke="hsl(var(--accent))"
-                strokeWidth={3}
-                dot={{ fill: 'hsl(var(--accent))', r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
         </div>
 
       </div>

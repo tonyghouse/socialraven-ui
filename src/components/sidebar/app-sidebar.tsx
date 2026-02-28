@@ -5,10 +5,8 @@ import {
   LayoutDashboard,
   CalendarCheck2,
   Cable,
-  LineChart,
   ChevronLeft,
   Send,
-  CalendarX2,
   CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
@@ -31,12 +29,6 @@ const navGroups = [
       { title: "Calendar", url: "/calendar", icon: CalendarDays },
       { title: "Scheduled Posts", url: "/scheduled-posts", icon: Calendar },
       { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
-    ],
-  },
-  {
-    label: "Insights",
-    items: [
-      { title: "Analytics", url: "/analytics", icon: LineChart },
     ],
   },
   {

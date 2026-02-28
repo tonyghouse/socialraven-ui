@@ -6,10 +6,8 @@ import {
   LayoutDashboard,
   Send,
   Calendar,
-  LineChart,
   MoreHorizontal,
   CalendarCheck2,
-  CalendarX2,
   Cable,
   User,
   LogOut,
@@ -22,7 +20,6 @@ import { useClerk, useUser } from "@clerk/nextjs";
 
 // ── Items that live inside the More drawer ────────────────────────────────────
 const drawerItems = [
-  { title: "Calendar", url: "/calendar", icon: CalendarDays },
   { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
   { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
 ];
@@ -188,12 +185,12 @@ export function MobileBottomBar() {
             </Link>
           </div>
 
-          {/* Analytics */}
+          {/* Calendar */}
           <NavTab
-            url="/analytics"
-            title="Analytics"
-            icon={LineChart}
-            isActive={pathname.startsWith("/analytics")}
+            url="/calendar"
+            title="Calendar"
+            icon={CalendarDays}
+            isActive={pathname.startsWith("/calendar")}
           />
 
           {/* More */}
