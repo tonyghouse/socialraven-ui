@@ -28,7 +28,7 @@ export default function PrivacyPolicyPage() {
   return (
     <>
       <Navbar />
-      <div className="bg-[#f9fafb] px-6 md:px-10 pt-5">
+      <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
         <div className="mx-auto max-w-7xl">
           <Link
             href="/"
@@ -94,8 +94,8 @@ export default function PrivacyPolicyPage() {
                   <div className="rounded-xl bg-slate-50 p-4 text-sm text-slate-800 space-y-1">
                     <p className="font-semibold">Social Raven</p>
                     <p>Email:{" "}
-                      <a href="mailto:team@socialraven.io" className="text-emerald-700 underline underline-offset-2">
-                        team@socialraven.io
+                      <a href="mailto:team+privacy@socialraven.io" className="text-emerald-700 underline underline-offset-2">
+                        team+privacy@socialraven.io
                       </a>
                     </p>
                     <p>Website: <span className="text-slate-600">socialraven.io</span></p>
@@ -352,8 +352,8 @@ export default function PrivacyPolicyPage() {
 
                   <p className="text-sm text-slate-600">
                     To exercise any of the above rights, contact us at{" "}
-                    <a href="mailto:team@socialraven.io" className="text-emerald-700 underline underline-offset-2">
-                      team@socialraven.io
+                    <a href="mailto:team+privacy@socialraven.io" className="text-emerald-700 underline underline-offset-2">
+                      team+privacy@socialraven.io
                     </a>. We will respond within <span className="font-semibold">30 days</span> (or 45 days for
                     CCPA requests where permitted). We may require identity verification before processing requests.
                   </p>
@@ -367,11 +367,11 @@ export default function PrivacyPolicyPage() {
                     <em>&quot;Data Deletion Request&quot;</em>:
                   </p>
                   <a
-                    href="mailto:team@socialraven.io"
+                    href="mailto:team+privacy@socialraven.io"
                     className="inline-flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-medium text-slate-900 hover:bg-slate-100 transition-colors border border-slate-200"
                   >
                     <span>📧</span>
-                    <span>team@socialraven.io</span>
+                    <span>team+privacy@socialraven.io</span>
                   </a>
                   <p className="text-sm text-slate-700">Upon confirmed request, we will permanently erase:</p>
                   <ul className="ml-5 list-disc space-y-1 text-sm text-slate-700">
@@ -397,8 +397,8 @@ export default function PrivacyPolicyPage() {
                     jurisdiction). We do not knowingly collect personal data from children. If we become aware
                     that we have collected data from a child without appropriate consent, we will delete it
                     promptly. If you believe a child has provided us with personal data, contact{" "}
-                    <a href="mailto:team@socialraven.io" className="text-emerald-700 underline underline-offset-2">
-                      team@socialraven.io
+                    <a href="mailto:team+privacy@socialraven.io" className="text-emerald-700 underline underline-offset-2">
+                      team+privacy@socialraven.io
                     </a>{" "}
                     immediately.
                   </p>
@@ -425,11 +425,11 @@ export default function PrivacyPolicyPage() {
                   <h2 className="text-xl font-semibold text-slate-900">13. Contact Us</h2>
                   <p className="text-sm text-slate-700">For questions, complaints, or to exercise your data rights:</p>
                   <a
-                    href="mailto:team@socialraven.io"
+                    href="mailto:team+privacy@socialraven.io"
                     className="inline-flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2 text-sm font-medium text-slate-900 hover:bg-slate-100 transition-colors border border-slate-200"
                   >
                     <span>📧</span>
-                    <span>team@socialraven.io</span>
+                    <span>team+privacy@socialraven.io</span>
                   </a>
                   <p className="text-sm text-slate-600">
                     We aim to respond to all privacy-related enquiries within{" "}

@@ -33,7 +33,7 @@ export default function TermsOfServicePage() {
   return (
     <>
       <Navbar />
-      <div className="bg-[#f9fafb] px-6 md:px-10 pt-5">
+      <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
         <div className="mx-auto max-w-7xl">
           <Link
             href="/"
@@ -140,8 +140,8 @@ export default function TermsOfServicePage() {
                     <li>All activity that occurs under your account;</li>
                     <li>
                       Notifying us immediately at{" "}
-                      <a href="mailto:team@socialraven.io" className="underline underline-offset-2 text-foreground/90">
-                        team@socialraven.io
+                      <a href="mailto:team+support@socialraven.io" className="underline underline-offset-2 text-foreground/90">
+                        team+support@socialraven.io
                       </a>{" "}
                       if you suspect unauthorised access or a security breach.
                     </li>
@@ -346,8 +346,8 @@ export default function TermsOfServicePage() {
                   <p className="text-foreground/70 leading-relaxed">
                     <strong>By you:</strong> You may stop using the Service and close your account at any
                     time by contacting{" "}
-                    <a href="mailto:team@socialraven.io" className="underline underline-offset-2 text-foreground/90">
-                      team@socialraven.io
+                    <a href="mailto:team+support@socialraven.io" className="underline underline-offset-2 text-foreground/90">
+                      team+support@socialraven.io
                     </a>
                     . Upon termination, your data will be deleted in accordance with our Privacy Policy.
                   </p>
@@ -511,10 +511,10 @@ export default function TermsOfServicePage() {
                     <p className="text-foreground/70">
                       Email:{" "}
                       <a
-                        href="mailto:team@socialraven.io"
+                        href="mailto:team+legal@socialraven.io"
                         className="font-medium text-foreground underline underline-offset-2"
                       >
-                        team@socialraven.io
+                        team+legal@socialraven.io
                       </a>
                     </p>
                   </div>

@@ -18,7 +18,7 @@ const ENTRIES = [
       "Multi-platform post creation (image, video, text)",
       "Analytics dashboard with reach, engagement, and post performance",
       "Multi-account management for agencies",
-      "GDPR-compliant data handling with EU data storage",
+      "GDPR and CCPA-compliant data handling",
     ],
   },
 ];
@@ -27,7 +27,7 @@ export default function ChangelogPage() {
   return (
     <>
       <Navbar />
-      <div className="bg-[#f9fafb] px-6 md:px-10 pt-5">
+      <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
         <div className="mx-auto max-w-7xl">
           <Link
             href="/"
