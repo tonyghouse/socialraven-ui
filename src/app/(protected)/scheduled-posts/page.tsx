@@ -6,7 +6,6 @@ import { fetchPostCollectionsApi } from "@/service/fetchPostCollections";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { useAuth } from "@clerk/nextjs";
 import {
-  Loader2,
   AlertCircle,
   RefreshCw,
   Layers,
@@ -16,6 +15,7 @@ import {
 import { CollectionCard } from "@/components/posts/collection-card";
 import { PostCollectionFilters } from "@/components/posts/post-collection-filters";
 import { Pagination } from "@/components/generic/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 const REFRESH_INTERVAL = 30 * 1000;
@@ -35,15 +35,10 @@ export default function ScheduledPostsPage() {
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Filter state — stored in refs so loadCollections closure always reads latest
   const activeSearchRef = useRef("");
   const activeProviderUserIdsRef = useRef<string[]>([]);
-
   const loadingRef = useRef(false);
   const needsRefreshRef = useRef(false);
-
-  // Tracks whether the upcoming [currentPage] effect was triggered by a filter change
-  // (to avoid double-loading when we navigate to page=1 after filter change)
   const skipNextPageEffectRef = useRef(false);
 
   const loadCollections = useCallback(
@@ -87,7 +82,6 @@ export default function ScheduledPostsPage() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  // Load on URL page change
   useEffect(() => {
     if (skipNextPageEffectRef.current) {
       skipNextPageEffectRef.current = false;
@@ -97,7 +91,6 @@ export default function ScheduledPostsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
-  // Auto-refresh
   useEffect(() => {
     const interval = setInterval(() => {
       if (!document.hidden) loadCollections(currentPage, true);
@@ -119,13 +112,11 @@ export default function ScheduledPostsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
 
-  // Called by PostCollectionFilters when search or account selection changes
   const handleFiltersChange = useCallback(
     (search: string, providerUserIds: string[]) => {
       activeSearchRef.current = search;
       activeProviderUserIdsRef.current = providerUserIds;
 
-      // If not already on page 1, navigate there and skip the resulting page effect
       if (currentPage !== 1) {
         skipNextPageEffectRef.current = true;
         const params = new URLSearchParams(searchParams.toString());
@@ -133,7 +124,6 @@ export default function ScheduledPostsPage() {
         router.replace(`?${params.toString()}`, { scroll: false });
       }
 
-      // Always load immediately with the updated filters from page 1
       loadCollections(1);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -227,13 +217,10 @@ export default function ScheduledPostsPage() {
         )}
 
         {loading && collections.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24">
-            <div className="h-12 w-12 rounded-2xl bg-primary/[0.08] flex items-center justify-center mb-4 border border-border/20">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
-            </div>
-            <p className="text-sm text-muted-foreground font-medium">
-              Loading collections…
-            </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCollectionCard key={i} />
+            ))}
           </div>
         ) : !isEmpty ? (
           <>
@@ -262,6 +249,38 @@ export default function ScheduledPostsPage() {
         )}
       </div>
     </main>
+  );
+}
+
+function SkeletonCollectionCard() {
+  return (
+    <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+      <div className="flex items-center justify-between px-5 pt-5">
+        <Skeleton className="h-6 w-16 rounded-lg" />
+        <Skeleton className="h-6 w-20 rounded-full" />
+      </div>
+      <div className="px-5 pt-3 pb-4 space-y-2.5">
+        <Skeleton className="h-5 w-4/5 rounded-md" />
+        <Skeleton className="h-4 w-full rounded-md" />
+        <Skeleton className="h-4 w-3/5 rounded-md" />
+        <Skeleton className="h-8 w-40 rounded-lg mt-1" />
+      </div>
+      <div className="px-5">
+        <div className="h-px bg-border/40" />
+      </div>
+      <div className="px-5 py-4">
+        <Skeleton className="h-3 w-16 rounded mb-3" />
+        <div className="flex gap-2">
+          <Skeleton className="h-8 w-8 rounded-xl" />
+          <Skeleton className="h-8 w-8 rounded-xl" />
+          <Skeleton className="h-8 w-8 rounded-xl" />
+        </div>
+      </div>
+      <div className="px-5 py-3.5 border-t border-border/40 bg-muted/20 flex justify-between items-center">
+        <Skeleton className="h-3.5 w-32 rounded" />
+        <Skeleton className="h-3.5 w-16 rounded" />
+      </div>
+    </div>
   );
 }
 
