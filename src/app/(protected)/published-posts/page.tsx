@@ -182,7 +182,7 @@ export default function PublishedPostsPage() {
 
               <button
                 onClick={() => router.push("/schedule-post")}
-                className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
+                className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
               >
                 <Plus className="h-3.5 w-3.5" />
                 New Post
@@ -306,7 +306,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
 
       <button
         onClick={onCreatePost}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-sm font-semibold text-sm"
+        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent text-accent-foreground hover:opacity-90 transition-all shadow-sm font-semibold text-sm"
       >
         <Plus className="h-4 w-4" />
         Schedule Your First Post

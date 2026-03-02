@@ -31,8 +31,8 @@ function StepCard({
   return (
     <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
       <div className="flex items-start gap-4 px-6 py-4 border-b border-border/60 bg-muted/20">
-        <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center mt-0.5">
-          <span className="text-xs font-bold text-primary">{step}</span>
+        <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center mt-0.5">
+          <span className="text-xs font-bold text-accent">{step}</span>
         </div>
         <div>
           <h2 className="text-sm font-bold text-foreground">{title}</h2>
@@ -112,8 +112,8 @@ export default function ScheduledPostCollectionPage() {
       <div className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="px-4 sm:px-6 py-3.5">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <CalendarClock className="w-[18px] h-[18px] text-primary" />
+            <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+              <CalendarClock className="w-[18px] h-[18px] text-accent" />
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-base font-bold text-foreground tracking-tight leading-tight">
@@ -126,7 +126,7 @@ export default function ScheduledPostCollectionPage() {
               </p>
             </div>
             {selectedCount > 0 && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-semibold text-primary flex-shrink-0">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 rounded-full text-xs font-semibold text-accent flex-shrink-0">
                 <Zap className="w-3 h-3" />
                 {selectedCount} account{selectedCount !== 1 ? "s" : ""}
               </div>

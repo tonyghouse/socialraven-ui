@@ -169,7 +169,7 @@ export default function PublishedCollectionDetailPage() {
           </p>
           <button
             onClick={() => router.push("/published-posts")}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity mx-auto"
+            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-opacity mx-auto"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Published Posts
@@ -259,7 +259,7 @@ export default function PublishedCollectionDetailPage() {
 
           <button
             onClick={() => router.push("/schedule-post")}
-            className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm flex-shrink-0"
+            className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm flex-shrink-0"
           >
             <Plus className="h-3.5 w-3.5" />
             New Post
@@ -389,7 +389,7 @@ export default function PublishedCollectionDetailPage() {
           {/* Post Caption */}
           <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden flex flex-col">
             <div className="flex items-center gap-3 px-5 py-4 border-b border-border/40 bg-muted/20 flex-shrink-0">
-              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
                 <FileText className="h-4 w-4 text-primary" />
               </div>
               <div>

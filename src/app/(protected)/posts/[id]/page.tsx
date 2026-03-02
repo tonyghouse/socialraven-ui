@@ -385,7 +385,7 @@ export default function PostDetailPage() {
           </p>
           <button
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             <ArrowLeft className="h-4 w-4" />
             Go back
@@ -688,7 +688,7 @@ export default function PostDetailPage() {
             {/* Schedule card */}
             <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                <div className="h-8 w-8 rounded-xl bg-accent/10 flex items-center justify-center">
                   <Calendar className="h-4 w-4 text-primary" />
                 </div>
                 <h3 className="text-sm font-semibold text-foreground">
@@ -822,7 +822,7 @@ export default function PostDetailPage() {
                 className="w-full rounded-2xl bg-card border border-border/60 shadow-sm p-5 text-left hover:border-primary/30 hover:shadow-md transition-all group"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center group-hover:bg-primary/10 transition-colors flex-shrink-0">
+                  <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center group-hover:bg-accent/10 transition-colors flex-shrink-0">
                     <Layers className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">

@@ -17,17 +17,14 @@ export default function ProtectedRootLayout({
     <>
       <SignedIn>
         {isMobile ? (
-          <div className="pb-16">
-            {/* Content */}
-            <main className="p-4">{children}</main>
-
-            {/* Bottom Nav */}
+          <div className="pb-16 page-bg min-h-screen">
+            <main>{children}</main>
             <MobileBottomBar />
           </div>
         ) : (
           <div className="flex h-screen w-full">
             <AppSidebar />
-            <main className="flex-1 overflow-auto">{children}</main>
+            <main className="flex-1 overflow-auto page-bg">{children}</main>
           </div>
         )}
       </SignedIn>

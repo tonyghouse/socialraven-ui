@@ -146,8 +146,8 @@ export default function ScheduledPostsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between gap-4 h-16">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <Layers className="w-[18px] h-[18px] text-primary" />
+              <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
+                <Layers className="w-[18px] h-[18px] text-accent" />
               </div>
               <div>
                 <h1 className="text-[17px] font-semibold text-foreground tracking-tight leading-tight">
@@ -182,7 +182,7 @@ export default function ScheduledPostsPage() {
 
               <button
                 onClick={() => router.push("/schedule-post")}
-                className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
+                className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
               >
                 <Plus className="h-3.5 w-3.5" />
                 New Post
@@ -306,7 +306,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
 
       <button
         onClick={onCreatePost}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-sm font-semibold text-sm"
+        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent text-accent-foreground hover:opacity-90 transition-all shadow-sm font-semibold text-sm"
       >
         <Plus className="h-4 w-4" />
         Schedule Your First Post
