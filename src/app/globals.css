@@ -63,7 +63,7 @@
 
 :root {
   /* Core Surface + Typography */
-  --background: #f8f9fb;
+  --background: 220 27% 98%;
   --foreground: 220 12% 18%;
   --card: 0 0% 100%;
   --card-foreground: 220 12% 18%;

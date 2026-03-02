@@ -16,6 +16,8 @@ export interface Plan {
   popular?: boolean;
   /** Stripe Price ID — populated once Stripe is configured */
   stripePriceId?: string;
+  /** If true, price is negotiated — display "Custom pricing" instead of the numeric price */
+  customPricing?: boolean;
   /** How many trial days this plan grants (only for TRIAL type) */
   trialDays?: number;
 }

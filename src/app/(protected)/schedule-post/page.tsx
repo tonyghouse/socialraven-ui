@@ -7,10 +7,12 @@ import { useAuth } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
+import { fetchAccountGroupsApi } from "@/service/accountGroups";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
+import { AccountGroup } from "@/model/AccountGroup";
 import { PostType } from "@/model/PostType";
 import PostTypeSelector from "@/components/schedule-post/post-type-selector";
-import { PostConnectedAccountsList } from "@/components/schedule-post/post-connected-accounts-list";
+import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
 import ScheduleImageForm from "@/components/schedule-post/schedule-image-form";
 import ScheduleVideoForm from "@/components/schedule-post/schedule-video-form";
 import ScheduleTextForm from "@/components/schedule-post/schedule-text-form";
@@ -69,20 +71,25 @@ export default function ScheduledPostCollectionPage() {
 
   const [postType, setPostType] = useState<PostType>("IMAGE");
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
+  const [accountGroups, setAccountGroups] = useState<AccountGroup[]>([]);
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (isLoaded) loadAccounts();
+    if (isLoaded) loadData();
   }, [isLoaded]);
 
-  async function loadAccounts() {
+  async function loadData() {
     try {
       setLoading(true);
-      const data = await fetchAllConnectedAccountsApi(getToken);
-      setConnectedAccounts(data);
+      const [accounts, groups] = await Promise.all([
+        fetchAllConnectedAccountsApi(getToken),
+        fetchAccountGroupsApi(getToken),
+      ]);
+      setConnectedAccounts(accounts);
+      setAccountGroups(groups);
     } catch (err: any) {
-      toast.error(err.message ?? "Failed to load connected accounts");
+      toast.error(err.message ?? "Failed to load accounts");
     } finally {
       setLoading(false);
     }
@@ -164,15 +171,12 @@ export default function ScheduledPostCollectionPage() {
           title="Select Accounts"
           description="Choose which social profiles this post will be published to."
         >
-          <PostConnectedAccountsList
+          <AccountSelector
             postType={postType}
             accounts={connectedAccounts}
+            groups={accountGroups}
             selectedAccountIds={selectedAccountIds}
-            toggleAccount={(id) =>
-              setSelectedAccountIds((prev) =>
-                prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-              )
-            }
+            onChange={setSelectedAccountIds}
             loading={loading}
           />
         </StepCard>

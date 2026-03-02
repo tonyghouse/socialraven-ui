@@ -369,7 +369,7 @@ export default function ProfilePage() {
                         </span>
                         {currentPlan.price > 0 && (
                           <span className="text-sm text-muted-foreground font-medium">
-                            ${currentPlan.price} / month
+                            {currentPlan.customPricing ? "Custom pricing" : `$${currentPlan.price} / month`}
                           </span>
                         )}
                       </div>
@@ -539,6 +539,8 @@ export default function ProfilePage() {
                   <div className="text-right shrink-0">
                     {plan.price === 0 ? (
                       <span className="text-base font-bold">Free</span>
+                    ) : plan.customPricing ? (
+                      <span className="text-base font-bold">Custom</span>
                     ) : (
                       <>
                         <span className="text-base font-bold">${plan.price}</span>

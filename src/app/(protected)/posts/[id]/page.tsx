@@ -4,11 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import {
-  Loader2,
   AlertCircle,
   FileText,
   FileImage,
-  Trash2,
   Clock,
   Calendar,
   Layers,
@@ -27,7 +25,6 @@ import { MediaPreview } from "@/components/generic/media-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { fetchPostByIdApi } from "@/service/getPost";
-import { deletePostByIdApi } from "@/service/deletePostByIdApi";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 
 const getImageUrl = (url: string | null | undefined) => {
@@ -341,8 +338,6 @@ export default function PostDetailPage() {
   const [post, setPost] = useState<PostResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     if (!postId) return;
@@ -357,16 +352,6 @@ export default function PostDetailPage() {
       }
     })();
   }, [postId, getToken]);
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await deletePostByIdApi(getToken, postId);
-      router.back();
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   if (loading) {
     return <SkeletonPostPage />;
@@ -448,6 +433,7 @@ export default function PostDetailPage() {
 
   const preview = renderPreview();
   const hasMedia = post.media && post.media.length > 0;
+  const extraMedia = hasMedia && post.media.length > 1 ? post.media.slice(1) : [];
 
   return (
     <main className="min-h-screen bg-background">
@@ -500,191 +486,164 @@ export default function PostDetailPage() {
       {/* Page Body */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <div className="grid lg:grid-cols-5 gap-6">
-          {/* ── Left: Content ── */}
+
+          {/* ── Left: Preview ── */}
           <div className="lg:col-span-3 space-y-5">
-            {/* Post header card */}
+
+            {/* Platform preview — hero */}
             <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div
-                className={cn(
-                  "h-0.5 w-full bg-gradient-to-r",
-                  status.barClass
-                )}
-              />
-              <div
-                className={cn(
-                  "px-6 pt-6 pb-5 bg-gradient-to-b",
-                  meta?.headerBg ?? "from-muted/20 to-transparent"
-                )}
-              >
-                <div className="flex items-center gap-3 mb-5">
-                  {Icon && (
-                    <div
-                      className={cn(
-                        "h-12 w-12 rounded-2xl border shadow-sm flex items-center justify-center flex-shrink-0",
-                        meta?.iconColor ??
-                          "bg-muted/50 border-border/60 text-muted-foreground"
-                      )}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-0.5">
-                      {meta?.name ?? post.provider}
-                    </p>
-                    {post.connectedAccount && (
-                      <p className="text-sm font-medium text-foreground">
-                        {post.connectedAccount.username}
-                      </p>
+              <div className={cn("h-0.5 w-full bg-gradient-to-r", status.barClass)} />
+              <div className="p-5">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    {Icon && (
+                      <div
+                        className={cn(
+                          "h-6 w-6 rounded-lg border flex items-center justify-center",
+                          meta?.iconColor
+                        )}
+                      >
+                        <Icon className="h-3.5 w-3.5" />
+                      </div>
                     )}
+                    <h2 className="text-sm font-semibold text-foreground">
+                      {meta?.name ?? post.provider} Preview
+                    </h2>
                   </div>
+                  <span className="text-[11px] text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full border border-border/30 font-medium">
+                    Approximate
+                  </span>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight leading-tight">
-                  {post.title}
-                </h1>
-              </div>
-
-              {/* Description — always show section, placeholder when empty */}
-              <div className="px-6 pb-6">
-                <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent mb-5" />
-                {post.description ? (
-                  <p className="text-base text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                    {post.description}
-                  </p>
+                {preview ? (
+                  <div className="bg-gradient-to-br from-muted/30 to-muted/50 rounded-xl p-4 border border-border/30">
+                    {preview}
+                  </div>
                 ) : (
-                  <div>
-                    <div className="space-y-2.5">
-                      {[100, 93, 86, 97, 79, 88, 100, 72].map((w, i) => (
-                        <div
-                          key={i}
-                          className="h-3.5 rounded-md bg-muted/70"
-                          style={{ width: `${w}%` }}
-                        />
+                  <div className="rounded-xl bg-muted/30 border border-border/30 p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="h-10 w-10 rounded-full bg-muted/80 border border-border/40 flex-shrink-0" />
+                      <div className="space-y-1.5 flex-1">
+                        <div className="h-3.5 bg-muted/80 rounded w-32" />
+                        <div className="h-3 bg-muted/60 rounded w-20" />
+                      </div>
+                    </div>
+                    <div className="space-y-2.5 mb-4">
+                      {[100, 88, 72].map((w, i) => (
+                        <div key={i} className="h-3 bg-muted/70 rounded" style={{ width: `${w}%` }} />
                       ))}
                     </div>
-                    <p className="text-xs text-muted-foreground/50 mt-4 pt-3 border-t border-border/30 italic">
-                      No caption added for this post
+                    <div className="aspect-video rounded-lg bg-muted/60 border border-border/30" />
+                    <p className="text-xs text-muted-foreground/50 mt-4 text-center italic">
+                      Preview not available for this platform
                     </p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Media gallery — always rendered */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-6">
-              <div className="flex items-center gap-2.5 mb-5">
-                <FileImage className="h-4 w-4 text-muted-foreground" />
-                <h2 className="text-base font-semibold text-foreground">
-                  Media
-                </h2>
-                <span className="ml-auto text-xs font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full border border-border/30">
-                  {hasMedia
-                    ? `${post.media.length} ${post.media.length === 1 ? "file" : "files"}`
-                    : "No files"}
-                </span>
+            {/* Caption — compact, below preview */}
+            {post.description && (
+              <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileText className="h-4 w-4 text-muted-foreground" />
+                  <h2 className="text-sm font-semibold text-foreground">Caption</h2>
+                </div>
+                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                  {post.description}
+                </p>
               </div>
+            )}
 
-              {hasMedia ? (
+            {/* Extra media files (beyond the first, which is shown in preview) */}
+            {extraMedia.length > 0 && (
+              <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <FileImage className="h-4 w-4 text-muted-foreground" />
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Additional Media
+                  </h2>
+                  <span className="ml-auto text-xs font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full border border-border/30">
+                    {extraMedia.length} {extraMedia.length === 1 ? "file" : "files"}
+                  </span>
+                </div>
                 <div
                   className={cn(
                     "grid gap-3",
-                    post.media.length === 1
-                      ? "grid-cols-1"
-                      : post.media.length === 2
-                      ? "grid-cols-2"
-                      : "grid-cols-2 sm:grid-cols-3"
+                    extraMedia.length === 1 ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3"
                   )}
                 >
-                  {post.media.map((m, i) => (
+                  {extraMedia.map((m, i) => (
                     <div
                       key={m.id ?? i}
                       className="rounded-xl overflow-hidden border border-border/40 shadow-sm hover:shadow-md transition-shadow"
                     >
                       <MediaPreview
                         media={mapMediaResponseToMedia(m)}
-                        className={cn(
-                          "w-full",
-                          post.media.length === 1
-                            ? "aspect-video"
-                            : "aspect-square"
-                        )}
+                        className="w-full aspect-square"
                       />
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="aspect-square rounded-xl bg-muted/60 border border-border/30"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground/50 mt-4 pt-3 border-t border-border/30 italic">
-                    No media files attached to this post
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Platform preview — always rendered, placeholder when unsupported */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-6">
-              <div className="flex items-center gap-2.5 mb-5">
-                {Icon && (
-                  <div
-                    className={cn(
-                      "h-6 w-6 rounded-lg border flex items-center justify-center",
-                      meta?.iconColor
-                    )}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                  </div>
-                )}
-                <h2 className="text-base font-semibold text-foreground">
-                  {meta?.name ?? post.provider} Preview
-                </h2>
-                <span className="ml-auto text-[11px] text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full border border-border/30 font-medium">
-                  Approximate
-                </span>
               </div>
-
-              {preview ? (
-                <div className="bg-gradient-to-br from-muted/30 to-muted/50 rounded-xl p-4 border border-border/30">
-                  {preview}
-                </div>
-              ) : (
-                <div className="rounded-xl bg-muted/30 border border-border/30 p-6">
-                  {/* Skeleton-like preview placeholder */}
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="h-10 w-10 rounded-full bg-muted/80 border border-border/40 flex-shrink-0" />
-                    <div className="space-y-1.5 flex-1">
-                      <div className="h-3.5 bg-muted/80 rounded w-32" />
-                      <div className="h-3 bg-muted/60 rounded w-20" />
-                    </div>
-                  </div>
-                  <div className="space-y-2.5 mb-4">
-                    {[100, 88, 72].map((w, i) => (
-                      <div
-                        key={i}
-                        className="h-3 bg-muted/70 rounded"
-                        style={{ width: `${w}%` }}
-                      />
-                    ))}
-                  </div>
-                  <div className="aspect-video rounded-lg bg-muted/60 border border-border/30" />
-                  <p className="text-xs text-muted-foreground/50 mt-4 text-center italic">
-                    Preview not available for this platform
-                  </p>
-                </div>
-              )}
-            </div>
+            )}
           </div>
 
           {/* ── Right: Sidebar ── */}
           <div className="lg:col-span-2 space-y-4">
+
+            {/* Account card — top of sidebar */}
+            {post.connectedAccount && (
+              <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Scheduled For
+                  </h3>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
+                  <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-border/50 shadow-sm flex-shrink-0">
+                    {profileImageSrc ? (
+                      <Image
+                        src={profileImageSrc}
+                        alt={post.connectedAccount.username}
+                        fill
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                        <User className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-foreground truncate">
+                      {post.connectedAccount.username}
+                    </p>
+                    <div className="flex items-center gap-1.5 mt-1">
+                      {Icon && (
+                        <div
+                          className={cn(
+                            "h-4 w-4 rounded border flex items-center justify-center",
+                            meta?.iconColor
+                          )}
+                        >
+                          <Icon className="h-2.5 w-2.5" />
+                        </div>
+                      )}
+                      <p className="text-xs text-muted-foreground font-medium">
+                        {meta?.name ?? post.provider}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Schedule card */}
             <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
               <div className="flex items-center gap-2.5 mb-4">
@@ -716,58 +675,6 @@ export default function PostDetailPage() {
               </div>
             </div>
 
-            {/* Account card */}
-            {post.connectedAccount && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-                <div className="flex items-center gap-2.5 mb-4">
-                  <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-sm font-semibold text-foreground">
-                    Account
-                  </h3>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="relative h-11 w-11 rounded-full overflow-hidden border-2 border-border/40 shadow-sm flex-shrink-0">
-                    {profileImageSrc ? (
-                      <Image
-                        src={profileImageSrc}
-                        alt={post.connectedAccount.username}
-                        fill
-                        sizes="44px"
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                        <User className="h-5 w-5 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground truncate">
-                      {post.connectedAccount.username}
-                    </p>
-                    <div className="flex items-center gap-1.5 mt-0.5">
-                      {Icon && (
-                        <div
-                          className={cn(
-                            "h-4 w-4 rounded border flex items-center justify-center",
-                            meta?.iconColor
-                          )}
-                        >
-                          <Icon className="h-2.5 w-2.5" />
-                        </div>
-                      )}
-                      <p className="text-xs text-muted-foreground font-medium">
-                        {meta?.name ?? post.provider}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Post stats card */}
             <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
               <div className="flex items-center gap-2.5 mb-4">
@@ -781,11 +688,10 @@ export default function PostDetailPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between py-2 border-b border-border/30">
                   <span className="text-xs text-muted-foreground font-medium">
-                    Type
+                    Platform
                   </span>
-                  <span className="text-xs font-semibold text-foreground capitalize">
-                    {post.provider?.charAt(0) +
-                      (post.provider?.slice(1).toLowerCase() ?? "")}
+                  <span className="text-xs font-semibold text-foreground">
+                    {meta?.name ?? post.provider}
                   </span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-border/30">
@@ -838,47 +744,6 @@ export default function PostDetailPage() {
               </button>
             )}
 
-            {/* Delete zone */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                Danger Zone
-              </p>
-
-              {!confirmDelete ? (
-                <button
-                  onClick={() => setConfirmDelete(true)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-100 hover:border-red-200 transition-all"
-                >
-                  <Trash2 className="h-4 w-4" />
-                  Delete Post
-                </button>
-              ) : (
-                <div className="space-y-2">
-                  <p className="text-xs text-muted-foreground text-center mb-3 leading-relaxed">
-                    This action cannot be undone. The post will be permanently
-                    deleted.
-                  </p>
-                  <button
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-red-600 hover:bg-red-700 transition-colors disabled:opacity-60"
-                  >
-                    {isDeleting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                    {isDeleting ? "Deleting…" : "Yes, delete permanently"}
-                  </button>
-                  <button
-                    onClick={() => setConfirmDelete(false)}
-                    className="w-full px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
       </div>
@@ -910,78 +775,66 @@ function SkeletonPostPage() {
         <div className="grid lg:grid-cols-5 gap-6">
           {/* Left column skeleton */}
           <div className="lg:col-span-3 space-y-5">
-            {/* Post header */}
+            {/* Platform preview */}
             <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
               <Skeleton className="h-0.5 w-full rounded-none" />
-              <div className="px-6 pt-6 pb-5 space-y-5">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-12 w-12 rounded-2xl flex-shrink-0" />
-                  <div className="space-y-1.5">
-                    <Skeleton className="h-3 w-16 rounded" />
-                    <Skeleton className="h-4 w-24 rounded" />
+              <div className="p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-6 w-6 rounded-lg" />
+                    <Skeleton className="h-4 w-36 rounded" />
                   </div>
+                  <Skeleton className="h-5 w-20 rounded-full" />
                 </div>
-                <Skeleton className="h-9 w-4/5 rounded-xl" />
-              </div>
-              <div className="px-6 pb-6">
-                <div className="h-px bg-border/40 mb-5" />
-                <div className="space-y-2.5">
-                  {[100, 93, 86, 97, 79, 88, 100, 72].map((w, i) => (
-                    <Skeleton
-                      key={i}
-                      className="h-3.5 rounded-md"
-                      style={{ width: `${w}%` }}
-                    />
-                  ))}
+                <div className="rounded-xl bg-muted/30 border border-border/30 p-4 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
+                    <div className="space-y-1.5 flex-1">
+                      <Skeleton className="h-4 w-28 rounded" />
+                      <Skeleton className="h-3 w-20 rounded" />
+                    </div>
+                  </div>
+                  <Skeleton className="aspect-video w-full rounded-lg" />
+                  <div className="space-y-2">
+                    {[100, 82, 60].map((w, i) => (
+                      <Skeleton key={i} className="h-3 rounded" style={{ width: `${w}%` }} />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Media */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-6">
-              <div className="flex items-center gap-2.5 mb-5">
+            {/* Caption */}
+            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+              <div className="flex items-center gap-2 mb-3">
                 <Skeleton className="h-4 w-4 rounded" />
-                <Skeleton className="h-5 w-14 rounded" />
-                <Skeleton className="h-5 w-14 rounded-full ml-auto" />
+                <Skeleton className="h-4 w-16 rounded" />
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="aspect-square rounded-xl" />
+              <div className="space-y-2.5">
+                {[100, 93, 86, 97, 79].map((w, i) => (
+                  <Skeleton key={i} className="h-3.5 rounded-md" style={{ width: `${w}%` }} />
                 ))}
-              </div>
-            </div>
-
-            {/* Platform preview */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-6">
-              <div className="flex items-center gap-2.5 mb-5">
-                <Skeleton className="h-6 w-6 rounded-lg" />
-                <Skeleton className="h-5 w-36 rounded" />
-                <Skeleton className="h-5 w-20 rounded-full ml-auto" />
-              </div>
-              <div className="rounded-xl bg-muted/30 border border-border/30 p-4 space-y-4">
-                <div className="flex items-center gap-3">
-                  <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
-                  <div className="space-y-1.5 flex-1">
-                    <Skeleton className="h-4 w-28 rounded" />
-                    <Skeleton className="h-3 w-20 rounded" />
-                  </div>
-                </div>
-                <Skeleton className="aspect-video w-full rounded-lg" />
-                <div className="space-y-2">
-                  {[100, 82, 60].map((w, i) => (
-                    <Skeleton
-                      key={i}
-                      className="h-3 rounded"
-                      style={{ width: `${w}%` }}
-                    />
-                  ))}
-                </div>
               </div>
             </div>
           </div>
 
           {/* Right sidebar skeleton */}
           <div className="lg:col-span-2 space-y-4">
+            {/* Account */}
+            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+              <div className="flex items-center gap-2.5 mb-4">
+                <Skeleton className="h-8 w-8 rounded-xl" />
+                <Skeleton className="h-4 w-24 rounded" />
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
+                <Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-28 rounded" />
+                  <Skeleton className="h-3 w-20 rounded" />
+                </div>
+              </div>
+            </div>
+
             {/* Schedule */}
             <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
               <div className="flex items-center gap-2.5 mb-4">
@@ -995,21 +848,6 @@ function SkeletonPostPage() {
                   <Skeleton className="h-4 w-24 rounded" />
                 </div>
                 <Skeleton className="h-9 w-full rounded-xl" />
-              </div>
-            </div>
-
-            {/* Account */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <div className="flex items-center gap-2.5 mb-4">
-                <Skeleton className="h-8 w-8 rounded-xl" />
-                <Skeleton className="h-4 w-16 rounded" />
-              </div>
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-11 w-11 rounded-full flex-shrink-0" />
-                <div className="space-y-1.5">
-                  <Skeleton className="h-4 w-28 rounded" />
-                  <Skeleton className="h-3 w-20 rounded" />
-                </div>
               </div>
             </div>
 
@@ -1042,12 +880,6 @@ function SkeletonPostPage() {
                 </div>
                 <Skeleton className="h-4 w-4 rounded" />
               </div>
-            </div>
-
-            {/* Danger zone */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <Skeleton className="h-3 w-20 rounded mb-3" />
-              <Skeleton className="h-10 w-full rounded-xl" />
             </div>
           </div>
         </div>

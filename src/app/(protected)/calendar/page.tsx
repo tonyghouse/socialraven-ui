@@ -288,20 +288,21 @@ function DayDetailSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]"
+            className="fixed inset-0 z-40 bg-black/50"
             onClick={onClose}
           />
 
-          {/* Panel */}
+          {/* Modal */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-sm bg-background border-l border-border shadow-2xl flex flex-col"
+            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+            transition={{ type: "spring", damping: 28, stiffness: 350 }}
+            className="pointer-events-auto w-full max-w-sm max-h-[85vh] bg-white border border-border shadow-2xl flex flex-col rounded-2xl overflow-hidden"
           >
             {/* Header */}
-            <div className="flex items-start justify-between px-5 py-4 border-b border-border/60 bg-card/60">
+            <div className="flex items-start justify-between px-5 py-4 border-b border-border/60 bg-white">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5">
                   {day ? format(day, "EEEE") : ""}
@@ -402,6 +403,7 @@ function DayDetailSheet({
               </button>
             </div>
           </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -924,16 +926,6 @@ export default function CalendarPage() {
     [accounts]
   );
 
-  // Derived: which providerUserIds to filter on
-  const activeProviderUserIds = useMemo(() => {
-    if (selectedAccountIds.length > 0) return selectedAccountIds;
-    const groupedIds = new Set(groups.flatMap((g) => g.accountIds));
-    if (selectedGroupId === "all")       return [];
-    if (selectedGroupId === "ungrouped") return accounts.filter((a) => !groupedIds.has(a.providerUserId)).map((a) => a.providerUserId);
-    const grp = groups.find((g) => g.id === selectedGroupId);
-    return grp ? grp.accountIds : [];
-  }, [selectedGroupId, selectedAccountIds, groups, accounts]);
-
   // Load groups + accounts once
   useEffect(() => {
     let cancelled = false;
@@ -957,7 +949,7 @@ export default function CalendarPage() {
     return () => { cancelled = true; };
   }, [getToken]);
 
-  // Fetch posts when view / date / filters change
+  // Fetch ALL posts for the time period; filtering is done client-side
   useEffect(() => {
     if (loadingData) return;
     let cancelled = false;
@@ -971,8 +963,7 @@ export default function CalendarPage() {
         const data = await fetchCalendarPostsApi(
           getToken,
           range.startDate,
-          range.endDate,
-          activeProviderUserIds.length > 0 ? activeProviderUserIds : undefined
+          range.endDate
         );
         if (!cancelled) setPosts(data ?? []);
       } catch (e: unknown) {
@@ -983,9 +974,31 @@ export default function CalendarPage() {
     }
     fetchPosts();
     return () => { cancelled = true; };
-  }, [view, currentDate, activeProviderUserIds, loadingData, getToken]);
+  }, [view, currentDate, loadingData, getToken]);
 
-  const postsByDay = useMemo(() => groupPostsByDay(posts), [posts]);
+  // Client-side filtering — instant, no extra API call
+  const filteredPosts = useMemo(() => {
+    if (selectedAccountIds.length === 0 && selectedGroupId === "all") return posts;
+
+    let allowedIds: Set<string>;
+    if (selectedAccountIds.length > 0) {
+      allowedIds = new Set(selectedAccountIds);
+    } else if (selectedGroupId === "ungrouped") {
+      const groupedIds = new Set(groups.flatMap((g) => g.accountIds));
+      allowedIds = new Set(
+        accounts
+          .filter((a) => !groupedIds.has(a.providerUserId))
+          .map((a) => a.providerUserId)
+      );
+    } else {
+      const grp = groups.find((g) => g.id === selectedGroupId);
+      allowedIds = new Set(grp ? grp.accountIds : []);
+    }
+
+    return posts.filter((p) => allowedIds.has(p.providerUserId));
+  }, [posts, selectedAccountIds, selectedGroupId, groups, accounts]);
+
+  const postsByDay = useMemo(() => groupPostsByDay(filteredPosts), [filteredPosts]);
 
   function goBack()    { view === "month" ? setCurrentDate(subMonths(currentDate, 1)) : setCurrentDate(subWeeks(currentDate, 1)); }
   function goForward() { view === "month" ? setCurrentDate(addMonths(currentDate, 1)) : setCurrentDate(addWeeks(currentDate, 1)); }
@@ -1061,8 +1074,8 @@ export default function CalendarPage() {
                 <p className="text-xs text-muted-foreground leading-tight">
                   {loadingPosts
                     ? "Refreshing…"
-                    : posts.length > 0
-                    ? `${posts.length} post${posts.length !== 1 ? "s" : ""} in view`
+                    : filteredPosts.length > 0
+                    ? `${filteredPosts.length} post${filteredPosts.length !== 1 ? "s" : ""} in view`
                     : "Visual overview of all your scheduled content"}
                 </p>
               </div>

@@ -116,6 +116,8 @@ const platformIconStyle: Record<string, string> = {
 const postStatusBadge: Record<string, string> = {
   PUBLISHED:
     "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20",
+  POSTED:
+    "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20",
   SCHEDULED:
     "text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20",
   FAILED:
@@ -625,7 +627,7 @@ function AccountRow({
   const statusClass =
     postStatusBadge[post.postStatus] ?? postStatusBadge.SCHEDULED;
   const statusLabel =
-    post.postStatus === "PUBLISHED"
+    ["PUBLISHED", "POSTED"].includes(post.postStatus)
       ? "Published"
       : post.postStatus === "FAILED"
       ? "Failed"

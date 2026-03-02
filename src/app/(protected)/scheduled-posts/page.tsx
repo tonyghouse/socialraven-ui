@@ -151,7 +151,7 @@ export default function ScheduledPostsPage() {
               </div>
               <div>
                 <h1 className="text-[17px] font-semibold text-foreground tracking-tight leading-tight">
-                  Scheduled Posts
+                  Post Collections
                 </h1>
                 <p className="text-xs text-muted-foreground">
                   {loading && collections.length === 0
@@ -296,12 +296,12 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
       </div>
 
       <h3 className="text-xl font-semibold text-foreground mb-2 tracking-tight">
-        No scheduled posts yet
+        No post collections yet
       </h3>
 
       <p className="text-sm text-muted-foreground max-w-xs mb-8 leading-relaxed">
-        Schedule your content once and publish to all your platforms
-        simultaneously. Each campaign appears here as a collection.
+        A post collection groups your content across all platforms into one
+        scheduled campaign. Create one to get started.
       </p>
 
       <button

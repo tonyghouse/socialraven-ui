@@ -489,10 +489,18 @@ export default function LandingPage() {
                       <p className="text-sm text-[hsl(var(--muted-foreground))] mb-5">{plan.description}</p>
 
                       <div className="mb-6">
-                        <span className="text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
-                          ${plan.price}
-                        </span>
-                        <span className="text-sm text-[hsl(var(--muted-foreground))] ml-1">/ month</span>
+                        {plan.customPricing ? (
+                          <span className="text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
+                            Custom pricing
+                          </span>
+                        ) : (
+                          <>
+                            <span className="text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
+                              ${plan.price}
+                            </span>
+                            <span className="text-sm text-[hsl(var(--muted-foreground))] ml-1">/ month</span>
+                          </>
+                        )}
                       </div>
 
                       <ul className="space-y-3 mb-7">
