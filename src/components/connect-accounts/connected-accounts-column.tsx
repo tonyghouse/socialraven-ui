@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { Trash2, RefreshCw, Plus, ArrowRight } from "lucide-react";
+import { Trash, ArrowCounterClockwise, Plus, ArrowRight } from "@phosphor-icons/react";
 
 type Props = {
   platformKey: string;
@@ -207,14 +207,14 @@ function AccountRow({
           aria-label="Reconnect account"
           className="p-1.5 rounded-lg hover:bg-white text-foreground/40 hover:text-foreground/70 transition-all"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <ArrowCounterClockwise className="w-3.5 h-3.5" />
         </button>
         <button
           onClick={() => onRemove?.(acc)}
           aria-label="Remove account"
           className="p-1.5 rounded-lg hover:bg-red-50 text-foreground/40 hover:text-red-500 transition-all"
         >
-          <Trash2 className="w-3.5 h-3.5" />
+          <Trash className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>

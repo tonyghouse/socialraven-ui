@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/navbar/navbar";
-import {
-  TrendingUp,
-  Zap,
-  Users,
-  Shield,
-  PenTool,
-  BarChart,
-  ArrowRight,
-  Clock,
-} from "lucide-react";
+import { TrendUp, Lightning, Users, Shield, PenNib, ChartBar, ArrowRight, Clock } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = {
   title: "Blog | Social Raven",
@@ -20,19 +11,19 @@ export const metadata: Metadata = {
 
 const CATEGORIES = [
   {
-    icon: TrendingUp,
+    icon: TrendUp,
     title: "Growth Strategy",
     description:
       "Proven tactics to grow your following and engagement across every platform.",
   },
   {
-    icon: Zap,
+    icon: Lightning,
     title: "Automation & Scheduling",
     description:
       "Get the most out of your scheduling workflow — batch content, best times, and more.",
   },
   {
-    icon: BarChart,
+    icon: ChartBar,
     title: "Analytics & Reporting",
     description:
       "Understand your numbers. Learn which posts work, when to post, and why.",
@@ -44,7 +35,7 @@ const CATEGORIES = [
       "Tools, templates, and frameworks for agencies managing multiple client accounts.",
   },
   {
-    icon: PenTool,
+    icon: PenNib,
     title: "Content Creation",
     description:
       "AI-assisted writing, caption formulas, and creative frameworks for every platform.",
@@ -60,9 +51,9 @@ const CATEGORIES = [
 const COMING_SOON = [
   {
     category: "Growth Strategy",
-    title: "The 2026 Instagram Algorithm: What Actually Works Right Now",
+    title: "The 2026 InstagramLogo Algorithm: What Actually Works Right Now",
     excerpt:
-      "Instagram's algorithm has shifted significantly. We break down the signals that matter most — Reels, carousels, and why reach isn't dead.",
+      "InstagramLogo's algorithm has shifted significantly. We break down the signals that matter most — Reels, carousels, and why reach isn't dead.",
     readTime: "7 min read",
   },
   {

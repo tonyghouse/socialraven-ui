@@ -4,23 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
-import {
-  ArrowLeft,
-  AlertCircle,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  ChevronRight,
-  Plus,
-  Image as ImageIcon,
-  Video,
-  FileText,
-  User,
-  ArrowRight,
-  LayoutGrid,
-} from "lucide-react";
+import { ArrowLeft, Warning, Calendar, Clock, CheckCircle, XCircle, CaretRight, Plus, Image as ImageIcon, Video, FileText, User, ArrowRight, SquaresFour } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
@@ -35,7 +19,7 @@ import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 
 const statusConfig: Record<
   string,
-  { label: string; Icon: typeof CheckCircle2; className: string }
+  { label: string; Icon: typeof CheckCircle; className: string }
 > = {
   SCHEDULED: {
     label: "Scheduled",
@@ -45,13 +29,13 @@ const statusConfig: Record<
   },
   PUBLISHED: {
     label: "Published",
-    Icon: CheckCircle2,
+    Icon: CheckCircle,
     className:
       "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20",
   },
   PARTIAL_SUCCESS: {
     label: "Partial Success",
-    Icon: AlertTriangle,
+    Icon: Warning,
     className:
       "text-amber-700 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20",
   },
@@ -88,11 +72,11 @@ const typeConfig: Record<
 };
 
 const platformDisplayName: Record<string, string> = {
-  INSTAGRAM: "Instagram",
+  INSTAGRAM: "InstagramLogo",
   LINKEDIN: "LinkedIn",
   YOUTUBE: "YouTube",
-  FACEBOOK: "Facebook",
-  X: "X (Twitter)",
+  FACEBOOK: "FacebookLogo",
+  X: "X (TwitterLogo)",
   THREADS: "Threads",
   TIKTOK: "TikTok",
 };
@@ -161,7 +145,7 @@ export default function PublishedCollectionDetailPage() {
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
         <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
           <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-7 w-7 text-red-500" />
+            <Warning className="h-7 w-7 text-red-500" />
           </div>
           <h3 className="font-semibold text-foreground mb-1">
             Collection not found
@@ -248,12 +232,12 @@ export default function PublishedCollectionDetailPage() {
               onClick={() => router.push("/published-posts")}
               className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
             >
-              <CheckCircle2 className="h-3.5 w-3.5" />
+              <CheckCircle className="h-3.5 w-3.5" />
               <span className="hidden sm:inline font-medium">
                 Published Posts
               </span>
             </button>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+            <CaretRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
             <span className="font-medium text-foreground truncate">
               {collection.title}
             </span>
@@ -485,7 +469,7 @@ export default function PublishedCollectionDetailPage() {
           <div className="flex items-center justify-between mb-5">
             <div>
               <div className="flex items-center gap-2.5">
-                <LayoutGrid className="h-5 w-5 text-muted-foreground" />
+                <SquaresFour className="h-5 w-5 text-muted-foreground" />
                 <h2 className="text-lg font-semibold text-foreground tracking-tight">
                   Account Groups
                 </h2>
@@ -501,7 +485,7 @@ export default function PublishedCollectionDetailPage() {
 
           {collection.posts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-border/40 bg-muted/20">
-              <LayoutGrid className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <SquaresFour className="h-10 w-10 text-muted-foreground/40 mb-3" />
               <p className="text-sm font-medium text-muted-foreground">
                 No posts in this collection
               </p>

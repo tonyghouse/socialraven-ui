@@ -1,6 +1,6 @@
 "use client";
 
-import { Instagram, Twitter, Linkedin, Youtube, Facebook } from "lucide-react";
+import { InstagramLogo, TwitterLogo, LinkedinLogo, YoutubeLogo, FacebookLogo } from "@phosphor-icons/react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
@@ -9,10 +9,10 @@ const PLATFORM_META: Record<
   string,
   { label: string; icon: any; accent: string }
 > = {
-  x: { label: "X / Twitter", icon: Twitter, accent: "text-foreground/80" },
-  linkedin: { label: "LinkedIn", icon: Linkedin, accent: "text-accent" },
-  youtube: { label: "YouTube", icon: Youtube, accent: "text-red-500" },
-  // instagram: { label: "Instagram", icon: Instagram, accent: "text-pink-500" },
+  x: { label: "X / TwitterLogo", icon: TwitterLogo, accent: "text-foreground/80" },
+  linkedin: { label: "LinkedIn", icon: LinkedinLogo, accent: "text-accent" },
+  youtube: { label: "YouTube", icon: YoutubeLogo, accent: "text-red-500" },
+  // instagram: { label: "InstagramLogo", icon: InstagramLogo, accent: "text-pink-500" },
 };
 
 const ORDER = ["x", "linkedin", "youtube"];

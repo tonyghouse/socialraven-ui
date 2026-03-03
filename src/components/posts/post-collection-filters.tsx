@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
-import { Search, SlidersHorizontal, X, Check, ChevronDown } from "lucide-react";
+import { MagnifyingGlass, SlidersHorizontal, X, Check, CaretDown } from "@phosphor-icons/react";
 import {
   Popover,
   PopoverContent,
@@ -125,12 +125,12 @@ export function PostCollectionFilters({
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      {/* Search input */}
+      {/* MagnifyingGlass input */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+        <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
         <input
           type="text"
-          placeholder="Search by title or description…"
+          placeholder="MagnifyingGlass by title or description…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className={cn(
@@ -151,7 +151,7 @@ export function PostCollectionFilters({
         )}
       </div>
 
-      {/* Filter popover */}
+      {/* Funnel popover */}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
           <button
@@ -169,7 +169,7 @@ export function PostCollectionFilters({
                 {activeFilterCount}
               </span>
             )}
-            <ChevronDown
+            <CaretDown
               className={cn(
                 "h-3 w-3 transition-transform",
                 isOpen && "rotate-180"
@@ -182,7 +182,7 @@ export function PostCollectionFilters({
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
             <span className="text-sm font-semibold text-foreground">
-              Filter by account
+              Funnel by account
             </span>
             {activeFilterCount > 0 && (
               <button

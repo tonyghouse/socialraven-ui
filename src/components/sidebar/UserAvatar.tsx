@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useState, useRef, useEffect } from "react";
-import { LogOut, User } from "lucide-react";
+import { SignOut, User } from "@phosphor-icons/react";
 
 export function UserAvatar({
   size = "md",
@@ -78,7 +78,7 @@ export function UserAvatar({
             onClick={() => signOut()}
             className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg hover:bg-red-50 text-[13px] font-medium text-red-500 transition-colors"
           >
-            <LogOut className="w-3.5 h-3.5" />
+            <SignOut className="w-3.5 h-3.5" />
             Sign out
           </button>
         </div>

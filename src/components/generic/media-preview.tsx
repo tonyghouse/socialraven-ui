@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileImage, FileVideo, File, X } from "lucide-react";
+import { FileImage, FileVideo, File, X } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 

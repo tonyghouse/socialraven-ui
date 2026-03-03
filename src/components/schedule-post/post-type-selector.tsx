@@ -2,7 +2,7 @@
 
 import { PostType } from "@/model/PostType";
 import { cn } from "@/lib/utils";
-import { ImageIcon, Video, Type } from "lucide-react";
+import { ImageIcon, Video, TextT } from "@phosphor-icons/react";
 
 const TYPES = [
   {
@@ -20,7 +20,7 @@ const TYPES = [
   {
     value: "TEXT" as PostType,
     label: "Text",
-    Icon: Type,
+    Icon: TextT,
     description: "Updates & threads",
   },
 ];

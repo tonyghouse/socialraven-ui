@@ -2,30 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navbar/navbar";
-import {
-  Calendar,
-  Clock,
-  Feather,
-  BarChart,
-  ArrowRight,
-  Instagram,
-  Twitter,
-  Linkedin,
-  Youtube,
-  Facebook,
-  TrendingUp,
-  Zap,
-  Globe,
-  Lock,
-  Users,
-  CheckCircle2,
-  Star,
-  Shield,
-  Sparkles,
-  Play,
-  Plus,
-  Minus,
-} from "lucide-react";
+import { Calendar, Clock, Feather, ChartBar, ArrowRight, InstagramLogo, TwitterLogo, LinkedinLogo, YoutubeLogo, FacebookLogo, TrendUp, Lightning, Globe, Lock, Users, CheckCircle, Star, Shield, Sparkle, Play, Plus, Minus } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -53,11 +30,11 @@ function ThreadsIcon({ className }: { className?: string }) {
 }
 
 const INTEGRATIONS = [
-  { name: "Instagram", icon: Instagram, gradient: "from-purple-500 to-pink-500" },
-  { name: "Twitter / X", icon: Twitter, gradient: "from-gray-800 to-gray-900" },
-  { name: "LinkedIn", icon: Linkedin, gradient: "from-blue-600 to-blue-700" },
-  { name: "YouTube", icon: Youtube, gradient: "from-red-500 to-red-600" },
-  { name: "Facebook", icon: Facebook, gradient: "from-blue-500 to-blue-600" },
+  { name: "InstagramLogo", icon: InstagramLogo, gradient: "from-purple-500 to-pink-500" },
+  { name: "TwitterLogo / X", icon: TwitterLogo, gradient: "from-gray-800 to-gray-900" },
+  { name: "LinkedIn", icon: LinkedinLogo, gradient: "from-blue-600 to-blue-700" },
+  { name: "YouTube", icon: YoutubeLogo, gradient: "from-red-500 to-red-600" },
+  { name: "FacebookLogo", icon: FacebookLogo, gradient: "from-blue-500 to-blue-600" },
   { name: "TikTok", icon: TikTokIcon, gradient: "from-slate-800 to-slate-900" },
   { name: "Threads", icon: ThreadsIcon, gradient: "from-slate-700 to-slate-800" },
 ];
@@ -78,7 +55,7 @@ const FEATURES = [
   {
     title: "Auto Posting",
     description: "Create once, publish everywhere — automatically, at exactly the right time.",
-    icon: Zap,
+    icon: Lightning,
   },
   {
     title: "AI-Powered Content",
@@ -88,7 +65,7 @@ const FEATURES = [
   {
     title: "Unified Analytics",
     description: "Track performance across all platforms in a single dashboard. Know what works, do more of it.",
-    icon: BarChart,
+    icon: ChartBar,
   },
   {
     title: "Multi-Account Management",
@@ -106,7 +83,7 @@ const STEPS = [
   {
     step: "01",
     title: "Connect your accounts",
-    description: "Link Instagram, LinkedIn, X, YouTube, and Facebook in seconds. OAuth-secured — no passwords stored.",
+    description: "Link InstagramLogo, LinkedIn, X, YouTube, and FacebookLogo in seconds. OAuth-secured — no passwords stored.",
     icon: Globe,
   },
   {
@@ -119,7 +96,7 @@ const STEPS = [
     step: "03",
     title: "Let it run",
     description: "Posts go live at optimal times automatically. Monitor everything from your analytics dashboard.",
-    icon: Zap,
+    icon: Lightning,
   },
 ];
 
@@ -163,7 +140,7 @@ const FAQ = [
   {
     question: "Which social platforms are supported?",
     answer:
-      "We currently support Instagram, Twitter/X, LinkedIn, YouTube, and Facebook. More platforms are on the way.",
+      "We currently support InstagramLogo, TwitterLogo/X, LinkedIn, YouTube, and FacebookLogo. More platforms are on the way.",
   },
   {
     question: "Can I manage multiple clients from one account?",
@@ -257,7 +234,7 @@ export default function LandingPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center">
-                          <TrendingUp className="w-4 h-4 text-[hsl(var(--accent))]" />
+                          <TrendUp className="w-4 h-4 text-[hsl(var(--accent))]" />
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Performance</p>
@@ -300,9 +277,9 @@ export default function LandingPage() {
                       </div>
                       <div className="flex gap-2">
                         {[
-                          { icon: Instagram, gradient: "from-purple-500 to-pink-500" },
-                          { icon: Twitter, gradient: "from-gray-800 to-gray-900" },
-                          { icon: Linkedin, gradient: "from-blue-600 to-blue-700" },
+                          { icon: InstagramLogo, gradient: "from-purple-500 to-pink-500" },
+                          { icon: TwitterLogo, gradient: "from-gray-800 to-gray-900" },
+                          { icon: LinkedinLogo, gradient: "from-blue-600 to-blue-700" },
                         ].map(({ icon: Icon, gradient }, i) => (
                           <div key={i} className={`w-8 h-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center`}>
                             <Icon className="w-3.5 h-3.5 text-white" />
@@ -432,7 +409,7 @@ export default function LandingPage() {
                   >
                     <div className="flex gap-0.5 mb-4">
                       {[...Array(rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" />
+                        <Star key={i} weight="fill" className="w-4 h-4 text-[hsl(var(--accent))]" />
                       ))}
                     </div>
                     <p className="text-sm text-[hsl(var(--foreground))]/80 mb-5 leading-relaxed">&quot;{quote}&quot;</p>
@@ -480,7 +457,7 @@ export default function LandingPage() {
                     >
                       {plan.popular && (
                         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))] text-xs font-semibold mb-4">
-                          <Sparkles className="w-3 h-3" />
+                          <Sparkle className="w-3 h-3" />
                           Most Popular
                         </div>
                       )}
@@ -506,7 +483,7 @@ export default function LandingPage() {
                       <ul className="space-y-3 mb-7">
                         {plan.features.map((feature) => (
                           <li key={feature} className="flex items-start gap-2.5 text-sm text-[hsl(var(--foreground))]/80">
-                            <CheckCircle2 className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0 mt-0.5" />
+                            <CheckCircle className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0 mt-0.5" />
                             {feature}
                           </li>
                         ))}

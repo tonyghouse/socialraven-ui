@@ -4,29 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
-import {
-  ArrowLeft,
-  AlertCircle,
-  Calendar,
-  Clock,
-  Layers,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  ChevronRight,
-  Plus,
-  Image as ImageIcon,
-  Video,
-  FileText,
-  User,
-  LayoutGrid,
-  Trash2,
-  Pencil,
-  Loader2,
-  CalendarDays,
-  AlignLeft,
-  Type,
-} from "lucide-react";
+import { ArrowLeft, Warning, Calendar, Clock, Stack, CheckCircle, XCircle, CaretRight, Plus, Image as ImageIcon, Video, FileText, User, SquaresFour, Trash, PencilSimple, CircleNotch, CalendarDots, AlignLeft, TextT } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import { deletePostCollectionApi } from "@/service/deletePostCollectionApi";
@@ -43,7 +21,7 @@ import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 
 const statusConfig: Record<
   string,
-  { label: string; Icon: typeof CheckCircle2; className: string }
+  { label: string; Icon: typeof CheckCircle; className: string }
 > = {
   SCHEDULED: {
     label: "Scheduled",
@@ -53,13 +31,13 @@ const statusConfig: Record<
   },
   PUBLISHED: {
     label: "Completed",
-    Icon: CheckCircle2,
+    Icon: CheckCircle,
     className:
       "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20",
   },
   PARTIAL_SUCCESS: {
     label: "Partially Completed",
-    Icon: AlertTriangle,
+    Icon: Warning,
     className:
       "text-amber-700 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20",
   },
@@ -96,11 +74,11 @@ const typeConfig: Record<
 };
 
 const platformDisplayName: Record<string, string> = {
-  INSTAGRAM: "Instagram",
+  INSTAGRAM: "InstagramLogo",
   LINKEDIN: "LinkedIn",
   YOUTUBE: "YouTube",
-  FACEBOOK: "Facebook",
-  X: "X (Twitter)",
+  FACEBOOK: "FacebookLogo",
+  X: "X (TwitterLogo)",
   THREADS: "Threads",
   TIKTOK: "TikTok",
 };
@@ -266,7 +244,7 @@ function DeleteModal({
           {/* Icon + heading */}
           <div className="flex items-start gap-4 mb-5">
             <div className="h-11 w-11 rounded-2xl bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 flex items-center justify-center flex-shrink-0">
-              <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <Trash className="h-5 w-5 text-red-600 dark:text-red-400" />
             </div>
             <div>
               <h2
@@ -389,12 +367,12 @@ function DeleteModal({
             >
               {isDeleting ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <CircleNotch className="h-4 w-4 animate-spin" />
                   Deleting…
                 </>
               ) : (
                 <>
-                  <Trash2 className="h-4 w-4" />
+                  <Trash className="h-4 w-4" />
                   Delete forever
                 </>
               )}
@@ -455,7 +433,7 @@ function EditModal({ collection, onCancel, onSave, isSaving }: EditModalProps) {
         <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-border/40 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-accent/10 border border-border/40 flex items-center justify-center">
-              <Pencil className="h-4 w-4 text-primary" />
+              <PencilSimple className="h-4 w-4 text-primary" />
             </div>
             <div>
               <h2
@@ -476,7 +454,7 @@ function EditModal({ collection, onCancel, onSave, isSaving }: EditModalProps) {
           {/* Title */}
           <div>
             <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              <Type className="h-3.5 w-3.5" />
+              <TextT className="h-3.5 w-3.5" />
               Title
             </label>
             <input
@@ -507,7 +485,7 @@ function EditModal({ collection, onCancel, onSave, isSaving }: EditModalProps) {
           {/* Schedule date/time — only editable if still SCHEDULED */}
           <div>
             <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              <CalendarDays className="h-3.5 w-3.5" />
+              <CalendarDots className="h-3.5 w-3.5" />
               Scheduled time
               {!isScheduled && (
                 <span className="ml-1 px-1.5 py-0.5 rounded-md bg-muted text-[10px] font-medium text-muted-foreground normal-case">
@@ -534,7 +512,7 @@ function EditModal({ collection, onCancel, onSave, isSaving }: EditModalProps) {
             </div>
             {!isScheduled && (
               <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
-                <AlertTriangle className="h-3 w-3 text-amber-500 flex-shrink-0" />
+                <Warning className="h-3 w-3 text-amber-500 flex-shrink-0" />
                 Schedule time cannot be changed after publishing has started.
               </p>
             )}
@@ -557,12 +535,12 @@ function EditModal({ collection, onCancel, onSave, isSaving }: EditModalProps) {
           >
             {isSaving ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <CircleNotch className="h-4 w-4 animate-spin" />
                 Saving…
               </>
             ) : (
               <>
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle className="h-4 w-4" />
                 Save changes
               </>
             )}
@@ -661,7 +639,7 @@ export default function ScheduledCollectionDetailPage() {
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
         <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
           <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-7 w-7 text-red-500" />
+            <Warning className="h-7 w-7 text-red-500" />
           </div>
           <h3 className="font-semibold text-foreground mb-1">
             Collection not found
@@ -742,9 +720,9 @@ export default function ScheduledCollectionDetailPage() {
           )}
         >
           {toast.type === "success" ? (
-            <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+            <CheckCircle className="h-4 w-4 flex-shrink-0" />
           ) : (
-            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <Warning className="h-4 w-4 flex-shrink-0" />
           )}
           {toast.message}
         </div>
@@ -779,12 +757,12 @@ export default function ScheduledCollectionDetailPage() {
               onClick={() => router.push("/scheduled-posts")}
               className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
             >
-              <Layers className="h-3.5 w-3.5" />
+              <Stack className="h-3.5 w-3.5" />
               <span className="hidden sm:inline font-medium">
                 Scheduled Posts
               </span>
             </button>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+            <CaretRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
             <span className="font-medium text-foreground truncate">
               {collection.title}
             </span>
@@ -796,7 +774,7 @@ export default function ScheduledCollectionDetailPage() {
               onClick={() => setShowEditModal(true)}
               className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-border/60 text-foreground hover:bg-muted/50 transition-all text-xs font-semibold"
             >
-              <Pencil className="h-3.5 w-3.5" />
+              <PencilSimple className="h-3.5 w-3.5" />
               Edit
             </button>
 
@@ -805,7 +783,7 @@ export default function ScheduledCollectionDetailPage() {
               onClick={() => setShowDeleteModal(true)}
               className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all text-xs font-semibold"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash className="h-3.5 w-3.5" />
               Delete
             </button>
 
@@ -864,13 +842,13 @@ export default function ScheduledCollectionDetailPage() {
                     onClick={() => setShowEditModal(true)}
                     className="h-8 w-8 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
                   >
-                    <Pencil className="h-3.5 w-3.5" />
+                    <PencilSimple className="h-3.5 w-3.5" />
                   </button>
                   <button
                     onClick={() => setShowDeleteModal(true)}
                     className="h-8 w-8 rounded-lg border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
                   >
-                    <Trash2 className="h-3.5 w-3.5" />
+                    <Trash className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
@@ -899,7 +877,7 @@ export default function ScheduledCollectionDetailPage() {
                   className="ml-2 h-6 w-6 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
                   title="Edit schedule"
                 >
-                  <Pencil className="h-3 w-3" />
+                  <PencilSimple className="h-3 w-3" />
                 </button>
               )}
             </div>
@@ -951,7 +929,7 @@ export default function ScheduledCollectionDetailPage() {
                   className="h-7 w-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all flex-shrink-0"
                   title="Edit caption"
                 >
-                  <Pencil className="h-3.5 w-3.5" />
+                  <PencilSimple className="h-3.5 w-3.5" />
                 </button>
               )}
             </div>
@@ -1035,7 +1013,7 @@ export default function ScheduledCollectionDetailPage() {
         {/* ── Platform Cards ── */}
         <div>
           <div className="flex items-center gap-2.5 mb-5">
-            <LayoutGrid className="h-5 w-5 text-muted-foreground" />
+            <SquaresFour className="h-5 w-5 text-muted-foreground" />
             <h2 className="text-lg font-semibold text-foreground tracking-tight">
               Platforms
             </h2>
@@ -1046,7 +1024,7 @@ export default function ScheduledCollectionDetailPage() {
 
           {collection.posts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-border/40 bg-muted/20">
-              <LayoutGrid className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <SquaresFour className="h-10 w-10 text-muted-foreground/40 mb-3" />
               <p className="text-sm font-medium text-muted-foreground">
                 No posts in this collection
               </p>
@@ -1071,14 +1049,14 @@ export default function ScheduledCollectionDetailPage() {
             onClick={() => setShowEditModal(true)}
             className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-border/60 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
           >
-            <Pencil className="h-4 w-4" />
+            <PencilSimple className="h-4 w-4" />
             Edit
           </button>
           <button
             onClick={() => setShowDeleteModal(true)}
             className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-red-200 dark:border-red-800/40 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash className="h-4 w-4" />
             Delete
           </button>
         </div>

@@ -11,7 +11,7 @@ import ScheduleDateTimePicker from "./date-time-picker";
 import { localToUTC } from "@/lib/timeUtil";
 import PlatformConfigsPanel from "./platform-configs-panel";
 import { cn } from "@/lib/utils";
-import { Send, Loader2 } from "lucide-react";
+import { PaperPlaneTilt, CircleNotch } from "@phosphor-icons/react";
 
 interface Props {
   connectedAccounts: ConnectedAccount[];
@@ -121,12 +121,12 @@ export default function ScheduleTextForm({ connectedAccounts, selectedIds, reset
       >
         {loading ? (
           <>
-            <Loader2 className="w-4 h-4 animate-spin" />
+            <CircleNotch className="w-4 h-4 animate-spin" />
             Scheduling...
           </>
         ) : (
           <>
-            <Send className="w-4 h-4" />
+            <PaperPlaneTilt className="w-4 h-4" />
             Schedule Post
           </>
         )}

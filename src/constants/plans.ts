@@ -1,4 +1,4 @@
-import { Clock, Zap, Sparkles, Building2 } from "lucide-react";
+import { Clock, Lightning, Sparkle, Buildings } from "@phosphor-icons/react";
 import type { Plan, PlanType } from "@/model/Plan";
 
 export const PLANS: Plan[] = [
@@ -84,7 +84,7 @@ export const PLANS: Plan[] = [
 
 export const PLAN_ICONS: Record<PlanType, React.ElementType> = {
   TRIAL:      Clock,
-  BASE:       Zap,
-  PRO:        Sparkles,
-  ENTERPRISE: Building2,
+  BASE:       Lightning,
+  PRO:        Sparkle,
+  ENTERPRISE: Buildings,
 };

@@ -12,24 +12,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import {
-  Search,
-  Users,
-  Check,
-  Info,
-  ChevronRight,
-  X,
-  Minus,
-} from "lucide-react";
+import { MagnifyingGlass, Users, Check, Info, CaretRight, X, Minus } from "@phosphor-icons/react";
 import { getImageUrl } from "@/service/getImageUrl";
 import { getInitials } from "@/service/getInitials";
 
 // ── constants ──────────────────────────────────────────────────────────────────
 
 const PLATFORM_LABELS: Record<string, string> = {
-  facebook: "Facebook",
-  instagram: "Instagram",
-  x: "X / Twitter",
+  facebook: "FacebookLogo",
+  instagram: "InstagramLogo",
+  x: "X / TwitterLogo",
   linkedin: "LinkedIn",
   youtube: "YouTube",
   threads: "Threads",
@@ -433,7 +425,7 @@ export function AccountSelector({
                   groups
                 </p>
               </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <CaretRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
             </div>
           ) : (
             /* Populated state */
@@ -514,13 +506,13 @@ export function AccountSelector({
               </Dialog.Close>
             </div>
 
-            {/* Search */}
+            {/* MagnifyingGlass */}
             <div className="relative mt-3.5">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              <MagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search groups or accounts…"
+                placeholder="MagnifyingGlass groups or accounts…"
                 className="pl-9 h-9 text-sm bg-muted border-border focus-visible:bg-background"
               />
               {search && (

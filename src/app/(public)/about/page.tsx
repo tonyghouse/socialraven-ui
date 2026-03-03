@@ -1,18 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/navbar/navbar";
-import {
-  Target,
-  Shield,
-  Globe,
-  Users,
-  Zap,
-  CheckCircle2,
-  ArrowRight,
-  BarChart,
-  Lock,
-  Calendar,
-} from "lucide-react";
+import { Target, Shield, Globe, Users, Lightning, CheckCircle, ArrowRight, ChartBar, Lock, Calendar } from "@phosphor-icons/react/dist/ssr";
 
 export const metadata: Metadata = {
   title: "About | Social Raven",
@@ -41,7 +30,7 @@ const VALUES = [
       "GDPR and CCPA-compliant from the ground up. Your data is never sold, never shared for advertising, and never used to train AI without your explicit consent.",
   },
   {
-    icon: Zap,
+    icon: Lightning,
     title: "Reliability you can count on",
     description:
       "Missed post times cost engagement. We obsess over uptime, delivery rates, and resilience so your content goes live exactly when it should.",
@@ -151,7 +140,7 @@ export default function AboutPage() {
               <div className="grid grid-cols-2 gap-4">
                 {[
                   { icon: Calendar, label: "Smart scheduling", value: "Post at peak times, automatically" },
-                  { icon: BarChart, label: "Unified analytics", value: "All platforms in one view" },
+                  { icon: ChartBar, label: "Unified analytics", value: "All platforms in one view" },
                   { icon: Users, label: "Multi-account", value: "Unlimited social profiles" },
                   { icon: Lock, label: "Secure & compliant", value: "GDPR · CCPA · TLS 1.2+" },
                 ].map(({ icon: Icon, label, value }) => (
@@ -221,7 +210,7 @@ export default function AboutPage() {
                   <ul className="space-y-2.5 pt-1">
                     {bullets.map((b) => (
                       <li key={b} className="flex items-center gap-2.5 text-sm text-[hsl(var(--foreground))]/80">
-                        <CheckCircle2 className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0" />
                         {b}
                       </li>
                     ))}

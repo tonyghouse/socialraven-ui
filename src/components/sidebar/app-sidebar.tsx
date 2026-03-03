@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  Calendar,
-  LayoutDashboard,
-  CalendarCheck2,
-  Cable,
-  ChevronLeft,
-  Send,
-  CalendarDays,
-} from "lucide-react";
+import { Calendar, SquaresFour, CalendarCheck, PlugsConnected, CaretLeft, PaperPlaneTilt, CalendarDots } from "@phosphor-icons/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -19,22 +11,22 @@ const navGroups = [
   {
     label: null,
     items: [
-      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      { title: "Dashboard", url: "/dashboard", icon: SquaresFour },
     ],
   },
   {
     label: "Content",
     items: [
-      { title: "Schedule Post", url: "/schedule-post", icon: Send },
-      { title: "Calendar", url: "/calendar", icon: CalendarDays },
+      { title: "Schedule Post", url: "/schedule-post", icon: PaperPlaneTilt },
+      { title: "Calendar", url: "/calendar", icon: CalendarDots },
       { title: "Scheduled Posts", url: "/scheduled-posts", icon: Calendar },
-      { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
+      { title: "Published Posts", url: "/published-posts", icon: CalendarCheck },
     ],
   },
   {
     label: "Accounts",
     items: [
-      { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
+      { title: "Connect Accounts", url: "/connect-accounts", icon: PlugsConnected },
     ],
   },
 ];
@@ -85,7 +77,7 @@ export function AppSidebar() {
           className="p-1.5 rounded-lg text-foreground/30 hover:text-foreground/60 hover:bg-black/[0.05] transition-colors shrink-0"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <ChevronLeft
+          <CaretLeft
             className={cn(
               "h-4 w-4 transition-transform duration-300",
               isCollapsed && "rotate-180"

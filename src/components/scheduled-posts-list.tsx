@@ -4,7 +4,7 @@ import type React from "react"
 
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Twitter, Linkedin, Facebook, Instagram, Trash2, Clock, CheckCircle } from "lucide-react"
+import { TwitterLogo, LinkedinLogo, FacebookLogo, InstagramLogo, Trash, Clock, CheckCircle } from "@phosphor-icons/react"
 import Image from "next/image";
 interface ScheduledPost {
   id: string
@@ -22,10 +22,10 @@ interface ScheduledPostsListProps {
 }
 
 const platformIcons: Record<string, React.ComponentType<any>> = {
-  Twitter,
-  LinkedIn: Linkedin,
-  Facebook,
-  Instagram,
+  TwitterLogo,
+  LinkedIn: LinkedinLogo,
+  FacebookLogo,
+  InstagramLogo,
 }
 
 export default function ScheduledPostsList({ posts, onDelete }: ScheduledPostsListProps) {
@@ -72,7 +72,7 @@ export default function ScheduledPostsList({ posts, onDelete }: ScheduledPostsLi
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-3 flex-wrap">
                     {post.platforms.map((platform) => {
-                      const PlatformIcon = platformIcons[platform] || Twitter
+                      const PlatformIcon = platformIcons[platform] || TwitterLogo
                       return (
                         <div key={platform} className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-lg">
                           <PlatformIcon className="w-4 h-4 text-primary" />
@@ -96,7 +96,7 @@ export default function ScheduledPostsList({ posts, onDelete }: ScheduledPostsLi
                   size="icon"
                   className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <Trash className="w-5 h-5" />
                 </Button>
               </div>
 

@@ -1,11 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card"
-import type { LucideIcon } from "lucide-react"
+import type { Icon } from "@phosphor-icons/react"
 
 interface StatsCardProps {
   title: string
   value: string | number
   subtitle?: string
-  icon: LucideIcon
+  icon: Icon
   className?: string
 }
 
