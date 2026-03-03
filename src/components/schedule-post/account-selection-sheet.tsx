@@ -21,7 +21,7 @@ import { getInitials } from "@/service/getInitials";
 const PLATFORM_LABELS: Record<string, string> = {
   facebook: "FacebookLogo",
   instagram: "InstagramLogo",
-  x: "X / TwitterLogo",
+  x: "X",
   linkedin: "LinkedIn",
   youtube: "YouTube",
   threads: "Threads",

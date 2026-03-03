@@ -1,6 +1,6 @@
 "use client";
 
-import { InstagramLogo, TwitterLogo, LinkedinLogo, YoutubeLogo, FacebookLogo } from "@phosphor-icons/react";
+import { InstagramLogo, XLogo, LinkedinLogo, YoutubeLogo, FacebookLogo } from "@phosphor-icons/react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
@@ -9,7 +9,7 @@ const PLATFORM_META: Record<
   string,
   { label: string; icon: any; accent: string }
 > = {
-  x: { label: "X / TwitterLogo", icon: TwitterLogo, accent: "text-foreground/80" },
+  x: { label: "X", icon: XLogo, accent: "text-foreground/80" },
   linkedin: { label: "LinkedIn", icon: LinkedinLogo, accent: "text-accent" },
   youtube: { label: "YouTube", icon: YoutubeLogo, accent: "text-red-500" },
   // instagram: { label: "InstagramLogo", icon: InstagramLogo, accent: "text-pink-500" },

@@ -52,7 +52,7 @@ const PLATFORM_COLORS: Record<string, string> = {
 
 const PLATFORM_LABELS: Record<string, string> = {
   instagram: "InstagramLogo",
-  x: "X / TwitterLogo",
+  x: "X",
   linkedin: "LinkedIn",
   facebook: "FacebookLogo",
   youtube: "YouTube",

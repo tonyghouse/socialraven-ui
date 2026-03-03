@@ -1,12 +1,12 @@
 // components/platform-icons.ts
-import { InstagramLogo, LinkedinLogo, TwitterLogo, FacebookLogo, YoutubeLogo } from "@phosphor-icons/react";
+import { InstagramLogo, LinkedinLogo, XLogo, FacebookLogo, YoutubeLogo } from "@phosphor-icons/react";
 import { TikTokIcon, ThreadsIcon } from "./platform-svg-icons";
 
 export const PLATFORM_ICONS: Record<string, any> = {
   // lowercase keys (matches Platform type)
   instagram: InstagramLogo,
   linkedin: LinkedinLogo,
-  x: TwitterLogo,
+  x: XLogo,
   facebook: FacebookLogo,
   youtube: YoutubeLogo,
   threads: ThreadsIcon,
@@ -14,7 +14,7 @@ export const PLATFORM_ICONS: Record<string, any> = {
   // uppercase keys (backward compatibility)
   INSTAGRAM: InstagramLogo,
   LINKEDIN: LinkedinLogo,
-  X: TwitterLogo,
+  X: XLogo,
   FACEBOOK: FacebookLogo,
   YOUTUBE: YoutubeLogo,
   THREADS: ThreadsIcon,

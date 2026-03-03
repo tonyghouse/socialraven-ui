@@ -71,7 +71,7 @@ const PLATFORM_BADGE: Record<string, string> = {
 };
 
 function platformLabel(platform: string) {
-  return platform === "x" ? "X / TwitterLogo" : platform;
+  return platform === "x" ? "X" : platform;
 }
 
 // ── AccountMiniRow ────────────────────────────────────────────────────────────
