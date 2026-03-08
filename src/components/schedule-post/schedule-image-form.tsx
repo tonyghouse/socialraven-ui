@@ -14,7 +14,7 @@ import { useAuth } from "@clerk/nextjs";
 import { localToUTC } from "@/lib/timeUtil";
 import PlatformConfigsPanel from "./platform-configs-panel";
 import { cn } from "@/lib/utils";
-import { PaperPlaneTilt, CircleNotch } from "@phosphor-icons/react";
+import { Send, Loader2 } from "lucide-react";
 
 interface Props {
   connectedAccounts: ConnectedAccount[];
@@ -146,12 +146,12 @@ export default function ScheduleImageForm({ connectedAccounts, selectedIds, rese
       >
         {loading ? (
           <>
-            <CircleNotch className="w-4 h-4 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" />
             Uploading & Scheduling...
           </>
         ) : (
           <>
-            <PaperPlaneTilt className="w-4 h-4" />
+            <Send className="w-4 h-4" />
             Schedule Post
           </>
         )}

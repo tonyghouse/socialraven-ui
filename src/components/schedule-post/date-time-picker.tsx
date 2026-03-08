@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { Calendar, Clock, Globe } from "@phosphor-icons/react";
+import { Calendar, Clock, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {

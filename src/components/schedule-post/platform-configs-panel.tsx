@@ -13,7 +13,7 @@ import {
   LinkedInConfig,
 } from "@/model/PostCollection";
 import { cn } from "@/lib/utils";
-import { CaretDown, CaretUp, Gear } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp, Settings2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -32,9 +32,9 @@ const PLATFORM_STYLES: Record<string, { bg: string; text: string; border: string
 };
 
 const PLATFORM_NAMES: Record<string, string> = {
-  facebook:  "FacebookLogo",
-  instagram: "InstagramLogo",
-  x:         "X (TwitterLogo)",
+  facebook:  "Facebook",
+  instagram: "Instagram",
+  x:         "X (Twitter)",
   linkedin:  "LinkedIn",
   youtube:   "YouTube",
   threads:   "Threads",
@@ -280,7 +280,7 @@ function YouTubePanel({ config, onChange }: { config: YouTubeConfig; onChange: (
         />
         <ToggleRow
           label="Notify Subscribers"
-          description="PaperPlaneTilt a notification to your subscribers when published"
+          description="Send a notification to your subscribers when published"
           checked={config.notifySubscribers ?? true}
           onChange={(v) => onChange({ ...config, notifySubscribers: v })}
         />
@@ -418,8 +418,8 @@ function PlatformAccordionCard({
           <span className={cn("text-sm font-semibold", styles.text)}>{name}</span>
         </div>
         {open
-          ? <CaretUp   className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-          : <CaretDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          ? <ChevronUp   className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
         }
       </button>
 
@@ -457,7 +457,7 @@ export default function PlatformConfigsPanel({ selectedAccounts, configs, onChan
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Gear className="w-4 h-4 text-muted-foreground" />
+        <Settings2 className="w-4 h-4 text-muted-foreground" />
         <div>
           <h3 className="text-sm font-semibold text-foreground">Platform Settings</h3>
           <p className="text-xs text-muted-foreground">Customize how your post appears on each platform</p>

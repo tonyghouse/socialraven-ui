@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Calendar, User, FileText, ArrowRight } from "@phosphor-icons/react";
+import { Calendar, User, FileText, ArrowRight } from "lucide-react";
 import { PLATFORM_ICONS } from "../generic/platform-icons";
 import { MediaPreview } from "../generic/media-preview";
 import { cn } from "@/lib/utils";

@@ -13,7 +13,15 @@ import {
   removeAccountFromGroupApi,
 } from "@/service/accountGroups";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Plus, PencilSimple, Trash, Check, X, Users, CaretDown } from "@phosphor-icons/react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Check,
+  X,
+  Users,
+  ChevronDown,
+} from "lucide-react";
 import { toast } from "sonner";
 import AppleSkeleton from "../generic/AppleSkelton";
 
@@ -71,7 +79,7 @@ const PLATFORM_BADGE: Record<string, string> = {
 };
 
 function platformLabel(platform: string) {
-  return platform === "x" ? "X / TwitterLogo" : platform;
+  return platform === "x" ? "X / Twitter" : platform;
 }
 
 // ── AccountMiniRow ────────────────────────────────────────────────────────────
@@ -246,14 +254,14 @@ function GroupCard({
               className="p-1.5 rounded-full hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition"
               aria-label="Rename group"
             >
-              <PencilSimple className="w-3.5 h-3.5" />
+              <Pencil className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => onDelete(group.id)}
               className="p-1.5 rounded-full hover:bg-red-50 text-muted-foreground hover:text-red-500 transition"
               aria-label="Delete group"
             >
-              <Trash className="w-3.5 h-3.5" />
+              <Trash2 className="w-3.5 h-3.5" />
             </button>
           </div>
         )}
@@ -284,7 +292,7 @@ function GroupCard({
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Add account</span>
-              <CaretDown
+              <ChevronDown
                 className={`w-3 h-3 transition-transform ${
                   showAddDropdown ? "rotate-180" : ""
                 }`}
@@ -390,7 +398,7 @@ function UngroupedAccountRow({
             className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/8 text-accent/70 hover:text-accent hover:bg-accent/15 text-[11px] font-semibold border border-accent/10 transition-all duration-150"
           >
             Assign
-            <CaretDown
+            <ChevronDown
               className={`w-3 h-3 transition-transform ${
                 showDropdown ? "rotate-180" : ""
               }`}

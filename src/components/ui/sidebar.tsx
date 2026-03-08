@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { SidebarSimple } from "@phosphor-icons/react"
+import { PanelLeft } from "lucide-react"
 
 
 
@@ -290,7 +290,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <SidebarSimple />
+      <PanelLeft />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

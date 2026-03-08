@@ -1,6 +1,18 @@
 "use client";
 
-import { Calendar, Image as ImageIcon, Video, FileText, CheckCircle, Clock, XCircle, Warning, ArrowRight, Stack, Play } from "@phosphor-icons/react";
+import {
+  Calendar,
+  Image as ImageIcon,
+  Video,
+  FileText,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  AlertTriangle,
+  ArrowRight,
+  Layers,
+  Play,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PLATFORM_ICONS } from "../generic/platform-icons";
 import { cn } from "@/lib/utils";
@@ -27,7 +39,7 @@ const STATUS_CONFIG = {
     pulse: false,
     className:
       "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30",
-    Icon: CheckCircle,
+    Icon: CheckCircle2,
   },
   PARTIAL_SUCCESS: {
     label: "Partial",
@@ -35,7 +47,7 @@ const STATUS_CONFIG = {
     pulse: false,
     className:
       "bg-amber-500/10 text-amber-700 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30",
-    Icon: Warning,
+    Icon: AlertTriangle,
   },
   FAILED: {
     label: "Failed",
@@ -199,7 +211,7 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
         <div className="flex items-center justify-between px-5 pt-5">
           <div className="flex items-center gap-1.5">
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[11px] font-semibold border bg-muted/60 text-muted-foreground border-border/50">
-              <Stack className="h-3 w-3" />
+              <Layers className="h-3 w-3" />
               Collection
             </span>
             <span

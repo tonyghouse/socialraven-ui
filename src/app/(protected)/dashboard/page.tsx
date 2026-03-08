@@ -4,7 +4,15 @@ import { useEffect, useState } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
-import { Clock, Calendar, Link as LinkIcon, PlusCircle, Warning, CheckCircle, ArrowRight } from "@phosphor-icons/react";
+import {
+  Clock,
+  Calendar,
+  Link2,
+  PlusCircle,
+  AlertTriangle,
+  CheckCircle,
+  ArrowRight,
+} from "lucide-react";
 
 import { fetchPaginatedPostsApi } from "@/service/pagingatedPosts";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
@@ -123,7 +131,7 @@ export default function DashboardPage() {
             value={scheduledThisWeek}
           />
           <StatCard
-            icon={LinkIcon}
+            icon={Link2}
             label="Connected Accounts"
             value={accounts.length}
           />
@@ -193,7 +201,7 @@ export default function DashboardPage() {
               <div className="p-5 space-y-4">
                 {accounts.length === 0 ? (
                   <div className="text-center py-3">
-                    <Warning className="w-7 h-7 text-amber-500 mx-auto mb-2" />
+                    <AlertTriangle className="w-7 h-7 text-amber-500 mx-auto mb-2" />
                     <p className="text-sm font-medium text-foreground mb-2">No accounts connected</p>
                     <Link href="/connect-accounts">
                       <button className="text-xs font-medium text-accent hover:opacity-75 transition-opacity">
@@ -208,7 +216,7 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <div className="flex items-center gap-2.5 p-3 rounded-xl bg-red-50 border border-red-100">
-                    <Warning className="w-4 h-4 text-red-500 flex-shrink-0" />
+                    <AlertTriangle className="w-4 h-4 text-red-500 flex-shrink-0" />
                     <p className="text-sm font-medium text-red-700">
                       {failedAccounts} account{failedAccounts > 1 ? "s" : ""} need reconnection
                     </p>
@@ -231,7 +239,7 @@ export default function DashboardPage() {
                 <QuickAction href="/schedule-post" icon={PlusCircle} label="Schedule a post" accent />
                 <QuickAction href="/scheduled-posts" icon={Clock} label="Scheduled posts" />
                 <QuickAction href="/calendar" icon={Calendar} label="Content calendar" />
-                <QuickAction href="/connect-accounts" icon={LinkIcon} label="Connect accounts" />
+                <QuickAction href="/connect-accounts" icon={Link2} label="Connect accounts" />
               </div>
             </div>
           </div>

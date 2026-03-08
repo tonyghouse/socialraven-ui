@@ -1,3 +1,4 @@
+
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google"
@@ -9,7 +10,6 @@ import { Toaster } from "@/components/ui/sonner"
 import Navbar from "@/components/navbar/navbar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import ClientToaster from "@/components/generic/ClientToaster";
-import { IconProvider } from "@/components/generic/icon-provider";
 
 
 
@@ -41,17 +41,17 @@ export default function RootLayout({
     <ClerkProvider>
    
     <html lang="en">
-      <body className={cn(
+      <body  className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}>
-          <IconProvider>
-            <ClientToaster />
-            {children}
-          </IconProvider>
+          <ClientToaster />
+          {children}
           </body>
     </html>
     
     </ClerkProvider>
   );
 }
+
+

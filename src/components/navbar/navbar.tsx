@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { Button } from "../ui/button";
-import { Code } from "@phosphor-icons/react";
+import { MessageSquareCode } from "lucide-react";
 import { Badge } from "../ui/badge";
 
 export default function Navbar() {

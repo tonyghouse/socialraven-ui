@@ -2,15 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SquaresFour, PaperPlaneTilt, Calendar, DotsThree, CalendarCheck, PlugsConnected, User, SignOut, CalendarDots, type Icon } from "@phosphor-icons/react";
+import {
+  LayoutDashboard,
+  Send,
+  Calendar,
+  MoreHorizontal,
+  CalendarCheck2,
+  Cable,
+  User,
+  LogOut,
+  CalendarDays,
+  type LucideIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
 
 // ── Items that live inside the More drawer ────────────────────────────────────
 const drawerItems = [
-  { title: "Published Posts", url: "/published-posts", icon: CalendarCheck },
-  { title: "Connect Accounts", url: "/connect-accounts", icon: PlugsConnected },
+  { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
+  { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -118,7 +129,7 @@ export function MobileBottomBar() {
             }}
             className="w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-[14px] font-medium text-red-500 hover:bg-red-50 transition-colors duration-150"
           >
-            <SignOut className="h-[18px] w-[18px] shrink-0" />
+            <LogOut className="h-[18px] w-[18px] shrink-0" />
             Sign out
           </button>
         </div>
@@ -139,7 +150,7 @@ export function MobileBottomBar() {
           <NavTab
             url="/dashboard"
             title="Dashboard"
-            icon={SquaresFour}
+            icon={LayoutDashboard}
             isActive={
               pathname === "/dashboard" || pathname.startsWith("/dashboard/")
             }
@@ -167,7 +178,7 @@ export function MobileBottomBar() {
                 pathname.startsWith("/schedule-post") && "opacity-85"
               )}
             >
-              <PaperPlaneTilt className="h-[19px] w-[19px] text-white" />
+              <Send className="h-[19px] w-[19px] text-white" />
               <span className="text-[9.5px] font-semibold text-white/80 leading-none -mt-0.5">
                 Post
               </span>
@@ -178,7 +189,7 @@ export function MobileBottomBar() {
           <NavTab
             url="/calendar"
             title="Calendar"
-            icon={CalendarDots}
+            icon={CalendarDays}
             isActive={pathname.startsWith("/calendar")}
           />
 
@@ -194,7 +205,7 @@ export function MobileBottomBar() {
                 : "text-foreground/38"
             )}
           >
-            <DotsThree className="h-[22px] w-[22px]" />
+            <MoreHorizontal className="h-[22px] w-[22px]" />
             <span
               className={cn(
                 "text-[10px] font-medium leading-none",
@@ -222,7 +233,7 @@ function NavTab({
 }: {
   url: string;
   title: string;
-  icon: Icon;
+  icon: LucideIcon;
   isActive: boolean;
 }) {
   return (

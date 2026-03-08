@@ -1,4 +1,4 @@
-import { ShieldCheck } from "@phosphor-icons/react/dist/ssr";
+import { ShieldCheck } from "lucide-react";
 
 export default function InfoCard() {
   return (

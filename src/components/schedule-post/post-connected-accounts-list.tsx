@@ -1,7 +1,7 @@
 "use client";
 
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { Check, CaretRight } from "@phosphor-icons/react";
+import { Check, ChevronRight } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -200,7 +200,7 @@ export function PostConnectedAccountsList({
             <>
               <div className="pointer-events-none absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-card to-transparent rounded-r-xl" />
               <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-card border border-border shadow-md flex items-center justify-center">
-                <CaretRight className="w-3.5 h-3.5 text-muted-foreground animate-pulse" />
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground animate-pulse" />
               </div>
             </>
           )}

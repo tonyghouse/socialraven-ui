@@ -3,7 +3,20 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { Warning, FileText, FileImage, Clock, Calendar, Stack, CaretRight, User, CheckCircle, XCircle, ArrowSquareOut, ArrowLeft } from "@phosphor-icons/react";
+import {
+  AlertCircle,
+  FileText,
+  FileImage,
+  Clock,
+  Calendar,
+  Layers,
+  ChevronRight,
+  User,
+  CheckCircle2,
+  XCircle,
+  ExternalLink,
+  ArrowLeft,
+} from "lucide-react";
 import Image from "next/image";
 
 import type { PostResponse } from "@/model/PostResponse";
@@ -258,7 +271,7 @@ const statusConfig: Record<
   string,
   {
     label: string;
-    Icon: typeof CheckCircle;
+    Icon: typeof CheckCircle2;
     className: string;
     barClass: string;
   }
@@ -271,7 +284,7 @@ const statusConfig: Record<
   },
   PUBLISHED: {
     label: "Published",
-    Icon: CheckCircle,
+    Icon: CheckCircle2,
     className: "text-emerald-700 bg-emerald-50 border-emerald-200",
     barClass: "from-emerald-400 to-emerald-500",
   },
@@ -293,12 +306,12 @@ const platformMeta: Record<
     headerBg: "from-red-50/60 to-transparent",
   },
   INSTAGRAM: {
-    name: "InstagramLogo",
+    name: "Instagram",
     iconColor: "text-pink-600 bg-pink-50 border-pink-100",
     headerBg: "from-pink-50/60 to-transparent",
   },
   FACEBOOK: {
-    name: "FacebookLogo",
+    name: "Facebook",
     iconColor: "text-blue-600 bg-blue-50 border-blue-100",
     headerBg: "from-blue-50/60 to-transparent",
   },
@@ -308,7 +321,7 @@ const platformMeta: Record<
     headerBg: "from-sky-50/60 to-transparent",
   },
   X: {
-    name: "X (TwitterLogo)",
+    name: "X (Twitter)",
     iconColor: "text-neutral-800 bg-neutral-50 border-neutral-200",
     headerBg: "from-neutral-50/60 to-transparent",
   },
@@ -349,7 +362,7 @@ export default function PostDetailPage() {
       <div className="min-h-screen flex items-center justify-center bg-background p-6">
         <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
           <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-            <Warning className="h-7 w-7 text-red-500" />
+            <AlertCircle className="h-7 w-7 text-red-500" />
           </div>
           <h3 className="font-semibold text-foreground mb-1">Post not found</h3>
           <p className="text-sm text-muted-foreground mb-6">
@@ -432,7 +445,7 @@ export default function PostDetailPage() {
               onClick={() => router.push("/scheduled-posts")}
               className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
             >
-              <Stack className="h-3.5 w-3.5" />
+              <Layers className="h-3.5 w-3.5" />
               <span className="hidden sm:inline font-medium">
                 Scheduled Posts
               </span>
@@ -440,7 +453,7 @@ export default function PostDetailPage() {
 
             {post.postCollectionId && (
               <>
-                <CaretRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
                 <button
                   onClick={() =>
                     router.push(`/scheduled-posts/${post.postCollectionId}`)
@@ -452,7 +465,7 @@ export default function PostDetailPage() {
               </>
             )}
 
-            <CaretRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
             <span className="font-medium text-foreground truncate">
               {post.title}
             </span>
@@ -716,7 +729,7 @@ export default function PostDetailPage() {
               >
                 <div className="flex items-center gap-2.5">
                   <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center group-hover:bg-accent/10 transition-colors flex-shrink-0">
-                    <Stack className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <Layers className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
@@ -726,7 +739,7 @@ export default function PostDetailPage() {
                       See all posts in this campaign
                     </p>
                   </div>
-                  <ArrowSquareOut className="h-4 w-4 text-muted-foreground/0 group-hover:text-primary/70 transition-all flex-shrink-0" />
+                  <ExternalLink className="h-4 w-4 text-muted-foreground/0 group-hover:text-primary/70 transition-all flex-shrink-0" />
                 </div>
               </button>
             )}

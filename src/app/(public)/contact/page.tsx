@@ -1,7 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/components/navbar/navbar";
-import { ChatCircle, Lock, Handshake, Clock, CheckCircle, ArrowRight, Buildings, Shield, Globe, Lightning } from "@phosphor-icons/react/dist/ssr";
+import {
+  MessageCircle,
+  Lock,
+  Handshake,
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  Building2,
+  Shield,
+  Globe,
+  Zap,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact | Social Raven",
@@ -17,7 +28,7 @@ const CONTACTS = [
     detail:
       "Billing questions, feature how-tos, post scheduling issues, connected account problems — we handle it all.",
     email: "team+support@socialraven.io",
-    icon: ChatCircle,
+    icon: MessageCircle,
     response: "Within 24 hours",
   },
   {
@@ -27,7 +38,7 @@ const CONTACTS = [
     detail:
       "We offer bespoke packages for large agencies and enterprise teams. Let's find the right fit for your scale.",
     email: "team+sales@socialraven.io",
-    icon: Buildings,
+    icon: Building2,
     response: "Within 4 hours",
   },
   {
@@ -53,10 +64,10 @@ const CONTACTS = [
 ];
 
 const TRUST = [
-  { icon: Lightning, label: "< 24h avg response", sub: "Average support reply time" },
+  { icon: Zap, label: "< 24h avg response", sub: "Average support reply time" },
   { icon: Globe, label: "40+ countries", sub: "Customers worldwide" },
   { icon: Shield, label: "GDPR & CCPA", sub: "Privacy-compliant platform" },
-  { icon: CheckCircle, label: "98% delivery", sub: "Post scheduling reliability" },
+  { icon: CheckCircle2, label: "98% delivery", sub: "Post scheduling reliability" },
 ];
 
 const FAQS = [
@@ -78,7 +89,7 @@ const FAQS = [
   },
   {
     q: "Which platforms does Social Raven support?",
-    a: "We support InstagramLogo, TwitterLogo/X, LinkedIn, YouTube, and FacebookLogo. More platforms are actively in development.",
+    a: "We support Instagram, Twitter/X, LinkedIn, YouTube, and Facebook. More platforms are actively in development.",
   },
   {
     q: "Is my data safe with Social Raven?",
@@ -228,7 +239,7 @@ export default function ContactPage() {
                 <div className="grid grid-cols-2 gap-3">
                   {ENTERPRISE_FEATURES.map((f) => (
                     <div key={f} className="flex items-center gap-2.5 text-sm text-white/70">
-                      <CheckCircle className="w-4 h-4 text-white/40 flex-shrink-0" />
+                      <CheckCircle2 className="w-4 h-4 text-white/40 flex-shrink-0" />
                       {f}
                     </div>
                   ))}

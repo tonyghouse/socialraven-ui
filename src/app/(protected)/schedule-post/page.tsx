@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Calendar, Lightning } from "@phosphor-icons/react";
+import { CalendarClock, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
@@ -49,7 +49,7 @@ function StepCard({
 // ── Platform name map ─────────────────────────────────────────────────────────
 
 const PLATFORM_LABELS: Record<string, string> = {
-  facebook: "FacebookLogo", instagram: "InstagramLogo", x: "X",
+  facebook: "Facebook", instagram: "Instagram", x: "X",
   linkedin: "LinkedIn", youtube: "YouTube", threads: "Threads", tiktok: "TikTok",
 };
 
@@ -120,7 +120,7 @@ export default function ScheduledPostCollectionPage() {
         <div className="px-4 sm:px-6 py-3.5">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-              <Calendar className="w-[18px] h-[18px] text-accent" />
+              <CalendarClock className="w-[18px] h-[18px] text-accent" />
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-base font-bold text-foreground tracking-tight leading-tight">
@@ -134,7 +134,7 @@ export default function ScheduledPostCollectionPage() {
             </div>
             {selectedCount > 0 && (
               <div className="flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 rounded-full text-xs font-semibold text-accent flex-shrink-0">
-                <Lightning className="w-3 h-3" />
+                <Zap className="w-3 h-3" />
                 {selectedCount} account{selectedCount !== 1 ? "s" : ""}
               </div>
             )}

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { House as Home, ArrowLeft } from "@phosphor-icons/react/dist/ssr"
+import { Home, ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (

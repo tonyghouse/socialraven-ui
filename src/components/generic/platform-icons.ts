@@ -1,22 +1,22 @@
 // components/platform-icons.ts
-import { InstagramLogo, LinkedinLogo, TwitterLogo, FacebookLogo, YoutubeLogo } from "@phosphor-icons/react";
+import { Instagram, Linkedin, Twitter, Facebook, Youtube } from "lucide-react";
 import { TikTokIcon, ThreadsIcon } from "./platform-svg-icons";
 
 export const PLATFORM_ICONS: Record<string, any> = {
   // lowercase keys (matches Platform type)
-  instagram: InstagramLogo,
-  linkedin: LinkedinLogo,
-  x: TwitterLogo,
-  facebook: FacebookLogo,
-  youtube: YoutubeLogo,
+  instagram: Instagram,
+  linkedin: Linkedin,
+  x: Twitter,
+  facebook: Facebook,
+  youtube: Youtube,
   threads: ThreadsIcon,
   tiktok: TikTokIcon,
   // uppercase keys (backward compatibility)
-  INSTAGRAM: InstagramLogo,
-  LINKEDIN: LinkedinLogo,
-  X: TwitterLogo,
-  FACEBOOK: FacebookLogo,
-  YOUTUBE: YoutubeLogo,
+  INSTAGRAM: Instagram,
+  LINKEDIN: Linkedin,
+  X: Twitter,
+  FACEBOOK: Facebook,
+  YOUTUBE: Youtube,
   THREADS: ThreadsIcon,
   TIKTOK: TikTokIcon,
 };

@@ -1,7 +1,13 @@
 "use client";
 
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { TwitterLogo, LinkedinLogo, YoutubeLogo, InstagramLogo, FacebookLogo } from "@phosphor-icons/react";
+import {
+  Twitter,
+  Linkedin,
+  Youtube,
+  Instagram,
+  Facebook,
+} from "lucide-react";
 import ConnectedAccountsColumn from "./connected-accounts-column";
 
 type GridProps = {
@@ -38,33 +44,33 @@ export type PlatformKey = "x" | "linkedin" | "youtube" | "instagram" | "facebook
 
 export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
   x: {
-    label: "X / TwitterLogo",
-    Icon: TwitterLogo,
+    label: "X / Twitter",
+    Icon: Twitter,
     accent: "text-foreground/80",
     connectHref: "/api/auth/x",
   },
   linkedin: {
     label: "LinkedIn",
-    Icon: LinkedinLogo,
+    Icon: Linkedin,
     accent: "text-accent",
     connectHref: "/api/auth/linkedin",
   },
   youtube: {
     label: "YouTube",
-    Icon: YoutubeLogo,
+    Icon: Youtube,
     accent: "text-red-500",
     connectHref: "/api/auth/youtube",
   },
   instagram: {
-    label: "InstagramLogo",
-    Icon: InstagramLogo,
+    label: "Instagram",
+    Icon: Instagram,
     accent: "text-[#E1306C]",
     connectHref: "/api/auth/instagram",
     comingSoon: true,
   },
   facebook: {
-    label: "FacebookLogo",
-    Icon: FacebookLogo,
+    label: "Facebook",
+    Icon: Facebook,
     accent: "text-[#1877F2]",
     connectHref: "/api/auth/facebook",
     comingSoon: true,

@@ -2,7 +2,21 @@
 
 import { UserProfile, useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import { Check, CircleNotch, CreditCard, Shield, ArrowSquareOut, Warning, CalendarDots, Users, ChartBar, Lightning, Clock, Info, FileText } from "@phosphor-icons/react";
+import {
+  Check,
+  Loader2,
+  CreditCard,
+  Shield,
+  ExternalLink,
+  AlertTriangle,
+  CalendarDays,
+  Users,
+  BarChart2,
+  Zap,
+  Clock,
+  Info,
+  FileText,
+} from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -282,7 +296,7 @@ export default function ProfilePage() {
                 )}
               >
                 <div className="flex items-start gap-2.5">
-                  <Warning
+                  <AlertTriangle
                     className={cn(
                       "w-4 h-4 mt-0.5 shrink-0",
                       daysLeft <= 3 ? "text-red-600" : "text-amber-600"
@@ -346,7 +360,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
                         <span className="text-sm text-muted-foreground flex items-center gap-1">
-                          <CalendarDots className="w-3 h-3" />
+                          <CalendarDays className="w-3 h-3" />
                           {isTrialing
                             ? `Trial ends ${formatDate(userPlan.trialEndsAt!)}`
                             : userPlan.cancelAtPeriodEnd
@@ -372,7 +386,7 @@ export default function ProfilePage() {
                         className="gap-1.5 text-sm"
                       >
                         {portalLoading ? (
-                          <CircleNotch className="w-3.5 h-3.5 animate-spin" />
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
                         ) : (
                           <CreditCard className="w-3.5 h-3.5" />
                         )}
@@ -389,7 +403,7 @@ export default function ProfilePage() {
                             ?.scrollIntoView({ behavior: "smooth" })
                         }
                       >
-                        <Lightning className="w-3.5 h-3.5" />
+                        <Zap className="w-3.5 h-3.5" />
                         View Plans
                       </Button>
                     )}
@@ -401,7 +415,7 @@ export default function ProfilePage() {
             {/* Cancellation warning (paid plans only) */}
             {userPlan.cancelAtPeriodEnd && !isTrialing && (
               <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-950/20 p-4 text-sm text-amber-800 dark:text-amber-300">
-                <Warning className="w-4 h-4 mt-0.5 shrink-0" />
+                <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
                 <span>
                   Your subscription ends on <strong>{formatDate(userPlan.renewalDate)}</strong>.
                   After that your account will be paused.{" "}
@@ -424,7 +438,7 @@ export default function ProfilePage() {
                       label="Posts this month"
                       used={usageStats.postsUsedThisMonth}
                       limit={usageStats.postsLimit}
-                      icon={ChartBar}
+                      icon={BarChart2}
                     />
                   </CardContent>
                 </Card>
@@ -563,7 +577,7 @@ export default function ProfilePage() {
                 >
                   {isChanging ? (
                     <span className="flex items-center gap-1.5">
-                      <CircleNotch className="w-3 h-3 animate-spin" />
+                      <Loader2 className="w-3 h-3 animate-spin" />
                       Switching…
                     </span>
                   ) : isCurrent ? (
@@ -612,7 +626,7 @@ export default function ProfilePage() {
             className="gap-1.5 text-sm shrink-0"
           >
             {portalLoading ? (
-              <CircleNotch className="w-3 h-3 animate-spin" />
+              <Loader2 className="w-3 h-3 animate-spin" />
             ) : (
               <CreditCard className="w-3 h-3" />
             )}
@@ -701,7 +715,7 @@ export default function ProfilePage() {
                               aria-label="Download invoice"
                               className="text-muted-foreground hover:text-foreground transition-colors"
                             >
-                              <ArrowSquareOut className="w-3.5 h-3.5" />
+                              <ExternalLink className="w-3.5 h-3.5" />
                             </a>
                           )}
                         </div>
@@ -766,7 +780,7 @@ export default function ProfilePage() {
                 rel="noopener noreferrer"
                 className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
               >
-                <ArrowSquareOut className="w-3 h-3" />
+                <ExternalLink className="w-3 h-3" />
                 Privacy Policy
               </a>
               <a
@@ -775,7 +789,7 @@ export default function ProfilePage() {
                 rel="noopener noreferrer"
                 className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
               >
-                <ArrowSquareOut className="w-3 h-3" />
+                <ExternalLink className="w-3 h-3" />
                 Terms of Service
               </a>
               <a

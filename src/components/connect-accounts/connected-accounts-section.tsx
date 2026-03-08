@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowCounterClockwise, SquaresFour, FolderOpen, ShieldCheck } from "@phosphor-icons/react";
+import { RefreshCw, LayoutGrid, FolderOpen, ShieldCheck } from "lucide-react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import AppleSkeleton from "../generic/AppleSkelton";
 
@@ -76,7 +76,7 @@ export default function ConnectedAccountsSection() {
 
   const handleReconnect = async (acc: ConnectedAccount) => {
     toast("Opening reconnect flow...", {
-      icon: <ArrowCounterClockwise className="w-4 h-4" />,
+      icon: <RefreshCw className="w-4 h-4" />,
     });
     window.open(`/api/auth/${acc.platform}`, "_blank");
   };
@@ -105,7 +105,7 @@ export default function ConnectedAccountsSection() {
           aria-label="Refresh accounts"
           disabled={refreshing}
         >
-          <ArrowCounterClockwise
+          <RefreshCw
             className={`h-3.5 w-3.5 text-foreground/50 ${refreshing ? "animate-spin" : ""}`}
           />
           <span className="hidden sm:inline text-xs font-medium text-foreground/60">
@@ -124,7 +124,7 @@ export default function ConnectedAccountsSection() {
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
-          <SquaresFour className="w-3.5 h-3.5" />
+          <LayoutGrid className="w-3.5 h-3.5" />
           By Platform
         </button>
         <button

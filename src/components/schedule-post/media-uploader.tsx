@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { X, Plus, DotsSixVertical, Upload } from "@phosphor-icons/react";
+import { X, Plus, GripVertical, Upload } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import Image from "next/image";
 
@@ -133,7 +133,7 @@ export default function MediaUploader({
                         </motion.button>
 
                         <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full bg-white/90 shadow-sm">
-                          <DotsSixVertical className="w-3 h-3 text-gray-600" strokeWidth={2.5} />
+                          <GripVertical className="w-3 h-3 text-gray-600" strokeWidth={2.5} />
                         </div>
                       </div>
                     </div>

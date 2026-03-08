@@ -1,7 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { InstagramLogo, LinkedinLogo, TwitterLogo, YoutubeLogo, FacebookLogo, Warning } from "@phosphor-icons/react";
+import {
+  Instagram,
+  Linkedin,
+  Twitter,
+  Youtube,
+  Facebook,
+  AlertCircle,
+} from "lucide-react";
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
@@ -21,10 +28,10 @@ function ThreadsIcon({ className }: { className?: string }) {
 
 const PROVIDERS = [
   {
-    name: "X / TwitterLogo",
+    name: "X / Twitter",
     key: "x",
     href: "/api/auth/x",
-    icon: TwitterLogo,
+    icon: Twitter,
     iconColor: "text-slate-800",
     bg: "bg-gradient-to-b from-slate-50 to-slate-100/60",
     border: "border-slate-200/80",
@@ -34,7 +41,7 @@ const PROVIDERS = [
     name: "LinkedIn",
     key: "linkedin",
     href: "/api/auth/linkedin",
-    icon: LinkedinLogo,
+    icon: Linkedin,
     iconColor: "text-[#0A66C2]",
     bg: "bg-gradient-to-b from-blue-50 to-blue-100/40",
     border: "border-blue-100",
@@ -44,27 +51,27 @@ const PROVIDERS = [
     name: "YouTube",
     key: "youtube",
     href: "/api/auth/youtube",
-    icon: YoutubeLogo,
+    icon: Youtube,
     iconColor: "text-[#FF0000]",
     bg: "bg-gradient-to-b from-red-50 to-red-100/40",
     border: "border-red-100",
     enabled: true,
   },
   {
-    name: "InstagramLogo",
+    name: "Instagram",
     key: "instagram",
     href: "/api/auth/instagram",
-    icon: InstagramLogo,
+    icon: Instagram,
     iconColor: "text-[#E1306C]",
     bg: "bg-gradient-to-b from-pink-50 to-purple-50/60",
     border: "border-pink-100",
     enabled: false,
   },
   {
-    name: "FacebookLogo",
+    name: "Facebook",
     key: "facebook",
     href: "/api/auth/facebook",
-    icon: FacebookLogo,
+    icon: Facebook,
     iconColor: "text-[#1877F2]",
     bg: "bg-gradient-to-b from-blue-50 to-blue-100/40",
     border: "border-blue-100",
@@ -100,7 +107,7 @@ export default function LinkNewAccountSection() {
       {/* ERROR ALERT */}
       {error && (
         <div className="flex items-start gap-3 p-4 mb-4 bg-red-50 border border-red-200 rounded-xl">
-          <Warning className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-red-700 flex-1">{error}</p>
           <button
             onClick={() => setError(null)}

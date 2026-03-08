@@ -9,7 +9,23 @@ import React, {
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { CaretLeft, CaretRight, Calendar, Clock, Plus, X, CircleNotch, Warning, CheckCircle, XCircle, Globe, Users, Funnel, CalendarDots, SquaresFour } from "@phosphor-icons/react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Clock,
+  Plus,
+  X,
+  Loader2,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Globe,
+  Users,
+  Filter,
+  CalendarDays,
+  LayoutGrid,
+} from "lucide-react";
 import {
   format,
   startOfMonth,
@@ -51,10 +67,10 @@ const PLATFORM_COLORS: Record<string, string> = {
 };
 
 const PLATFORM_LABELS: Record<string, string> = {
-  instagram: "InstagramLogo",
-  x: "X / TwitterLogo",
+  instagram: "Instagram",
+  x: "X / Twitter",
   linkedin: "LinkedIn",
-  facebook: "FacebookLogo",
+  facebook: "Facebook",
   youtube: "YouTube",
   threads: "Threads",
   tiktok: "TikTok",
@@ -65,7 +81,7 @@ const STATUS_CONFIG: Record<
   { color: string; bg: string; text: string; border: string; label: string; Icon: React.ElementType }
 > = {
   SCHEDULED: { color: "#3b82f6", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", label: "Scheduled", Icon: Clock },
-  POSTED:    { color: "#22c55e", bg: "bg-green-50", text: "text-green-700", border: "border-green-200", label: "Published", Icon: CheckCircle },
+  POSTED:    { color: "#22c55e", bg: "bg-green-50", text: "text-green-700", border: "border-green-200", label: "Published", Icon: CheckCircle2 },
   FAILED:    { color: "#ef4444", bg: "bg-red-50", text: "text-red-700", border: "border-red-200", label: "Failed", Icon: XCircle },
 };
 
@@ -309,7 +325,7 @@ function DayDetailSheet({
 
             {/* Summary bar */}
             <div className="px-5 py-2.5 bg-muted/30 border-b border-border/40 flex items-center gap-2">
-              <CalendarDots className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+              <CalendarDays className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
               <span className="text-xs text-muted-foreground">
                 {posts.length === 0
                   ? "No posts — click an hour to schedule"
@@ -742,7 +758,7 @@ function FilterBar({
 
   return (
     <div className="flex items-center gap-2 px-4 py-2 border-b border-border/40 bg-background/80 backdrop-blur-sm flex-wrap">
-      <Funnel className="w-3 h-3 text-muted-foreground/60 shrink-0" />
+      <Filter className="w-3 h-3 text-muted-foreground/60 shrink-0" />
 
       {/* Group selector */}
       <div className="relative" ref={groupRef}>
@@ -759,7 +775,7 @@ function FilterBar({
             <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: selectedGroup.color }} />
           )}
           {groupLabel}
-          <CaretRight className={cn("w-3 h-3 transition-transform duration-200", groupOpen && "rotate-90")} />
+          <ChevronRight className={cn("w-3 h-3 transition-transform duration-200", groupOpen && "rotate-90")} />
         </button>
 
         <AnimatePresence>
@@ -790,7 +806,7 @@ function FilterBar({
                       style={{ backgroundColor: item.color ?? "#94a3b8" }}
                     />
                     {item.name}
-                    {selectedGroupId === item.id && <CheckCircle className="w-3 h-3 ml-auto text-blue-500" />}
+                    {selectedGroupId === item.id && <CheckCircle2 className="w-3 h-3 ml-auto text-blue-500" />}
                   </button>
                 ))}
               </div>
@@ -812,7 +828,7 @@ function FilterBar({
         >
           <Users className="w-3 h-3 shrink-0" />
           {accountLabel}
-          <CaretRight className={cn("w-3 h-3 transition-transform duration-200", accountOpen && "rotate-90")} />
+          <ChevronRight className={cn("w-3 h-3 transition-transform duration-200", accountOpen && "rotate-90")} />
         </button>
 
         <AnimatePresence>
@@ -853,7 +869,7 @@ function FilterBar({
                           <p className="font-semibold truncate">{acc.username}</p>
                           <p className="text-[10px] text-muted-foreground capitalize">{acc.platform}</p>
                         </div>
-                        {checked && <CheckCircle className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
+                        {checked && <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
                       </button>
                     );
                   })
@@ -1021,7 +1037,7 @@ export default function CalendarPage() {
     return (
       <div className="h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <CircleNotch className="w-6 h-6 animate-spin text-blue-500" />
+          <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
           <p className="text-sm text-muted-foreground">Loading calendar…</p>
         </div>
       </div>
@@ -1032,7 +1048,7 @@ export default function CalendarPage() {
     return (
       <div className="h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <Warning className="w-6 h-6 text-destructive" />
+          <AlertCircle className="w-6 h-6 text-destructive" />
           <p className="text-sm text-muted-foreground">{error}</p>
           <button onClick={() => { setError(null); setLoadingData(true); }} className="text-xs text-blue-500 hover:underline">Retry</button>
         </div>
@@ -1068,17 +1084,17 @@ export default function CalendarPage() {
             {/* Navigation */}
             <div className="flex items-center gap-1.5">
               <button onClick={goBack} className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
-                <CaretLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
               <button onClick={goToday} className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
                 Today
               </button>
               <button onClick={goForward} className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
-                <CaretRight className="w-4 h-4" />
+                <ChevronRight className="w-4 h-4" />
               </button>
               <div className="mx-1.5 h-5 w-px bg-border" />
               <h2 className="text-sm font-bold text-foreground min-w-[140px]">{headerLabel}</h2>
-              {loadingPosts && <CircleNotch className="w-3.5 h-3.5 animate-spin text-muted-foreground/60 ml-0.5" />}
+              {loadingPosts && <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground/60 ml-0.5" />}
             </div>
 
             {/* View toggle */}
@@ -1087,14 +1103,14 @@ export default function CalendarPage() {
                 onClick={() => setView("month")}
                 className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all", view === "month" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
               >
-                <SquaresFour className="w-3.5 h-3.5" />
+                <LayoutGrid className="w-3.5 h-3.5" />
                 Month
               </button>
               <button
                 onClick={() => setView("week")}
                 className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all", view === "week" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
               >
-                <CalendarDots className="w-3.5 h-3.5" />
+                <CalendarDays className="w-3.5 h-3.5" />
                 Week
               </button>
             </div>

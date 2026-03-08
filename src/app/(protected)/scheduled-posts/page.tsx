@@ -5,7 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { fetchPostCollectionsApi } from "@/service/fetchPostCollections";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { useAuth } from "@clerk/nextjs";
-import { Warning, ArrowCounterClockwise, Stack, Plus, CalendarDots } from "@phosphor-icons/react";
+import {
+  AlertCircle,
+  RefreshCw,
+  Layers,
+  Plus,
+  CalendarDays,
+} from "lucide-react";
 import { CollectionCard } from "@/components/posts/collection-card";
 import { PostCollectionFilters } from "@/components/posts/post-collection-filters";
 import { Pagination } from "@/components/generic/pagination";
@@ -141,7 +147,7 @@ export default function ScheduledPostsPage() {
           <div className="flex items-center justify-between gap-4 h-16">
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-                <Stack className="w-[18px] h-[18px] text-accent" />
+                <Layers className="w-[18px] h-[18px] text-accent" />
               </div>
               <div>
                 <h1 className="text-[17px] font-semibold text-foreground tracking-tight leading-tight">
@@ -166,7 +172,7 @@ export default function ScheduledPostsPage() {
                 className="h-8 w-8 rounded-lg bg-secondary hover:bg-secondary/70 disabled:opacity-50 transition-all flex items-center justify-center"
                 title="Refresh"
               >
-                <ArrowCounterClockwise
+                <RefreshCw
                   className={cn(
                     "h-3.5 w-3.5 text-muted-foreground",
                     isRefreshing && "animate-spin"
@@ -186,7 +192,7 @@ export default function ScheduledPostsPage() {
         </div>
       </header>
 
-      {/* Funnel bar */}
+      {/* Filter bar */}
       <div className="border-b border-border/50 bg-background/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <PostCollectionFilters onFiltersChange={handleFiltersChange} />
@@ -197,7 +203,7 @@ export default function ScheduledPostsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-destructive/10 text-destructive border border-destructive/20 flex gap-3 items-start">
-            <Warning className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-medium">{error}</p>
               <button
@@ -283,7 +289,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="relative mb-6">
         <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-primary/[0.08] to-primary/[0.03] flex items-center justify-center border border-border/30">
-          <CalendarDots className="w-8 h-8 text-muted-foreground/60" />
+          <CalendarDays className="w-8 h-8 text-muted-foreground/60" />
         </div>
         <div className="absolute inset-0 rounded-3xl border border-border/20 scale-125 opacity-40" />
         <div className="absolute inset-0 rounded-3xl border border-border/10 scale-150 opacity-25" />

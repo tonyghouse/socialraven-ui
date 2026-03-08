@@ -1,6 +1,6 @@
 "use client";
 
-import { CaretLeft, CaretRight, CaretDoubleLeft, CaretDoubleRight } from "@phosphor-icons/react";
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface PaginationProps {
@@ -88,7 +88,7 @@ export function Pagination({
           "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <CaretDoubleLeft className="h-4 w-4 text-muted-foreground" />
+        <ChevronsLeft className="h-4 w-4 text-muted-foreground" />
       </button>
 
       {/* Previous Page Button */}
@@ -104,7 +104,7 @@ export function Pagination({
           "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <CaretLeft className="h-4 w-4 text-muted-foreground" />
+        <ChevronLeft className="h-4 w-4 text-muted-foreground" />
       </button>
 
       {/* Page Numbers */}
@@ -158,7 +158,7 @@ export function Pagination({
           "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <CaretRight className="h-4 w-4 text-muted-foreground" />
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </button>
 
       {/* Last Page Button */}
@@ -174,7 +174,7 @@ export function Pagination({
           "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <CaretDoubleRight className="h-4 w-4 text-muted-foreground" />
+        <ChevronsRight className="h-4 w-4 text-muted-foreground" />
       </button>
 
       {/* Page Info */}

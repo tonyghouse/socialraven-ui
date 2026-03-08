@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import LinkNewAccountSection from "@/components/connect-accounts/link-new-account-section";
 import ConnectedAccountsSection from "@/components/connect-accounts/connected-accounts-section";
-import { Link as LinkIcon } from "@phosphor-icons/react";
+import { Link2 } from "lucide-react";
 
 export default function ManageAccountsPage() {
   const params = useSearchParams();
@@ -38,7 +38,7 @@ export default function ManageAccountsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center">
-              <LinkIcon className="w-4 h-4 text-accent" />
+              <Link2 className="w-4 h-4 text-accent" />
             </div>
             <div>
               <h1 className="text-lg font-semibold text-foreground tracking-tight">
