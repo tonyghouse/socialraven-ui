@@ -4,7 +4,7 @@ import type React from "react"
 
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { XLogo, LinkedinLogo, FacebookLogo, InstagramLogo, Trash, Clock, CheckCircle } from "@phosphor-icons/react"
+import { TwitterLogo, LinkedinLogo, FacebookLogo, InstagramLogo, Trash, Clock, CheckCircle } from "@phosphor-icons/react"
 import Image from "next/image";
 interface ScheduledPost {
   id: string
@@ -22,7 +22,7 @@ interface ScheduledPostsListProps {
 }
 
 const platformIcons: Record<string, React.ComponentType<any>> = {
-  x: XLogo,
+  TwitterLogo,
   LinkedIn: LinkedinLogo,
   FacebookLogo,
   InstagramLogo,
@@ -72,7 +72,7 @@ export default function ScheduledPostsList({ posts, onDelete }: ScheduledPostsLi
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-3 flex-wrap">
                     {post.platforms.map((platform) => {
-                      const PlatformIcon = platformIcons[platform] || XLogo
+                      const PlatformIcon = platformIcons[platform] || TwitterLogo
                       return (
                         <div key={platform} className="flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-lg">
                           <PlatformIcon className="w-4 h-4 text-primary" />

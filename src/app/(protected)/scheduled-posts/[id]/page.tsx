@@ -78,7 +78,7 @@ const platformDisplayName: Record<string, string> = {
   LINKEDIN: "LinkedIn",
   YOUTUBE: "YouTube",
   FACEBOOK: "FacebookLogo",
-  X: "X",
+  X: "X (TwitterLogo)",
   THREADS: "Threads",
   TIKTOK: "TikTok",
 };

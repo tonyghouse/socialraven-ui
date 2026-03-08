@@ -34,7 +34,7 @@ const PLATFORM_STYLES: Record<string, { bg: string; text: string; border: string
 const PLATFORM_NAMES: Record<string, string> = {
   facebook:  "FacebookLogo",
   instagram: "InstagramLogo",
-  x:         "X",
+  x:         "X (TwitterLogo)",
   linkedin:  "LinkedIn",
   youtube:   "YouTube",
   threads:   "Threads",

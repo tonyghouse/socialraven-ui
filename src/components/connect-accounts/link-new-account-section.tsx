@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { InstagramLogo, LinkedinLogo, XLogo, YoutubeLogo, FacebookLogo, Warning } from "@phosphor-icons/react";
+import { InstagramLogo, LinkedinLogo, TwitterLogo, YoutubeLogo, FacebookLogo, Warning } from "@phosphor-icons/react";
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
@@ -21,10 +21,10 @@ function ThreadsIcon({ className }: { className?: string }) {
 
 const PROVIDERS = [
   {
-    name: "X",
+    name: "X / TwitterLogo",
     key: "x",
     href: "/api/auth/x",
-    icon: XLogo,
+    icon: TwitterLogo,
     iconColor: "text-slate-800",
     bg: "bg-gradient-to-b from-slate-50 to-slate-100/60",
     border: "border-slate-200/80",

@@ -1,7 +1,7 @@
 "use client";
 
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { XLogo, LinkedinLogo, YoutubeLogo, InstagramLogo, FacebookLogo } from "@phosphor-icons/react";
+import { TwitterLogo, LinkedinLogo, YoutubeLogo, InstagramLogo, FacebookLogo } from "@phosphor-icons/react";
 import ConnectedAccountsColumn from "./connected-accounts-column";
 
 type GridProps = {
@@ -38,8 +38,8 @@ export type PlatformKey = "x" | "linkedin" | "youtube" | "instagram" | "facebook
 
 export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
   x: {
-    label: "X",
-    Icon: XLogo,
+    label: "X / TwitterLogo",
+    Icon: TwitterLogo,
     accent: "text-foreground/80",
     connectHref: "/api/auth/x",
   },

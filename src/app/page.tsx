@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navbar/navbar";
-import { Calendar, Clock, Feather, ChartBar, ArrowRight, InstagramLogo, XLogo, LinkedinLogo, YoutubeLogo, FacebookLogo, TrendUp, Lightning, Globe, Lock, Users, CheckCircle, Star, Shield, Sparkle, Play, Plus, Minus } from "@phosphor-icons/react";
+import { Calendar, Clock, Feather, ChartBar, ArrowRight, InstagramLogo, TwitterLogo, LinkedinLogo, YoutubeLogo, FacebookLogo, TrendUp, Lightning, Globe, Lock, Users, CheckCircle, Star, Shield, Sparkle, Play, Plus, Minus } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -30,11 +30,11 @@ function ThreadsIcon({ className }: { className?: string }) {
 }
 
 const INTEGRATIONS = [
-  { name: "Instagram", icon: InstagramLogo, gradient: "from-purple-500 to-pink-500" },
-  { name: "X", icon: XLogo, gradient: "from-gray-800 to-gray-900" },
+  { name: "InstagramLogo", icon: InstagramLogo, gradient: "from-purple-500 to-pink-500" },
+  { name: "TwitterLogo / X", icon: TwitterLogo, gradient: "from-gray-800 to-gray-900" },
   { name: "LinkedIn", icon: LinkedinLogo, gradient: "from-blue-600 to-blue-700" },
   { name: "YouTube", icon: YoutubeLogo, gradient: "from-red-500 to-red-600" },
-  { name: "Facebook", icon: FacebookLogo, gradient: "from-blue-500 to-blue-600" },
+  { name: "FacebookLogo", icon: FacebookLogo, gradient: "from-blue-500 to-blue-600" },
   { name: "TikTok", icon: TikTokIcon, gradient: "from-slate-800 to-slate-900" },
   { name: "Threads", icon: ThreadsIcon, gradient: "from-slate-700 to-slate-800" },
 ];
@@ -83,7 +83,7 @@ const STEPS = [
   {
     step: "01",
     title: "Connect your accounts",
-    description: "Link Instagram, LinkedIn, X, YouTube, and Facebook in seconds. OAuth-secured — no passwords stored.",
+    description: "Link InstagramLogo, LinkedIn, X, YouTube, and FacebookLogo in seconds. OAuth-secured — no passwords stored.",
     icon: Globe,
   },
   {
@@ -140,7 +140,7 @@ const FAQ = [
   {
     question: "Which social platforms are supported?",
     answer:
-      "We currently support Instagram, Twitter/X, LinkedIn, YouTube, and Facebook. More platforms are on the way.",
+      "We currently support InstagramLogo, TwitterLogo/X, LinkedIn, YouTube, and FacebookLogo. More platforms are on the way.",
   },
   {
     question: "Can I manage multiple clients from one account?",
@@ -278,7 +278,7 @@ export default function LandingPage() {
                       <div className="flex gap-2">
                         {[
                           { icon: InstagramLogo, gradient: "from-purple-500 to-pink-500" },
-                          { icon: XLogo, gradient: "from-gray-800 to-gray-900" },
+                          { icon: TwitterLogo, gradient: "from-gray-800 to-gray-900" },
                           { icon: LinkedinLogo, gradient: "from-blue-600 to-blue-700" },
                         ].map(({ icon: Icon, gradient }, i) => (
                           <div key={i} className={`w-8 h-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center`}>

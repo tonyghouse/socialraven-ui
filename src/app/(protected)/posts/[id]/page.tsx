@@ -308,7 +308,7 @@ const platformMeta: Record<
     headerBg: "from-sky-50/60 to-transparent",
   },
   X: {
-    name: "X",
+    name: "X (TwitterLogo)",
     iconColor: "text-neutral-800 bg-neutral-50 border-neutral-200",
     headerBg: "from-neutral-50/60 to-transparent",
   },
