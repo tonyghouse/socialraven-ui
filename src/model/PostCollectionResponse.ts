@@ -10,6 +10,7 @@ export interface PostCollectionResponse {
   overallStatus: "SCHEDULED" | "PUBLISHED" | "PARTIAL_SUCCESS" | "FAILED";
   posts: PostResponse[];
   media: MediaResponse[];
+  platformConfigs?: Record<string, any>;
 }
 
 export interface PostCollectionResponsePage {

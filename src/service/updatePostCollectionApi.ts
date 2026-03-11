@@ -1,9 +1,25 @@
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
+import type { ConnectedAccount } from "@/model/ConnectedAccount";
+
+export interface PostMediaPayload {
+  fileName: string;
+  mimeType: string;
+  fileUrl: string;
+  fileKey: string;
+  size: number;
+}
 
 export interface UpdatePostCollectionPayload {
   title?: string;
   description?: string;
   scheduledTime?: string; // ISO 8601 UTC string
+  platformConfigs?: Record<string, any>;
+  /** Newly uploaded S3 media files to add */
+  newMedia?: PostMediaPayload[];
+  /** Keys of existing media files to retain (omitted keys get removed) */
+  keepMediaKeys?: string[];
+  /** Updated list of connected accounts (replaces current account list) */
+  connectedAccounts?: ConnectedAccount[];
 }
 
 export async function updatePostCollectionApi(
