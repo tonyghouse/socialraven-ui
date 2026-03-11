@@ -242,7 +242,7 @@ export default function PublishedCollectionDetailPage() {
     <main className="min-h-screen bg-background">
       {/* Sticky Breadcrumb Header */}
       <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <nav className="flex items-center gap-1.5 text-sm min-w-0">
             <button
               onClick={() => router.push("/published-posts")}
@@ -269,7 +269,7 @@ export default function PublishedCollectionDetailPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <div className="px-4 sm:px-6 py-8 space-y-8">
         {/* ── Collection Hero ── */}
         <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
           {/* Status accent bar */}
@@ -691,7 +691,7 @@ function SkeletonDetailPage() {
     <main className="min-h-screen bg-background">
       {/* Header skeleton */}
       <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />
             <Skeleton className="h-4 w-32 rounded hidden sm:block" />
@@ -702,7 +702,7 @@ function SkeletonDetailPage() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+      <div className="px-4 sm:px-6 py-8 space-y-8">
         {/* Hero card skeleton */}
         <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
           <Skeleton className="h-1 w-full rounded-none" />

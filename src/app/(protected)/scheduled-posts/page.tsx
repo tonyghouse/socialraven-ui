@@ -143,7 +143,7 @@ export default function ScheduledPostsPage() {
     <main className="min-h-screen bg-background">
       {/* Sticky Header */}
       <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between gap-4 h-16">
             <div className="flex items-center gap-3">
               <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
@@ -194,13 +194,13 @@ export default function ScheduledPostsPage() {
 
       {/* Filter bar */}
       <div className="border-b border-border/50 bg-background/60">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+        <div className="px-4 sm:px-6 py-3">
           <PostCollectionFilters onFiltersChange={handleFiltersChange} />
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+      <div className="px-4 sm:px-6 py-8">
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-destructive/10 text-destructive border border-destructive/20 flex gap-3 items-start">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />

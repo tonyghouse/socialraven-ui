@@ -29,7 +29,7 @@ export default function PrivacyPolicyPage() {
     <>
       <Navbar />
       <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="mx-auto max-w-7xl">
+        <div className="">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-900 transition-colors"
@@ -42,7 +42,7 @@ export default function PrivacyPolicyPage() {
 
         {/* Hero */}
         <div className="bg-white border-b border-slate-100 px-6 md:px-10 py-16">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <p className="text-xs font-semibold uppercase tracking-widest text-slate-500 mb-3">Legal</p>
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-slate-900 mb-4">
               Privacy Policy
@@ -61,7 +61,7 @@ export default function PrivacyPolicyPage() {
 
         {/* Body */}
         <div className="px-6 md:px-10 py-14">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-14 items-start">
 
               {/* Sticky TOC */}

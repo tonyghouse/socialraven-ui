@@ -1061,8 +1061,8 @@ export default function CalendarPage() {
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="shrink-0 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
-        <div className="px-4 sm:px-6 py-3">
-          <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="px-4 sm:px-6 h-16 flex items-center">
+          <div className="flex items-center justify-between gap-4 flex-wrap w-full">
 
             {/* Title */}
             <div className="flex items-center gap-3">

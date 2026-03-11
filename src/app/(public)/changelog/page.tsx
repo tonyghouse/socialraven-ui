@@ -28,7 +28,7 @@ export default function ChangelogPage() {
     <>
       <Navbar />
       <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="mx-auto max-w-7xl">
+        <div className="">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
@@ -41,7 +41,7 @@ export default function ChangelogPage() {
 
         {/* Hero */}
         <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-16">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">Changelog</p>
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-[hsl(var(--foreground))] mb-4">
               What&apos;s new
@@ -54,7 +54,7 @@ export default function ChangelogPage() {
 
         {/* Content */}
         <div className="px-6 md:px-10 py-14">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
 
             <div className="space-y-8">
               {ENTRIES.map(({ version, date, badge, items }) => (

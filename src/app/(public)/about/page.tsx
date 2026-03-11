@@ -92,7 +92,7 @@ export default function AboutPage() {
     <>
       <Navbar />
       <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="mx-auto max-w-7xl">
+        <div className="">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
@@ -105,7 +105,7 @@ export default function AboutPage() {
 
         {/* Hero */}
         <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-20">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-4">Our story</p>
             <h1 className="text-4xl md:text-5xl lg:text-[60px] font-semibold tracking-tight text-[hsl(var(--foreground))] mb-6 max-w-3xl leading-[1.08]">
               Built for teams who take social media seriously.
@@ -128,7 +128,7 @@ export default function AboutPage() {
 
         {/* Mission */}
         <div className="px-6 md:px-10 py-16 bg-[#f9fafb]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="grid lg:grid-cols-2 gap-14 items-center">
               <div className="space-y-5">
                 <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))]">Our mission</p>
@@ -173,7 +173,7 @@ export default function AboutPage() {
 
         {/* Values */}
         <div className="px-6 md:px-10 py-16 bg-white border-y border-[hsl(var(--border))]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="text-center mb-12">
               <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">
                 What we stand for
@@ -201,7 +201,7 @@ export default function AboutPage() {
 
         {/* Who we build for */}
         <div className="px-6 md:px-10 py-16 bg-[#f9fafb]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="text-center mb-12">
               <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">
                 Who we build for

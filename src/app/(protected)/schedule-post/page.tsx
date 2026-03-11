@@ -117,8 +117,8 @@ export default function ScheduledPostCollectionPage() {
 
       {/* ── Sticky header ── */}
       <div className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
-        <div className="px-4 sm:px-6 py-3.5">
-          <div className="flex items-center gap-3">
+        <div className="px-4 sm:px-6">
+          <div className="flex items-center gap-3 h-16">
             <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
               <CalendarClock className="w-[18px] h-[18px] text-accent" />
             </div>
@@ -141,7 +141,7 @@ export default function ScheduledPostCollectionPage() {
           </div>
 
           {selectedPlatforms.length > 0 && (
-            <div className="flex items-center gap-1.5 mt-2.5 flex-wrap">
+            <div className="flex items-center gap-1.5 pb-2.5 flex-wrap">
               <span className="text-xs text-muted-foreground">Posting to:</span>
               {selectedPlatforms.map((p) => (
                 <span key={p} className="text-xs font-medium px-2 py-0.5 bg-muted rounded-full text-foreground">

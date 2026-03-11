@@ -197,7 +197,7 @@ export default function DashboardPage() {
 
       {/* ── Sticky header ────────────────────────────────────────── */}
       <div className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-[17px] font-semibold text-foreground tracking-tight leading-tight">
               {getGreeting()}{firstName ? `, ${firstName}` : ""}
@@ -241,7 +241,7 @@ export default function DashboardPage() {
       {/* ── Trial banner ─────────────────────────────────────────── */}
       {userPlan?.status === "TRIALING" && trialDaysLeft !== null && (
         <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
+          <div className="px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm">
               <Sparkles className="w-4 h-4 text-violet-200 flex-shrink-0" />
               <span className="font-semibold text-white">Free trial active</span>
@@ -261,7 +261,7 @@ export default function DashboardPage() {
       )}
 
       {/* ── Page content ─────────────────────────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      <div className="px-4 sm:px-6 py-8 space-y-6">
 
         {/* Stats row — 4 cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

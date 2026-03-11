@@ -439,7 +439,7 @@ export default function PostDetailPage() {
     <main className="min-h-screen bg-background">
       {/* Sticky Top Bar */}
       <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <nav className="flex items-center gap-1.5 text-sm min-w-0">
             <button
               onClick={() => router.push("/scheduled-posts")}
@@ -484,7 +484,7 @@ export default function PostDetailPage() {
       </header>
 
       {/* Page Body */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <div className="px-4 sm:px-6 py-8">
         <div className="grid lg:grid-cols-5 gap-6">
 
           {/* ── Left: Preview ── */}
@@ -758,7 +758,7 @@ function SkeletonPostPage() {
     <main className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
+        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />
             <Skeleton className="h-4 w-28 rounded hidden sm:block" />
@@ -771,7 +771,7 @@ function SkeletonPostPage() {
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <div className="px-4 sm:px-6 py-8">
         <div className="grid lg:grid-cols-5 gap-6">
           {/* Left column skeleton */}
           <div className="lg:col-span-3 space-y-5">

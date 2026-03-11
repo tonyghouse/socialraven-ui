@@ -111,7 +111,7 @@ export default function ContactPage() {
     <>
       <Navbar />
       <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="mx-auto max-w-7xl">
+        <div className="">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
@@ -124,7 +124,7 @@ export default function ContactPage() {
 
         {/* Hero */}
         <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-20">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-4">Contact</p>
             <h1 className="text-4xl md:text-5xl lg:text-[60px] font-semibold tracking-tight text-[hsl(var(--foreground))] mb-5 max-w-2xl leading-[1.08]">
               We&apos;re here when you need us.
@@ -150,7 +150,7 @@ export default function ContactPage() {
 
         {/* Contact channels */}
         <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="mb-8">
               <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">
                 Get in touch
@@ -193,7 +193,7 @@ export default function ContactPage() {
 
         {/* Quick answers */}
         <div className="px-6 md:px-10 py-14 bg-white border-y border-[hsl(var(--border))]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="mb-10">
               <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">
                 Quick answers
@@ -218,7 +218,7 @@ export default function ContactPage() {
 
         {/* Enterprise CTA */}
         <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="rounded-2xl bg-[hsl(var(--foreground))] p-10 md:p-14">
               <div className="grid md:grid-cols-2 gap-10 items-center">
                 <div className="space-y-4">

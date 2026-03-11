@@ -86,7 +86,7 @@ export default function BlogPage() {
     <>
       <Navbar />
       <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="mx-auto max-w-7xl">
+        <div className="">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
@@ -99,7 +99,7 @@ export default function BlogPage() {
 
         {/* Hero */}
         <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-20">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-4">Blog</p>
             <h1 className="text-4xl md:text-5xl lg:text-[60px] font-semibold tracking-tight text-[hsl(var(--foreground))] mb-5 max-w-2xl leading-[1.08]">
               Insights for modern social media teams.
@@ -118,7 +118,7 @@ export default function BlogPage() {
 
         {/* Coming soon articles */}
         <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="mx-auto max-w-7xl space-y-8">
+          <div className="space-y-8">
             <div>
               <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">
                 Coming soon
@@ -156,7 +156,7 @@ export default function BlogPage() {
 
         {/* Topic categories */}
         <div className="px-6 md:px-10 py-14 bg-white border-y border-[hsl(var(--border))]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="mb-10">
               <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">Topics</p>
               <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]">What we&apos;ll cover</h2>
@@ -180,7 +180,7 @@ export default function BlogPage() {
 
         {/* Notify CTA */}
         <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="rounded-2xl bg-[hsl(var(--foreground))] p-10 md:p-14 text-center space-y-5">
               <p className="text-xs font-semibold uppercase tracking-widest text-white/50">
                 Stay in the loop

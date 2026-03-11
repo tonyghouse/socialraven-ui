@@ -68,7 +68,7 @@ export function AppSidebar() {
           "flex items-center border-b border-foreground/[0.07]",
           isCollapsed
             ? "flex-col gap-2 px-0 pt-5 pb-4 items-center"
-            : "flex-row justify-between px-4 py-4"
+            : "flex-row justify-between px-4 h-16"
         )}
       >
         <Link

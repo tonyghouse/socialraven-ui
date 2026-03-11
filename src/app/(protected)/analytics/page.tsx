@@ -350,7 +350,7 @@ export default function AnalyticsPage() {
     <div className="flex flex-col min-h-screen page-bg">
 
       {/* ─── Sticky header ─────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 h-14 flex items-center border-b border-border/60 bg-background/80 backdrop-blur-xl px-4 sm:px-6 shrink-0 gap-3">
+      <header className="sticky top-0 z-30 h-16 flex items-center border-b border-border/60 bg-background/80 backdrop-blur-xl px-4 sm:px-6 shrink-0 gap-3">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-accent/10 shrink-0">
             <BarChart2 className="h-3.5 w-3.5 text-accent" />
@@ -388,7 +388,7 @@ export default function AnalyticsPage() {
         </button>
       </header>
 
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 space-y-5">
+      <main className="flex-1 w-full px-4 sm:px-6 py-6 space-y-5">
 
         {/* ── Error banner ──────────────────────────────────────────────── */}
         {error && (

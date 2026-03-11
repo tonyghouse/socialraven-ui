@@ -34,7 +34,7 @@ export default function TermsOfServicePage() {
     <>
       <Navbar />
       <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="mx-auto max-w-7xl">
+        <div className="">
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
@@ -47,7 +47,7 @@ export default function TermsOfServicePage() {
 
         {/* Hero */}
         <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-16">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3">Legal</p>
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground mb-3">
               Terms of Service
@@ -60,7 +60,7 @@ export default function TermsOfServicePage() {
 
         {/* Body */}
         <div className="px-6 md:px-10 py-14">
-          <div className="mx-auto max-w-7xl">
+          <div className="">
             <div className="lg:grid lg:grid-cols-[220px_1fr] lg:gap-14 items-start">
 
               {/* Sticky TOC */}

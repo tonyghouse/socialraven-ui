@@ -103,7 +103,7 @@ export default function LinkNewAccountSection() {
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <div className="px-4 sm:px-6 py-6">
       {/* ERROR ALERT */}
       {error && (
         <div className="flex items-start gap-3 p-4 mb-4 bg-red-50 border border-red-200 rounded-xl">
