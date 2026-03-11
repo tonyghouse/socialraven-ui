@@ -12,6 +12,7 @@ import {
   User,
   LogOut,
   CalendarDays,
+  BarChart2,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -20,7 +21,8 @@ import { useClerk, useUser } from "@clerk/nextjs";
 
 // ── Items that live inside the More drawer ────────────────────────────────────
 const drawerItems = [
-  { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
+  { title: "Analytics",       url: "/analytics",        icon: BarChart2 },
+  { title: "Published Posts", url: "/published-posts",  icon: CalendarCheck2 },
   { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
 ];
 
