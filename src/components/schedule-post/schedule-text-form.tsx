@@ -10,8 +10,13 @@ import { useAuth } from "@clerk/nextjs";
 import ScheduleDateTimePicker from "./date-time-picker";
 import { localToUTC } from "@/lib/timeUtil";
 import PlatformConfigsPanel from "./platform-configs-panel";
+import PlatformCharLimits from "./platform-char-limits";
 import { cn } from "@/lib/utils";
 import { Send, Loader2 } from "lucide-react";
+import {
+  getCharErrors,
+  PLATFORM_DISPLAY_NAMES,
+} from "@/lib/platformLimits";
 
 interface Props {
   connectedAccounts: ConnectedAccount[];
@@ -24,24 +29,52 @@ interface Props {
 
 const MAX_CHARS = 2200;
 
-export default function ScheduleTextForm({ connectedAccounts, selectedIds, resetSelection, initialDate = "", initialTime = "" }: Props) {
+export default function ScheduleTextForm({
+  connectedAccounts,
+  selectedIds,
+  resetSelection,
+  initialDate = "",
+  initialTime = "",
+}: Props) {
   const [content, setContent] = useState("");
   const [date, setDate] = useState(initialDate);
   const [time, setTime] = useState(initialTime);
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>({});
   const [loading, setLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
   const { getToken } = useAuth();
 
   const selectedAccounts = connectedAccounts.filter((a) => selectedIds.includes(a.providerUserId));
+  const selectedPlatforms = [...new Set(selectedAccounts.map((a) => a.platform.toLowerCase()))];
+
   const charCount = content.length;
-  const nearLimit  = charCount > MAX_CHARS * 0.85;
-  const overLimit  = charCount > MAX_CHARS;
+  const nearLimit = charCount > MAX_CHARS * 0.85;
+  const overLimit = charCount > MAX_CHARS;
+
+  // Real-time per-platform char errors (drives live UI feedback)
+  const platformCharErrors = getCharErrors(selectedPlatforms, charCount);
+  const hasAnyCharError = overLimit || platformCharErrors.length > 0;
 
   async function submit() {
+    setShowErrors(true);
+
     if (!content.trim()) { toast.error("Please write your post content"); return; }
-    if (!date || !time)   { toast.error("Please select a date and time");  return; }
+    if (!date || !time)  { toast.error("Please select a date and time");  return; }
     if (selectedIds.length === 0) { toast.error("Please select at least one account"); return; }
-    if (overLimit) { toast.error(`Content exceeds the ${MAX_CHARS.toLocaleString()} character limit`); return; }
+
+    // Platform-specific char limit check
+    if (platformCharErrors.length > 0) {
+      const err = platformCharErrors[0];
+      const name = PLATFORM_DISPLAY_NAMES[err.platform] ?? err.platform;
+      const over = err.current - err.limit;
+      toast.error(`${name} limit exceeded — remove ${over.toLocaleString()} character${over === 1 ? "" : "s"} to continue`);
+      return;
+    }
+
+    if (overLimit) {
+      toast.error(`Content exceeds the ${MAX_CHARS.toLocaleString()} character limit`);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -60,6 +93,7 @@ export default function ScheduleTextForm({ connectedAccounts, selectedIds, reset
       setDate("");
       setTime("");
       setPlatformConfigs({});
+      setShowErrors(false);
     } catch {
       toast.error("Failed to schedule post. Please try again.");
     } finally {
@@ -76,8 +110,7 @@ export default function ScheduleTextForm({ connectedAccounts, selectedIds, reset
           <span
             className={cn(
               "text-xs font-mono tabular-nums transition-colors",
-              overLimit  ? "text-red-500 font-semibold"  :
-              nearLimit  ? "text-amber-500"               : "text-muted-foreground"
+              overLimit ? "text-red-500 font-semibold" : nearLimit ? "text-amber-500" : "text-muted-foreground"
             )}
           >
             {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()}
@@ -90,11 +123,18 @@ export default function ScheduleTextForm({ connectedAccounts, selectedIds, reset
             "resize-none min-h-[160px] transition-all duration-200",
             "placeholder:text-muted-foreground/60",
             "focus:outline-none focus:ring-2 focus:ring-primary/20",
-            overLimit ? "border-red-400 focus:border-red-400" : "border-border focus:border-primary"
+            overLimit || platformCharErrors.length > 0
+              ? "border-red-400 focus:border-red-400"
+              : "border-border focus:border-primary"
           )}
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
+
+        {/* Per-platform character limit indicator */}
+        {selectedPlatforms.length > 0 && (
+          <PlatformCharLimits platforms={selectedPlatforms} charCount={charCount} />
+        )}
       </div>
 
       {/* Divider */}
@@ -105,6 +145,8 @@ export default function ScheduleTextForm({ connectedAccounts, selectedIds, reset
         selectedAccounts={selectedAccounts}
         configs={platformConfigs}
         onChange={setPlatformConfigs}
+        showErrors={showErrors}
+        postType="TEXT"
       />
 
       {selectedAccounts.length > 0 && <div className="border-t border-border/60" />}
@@ -115,7 +157,7 @@ export default function ScheduleTextForm({ connectedAccounts, selectedIds, reset
       {/* Submit */}
       <Button
         onClick={submit}
-        disabled={loading || selectedIds.length === 0 || overLimit}
+        disabled={loading || selectedIds.length === 0 || hasAnyCharError}
         className="w-full h-11 font-semibold gap-2 text-sm"
         size="lg"
       >

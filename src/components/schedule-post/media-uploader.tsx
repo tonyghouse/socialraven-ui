@@ -10,6 +10,10 @@ interface Props {
   setFiles: (v: File[]) => void;
   accept?: string;
   label?: string;
+  /** Hard cap on how many files can be added. Defaults to 10. */
+  maxFiles?: number;
+  /** Label shown next to the file count, e.g. "X / Twitter" */
+  maxFilesLabel?: string;
 }
 
 export default function MediaUploader({
@@ -17,6 +21,8 @@ export default function MediaUploader({
   setFiles,
   accept = "image/*,video/*",
   label = "Add Media",
+  maxFiles = 10,
+  maxFilesLabel,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -27,7 +33,7 @@ export default function MediaUploader({
   function onSelect(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     const selected = Array.from(e.target.files);
-    const updated  = [...files, ...selected].slice(0, 10);
+    const updated  = [...files, ...selected].slice(0, maxFiles);
     setFiles(updated);
     if (inputRef.current) inputRef.current.value = "";
   }
@@ -70,7 +76,11 @@ export default function MediaUploader({
             <p className="text-sm font-semibold text-foreground">{label}</p>
             {files.length === 0 && (
               <p className="text-xs text-muted-foreground mt-0.5">
-                Drag & drop or click to browse — up to 10 files
+                Drag & drop or click to browse
+                {maxFiles === 1
+                  ? " — 1 file only"
+                  : ` — up to ${maxFiles} file${maxFiles !== 1 ? "s" : ""}`}
+                {maxFilesLabel ? ` (${maxFilesLabel} limit)` : ""}
               </p>
             )}
           </div>
@@ -142,9 +152,10 @@ export default function MediaUploader({
               </Reorder.Group>
             </div>
 
-            {files.length >= 2 && (
+            {files.length >= 1 && (
               <p className="text-xs text-muted-foreground mt-2">
-                Drag to reorder · {files.length} file{files.length !== 1 ? "s" : ""} added
+                {files.length >= 2 ? "Drag to reorder · " : ""}
+                {files.length} / {maxFiles} file{maxFiles !== 1 ? "s" : ""} added
               </p>
             )}
           </motion.div>

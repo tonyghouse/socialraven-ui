@@ -12,8 +12,9 @@ import {
   TikTokConfig,
   LinkedInConfig,
 } from "@/model/PostCollection";
+import { PostType } from "@/model/PostType";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronUp, Settings2 } from "lucide-react";
+import { AlertCircle, ChevronDown, ChevronUp, Settings2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -202,8 +203,19 @@ function XPanel({ config, onChange }: { config: XConfig; onChange: (c: XConfig) 
   );
 }
 
-function YouTubePanel({ config, onChange }: { config: YouTubeConfig; onChange: (c: YouTubeConfig) => void }) {
+function YouTubePanel({
+  config,
+  onChange,
+  showErrors,
+  postType,
+}: {
+  config: YouTubeConfig;
+  onChange: (c: YouTubeConfig) => void;
+  showErrors?: boolean;
+  postType?: PostType;
+}) {
   const [tagInput, setTagInput] = useState("");
+  const titleError = showErrors && postType === "VIDEO" && !config.videoTitle?.trim();
 
   function addTag() {
     const trimmed = tagInput.trim();
@@ -217,14 +229,26 @@ function YouTubePanel({ config, onChange }: { config: YouTubeConfig; onChange: (
 
   return (
     <div className="space-y-4">
-      <ConfigRow label="Video Title">
+      <div className="space-y-2">
+        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Video Title
+          {postType === "VIDEO" && (
+            <span className="ml-1.5 text-red-500 font-bold">*</span>
+          )}
+        </Label>
         <Input
           placeholder="Enter a compelling video title..."
           value={config.videoTitle ?? ""}
           onChange={(e) => onChange({ ...config, videoTitle: e.target.value })}
-          className="text-sm"
+          className={cn("text-sm", titleError ? "border-red-400 focus-visible:ring-red-400/30" : "")}
         />
-      </ConfigRow>
+        {titleError && (
+          <p className="flex items-center gap-1.5 text-xs text-red-500">
+            <AlertCircle className="w-3 h-3 flex-shrink-0" />
+            Video title is required for YouTube
+          </p>
+        )}
+      </div>
       <ConfigRow label="Privacy">
         <RadioPills
           value={config.privacy}
@@ -375,22 +399,33 @@ function PlatformAccordionCard({
   platform,
   config,
   onChange,
+  showErrors,
+  postType,
 }: {
   platform: string;
   config: any;
   onChange: (c: any) => void;
+  showErrors?: boolean;
+  postType?: PostType;
 }) {
   const [open, setOpen] = useState(true);
   const styles = PLATFORM_STYLES[platform] ?? PLATFORM_STYLES["x"];
   const Icon   = PLATFORM_ICONS[platform];
   const name   = PLATFORM_NAMES[platform] ?? platform;
 
+  // Detect if this platform has a validation error to show a badge on the header
+  const hasError =
+    showErrors &&
+    platform === "youtube" &&
+    postType === "VIDEO" &&
+    !config?.videoTitle?.trim();
+
   function renderPanel() {
     switch (platform) {
       case "facebook":  return <FacebookPanel  config={config ?? {}} onChange={onChange} />;
       case "instagram": return <InstagramPanel config={config ?? {}} onChange={onChange} />;
       case "x":         return <XPanel         config={config ?? {}} onChange={onChange} />;
-      case "youtube":   return <YouTubePanel   config={config ?? {}} onChange={onChange} />;
+      case "youtube":   return <YouTubePanel   config={config ?? {}} onChange={onChange} showErrors={showErrors} postType={postType} />;
       case "threads":   return <ThreadsPanel   config={config ?? {}} onChange={onChange} />;
       case "tiktok":    return <TikTokPanel    config={config ?? {}} onChange={onChange} />;
       case "linkedin":  return <LinkedInPanel  config={config ?? {}} onChange={onChange} />;
@@ -416,6 +451,12 @@ function PlatformAccordionCard({
           )}
           {Icon && <Icon className={cn("w-4 h-4 flex-shrink-0", styles.text)} />}
           <span className={cn("text-sm font-semibold", styles.text)}>{name}</span>
+          {hasError && (
+            <span className="flex items-center gap-1 text-[10px] font-semibold text-red-600 bg-red-50 border border-red-200 rounded-full px-2 py-px">
+              <AlertCircle className="w-2.5 h-2.5" />
+              Required field missing
+            </span>
+          )}
         </div>
         {open
           ? <ChevronUp   className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -438,9 +479,11 @@ interface Props {
   selectedAccounts: ConnectedAccount[];
   configs: PlatformConfigs;
   onChange: (configs: PlatformConfigs) => void;
+  showErrors?: boolean;
+  postType?: PostType;
 }
 
-export default function PlatformConfigsPanel({ selectedAccounts, configs, onChange }: Props) {
+export default function PlatformConfigsPanel({ selectedAccounts, configs, onChange, showErrors, postType }: Props) {
   const platforms = useMemo(() => {
     const seen = new Set<string>();
     return selectedAccounts
@@ -470,6 +513,8 @@ export default function PlatformConfigsPanel({ selectedAccounts, configs, onChan
             platform={platform}
             config={(configs as any)[platform]}
             onChange={(c) => update(platform, c)}
+            showErrors={showErrors}
+            postType={postType}
           />
         ))}
       </div>

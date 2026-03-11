@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { CalendarClock, Zap } from "lucide-react";
+import { CalendarClock, CheckCircle2, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
@@ -16,6 +16,7 @@ import { AccountSelector } from "@/components/schedule-post/account-selection-sh
 import ScheduleImageForm from "@/components/schedule-post/schedule-image-form";
 import ScheduleVideoForm from "@/components/schedule-post/schedule-video-form";
 import ScheduleTextForm from "@/components/schedule-post/schedule-text-form";
+import { cn } from "@/lib/utils";
 
 // ── Step card wrapper ─────────────────────────────────────────────────────────
 
@@ -24,17 +25,30 @@ function StepCard({
   title,
   description,
   children,
+  complete,
 }: {
   step: number;
   title: string;
   description: string;
   children: React.ReactNode;
+  complete?: boolean;
 }) {
   return (
-    <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
+    <div className={cn(
+      "bg-card border rounded-2xl shadow-sm overflow-hidden transition-all duration-300",
+      complete ? "border-primary/30" : "border-border"
+    )}>
       <div className="flex items-start gap-4 px-6 py-4 border-b border-border/60 bg-muted/20">
-        <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center mt-0.5">
-          <span className="text-xs font-bold text-accent">{step}</span>
+        <div className={cn(
+          "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5 transition-all duration-300",
+          complete
+            ? "bg-primary/15"
+            : "bg-muted border border-border/60"
+        )}>
+          {complete
+            ? <CheckCircle2 className="w-4 h-4 text-primary" />
+            : <span className="text-xs font-bold text-muted-foreground">{step}</span>
+          }
         </div>
         <div>
           <h2 className="text-sm font-bold text-foreground">{title}</h2>
@@ -46,7 +60,17 @@ function StepCard({
   );
 }
 
-// ── Platform name map ─────────────────────────────────────────────────────────
+// ── Platform badge colours ────────────────────────────────────────────────────
+
+const PLATFORM_BADGE_STYLES: Record<string, string> = {
+  facebook:  "bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/20",
+  instagram: "bg-pink-50 text-pink-600 border-pink-200",
+  x:         "bg-foreground/8 text-foreground border-border",
+  linkedin:  "bg-[#0A66C2]/10 text-[#0A66C2] border-[#0A66C2]/20",
+  youtube:   "bg-red-50 text-red-600 border-red-200",
+  threads:   "bg-foreground/8 text-foreground border-border",
+  tiktok:    "bg-foreground/8 text-foreground border-border",
+};
 
 const PLATFORM_LABELS: Record<string, string> = {
   facebook: "Facebook", instagram: "Instagram", x: "X",
@@ -65,7 +89,6 @@ export default function ScheduledPostCollectionPage() {
   const { isLoaded, getToken } = useAuth();
   const searchParams = useSearchParams();
 
-  // Pre-fill date/time from calendar navigation
   const initialDate = searchParams.get("date") ?? "";
   const initialTime = searchParams.get("time") ?? "";
 
@@ -112,6 +135,9 @@ export default function ScheduledPostCollectionPage() {
       .map((a) => a.platform.toLowerCase())
   )];
 
+  const step1Complete = true; // post type always selected
+  const step2Complete = selectedCount > 0;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
 
@@ -119,23 +145,23 @@ export default function ScheduledPostCollectionPage() {
       <div className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="px-4 sm:px-6">
           <div className="flex items-center gap-3 h-16">
-            <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center flex-shrink-0">
-              <CalendarClock className="w-[18px] h-[18px] text-accent" />
+            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <CalendarClock className="w-[18px] h-[18px] text-primary" />
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-base font-bold text-foreground tracking-tight leading-tight">
                 Schedule Post
               </h1>
-              <p className="text-xs text-muted-foreground leading-tight">
+              <p className="text-xs text-muted-foreground leading-tight truncate">
                 {initialDate && initialTime
                   ? `Pre-filled from calendar · ${initialDate} at ${initialTime}`
                   : "Create once · publish to 7 platforms simultaneously"}
               </p>
             </div>
             {selectedCount > 0 && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-accent/10 rounded-full text-xs font-semibold text-accent flex-shrink-0">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-semibold text-primary flex-shrink-0 border border-primary/20">
                 <Zap className="w-3 h-3" />
-                {selectedCount} account{selectedCount !== 1 ? "s" : ""}
+                {selectedCount} {selectedCount === 1 ? "account" : "accounts"}
               </div>
             )}
           </div>
@@ -144,7 +170,13 @@ export default function ScheduledPostCollectionPage() {
             <div className="flex items-center gap-1.5 pb-2.5 flex-wrap">
               <span className="text-xs text-muted-foreground">Posting to:</span>
               {selectedPlatforms.map((p) => (
-                <span key={p} className="text-xs font-medium px-2 py-0.5 bg-muted rounded-full text-foreground">
+                <span
+                  key={p}
+                  className={cn(
+                    "text-xs font-medium px-2 py-0.5 rounded-full border",
+                    PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border"
+                  )}
+                >
                   {PLATFORM_LABELS[p] ?? p}
                 </span>
               ))}
@@ -161,6 +193,7 @@ export default function ScheduledPostCollectionPage() {
           step={1}
           title="Content Type"
           description="Choose the format for this post."
+          complete={step1Complete}
         >
           <PostTypeSelector postType={postType} setPostType={handlePostTypeChange} />
         </StepCard>
@@ -170,6 +203,7 @@ export default function ScheduledPostCollectionPage() {
           step={2}
           title="Select Accounts"
           description="Choose which social profiles this post will be published to."
+          complete={step2Complete}
         >
           <AccountSelector
             postType={postType}
