@@ -23,21 +23,27 @@ import {
   Trash2,
   Pencil,
   Loader2,
-  CalendarDays,
-  AlignLeft,
-  Type,
+  Lock,
+  Zap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import { deletePostCollectionApi } from "@/service/deletePostCollectionApi";
-import { updatePostCollectionApi } from "@/service/updatePostCollectionApi";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { PostResponse } from "@/model/PostResponse";
+import type { ConnectedAccount } from "@/model/ConnectedAccount";
+import type { AccountGroup } from "@/model/AccountGroup";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/service/getImageUrl";
 import { MediaPreview } from "@/components/generic/media-preview";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
+import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
+import { fetchAccountGroupsApi } from "@/service/accountGroups";
+import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
+import EditImageForm from "@/components/schedule-post/edit-image-form";
+import EditVideoForm from "@/components/schedule-post/edit-video-form";
+import EditTextForm from "@/components/schedule-post/edit-text-form";
 
 /* ─── Config maps ─────────────────────────────────────────── */
 
@@ -125,10 +131,10 @@ const platformIconStyle: Record<string, string> = {
 const platformAccent: Record<
   string,
   {
-    bar: string;          // CSS gradient for the 3 px top accent bar
-    cardBg: string;       // subtle tinted card background
-    cardBorder: string;   // colored border
-    iconClass: string;    // icon container: gradient bg + text + shadow
+    bar: string;
+    cardBg: string;
+    cardBorder: string;
+    iconClass: string;
   }
 > = {
   INSTAGRAM: {
@@ -141,8 +147,7 @@ const platformAccent: Record<
   },
   X: {
     bar: "linear-gradient(90deg,#000 0%,#3a3a3a 50%,#000 100%)",
-    cardBg:
-      "bg-neutral-50/90 dark:bg-neutral-900/50",
+    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
     cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
     iconClass:
       "bg-neutral-900 dark:bg-neutral-100 border-transparent text-white dark:text-neutral-900 shadow-md shadow-neutral-900/20",
@@ -173,16 +178,14 @@ const platformAccent: Record<
   },
   TIKTOK: {
     bar: "linear-gradient(90deg,#010101 0%,#ff0050 50%,#00f2ea 100%)",
-    cardBg:
-      "bg-neutral-50/90 dark:bg-neutral-900/50",
+    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
     cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
     iconClass:
       "bg-neutral-900 border-transparent text-white shadow-md shadow-neutral-900/20",
   },
   THREADS: {
     bar: "linear-gradient(90deg,#101010 0%,#606060 50%,#101010 100%)",
-    cardBg:
-      "bg-neutral-50/90 dark:bg-neutral-900/50",
+    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
     cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
     iconClass:
       "bg-neutral-900 dark:bg-neutral-700 border-transparent text-white shadow-md shadow-neutral-900/20",
@@ -196,24 +199,84 @@ const platformAccentFallback = {
   iconClass: "bg-muted border-border/60 text-muted-foreground",
 };
 
-/* ─── Helpers ─────────────────────────────────────────────── */
+/* Platform badge styles for edit mode header */
+const PLATFORM_BADGE_STYLES: Record<string, string> = {
+  facebook: "bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/20",
+  instagram: "bg-pink-50 text-pink-600 border-pink-200",
+  x: "bg-foreground/8 text-foreground border-border",
+  linkedin: "bg-[#0A66C2]/10 text-[#0A66C2] border-[#0A66C2]/20",
+  youtube: "bg-red-50 text-red-600 border-red-200",
+  threads: "bg-foreground/8 text-foreground border-border",
+  tiktok: "bg-foreground/8 text-foreground border-border",
+};
 
-/** Format a JS Date → "YYYY-MM-DD" in local time */
-function toLocalDateString(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+const PLATFORM_LABELS: Record<string, string> = {
+  facebook: "Facebook",
+  instagram: "Instagram",
+  x: "X",
+  linkedin: "LinkedIn",
+  youtube: "YouTube",
+  threads: "Threads",
+  tiktok: "TikTok",
+};
 
-/** Format a JS Date → "HH:MM" in local time */
-function toLocalTimeString(d: Date) {
-  return d.toTimeString().slice(0, 5);
-}
+const POST_TYPE_EDIT_DESCRIPTIONS: Record<string, string> = {
+  IMAGE:
+    "Edit your caption, add or remove images, configure platform-specific settings, and update the schedule time.",
+  VIDEO:
+    "Edit your description, replace or add videos, configure platform-specific settings, and update the schedule time.",
+  TEXT: "Edit your content, configure platform-specific settings, and update the schedule time.",
+};
 
-/** Build UTC ISO string from a local date string + time string */
-function buildUtcIso(localDate: string, localTime: string): string {
-  return new Date(`${localDate}T${localTime}:00`).toISOString();
+/* ─── StepCard ────────────────────────────────────────────── */
+
+function StepCard({
+  step,
+  title,
+  description,
+  children,
+  complete,
+}: {
+  step: number;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+  complete?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "bg-card border rounded-2xl shadow-sm overflow-hidden transition-all duration-300",
+        complete ? "border-primary/30" : "border-border"
+      )}
+    >
+      <div className="flex items-start gap-4 px-6 py-4 border-b border-border/60 bg-muted/20">
+        <div
+          className={cn(
+            "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5 transition-all duration-300",
+            complete
+              ? "bg-primary/15"
+              : "bg-muted border border-border/60"
+          )}
+        >
+          {complete ? (
+            <CheckCircle2 className="w-4 h-4 text-primary" />
+          ) : (
+            <span className="text-xs font-bold text-muted-foreground">
+              {step}
+            </span>
+          )}
+        </div>
+        <div>
+          <h2 className="text-sm font-bold text-foreground">{title}</h2>
+          <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+            {description}
+          </p>
+        </div>
+      </div>
+      <div className="px-6 py-5">{children}</div>
+    </div>
+  );
 }
 
 /* ─── Delete Confirmation Modal ───────────────────────────── */
@@ -238,7 +301,6 @@ function DeleteModal({
   const confirmWord = "DELETE";
   const canDelete = typed === confirmWord;
 
-  // Trap focus inside modal
   const cancelRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     cancelRef.current?.focus();
@@ -406,179 +468,12 @@ function DeleteModal({
   );
 }
 
-/* ─── Edit Modal ──────────────────────────────────────────── */
-
-interface EditModalProps {
-  collection: PostCollectionResponse;
-  onCancel: () => void;
-  onSave: (title: string, description: string, localDate: string, localTime: string) => void;
-  isSaving: boolean;
-}
-
-function EditModal({ collection, onCancel, onSave, isSaving }: EditModalProps) {
-  const scheduledDate = new Date(collection.scheduledTime);
-  const isScheduled = collection.overallStatus === "SCHEDULED";
-
-  const [title, setTitle] = useState(collection.title ?? "");
-  const [description, setDescription] = useState(
-    collection.posts[0]?.description?.trim() ||
-      collection.description?.trim() ||
-      ""
-  );
-  const [localDate, setLocalDate] = useState(toLocalDateString(scheduledDate));
-  const [localTime, setLocalTime] = useState(toLocalTimeString(scheduledDate));
-
-  const canSave = title.trim().length > 0;
-
-  // Compute minimum selectable date (today)
-  const today = toLocalDateString(new Date());
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="edit-modal-title"
-    >
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onCancel}
-      />
-
-      {/* Panel */}
-      <div className="relative w-full max-w-lg rounded-2xl bg-card border border-border/60 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
-        {/* Accent bar */}
-        <div className="h-1 w-full bg-gradient-to-r from-primary/70 to-primary flex-shrink-0" />
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-border/40 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-accent/10 border border-border/40 flex items-center justify-center">
-              <Pencil className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <h2
-                id="edit-modal-title"
-                className="text-sm font-semibold text-foreground"
-              >
-                Edit Collection
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Changes apply to all posts in this collection
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Scrollable body */}
-        <div className="overflow-y-auto flex-1 px-6 py-5 space-y-5">
-          {/* Title */}
-          <div>
-            <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              <Type className="h-3.5 w-3.5" />
-              Title
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              maxLength={200}
-              placeholder="Give this collection a name…"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-border/60 bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all"
-            />
-          </div>
-
-          {/* Caption / Description */}
-          <div>
-            <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              <AlignLeft className="h-3.5 w-3.5" />
-              Caption
-            </label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={5}
-              placeholder="Write your post caption here…"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-border/60 bg-background text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all resize-none leading-relaxed"
-            />
-          </div>
-
-          {/* Schedule date/time — only editable if still SCHEDULED */}
-          <div>
-            <label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              <CalendarDays className="h-3.5 w-3.5" />
-              Scheduled time
-              {!isScheduled && (
-                <span className="ml-1 px-1.5 py-0.5 rounded-md bg-muted text-[10px] font-medium text-muted-foreground normal-case">
-                  locked
-                </span>
-              )}
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                type="date"
-                value={localDate}
-                min={today}
-                onChange={(e) => setLocalDate(e.target.value)}
-                disabled={!isScheduled}
-                className="px-3.5 py-2.5 rounded-xl border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-              <input
-                type="time"
-                value={localTime}
-                onChange={(e) => setLocalTime(e.target.value)}
-                disabled={!isScheduled}
-                className="px-3.5 py-2.5 rounded-xl border border-border/60 bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              />
-            </div>
-            {!isScheduled && (
-              <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1.5">
-                <AlertTriangle className="h-3 w-3 text-amber-500 flex-shrink-0" />
-                Schedule time cannot be changed after publishing has started.
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-border/40 flex gap-2.5 flex-shrink-0 bg-card">
-          <button
-            onClick={onCancel}
-            disabled={isSaving}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-border/60 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={() => onSave(title, description, localDate, localTime)}
-            disabled={!canSave || isSaving}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Saving…
-              </>
-            ) : (
-              <>
-                <CheckCircle2 className="h-4 w-4" />
-                Save changes
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 /* ─── Page ────────────────────────────────────────────────── */
 
 export default function ScheduledCollectionDetailPage() {
   const router = useRouter();
   const params = useParams();
-  const { getToken } = useAuth();
+  const { getToken, isLoaded } = useAuth();
   const collectionId = params.id as string;
 
   const [collection, setCollection] =
@@ -586,15 +481,24 @@ export default function ScheduledCollectionDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Modal states
+  /* ── Edit mode ── */
+  const [mode, setMode] = useState<"view" | "edit">("view");
+  const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
+  const [accountGroups, setAccountGroups] = useState<AccountGroup[]>([]);
+  const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
+  const [accountsLoading, setAccountsLoading] = useState(false);
+
+  /* ── Modal states ── */
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
-  // Toast state
-  const [toast, setToast] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  /* ── Toast state (for delete errors) ── */
+  const [toast, setToast] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
+  /* ── Load collection ── */
   useEffect(() => {
     if (!collectionId) return;
     (async () => {
@@ -602,6 +506,15 @@ export default function ScheduledCollectionDetailPage() {
         setLoading(true);
         const data = await fetchPostCollectionByIdApi(getToken, collectionId);
         setCollection(data);
+        // Pre-populate selected account IDs from existing posts
+        const ids = [
+          ...new Set(
+            data.posts
+              .map((p) => p.connectedAccount?.providerUserId)
+              .filter((id): id is string => Boolean(id))
+          ),
+        ];
+        setSelectedAccountIds(ids);
       } catch {
         setError("Unable to load this collection.");
       } finally {
@@ -610,7 +523,27 @@ export default function ScheduledCollectionDetailPage() {
     })();
   }, [collectionId, getToken]);
 
-  // Auto-dismiss toast
+  /* ── Load accounts (needed for edit mode) ── */
+  useEffect(() => {
+    if (!isLoaded) return;
+    (async () => {
+      try {
+        setAccountsLoading(true);
+        const [accounts, groups] = await Promise.all([
+          fetchAllConnectedAccountsApi(getToken),
+          fetchAccountGroupsApi(getToken),
+        ]);
+        setConnectedAccounts(accounts);
+        setAccountGroups(groups);
+      } catch {
+        /* Non-critical — only needed for edit mode */
+      } finally {
+        setAccountsLoading(false);
+      }
+    })();
+  }, [isLoaded]);
+
+  /* ── Auto-dismiss toast ── */
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3500);
@@ -625,33 +558,38 @@ export default function ScheduledCollectionDetailPage() {
     } catch {
       setIsDeleting(false);
       setShowDeleteModal(false);
-      setToast({ type: "error", message: "Failed to delete. Please try again." });
+      setToast({
+        type: "error",
+        message: "Failed to delete. Please try again.",
+      });
     }
   };
 
-  const handleSave = async (
-    title: string,
-    description: string,
-    localDate: string,
-    localTime: string
-  ) => {
-    setIsSaving(true);
-    try {
-      const payload: Record<string, string> = { title, description };
-      if (collection?.overallStatus === "SCHEDULED") {
-        payload.scheduledTime = buildUtcIso(localDate, localTime);
-      }
-      const updated = await updatePostCollectionApi(getToken, collectionId, payload);
-      setCollection(updated);
-      setShowEditModal(false);
-      setToast({ type: "success", message: "Collection updated successfully." });
-    } catch {
-      setToast({ type: "error", message: "Failed to save. Please try again." });
-    } finally {
-      setIsSaving(false);
-    }
-  };
+  function enterEditMode() {
+    setMode("edit");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
+  function exitEditMode() {
+    setMode("view");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function handleEditSuccess(updated: PostCollectionResponse) {
+    setCollection(updated);
+    // Re-sync selected IDs from the updated collection's posts
+    const ids = [
+      ...new Set(
+        updated.posts
+          .map((p) => p.connectedAccount?.providerUserId)
+          .filter((id): id is string => Boolean(id))
+      ),
+    ];
+    setSelectedAccountIds(ids);
+    exitEditMode();
+  }
+
+  /* ── Loading / error states ── */
   if (loading) {
     return <SkeletonDetailPage />;
   }
@@ -723,11 +661,24 @@ export default function ScheduledCollectionDetailPage() {
 
   const platformCount = Object.keys(groupedPosts).length;
 
-  // Caption: use first post's description as the actual content being posted
   const captionText =
     collection.posts[0]?.description?.trim() ||
     collection.description?.trim() ||
     "";
+
+  const firstMedia = collection.media[0]
+    ? { url: collection.media[0].fileUrl, mimeType: collection.media[0].mimeType }
+    : null;
+
+  // For the edit mode header platform badges
+  const editSelectedPlatforms = [
+    ...new Set(
+      connectedAccounts
+        .filter((a) => selectedAccountIds.includes(a.providerUserId))
+        .map((a) => a.platform.toLowerCase())
+    ),
+  ];
+  const editSelectedCount = selectedAccountIds.length;
 
   return (
     <main className="min-h-screen bg-background">
@@ -761,444 +712,770 @@ export default function ScheduledCollectionDetailPage() {
         />
       )}
 
-      {/* Edit Modal */}
-      {showEditModal && (
-        <EditModal
-          collection={collection}
-          onCancel={() => setShowEditModal(false)}
-          onSave={handleSave}
-          isSaving={isSaving}
-        />
-      )}
-
-      {/* Sticky Breadcrumb Header */}
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <nav className="flex items-center gap-1.5 text-sm min-w-0">
-            <button
-              onClick={() => router.push("/scheduled-posts")}
-              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-            >
-              <Layers className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline font-medium">
-                Scheduled Posts
-              </span>
-            </button>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-            <span className="font-medium text-foreground truncate">
-              {collection.title}
-            </span>
-          </nav>
-
-          <div className="flex items-center gap-2 flex-shrink-0">
-            {/* Edit button */}
-            <button
-              onClick={() => setShowEditModal(true)}
-              className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-border/60 text-foreground hover:bg-muted/50 transition-all text-xs font-semibold"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-              Edit
-            </button>
-
-            {/* Delete button */}
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all text-xs font-semibold"
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-              Delete
-            </button>
-
-            <button
-              onClick={() => router.push("/schedule-post")}
-              className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              New Post
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="px-4 sm:px-6 py-8 space-y-8">
-        {/* ── Collection Hero ── */}
-        <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-          {/* Status accent bar */}
-          <div
-            className={cn("h-1 w-full bg-gradient-to-r", accentGradient)}
-          />
-
-          <div className="p-6 sm:p-8">
-            {/* Badges */}
-            <div className="flex items-center gap-2.5 mb-4">
-              <span
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border",
-                  type.className
-                )}
-              >
-                <TypeIcon className="h-3 w-3" />
-                {type.label}
-              </span>
-              <span
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border",
-                  status.className
-                )}
-              >
-                <StatusIcon className="h-3 w-3" />
-                {status.label}
-              </span>
-            </div>
-
-            {/* Title + Description + mobile actions */}
-            <div className="mb-5">
-              <div className="flex items-start justify-between gap-3">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight leading-tight mb-2">
-                  {collection.title}
-                </h1>
-
-                {/* Mobile action buttons */}
-                <div className="flex items-center gap-2 sm:hidden flex-shrink-0 mt-1">
-                  <button
-                    onClick={() => setShowEditModal(true)}
-                    className="h-8 w-8 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => setShowDeleteModal(true)}
-                    className="h-8 w-8 rounded-lg border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+      {/* ══════════════════════════════════════════════
+          EDIT MODE
+      ══════════════════════════════════════════════ */}
+      {mode === "edit" && (
+        <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+          {/* Sticky edit header */}
+          <div className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
+            <div className="px-4 sm:px-6">
+              <div className="flex items-center gap-3 h-16">
+                <button
+                  onClick={exitEditMode}
+                  className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  <span className="text-sm font-medium hidden sm:inline">
+                    Back
+                  </span>
+                </button>
+                <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Pencil className="w-[18px] h-[18px] text-primary" />
                 </div>
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-base font-bold text-foreground tracking-tight leading-tight">
+                    Edit Collection
+                  </h1>
+                  <p className="text-xs text-muted-foreground leading-tight truncate">
+                    {collection.title}
+                  </p>
+                </div>
+                {editSelectedCount > 0 && (
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-semibold text-primary flex-shrink-0 border border-primary/20">
+                    <Zap className="w-3 h-3" />
+                    {editSelectedCount}{" "}
+                    {editSelectedCount === 1 ? "account" : "accounts"}
+                  </div>
+                )}
               </div>
 
+              {/* Platform badges row */}
+              {editSelectedPlatforms.length > 0 && (
+                <div className="flex items-center gap-1.5 pb-2.5 flex-wrap">
+                  <span className="text-xs text-muted-foreground">
+                    Posting to:
+                  </span>
+                  {editSelectedPlatforms.map((p) => (
+                    <span
+                      key={p}
+                      className={cn(
+                        "text-xs font-medium px-2 py-0.5 rounded-full border",
+                        PLATFORM_BADGE_STYLES[p] ??
+                          "bg-muted text-foreground border-border"
+                      )}
+                    >
+                      {PLATFORM_LABELS[p] ?? p}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Edit step cards */}
+          <div className="px-4 sm:px-6 py-6 space-y-4">
+            {/* Step 1 — Content Type (locked) */}
+            <StepCard
+              step={1}
+              title="Content Type"
+              description="Post type is locked and cannot be changed after creation."
+              complete={true}
+            >
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/40 border border-border/40">
+                <div
+                  className={cn(
+                    "h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0",
+                    type.className
+                  )}
+                >
+                  <TypeIcon className="h-4 w-4" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground">
+                    {type.label} Post
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Format is fixed for this collection
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted border border-border/50 px-2.5 py-1 rounded-lg">
+                  <Lock className="h-3 w-3" />
+                  Locked
+                </div>
+              </div>
+            </StepCard>
+
+            {/* Step 2 — Select Accounts */}
+            <StepCard
+              step={2}
+              title="Select Accounts"
+              description="Choose which social profiles this post will be published to. You can add or remove accounts."
+              complete={selectedAccountIds.length > 0}
+            >
+              <AccountSelector
+                postType={collection.postCollectionType}
+                accounts={connectedAccounts}
+                groups={accountGroups}
+                selectedAccountIds={selectedAccountIds}
+                onChange={setSelectedAccountIds}
+                loading={accountsLoading}
+              />
+            </StepCard>
+
+            {/* Step 3 — Compose & Schedule */}
+            <StepCard
+              step={3}
+              title="Edit Content & Schedule"
+              description={
+                POST_TYPE_EDIT_DESCRIPTIONS[collection.postCollectionType] ??
+                "Edit your post content, platform settings, and schedule."
+              }
+            >
+              {collection.postCollectionType === "IMAGE" && (
+                <EditImageForm
+                  collection={collection}
+                  connectedAccounts={connectedAccounts}
+                  selectedIds={selectedAccountIds}
+                  collectionId={collectionId}
+                  onSuccess={handleEditSuccess}
+                />
+              )}
+              {collection.postCollectionType === "VIDEO" && (
+                <EditVideoForm
+                  collection={collection}
+                  connectedAccounts={connectedAccounts}
+                  selectedIds={selectedAccountIds}
+                  collectionId={collectionId}
+                  onSuccess={handleEditSuccess}
+                />
+              )}
+              {collection.postCollectionType === "TEXT" && (
+                <EditTextForm
+                  collection={collection}
+                  connectedAccounts={connectedAccounts}
+                  selectedIds={selectedAccountIds}
+                  collectionId={collectionId}
+                  onSuccess={handleEditSuccess}
+                />
+              )}
+            </StepCard>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════
+          VIEW MODE
+      ══════════════════════════════════════════════ */}
+      {mode === "view" && (
+        <>
+          {/* Sticky Breadcrumb Header */}
+          <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+            <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+              <nav className="flex items-center gap-1.5 text-sm min-w-0">
+                <button
+                  onClick={() => router.push("/scheduled-posts")}
+                  className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                >
+                  <Layers className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline font-medium">
+                    Scheduled Posts
+                  </span>
+                </button>
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+                <span className="font-medium text-foreground truncate">
+                  {collection.title}
+                </span>
+              </nav>
+
+              <div className="flex items-center gap-2 flex-shrink-0">
+                {/* Edit button */}
+                {isScheduled && (
+                  <button
+                    onClick={enterEditMode}
+                    className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-border/60 text-foreground hover:bg-muted/50 transition-all text-xs font-semibold"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Edit
+                  </button>
+                )}
+
+                {/* Delete button */}
+                <button
+                  onClick={() => setShowDeleteModal(true)}
+                  className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all text-xs font-semibold"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete
+                </button>
+
+                <button
+                  onClick={() => router.push("/schedule-post")}
+                  className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  New Post
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div className="px-4 sm:px-6 py-4 space-y-3">
+            {/* Compact hero strip */}
+            <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+              <div className={cn("h-1 w-full bg-gradient-to-r", accentGradient)} />
+              <div className="px-5 py-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+                <h1 className="text-lg font-bold text-foreground tracking-tight flex-1 min-w-0 truncate">
+                  {collection.title}
+                </h1>
+                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
+                  <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold border", type.className)}>
+                    <TypeIcon className="h-3 w-3" />
+                    {type.label}
+                  </span>
+                  <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border", status.className)}>
+                    <StatusIcon className="h-3 w-3" />
+                    {status.label}
+                  </span>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium text-muted-foreground bg-muted/50 border border-border/40">
+                    <Calendar className="h-3 w-3" />
+                    <span>{formattedDate} &middot; {formattedTime}</span>
+                    {isScheduled && (
+                      <button onClick={enterEditMode} className="ml-0.5 hover:text-foreground transition-colors" title="Edit schedule">
+                        <Pencil className="h-2.5 w-2.5" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5 sm:hidden">
+                    {isScheduled && (
+                      <button onClick={enterEditMode} className="h-7 w-7 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all">
+                        <Pencil className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                    <button onClick={() => setShowDeleteModal(true)} className="h-7 w-7 rounded-lg border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
               {collection.description && (
-                <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
+                <p className="px-5 pb-3 text-sm text-muted-foreground leading-relaxed -mt-1 max-w-3xl">
                   {collection.description}
                 </p>
               )}
             </div>
 
-            {/* Date chip */}
-            <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-muted/50 border border-border/40 w-fit mb-6">
-              <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <div>
-                <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide leading-none mb-0.5">
-                  {isScheduled ? "Scheduled for" : "Was scheduled for"}
-                </p>
-                <p className="text-sm font-medium text-foreground">
-                  {formattedDate} · {formattedTime}
-                </p>
-              </div>
-              {isScheduled && (
-                <button
-                  onClick={() => setShowEditModal(true)}
-                  className="ml-2 h-6 w-6 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
-                  title="Edit schedule"
-                >
-                  <Pencil className="h-3 w-3" />
-                </button>
-              )}
-            </div>
-
-            {/* Platform summary row */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {Object.keys(groupedPosts).map((platform) => {
-                const Icon = PLATFORM_ICONS[platform];
-                return Icon ? (
-                  <span
-                    key={platform}
-                    className={cn(
-                      "h-7 w-7 rounded-lg border flex items-center justify-center shadow-sm",
-                      platformIconStyle[platform] ??
-                        "text-muted-foreground bg-muted/50 border-border/60"
+            {/* Main layout: sidebar + platform sections */}
+            <div className="flex flex-col lg:flex-row gap-3 items-start">
+              {/* Left sidebar */}
+              <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-3">
+                {/* Post content card: caption + media */}
+                <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
+                    <FileText className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    <p className="text-xs font-semibold text-foreground flex-1">Caption</p>
+                    {isScheduled && (
+                      <button onClick={enterEditMode} className="h-5 w-5 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
+                        <Pencil className="h-3 w-3" />
+                      </button>
                     )}
-                    title={platformDisplayName[platform] ?? platform}
-                  >
-                    <Icon className="h-3.5 w-3.5" />
-                  </span>
-                ) : null;
-              })}
-              <span className="text-xs text-muted-foreground">
-                {platformCount} platform{platformCount !== 1 ? "s" : ""} · {collection.posts.length} account{collection.posts.length !== 1 ? "s" : ""}
-              </span>
-            </div>
-          </div>
-        </div>
+                  </div>
+                  <div className="p-4">
+                    {captionText ? (
+                      <p className="text-xs text-foreground/80 leading-relaxed line-clamp-10 whitespace-pre-wrap">{captionText}</p>
+                    ) : (
+                      <p className="text-xs text-muted-foreground/50 italic">No caption specified</p>
+                    )}
+                  </div>
+                  {collection.media.length > 0 && (
+                    <div className="px-4 pb-4 border-t border-border/30 pt-3">
+                      <div className="flex items-center gap-1.5 mb-2">
+                        <ImageIcon className="h-3 w-3 text-muted-foreground" />
+                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
+                          Media &middot; {collection.media.length}
+                        </p>
+                        {isScheduled && collection.postCollectionType !== "TEXT" && (
+                          <button onClick={enterEditMode} className="ml-auto h-4 w-4 rounded flex items-center justify-center text-muted-foreground hover:text-foreground transition-all">
+                            <Pencil className="h-2.5 w-2.5" />
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {collection.media.map((m, i) => (
+                          <div key={m.id ?? i} className="rounded-lg overflow-hidden border border-border/40 shadow-sm">
+                            <MediaPreview media={mapMediaResponseToMedia(m)} className="h-14 w-14" showLightbox />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
-        {/* ── Content & Media row ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Post Caption */}
-          <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden flex flex-col">
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-border/40 bg-muted/20 flex-shrink-0">
-              <div className="h-8 w-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0">
-                <FileText className="h-4 w-4 text-primary" />
+                {/* Stats */}
+                <div className="rounded-xl bg-card border border-border/60 shadow-sm px-4 py-3 flex items-center divide-x divide-border/40">
+                  <div className="flex-1 text-center pr-3">
+                    <p className="text-xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Posts</p>
+                  </div>
+                  <div className="flex-1 text-center pl-3">
+                    <p className="text-xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Platforms</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">
-                  Post Caption
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Content scheduled for publishing
-                </p>
+
+              {/* Platform sections */}
+              <div className="flex-1 min-w-0 space-y-2.5">
+                {collection.posts.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-border/40 bg-muted/20">
+                    <LayoutGrid className="h-8 w-8 text-muted-foreground/40 mb-2" />
+                    <p className="text-sm text-muted-foreground">No posts in this collection</p>
+                  </div>
+                ) : (
+                  Object.entries(groupedPosts).map(([platform, posts]) => (
+                    <PlatformSection
+                      key={platform}
+                      platform={platform}
+                      posts={posts}
+                      caption={captionText}
+                      firstMedia={firstMedia}
+                      onPostClick={(id) => router.push(`/posts/${id}`)}
+                    />
+                  ))
+                )}
               </div>
+            </div>
+
+            {/* Mobile bottom actions */}
+            <div className="sm:hidden flex gap-3 pt-1 pb-6">
               {isScheduled && (
                 <button
-                  onClick={() => setShowEditModal(true)}
-                  className="h-7 w-7 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all flex-shrink-0"
-                  title="Edit caption"
+                  onClick={enterEditMode}
+                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-border/60 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
                 >
-                  <Pencil className="h-3.5 w-3.5" />
+                  <Pencil className="h-4 w-4" />
+                  Edit
                 </button>
               )}
-            </div>
-            <div className="p-5 flex-1">
-              {captionText ? (
-                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                  {captionText}
-                </p>
-              ) : (
-                <div>
-                  <div className="space-y-2.5">
-                    {[100, 91, 83, 97, 76, 88, 94, 71].map((w, i) => (
-                      <div
-                        key={i}
-                        className="h-3 rounded-md bg-muted/70"
-                        style={{ width: `${w}%` }}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground/50 mt-4 pt-3 border-t border-border/30 italic">
-                    No caption specified for this collection
-                  </p>
-                </div>
-              )}
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-red-200 dark:border-red-800/40 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </button>
             </div>
           </div>
-
-          {/* Media Attachments */}
-          <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden flex flex-col">
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-border/40 bg-muted/20 flex-shrink-0">
-              <div className="h-8 w-8 rounded-lg bg-violet-500/10 flex items-center justify-center flex-shrink-0">
-                <ImageIcon className="h-4 w-4 text-violet-600 dark:text-violet-400" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">
-                  Attachments
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {collection.media.length > 0
-                    ? `${collection.media.length} file${collection.media.length !== 1 ? "s" : ""} attached`
-                    : "No media files"}
-                </p>
-              </div>
-            </div>
-            <div className="p-5 flex-1">
-              {collection.media.length > 0 ? (
-                <div className="flex flex-wrap gap-2.5">
-                  {collection.media.map((m, i) => (
-                    <div
-                      key={m.id ?? i}
-                      className="rounded-xl overflow-hidden border border-border/40 shadow-sm"
-                    >
-                      <MediaPreview
-                        media={mapMediaResponseToMedia(m)}
-                        className="h-20 w-20"
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div>
-                  <div className="grid grid-cols-4 gap-2.5">
-                    {Array.from({ length: 8 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="aspect-square rounded-xl bg-muted/60 border border-border/30"
-                      />
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground/50 mt-4 pt-3 border-t border-border/30 italic">
-                    {collection.postCollectionType === "TEXT"
-                      ? "Text post — no media attachments"
-                      : "No media files attached"}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Platform Cards ── */}
-        <div>
-          <div className="flex items-center gap-2.5 mb-5">
-            <LayoutGrid className="h-5 w-5 text-muted-foreground" />
-            <h2 className="text-lg font-semibold text-foreground tracking-tight">
-              Platforms
-            </h2>
-            <span className="px-2 py-0.5 rounded-full bg-muted border border-border/40 text-xs font-semibold text-muted-foreground tabular-nums">
-              {platformCount}
-            </span>
-          </div>
-
-          {collection.posts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center rounded-2xl border border-border/40 bg-muted/20">
-              <LayoutGrid className="h-10 w-10 text-muted-foreground/40 mb-3" />
-              <p className="text-sm font-medium text-muted-foreground">
-                No posts in this collection
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Object.entries(groupedPosts).map(([platform, posts]) => (
-                <PlatformCircleCard
-                  key={platform}
-                  platform={platform}
-                  posts={posts}
-                  onPostClick={(id) => router.push(`/posts/${id}`)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* ── Bottom action bar (mobile) ── */}
-        <div className="sm:hidden flex gap-3 pt-2 pb-8">
-          <button
-            onClick={() => setShowEditModal(true)}
-            className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-border/60 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
-          >
-            <Pencil className="h-4 w-4" />
-            Edit
-          </button>
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-red-200 dark:border-red-800/40 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-          >
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </button>
-        </div>
-      </div>
+        </>
+      )}
     </main>
   );
 }
 
-/* ─── Platform Circle Card ────────────────────────────────── */
+/* --- Platform Post Previews -------------------------------------------- */
 
-function PlatformCircleCard({
-  platform,
-  posts,
-  onPostClick,
-}: {
-  platform: string;
-  posts: PostResponse[];
-  onPostClick: (id: number) => void;
-}) {
-  const Icon = PLATFORM_ICONS[platform];
-  const accent = platformAccent[platform] ?? platformAccentFallback;
-
-  const displayedPosts = posts.slice(0, 10);
-  const extraCount = posts.length - 10;
-
+/* Shared small account avatar */
+function AccountAvatar({ src, name, size = 8 }: { src: string | null; name: string; size?: number }) {
+  const dim = `h-${size} w-${size}`;
   return (
-    <div
-      className={cn(
-        "rounded-2xl border shadow-sm overflow-hidden flex flex-col transition-shadow hover:shadow-md",
-        accent.cardBg,
-        accent.cardBorder
-      )}
-    >
-      {/* Gradient accent bar */}
-      <div
-        className="h-[3px] w-full flex-shrink-0"
-        style={{ background: accent.bar }}
-      />
-
-      <div className="p-5 flex flex-col gap-4 flex-1 relative overflow-hidden">
-        {/* Faint watermark icon */}
-        {Icon && (
-          <div className="absolute -right-2 -top-1 pointer-events-none select-none">
-            <Icon className="h-20 w-20 opacity-[0.045] text-foreground" />
-          </div>
-        )}
-
-        {/* Platform header */}
-        <div className="flex items-center gap-3 relative">
-          <div
-            className={cn(
-              "h-11 w-11 rounded-xl border flex items-center justify-center flex-shrink-0",
-              accent.iconClass
-            )}
-          >
-            {Icon ? <Icon className="h-5 w-5" /> : null}
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground leading-tight">
-              {platformDisplayName[platform] ?? platform}
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              {posts.length} account{posts.length !== 1 ? "s" : ""}
-            </p>
-          </div>
+    <div className={cn("rounded-full overflow-hidden bg-muted flex-shrink-0 border border-white/20", dim)}>
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={name} className="w-full h-full object-cover" />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-muted">
+          <User className="h-3 w-3 text-muted-foreground" />
         </div>
+      )}
+    </div>
+  );
+}
 
-        {/* Stacked avatar circles — each individually clickable */}
-        <div className="flex items-center">
-          {displayedPosts.map((post, i) => {
-            const src = getImageUrl(post.connectedAccount?.profilePicLink);
-            return (
-              <button
-                key={post.id}
-                onClick={() => onPostClick(post.id)}
-                title={post.connectedAccount?.username ?? "View post"}
-                style={{
-                  marginLeft: i === 0 ? 0 : "-10px",
-                  zIndex: displayedPosts.length - i,
-                }}
-                className="relative h-9 w-9 rounded-full border-2 border-card overflow-hidden bg-muted flex-shrink-0 shadow-sm hover:scale-110 hover:z-50 transition-transform focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-              >
-                {src ? (
-                  <Image
-                    src={src}
-                    alt={post.connectedAccount?.username ?? ""}
-                    fill
-                    sizes="36px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-          {extraCount > 0 && (
-            <div
-              style={{ marginLeft: "-10px", zIndex: 0 }}
-              className="relative h-9 w-9 rounded-full border-2 border-card bg-muted flex items-center justify-center flex-shrink-0 shadow-sm"
-            >
-              <span className="text-[10px] font-semibold text-muted-foreground">
-                +{extraCount}
-              </span>
-            </div>
+/* Generic media thumbnail used inside previews */
+function PreviewMedia({ media }: { media: { url: string; mimeType: string } | null }) {
+  if (!media) return null;
+  const isVideo = media.mimeType.startsWith("video/");
+  return (
+    <div className="w-full overflow-hidden rounded-lg border border-black/10 dark:border-white/10 mt-2">
+      {isVideo ? (
+        // eslint-disable-next-line jsx-a11y/media-has-caption
+        <video src={media.url} className="w-full max-h-56 object-cover" />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={media.url} alt="Post media" className="w-full max-h-56 object-cover" />
+      )}
+    </div>
+  );
+}
+
+/* ── X (Twitter) preview ── */
+function XPreview({ caption, media, accountName, avatarSrc }: {
+  caption: string; media: { url: string; mimeType: string } | null;
+  accountName: string; avatarSrc: string | null;
+}) {
+  const handle = "@" + (accountName.replace(/\s+/g, "").toLowerCase() || "account");
+  return (
+    <div className="bg-white dark:bg-black rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 font-sans">
+      <div className="flex gap-3">
+        <AccountAvatar src={avatarSrc} name={accountName} size={10} />
+        <div className="flex-1 min-w-0">
+          <div className="flex items-baseline gap-1.5 flex-wrap">
+            <span className="text-sm font-bold text-neutral-900 dark:text-white">{accountName || "Your Account"}</span>
+            <span className="text-sm text-neutral-500">{handle}</span>
+            <span className="text-neutral-400 text-sm">·</span>
+            <span className="text-sm text-neutral-500">now</span>
+          </div>
+          {caption && (
+            <p className="text-sm text-neutral-900 dark:text-neutral-100 mt-1 leading-relaxed whitespace-pre-wrap line-clamp-5">{caption}</p>
           )}
+          <PreviewMedia media={media} />
+          <div className="flex gap-6 mt-3 text-neutral-400 text-xs">
+            <span>Reply</span>
+            <span>Repost</span>
+            <span>Like</span>
+            <span>Views</span>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
+/* ── Instagram preview ── */
+function InstagramPreview({ caption, media, accountName, avatarSrc }: {
+  caption: string; media: { url: string; mimeType: string } | null;
+  accountName: string; avatarSrc: string | null;
+}) {
+  return (
+    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden font-sans">
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-3 py-2.5">
+        <div className="p-0.5 rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-purple-600">
+          <AccountAvatar src={avatarSrc} name={accountName} size={8} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate">{accountName || "your_account"}</p>
+          <p className="text-[10px] text-neutral-500">Sponsored</p>
+        </div>
+        <span className="text-neutral-400 text-lg leading-none">···</span>
+      </div>
+      {/* Square media */}
+      {media ? (
+        <div className="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+          {media.mimeType.startsWith("video/") ? (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
+            <video src={media.url} className="w-full h-full object-cover" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={media.url} alt="" className="w-full h-full object-cover" />
+          )}
+        </div>
+      ) : (
+        <div className="w-full aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 flex items-center justify-center">
+          <span className="text-neutral-400 text-xs">No media</span>
+        </div>
+      )}
+      {/* Actions + caption */}
+      <div className="px-3 py-2.5">
+        <div className="flex gap-3 mb-2 text-neutral-800 dark:text-neutral-200">
+          <span className="text-lg">♡</span>
+          <span className="text-lg">🗨</span>
+          <span className="text-lg rotate-12">↗</span>
+          <span className="ml-auto text-lg">⊡</span>
+        </div>
+        {caption && (
+          <p className="text-xs text-neutral-900 dark:text-neutral-100 leading-relaxed line-clamp-3">
+            <span className="font-semibold">{accountName || "your_account"}</span>{" "}{caption}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── LinkedIn preview ── */
+function LinkedInPreview({ caption, media, accountName, avatarSrc }: {
+  caption: string; media: { url: string; mimeType: string } | null;
+  accountName: string; avatarSrc: string | null;
+}) {
+  return (
+    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 font-sans overflow-hidden">
+      <div className="p-4">
+        <div className="flex gap-2.5 mb-3">
+          <AccountAvatar src={avatarSrc} name={accountName} size={10} />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-neutral-900 dark:text-white truncate">{accountName || "Your Name"}</p>
+            <p className="text-xs text-neutral-500 truncate">Your Title • 1st</p>
+            <p className="text-xs text-neutral-400">Just now · 🌐</p>
+          </div>
+          <span className="text-blue-600 font-semibold text-xs self-start cursor-default">+ Follow</span>
+        </div>
+        {caption && (
+          <p className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-5 whitespace-pre-wrap">{caption}</p>
+        )}
+      </div>
+      {media && (
+        <div className="border-t border-neutral-100 dark:border-neutral-700 overflow-hidden">
+          <PreviewMedia media={media} />
+        </div>
+      )}
+      <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-700 flex gap-4 text-xs text-neutral-500">
+        <span>👍 Like</span>
+        <span>💬 Comment</span>
+        <span>🔁 Repost</span>
+        <span>↗ Send</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── Facebook preview ── */
+function FacebookPreview({ caption, media, accountName, avatarSrc }: {
+  caption: string; media: { url: string; mimeType: string } | null;
+  accountName: string; avatarSrc: string | null;
+}) {
+  return (
+    <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 font-sans overflow-hidden">
+      <div className="p-4">
+        <div className="flex gap-2.5 mb-3">
+          <AccountAvatar src={avatarSrc} name={accountName} size={10} />
+          <div>
+            <p className="text-sm font-semibold text-neutral-900 dark:text-white">{accountName || "Your Page"}</p>
+            <p className="text-xs text-neutral-500">Just now · 🌐</p>
+          </div>
+        </div>
+        {caption && (
+          <p className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-5 whitespace-pre-wrap">{caption}</p>
+        )}
+      </div>
+      {media && (
+        <div className="overflow-hidden border-t border-neutral-100 dark:border-neutral-700">
+          <PreviewMedia media={media} />
+        </div>
+      )}
+      <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-700 flex gap-4 text-xs text-neutral-500">
+        <span>👍 Like</span>
+        <span>💬 Comment</span>
+        <span>↗ Share</span>
+      </div>
+    </div>
+  );
+}
+
+/* ── YouTube preview ── */
+function YouTubePreview({ caption, media, accountName, avatarSrc }: {
+  caption: string; media: { url: string; mimeType: string } | null;
+  accountName: string; avatarSrc: string | null;
+}) {
+  const title = caption?.split("\n")[0]?.slice(0, 100) || "Your Video Title";
+  return (
+    <div className="bg-white dark:bg-neutral-900 rounded-xl overflow-hidden font-sans border border-neutral-200 dark:border-neutral-700">
+      {/* Thumbnail */}
+      <div className="relative w-full aspect-video bg-neutral-900 overflow-hidden">
+        {media ? (
+          media.mimeType.startsWith("video/") ? (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
+            <video src={media.url} className="w-full h-full object-cover" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={media.url} alt="" className="w-full h-full object-cover" />
+          )
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-white/30 text-xs">Thumbnail</span>
+          </div>
+        )}
+        {/* Duration badge */}
+        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">0:00</div>
+      </div>
+      <div className="p-3 flex gap-3">
+        <AccountAvatar src={avatarSrc} name={accountName} size={9} />
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-neutral-900 dark:text-white line-clamp-2 leading-snug">{title}</p>
+          <p className="text-xs text-neutral-500 mt-0.5">{accountName || "Your Channel"}</p>
+          <p className="text-xs text-neutral-400">0 views · Just now</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── TikTok preview ── */
+function TikTokPreview({ caption, media, accountName, avatarSrc }: {
+  caption: string; media: { url: string; mimeType: string } | null;
+  accountName: string; avatarSrc: string | null;
+}) {
+  return (
+    <div className="bg-black rounded-xl overflow-hidden font-sans relative border border-neutral-800">
+      <div className="relative w-full aspect-[9/16] max-h-72 overflow-hidden">
+        {media ? (
+          media.mimeType.startsWith("video/") ? (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
+            <video src={media.url} className="w-full h-full object-cover" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={media.url} alt="" className="w-full h-full object-cover" />
+          )
+        ) : (
+          <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
+            <span className="text-white/30 text-xs">Video</span>
+          </div>
+        )}
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        <div className="absolute bottom-3 left-3 right-12">
+          <p className="text-white text-xs font-semibold mb-1">@{accountName?.replace(/\s+/g, "").toLowerCase() || "account"}</p>
+          {caption && <p className="text-white/90 text-xs leading-snug line-clamp-2">{caption}</p>}
+        </div>
+        {/* Right actions */}
+        <div className="absolute right-2 bottom-3 flex flex-col items-center gap-3 text-white">
+          <div className="flex flex-col items-center">
+            <AccountAvatar src={avatarSrc} name={accountName} size={8} />
+            <div className="-mt-1.5 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white font-bold">+</div>
+          </div>
+          <div className="flex flex-col items-center gap-0.5"><span className="text-lg">♡</span><span className="text-[10px]">0</span></div>
+          <div className="flex flex-col items-center gap-0.5"><span className="text-lg">🗨</span><span className="text-[10px]">0</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Threads preview ── */
+function ThreadsPreview({ caption, media, accountName, avatarSrc }: {
+  caption: string; media: { url: string; mimeType: string } | null;
+  accountName: string; avatarSrc: string | null;
+}) {
+  return (
+    <div className="bg-white dark:bg-neutral-950 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 font-sans">
+      <div className="flex gap-3">
+        <div className="flex flex-col items-center">
+          <AccountAvatar src={avatarSrc} name={accountName} size={10} />
+          <div className="w-0.5 flex-1 bg-neutral-200 dark:bg-neutral-700 mt-2 min-h-4" />
+        </div>
+        <div className="flex-1 min-w-0 pb-2">
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm font-semibold text-neutral-900 dark:text-white">{accountName || "your_account"}</span>
+            <span className="text-xs text-neutral-400">now</span>
+          </div>
+          {caption && <p className="text-sm text-neutral-800 dark:text-neutral-200 mt-1 leading-relaxed whitespace-pre-wrap line-clamp-5">{caption}</p>}
+          <PreviewMedia media={media} />
+          <div className="flex gap-4 mt-3 text-neutral-400">
+            <span className="text-base">♡</span>
+            <span className="text-base">🗨</span>
+            <span className="text-base rotate-12">↗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Main PlatformSection ── */
+function PlatformSection({
+  platform,
+  posts,
+  caption,
+  firstMedia,
+  onPostClick,
+}: {
+  platform: string;
+  posts: PostResponse[];
+  caption: string;
+  firstMedia: { url: string; mimeType: string } | null;
+  onPostClick: (id: number) => void;
+}) {
+  const p = platform.toUpperCase();
+  const Icon = PLATFORM_ICONS[platform] ?? PLATFORM_ICONS[platform.toLowerCase()];
+  const accent = platformAccent[p] ?? platformAccent[platform] ?? platformAccentFallback;
+
+  // Use first post's account for the preview
+  const previewAccount = posts[0]?.connectedAccount;
+  const previewName = previewAccount?.username ?? "";
+  const previewAvatar = previewAccount?.profilePicLink
+    ? getImageUrl(previewAccount.profilePicLink)
+    : null;
+
+  const previewProps = { caption, media: firstMedia, accountName: previewName, avatarSrc: previewAvatar };
+
+  return (
+    <div className={cn("rounded-xl border shadow-sm overflow-hidden", accent.cardBg, accent.cardBorder)}>
+      <div className="h-[3px] w-full" style={{ background: accent.bar }} />
+
+      {/* Platform header row */}
+      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/30">
+        <div className={cn("h-7 w-7 rounded-lg border flex items-center justify-center flex-shrink-0", accent.iconClass)}>
+          {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
+        </div>
+        <p className="text-sm font-semibold text-foreground flex-1">
+          {platformDisplayName[p] ?? platformDisplayName[platform] ?? platform}
+        </p>
+        <span className="text-xs text-muted-foreground font-medium">
+          {posts.length} account{posts.length !== 1 ? "s" : ""}
+        </span>
+      </div>
+
+      {/* Platform-specific post preview */}
+      <div className="p-4 border-b border-border/30">
+        {p === "X" && <XPreview {...previewProps} />}
+        {p === "INSTAGRAM" && <InstagramPreview {...previewProps} />}
+        {p === "LINKEDIN" && <LinkedInPreview {...previewProps} />}
+        {p === "FACEBOOK" && <FacebookPreview {...previewProps} />}
+        {p === "YOUTUBE" && <YouTubePreview {...previewProps} />}
+        {p === "TIKTOK" && <TikTokPreview {...previewProps} />}
+        {p === "THREADS" && <ThreadsPreview {...previewProps} />}
+        {!["X","INSTAGRAM","LINKEDIN","FACEBOOK","YOUTUBE","TIKTOK","THREADS"].includes(p) && (
+          <div className="rounded-lg bg-muted/40 border border-border/40 p-4">
+            {caption && <p className="text-sm text-foreground/80 leading-relaxed line-clamp-5 whitespace-pre-wrap">{caption}</p>}
+            {firstMedia && <PreviewMedia media={firstMedia} />}
+          </div>
+        )}
+      </div>
+
+      {/* Account list */}
+      <div className="p-3 flex flex-wrap gap-1.5">
+        {posts.map((post) => {
+          const src = getImageUrl(post.connectedAccount?.profilePicLink);
+          return (
+            <button
+              key={post.id}
+              onClick={() => onPostClick(post.id)}
+              title={`View ${post.connectedAccount?.username ?? "account"}'s post`}
+              className="flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full bg-background/70 hover:bg-background border border-border/50 hover:border-border transition-all group shadow-sm"
+            >
+              <div className="relative h-5 w-5 rounded-full overflow-hidden flex-shrink-0 bg-muted border border-border/30">
+                {src ? (
+                  <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="20px" className="object-cover" />
+                ) : (
+                  <div className="h-full w-full flex items-center justify-center">
+                    <User className="h-2.5 w-2.5 text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+              <span className="text-xs font-medium text-foreground/75 group-hover:text-foreground max-w-[140px] truncate leading-none">
+                {post.connectedAccount?.username ?? "Account"}
+              </span>
+              <div className={cn(
+                "h-1.5 w-1.5 rounded-full flex-shrink-0",
+                post.postStatus === "PUBLISHED" ? "bg-emerald-500"
+                  : post.postStatus === "FAILED" ? "bg-red-500"
+                  : "bg-blue-400"
+              )} />
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+
+
 /* ─── Skeleton ────────────────────────────────────────────── */
 
 function SkeletonDetailPage() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Header skeleton */}
       <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
@@ -1215,74 +1492,51 @@ function SkeletonDetailPage() {
         </div>
       </header>
 
-      <div className="px-4 sm:px-6 py-8 space-y-8">
-        {/* Hero card skeleton */}
-        <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+      <div className="px-4 sm:px-6 py-4 space-y-3">
+        {/* Hero strip skeleton */}
+        <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
           <Skeleton className="h-1 w-full rounded-none" />
-          <div className="p-6 sm:p-8 space-y-5">
+          <div className="px-5 py-3 flex items-center gap-4">
+            <Skeleton className="h-6 rounded-lg flex-1" />
             <div className="flex gap-2">
-              <Skeleton className="h-6 w-16 rounded-lg" />
-              <Skeleton className="h-6 w-24 rounded-full" />
-            </div>
-            <div className="space-y-2">
-              <Skeleton className="h-9 w-3/4 rounded-xl" />
-              <Skeleton className="h-5 w-full rounded-lg" />
-              <Skeleton className="h-5 w-2/3 rounded-lg" />
-            </div>
-            <Skeleton className="h-14 w-72 rounded-xl" />
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-7 w-7 rounded-lg" />
-              <Skeleton className="h-7 w-7 rounded-lg" />
-              <Skeleton className="h-7 w-7 rounded-lg" />
-              <Skeleton className="h-4 w-32 rounded ml-1" />
+              <Skeleton className="h-5 w-16 rounded-md" />
+              <Skeleton className="h-5 w-20 rounded-full" />
+              <Skeleton className="h-5 w-40 rounded-lg hidden sm:block" />
             </div>
           </div>
         </div>
 
-        {/* Content & Media skeleton row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-border/40 bg-muted/20">
-              <Skeleton className="h-8 w-8 rounded-lg flex-shrink-0" />
-              <div className="space-y-1.5">
-                <Skeleton className="h-4 w-24 rounded" />
-                <Skeleton className="h-3 w-36 rounded" />
+        {/* Main layout skeleton */}
+        <div className="flex flex-col lg:flex-row gap-3 items-start">
+          {/* Sidebar skeleton */}
+          <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-3">
+            <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
+                <Skeleton className="h-3.5 w-3.5 rounded flex-shrink-0" />
+                <Skeleton className="h-4 w-20 rounded flex-1" />
               </div>
-            </div>
-            <div className="p-5 space-y-2.5">
-              {[100, 91, 83, 97, 76, 88, 94, 71].map((w, i) => (
-                <Skeleton key={i} className="h-3 rounded-md" style={{ width: `${w}%` }} />
-              ))}
-            </div>
-          </div>
-          <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-            <div className="flex items-center gap-3 px-5 py-4 border-b border-border/40 bg-muted/20">
-              <Skeleton className="h-8 w-8 rounded-lg flex-shrink-0" />
-              <div className="space-y-1.5">
-                <Skeleton className="h-4 w-24 rounded" />
-                <Skeleton className="h-3 w-28 rounded" />
-              </div>
-            </div>
-            <div className="p-5">
-              <div className="grid grid-cols-4 gap-2.5">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <Skeleton key={i} className="aspect-square rounded-xl" />
+              <div className="p-4 space-y-2">
+                {[100, 91, 83, 97, 76, 88].map((w, i) => (
+                  <Skeleton key={i} className="h-2.5 rounded" style={{ width: `${w}%` }} />
                 ))}
               </div>
             </div>
+            <div className="rounded-xl bg-card border border-border/60 shadow-sm px-4 py-3 flex items-center divide-x divide-border/40">
+              <div className="flex-1 text-center pr-3 space-y-1">
+                <Skeleton className="h-6 w-8 rounded mx-auto" />
+                <Skeleton className="h-2.5 w-10 rounded mx-auto" />
+              </div>
+              <div className="flex-1 text-center pl-3 space-y-1">
+                <Skeleton className="h-6 w-8 rounded mx-auto" />
+                <Skeleton className="h-2.5 w-14 rounded mx-auto" />
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Section header skeleton */}
-        <div>
-          <div className="flex items-center gap-2.5 mb-5">
-            <Skeleton className="h-5 w-5 rounded" />
-            <Skeleton className="h-6 w-24 rounded-lg" />
-            <Skeleton className="h-5 w-6 rounded-full" />
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[0, 1, 2, 3].map((i) => (
-              <SkeletonCircleCard key={i} />
+          {/* Platform sections skeleton */}
+          <div className="flex-1 min-w-0 space-y-2.5">
+            {[0, 1, 2].map((i) => (
+              <SkeletonPlatformSection key={i} />
             ))}
           </div>
         </div>
@@ -1291,24 +1545,21 @@ function SkeletonDetailPage() {
   );
 }
 
-function SkeletonCircleCard() {
+function SkeletonPlatformSection() {
   return (
-    <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden p-5 flex flex-col gap-4">
-      <div className="flex items-center gap-3">
-        <Skeleton className="h-10 w-10 rounded-xl flex-shrink-0" />
-        <div className="space-y-1.5">
-          <Skeleton className="h-4 w-20 rounded" />
-          <Skeleton className="h-3 w-14 rounded" />
+    <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+      <Skeleton className="h-[3px] w-full rounded-none" />
+      <div className="p-4">
+        <div className="flex items-center gap-2.5 mb-3">
+          <Skeleton className="h-8 w-8 rounded-lg flex-shrink-0" />
+          <Skeleton className="h-4 w-24 rounded flex-1" />
+          <Skeleton className="h-3 w-16 rounded" />
         </div>
-      </div>
-      <div className="flex">
-        {[0, 1, 2].map((i) => (
-          <Skeleton
-            key={i}
-            className="h-9 w-9 rounded-full flex-shrink-0 border-2 border-card"
-            style={{ marginLeft: i === 0 ? 0 : "-10px" }}
-          />
-        ))}
+        <div className="flex flex-wrap gap-1.5">
+          {[80, 100, 90, 110, 85, 95].map((w, i) => (
+            <Skeleton key={i} className="h-7 rounded-full" style={{ width: `${w}px` }} />
+          ))}
+        </div>
       </div>
     </div>
   );
