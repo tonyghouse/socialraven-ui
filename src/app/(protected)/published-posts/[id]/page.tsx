@@ -182,7 +182,7 @@ export default function PublishedCollectionDetailPage() {
   }
 
   /* ── Derived values ── */
-  const scheduledDate = new Date(collection.scheduledTime);
+  const scheduledDate = new Date(collection.scheduledTime ?? "");
   const status = statusConfig[collection.overallStatus] ?? statusConfig.PUBLISHED;
   const type = typeConfig[collection.postCollectionType] ?? typeConfig.TEXT;
   const StatusIcon = status.Icon;

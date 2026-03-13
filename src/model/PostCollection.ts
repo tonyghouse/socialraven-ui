@@ -62,6 +62,7 @@ export interface PostCollection {
   postType: PostType;
   media: PostMedia[]; // multiple media files as byte arrays homogenous image or video either one
   connectedAccounts: ConnectedAccount[];
-  scheduledTime: string; // ISO string
+  scheduledTime?: string | null; // ISO string; null/undefined when saving as draft
   platformConfigs?: PlatformConfigs;
+  isDraft?: boolean;
 }

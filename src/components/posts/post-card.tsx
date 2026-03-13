@@ -32,7 +32,7 @@ export function PostCard({ post }: { post: PostResponse }) {
     FAILED: "bg-destructive/10 text-destructive backdrop-blur-xl border-destructive/20",
   };
 
-  const localDate = new Date(post.scheduledTime);
+  const localDate = new Date(post.scheduledTime ?? "");
 
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     month: "short",

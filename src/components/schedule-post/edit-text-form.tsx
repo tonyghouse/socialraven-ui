@@ -47,12 +47,13 @@ export default function EditTextForm({
 }: Props) {
   const { getToken } = useAuth();
   const isScheduled = collection.overallStatus === "SCHEDULED";
+  const isDraft = collection.overallStatus === "DRAFT";
 
-  const scheduledDate = new Date(collection.scheduledTime);
+  const scheduledDate = collection.scheduledTime ? new Date(collection.scheduledTime) : null;
 
   const [content, setContent] = useState(collection.description ?? "");
-  const [date, setDate] = useState(toLocalDateString(scheduledDate));
-  const [time, setTime] = useState(toLocalTimeString(scheduledDate));
+  const [date, setDate] = useState(scheduledDate ? toLocalDateString(scheduledDate) : "");
+  const [time, setTime] = useState(scheduledDate ? toLocalTimeString(scheduledDate) : "");
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>(
     (collection.platformConfigs ?? {}) as PlatformConfigs
   );
@@ -174,7 +175,7 @@ export default function EditTextForm({
 
       {selectedAccounts.length > 0 && <div className="border-t border-border/60" />}
 
-      {isScheduled ? (
+      {isScheduled || isDraft ? (
         <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
       ) : (
         <div className="rounded-xl bg-muted/40 border border-border/50 px-4 py-3">

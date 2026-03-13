@@ -16,7 +16,7 @@ import MediaValidationPanel from "./media-validation-panel";
 import { localToUTC } from "@/lib/timeUtil";
 import PlatformConfigsPanel from "./platform-configs-panel";
 import { cn } from "@/lib/utils";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, BookOpen } from "lucide-react";
 import { getCharErrors, PLATFORM_DISPLAY_NAMES, validatePlatformConfigs } from "@/lib/platformLimits";
 import {
   validateMediaFiles,
@@ -50,6 +50,7 @@ export default function ScheduleVideoForm({
   const [time, setTime] = useState(initialTime);
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>({});
   const [loading, setLoading] = useState(false);
+  const [draftLoading, setDraftLoading] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
   const [mediaErrors, setMediaErrors] = useState<MediaValidationError[]>([]);
   const [validatingMedia, setValidatingMedia] = useState(false);
@@ -185,6 +186,48 @@ export default function ScheduleVideoForm({
     }
   }
 
+  async function saveDraft() {
+    if (!description.trim()) { toast.error("Please write a description before saving as draft"); return; }
+    if (overLimit || platformCharErrors.length > 0) {
+      toast.error("Fix character limit errors before saving");
+      return;
+    }
+
+    setDraftLoading(true);
+    try {
+      const media = [];
+      for (const file of files) {
+        if (!file.type.startsWith("video/")) continue;
+        const { uploadUrl, fileUrl, fileKey } = await getPresignedUrl(file, getToken);
+        await uploadToS3(uploadUrl, file);
+        media.push({ fileName: file.name, mimeType: file.type, fileUrl, fileKey, size: file.size });
+      }
+
+      await postConnectedAccountsApi(getToken, {
+        title: "",
+        description,
+        postType: "VIDEO",
+        media,
+        connectedAccounts: selectedAccounts,
+        platformConfigs,
+        isDraft: true,
+      });
+      toast.success("Draft saved! You can schedule it later from Drafts.");
+      setFiles([]);
+      setDescription("");
+      resetSelection();
+      setDate("");
+      setTime("");
+      setPlatformConfigs({});
+      setShowErrors(false);
+      setMediaErrors([]);
+    } catch {
+      toast.error("Failed to save draft. Please try again.");
+    } finally {
+      setDraftLoading(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Description */}
@@ -267,28 +310,39 @@ export default function ScheduleVideoForm({
       <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
 
       {/* Submit */}
-      <Button
-        onClick={submit}
-        disabled={loading || selectedIds.length === 0 || hasAnyCharError || hasMediaErrors || validatingMedia}
-        className="w-full h-11 font-semibold gap-2 text-sm"
-        size="lg"
-      >
-        {loading ? (
-          <>
+      <div className="flex gap-2">
+        <Button
+          onClick={saveDraft}
+          disabled={draftLoading || loading || hasAnyCharError || validatingMedia}
+          variant="outline"
+          className="flex-1 h-11 font-semibold gap-2 text-sm"
+          size="lg"
+        >
+          {draftLoading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
-            Uploading & Scheduling...
-          </>
-        ) : (
-          <>
+          ) : (
+            <BookOpen className="w-4 h-4" />
+          )}
+          Save Draft
+        </Button>
+        <Button
+          onClick={submit}
+          disabled={loading || draftLoading || selectedIds.length === 0 || hasAnyCharError || hasMediaErrors || validatingMedia}
+          className="flex-1 h-11 font-semibold gap-2 text-sm"
+          size="lg"
+        >
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
             <Send className="w-4 h-4" />
-            Schedule Post
-          </>
-        )}
-      </Button>
+          )}
+          Schedule
+        </Button>
+      </div>
 
       {selectedIds.length === 0 && (
         <p className="text-xs text-center text-muted-foreground -mt-2">
-          Select at least one account above to enable scheduling.
+          Select an account to schedule, or save as draft to finish later.
         </p>
       )}
     </div>

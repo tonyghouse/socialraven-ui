@@ -7,8 +7,8 @@ export interface PostResponse {
   title: string;
   description: string;
   provider: string;
-  postStatus: "SCHEDULED" | "PUBLISHED" | "FAILED"
-  scheduledTime: string;
+  postStatus: "DRAFT" | "SCHEDULED" | "PUBLISHED" | "FAILED"
+  scheduledTime: string | null;
   media: MediaResponse[];
   connectedAccount: ConnectedAccount;
 }

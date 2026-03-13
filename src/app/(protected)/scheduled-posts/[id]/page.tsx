@@ -296,7 +296,7 @@ function DeleteModal({
   onConfirm,
   isDeleting,
 }: DeleteModalProps) {
-  const scheduledDate = new Date(collection.scheduledTime);
+  const scheduledDate = new Date(collection.scheduledTime ?? "");
   const [typed, setTyped] = useState("");
   const confirmWord = "DELETE";
   const canDelete = typed === confirmWord;
@@ -620,7 +620,7 @@ export default function ScheduledCollectionDetailPage() {
   }
 
   /* ── Derived values ── */
-  const scheduledDate = new Date(collection.scheduledTime);
+  const scheduledDate = new Date(collection.scheduledTime ?? "");
   const status = statusConfig[collection.overallStatus] ?? statusConfig.SCHEDULED;
   const type = typeConfig[collection.postCollectionType] ?? typeConfig.TEXT;
   const StatusIcon = status.Icon;

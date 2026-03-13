@@ -12,7 +12,7 @@ import { localToUTC } from "@/lib/timeUtil";
 import PlatformConfigsPanel from "./platform-configs-panel";
 import PlatformCharLimits from "./platform-char-limits";
 import { cn } from "@/lib/utils";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, BookOpen } from "lucide-react";
 import {
   getCharErrors,
   PLATFORM_DISPLAY_NAMES,
@@ -41,6 +41,7 @@ export default function ScheduleTextForm({
   const [time, setTime] = useState(initialTime);
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>({});
   const [loading, setLoading] = useState(false);
+  const [draftLoading, setDraftLoading] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
   const { getToken } = useAuth();
 
@@ -62,7 +63,6 @@ export default function ScheduleTextForm({
     if (!date || !time)  { toast.error("Please select a date and time");  return; }
     if (selectedIds.length === 0) { toast.error("Please select at least one account"); return; }
 
-    // Platform-specific char limit check
     if (platformCharErrors.length > 0) {
       const err = platformCharErrors[0];
       const name = PLATFORM_DISPLAY_NAMES[err.platform] ?? err.platform;
@@ -98,6 +98,38 @@ export default function ScheduleTextForm({
       toast.error("Failed to schedule post. Please try again.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function saveDraft() {
+    if (!content.trim()) { toast.error("Please write your post content before saving as draft"); return; }
+    if (overLimit || platformCharErrors.length > 0) {
+      toast.error("Fix character limit errors before saving");
+      return;
+    }
+
+    setDraftLoading(true);
+    try {
+      await postConnectedAccountsApi(getToken, {
+        title: "",
+        description: content,
+        postType: "TEXT",
+        media: [],
+        connectedAccounts: selectedAccounts,
+        platformConfigs,
+        isDraft: true,
+      });
+      toast.success("Draft saved! You can schedule it later from Drafts.");
+      setContent("");
+      resetSelection();
+      setDate("");
+      setTime("");
+      setPlatformConfigs({});
+      setShowErrors(false);
+    } catch {
+      toast.error("Failed to save draft. Please try again.");
+    } finally {
+      setDraftLoading(false);
     }
   }
 
@@ -155,28 +187,39 @@ export default function ScheduleTextForm({
       <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
 
       {/* Submit */}
-      <Button
-        onClick={submit}
-        disabled={loading || selectedIds.length === 0 || hasAnyCharError}
-        className="w-full h-11 font-semibold gap-2 text-sm"
-        size="lg"
-      >
-        {loading ? (
-          <>
+      <div className="flex gap-2">
+        <Button
+          onClick={saveDraft}
+          disabled={draftLoading || loading || hasAnyCharError}
+          variant="outline"
+          className="flex-1 h-11 font-semibold gap-2 text-sm"
+          size="lg"
+        >
+          {draftLoading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
-            Scheduling...
-          </>
-        ) : (
-          <>
+          ) : (
+            <BookOpen className="w-4 h-4" />
+          )}
+          Save Draft
+        </Button>
+        <Button
+          onClick={submit}
+          disabled={loading || draftLoading || selectedIds.length === 0 || hasAnyCharError}
+          className="flex-1 h-11 font-semibold gap-2 text-sm"
+          size="lg"
+        >
+          {loading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
             <Send className="w-4 h-4" />
-            Schedule Post
-          </>
-        )}
-      </Button>
+          )}
+          Schedule
+        </Button>
+      </div>
 
       {selectedIds.length === 0 && (
         <p className="text-xs text-center text-muted-foreground -mt-2">
-          Select at least one account above to enable scheduling.
+          Select an account to schedule, or save as draft to finish later.
         </p>
       )}
     </div>

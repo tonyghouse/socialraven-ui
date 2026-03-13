@@ -60,12 +60,13 @@ export default function EditImageForm({
 }: Props) {
   const { getToken } = useAuth();
   const isScheduled = collection.overallStatus === "SCHEDULED";
+  const isDraft = collection.overallStatus === "DRAFT";
 
-  const scheduledDate = new Date(collection.scheduledTime);
+  const scheduledDate = collection.scheduledTime ? new Date(collection.scheduledTime) : null;
 
   const [description, setDescription] = useState(collection.description ?? "");
-  const [date, setDate] = useState(toLocalDateString(scheduledDate));
-  const [time, setTime] = useState(toLocalTimeString(scheduledDate));
+  const [date, setDate] = useState(scheduledDate ? toLocalDateString(scheduledDate) : "");
+  const [time, setTime] = useState(scheduledDate ? toLocalTimeString(scheduledDate) : "");
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>(
     (collection.platformConfigs ?? {}) as PlatformConfigs
   );
@@ -368,7 +369,7 @@ export default function EditImageForm({
       {selectedAccounts.length > 0 && <div className="border-t border-border/60" />}
 
       {/* Schedule time */}
-      {isScheduled ? (
+      {isScheduled || isDraft ? (
         <ScheduleDateTimePicker
           date={date}
           setDate={setDate}

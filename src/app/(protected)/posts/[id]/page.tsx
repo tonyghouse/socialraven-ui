@@ -384,7 +384,7 @@ export default function PostDetailPage() {
   const meta = platformMeta[post.provider];
   const status = statusConfig[post.postStatus] ?? statusConfig.SCHEDULED;
   const StatusIcon = status.Icon;
-  const scheduled = new Date(post.scheduledTime);
+  const scheduled = new Date(post.scheduledTime ?? "");
   const profileImageSrc = getImageUrl(post.connectedAccount?.profilePicLink);
 
   const formattedDate = scheduled.toLocaleDateString("en-US", {

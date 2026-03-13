@@ -25,6 +25,14 @@ interface CollectionCardProps {
 }
 
 const STATUS_CONFIG = {
+  DRAFT: {
+    label: "Draft",
+    dotColor: "bg-slate-400",
+    pulse: false,
+    className:
+      "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700/30",
+    Icon: FileText,
+  },
   SCHEDULED: {
     label: "Scheduled",
     dotColor: "bg-blue-500",
@@ -136,19 +144,16 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
     TYPE_CONFIG[collection.postCollectionType as keyof typeof TYPE_CONFIG] ?? TYPE_CONFIG.TEXT;
   const TypeIcon = typeCfg.Icon;
 
-  const localDate = new Date(collection.scheduledTime);
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(localDate);
-  const formattedTime = new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  }).format(localDate);
+  const isDraft = collection.overallStatus === "DRAFT";
+  const localDate = collection.scheduledTime ? new Date(collection.scheduledTime) : null;
+  const formattedDate = localDate
+    ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(localDate)
+    : null;
+  const formattedTime = localDate
+    ? new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit", hour12: true }).format(localDate)
+    : null;
 
-  const timeLabel = getTimeLabel(collection.scheduledTime);
+  const timeLabel = collection.scheduledTime ? getTimeLabel(collection.scheduledTime) : null;
 
   const uniquePlatforms = Array.from(new Set(collection.posts.map((p) => p.provider)));
   const visiblePlatforms = uniquePlatforms.slice(0, 6);
@@ -374,17 +379,24 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
             </div>
           )}
 
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border flex-shrink-0 ml-auto",
-              timeLabel.urgent
-                ? "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/30"
-                : "bg-muted/40 text-muted-foreground border-border/30"
-            )}
-          >
-            <Calendar className="h-3 w-3" />
-            {timeLabel.text}
-          </span>
+          {timeLabel ? (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border flex-shrink-0 ml-auto",
+                timeLabel.urgent
+                  ? "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/30"
+                  : "bg-muted/40 text-muted-foreground border-border/30"
+              )}
+            >
+              <Calendar className="h-3 w-3" />
+              {timeLabel.text}
+            </span>
+          ) : isDraft ? (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border flex-shrink-0 ml-auto bg-muted/40 text-muted-foreground border-border/30">
+              <Calendar className="h-3 w-3" />
+              Not scheduled
+            </span>
+          ) : null}
         </div>
 
         {/* ── Footer ── */}
@@ -394,9 +406,13 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
               {collection.posts.length} post{collection.posts.length !== 1 ? "s" : ""} ·{" "}
               {uniquePlatforms.length} platform{uniquePlatforms.length !== 1 ? "s" : ""}
             </p>
-            <time dateTime={localDate.toISOString()} className="text-[11px] text-muted-foreground/60">
-              {formattedDate} · {formattedTime}
-            </time>
+            {localDate && formattedDate && formattedTime ? (
+              <time dateTime={localDate.toISOString()} className="text-[11px] text-muted-foreground/60">
+                {formattedDate} · {formattedTime}
+              </time>
+            ) : (
+              <span className="text-[11px] text-muted-foreground/60">No schedule set</span>
+            )}
           </div>
           <div className="flex items-center gap-1.5 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200">
             <span>Open</span>

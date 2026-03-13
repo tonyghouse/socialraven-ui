@@ -311,7 +311,7 @@ export default function DashboardPage() {
                 <div className="divide-y divide-border/40">
                   {scheduledPosts.slice(0, 6).map((post) => {
                     const PlatformIcon = post.provider ? PLATFORM_ICONS[post.provider] : null;
-                    const { label: timeLabel, urgent } = relativeTime(post.scheduledTime);
+                    const { label: timeLabel, urgent } = relativeTime(post.scheduledTime ?? "");
 
                     return (
                       <Link key={post.id} href="/scheduled-posts">

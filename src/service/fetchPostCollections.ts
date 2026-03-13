@@ -3,7 +3,7 @@ import { PostCollectionResponsePage } from "@/model/PostCollectionResponse";
 export async function fetchPostCollectionsApi(
   getToken: () => Promise<string | null>,
   page: number,
-  type?: "scheduled" | "published",
+  type?: "scheduled" | "published" | "draft",
   search?: string,
   providerUserIds?: string[]
 ): Promise<PostCollectionResponsePage> {

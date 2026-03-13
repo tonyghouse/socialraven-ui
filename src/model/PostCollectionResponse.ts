@@ -5,9 +5,9 @@ export interface PostCollectionResponse {
   id: number;
   title: string;
   description: string;
-  scheduledTime: string;
+  scheduledTime: string | null;
   postCollectionType: "IMAGE" | "VIDEO" | "TEXT";
-  overallStatus: "SCHEDULED" | "PUBLISHED" | "PARTIAL_SUCCESS" | "FAILED";
+  overallStatus: "DRAFT" | "SCHEDULED" | "PUBLISHED" | "PARTIAL_SUCCESS" | "FAILED";
   posts: PostResponse[];
   media: MediaResponse[];
   platformConfigs?: Record<string, any>;
