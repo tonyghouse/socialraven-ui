@@ -66,14 +66,12 @@ export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
     Icon: Instagram,
     accent: "text-[#E1306C]",
     connectHref: "/api/auth/instagram",
-    comingSoon: true,
   },
   facebook: {
     label: "Facebook",
     Icon: Facebook,
     accent: "text-[#1877F2]",
     connectHref: "/api/auth/facebook",
-    comingSoon: true,
   },
   tiktok: {
     label: "TikTok",

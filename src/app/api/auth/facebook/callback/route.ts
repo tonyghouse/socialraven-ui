@@ -33,7 +33,7 @@ export async function GET(req: Request) {
   }
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/social/facebook/callback`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/facebook/callback`,
     {
       method: "POST",
       headers: {

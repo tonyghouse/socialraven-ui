@@ -16,6 +16,12 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { UserAvatar } from "./UserAvatar";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const navGroups = [
   {
@@ -49,13 +55,13 @@ const navGroups = [
 ];
 
 export function AppSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
 
   return (
     <aside
       className={cn(
-        "relative flex flex-col shrink-0",
+        "relative flex flex-col shrink-0 z-30",
         "h-[calc(100vh-1rem)] m-2",
         "rounded-2xl bg-white/70 backdrop-blur-2xl",
         "border border-foreground/[0.07]",
@@ -105,65 +111,77 @@ export function AppSidebar() {
 
       {/* ─── Navigation ──────────────────────────────────── */}
       <nav className="flex-1 overflow-y-auto px-2 py-3">
-        <div className="space-y-4">
-          {navGroups.map(({ label, items }, groupIdx) => (
-            <div key={groupIdx} className="space-y-px">
-              {/* Section label (expanded) or divider (collapsed) */}
-              {label && (
-                <div className="pb-1">
-                  {!isCollapsed ? (
-                    <p className="px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 select-none">
-                      {label}
-                    </p>
-                  ) : (
-                    <div className="mx-3 border-t border-foreground/[0.07]" />
-                  )}
-                </div>
-              )}
-
-              {items.map(({ title, url, icon: Icon }) => {
-                const isActive =
-                  pathname === url || pathname.startsWith(url + "/");
-                return (
-                  <Link
-                    key={url}
-                    href={url}
-                    title={isCollapsed ? title : undefined}
-                    className={cn(
-                      "relative flex items-center gap-3 rounded-xl",
-                      "text-[13.5px] font-medium leading-none",
-                      "transition-colors duration-150 group",
-                      isCollapsed
-                        ? "justify-center py-3 px-0"
-                        : "px-3 py-[11px]",
-                      isActive
-                        ? "bg-accent/[0.09] text-accent"
-                        : "text-foreground/55 hover:bg-black/[0.04] hover:text-foreground/80"
+        <TooltipProvider delayDuration={300}>
+          <div className="space-y-4">
+            {navGroups.map(({ label, items }, groupIdx) => (
+              <div key={groupIdx} className="space-y-px">
+                {/* Section label (expanded) or divider (collapsed) */}
+                {label && (
+                  <div className="pb-1">
+                    {!isCollapsed ? (
+                      <p className="px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 select-none">
+                        {label}
+                      </p>
+                    ) : (
+                      <div className="mx-3 border-t border-foreground/[0.07]" />
                     )}
-                  >
-                    {/* Left active bar */}
-                    {isActive && (
-                      <span className="absolute left-0 top-1/2 -translate-y-1/2 h-[18px] w-[3px] rounded-r-full bg-accent" />
-                    )}
+                  </div>
+                )}
 
-                    <Icon
+                {items.map(({ title, url, icon: Icon }) => {
+                  const isActive =
+                    pathname === url || pathname.startsWith(url + "/");
+                  const linkEl = (
+                    <Link
+                      key={url}
+                      href={url}
                       className={cn(
-                        "h-[17px] w-[17px] shrink-0 transition-colors duration-150",
+                        "relative flex items-center gap-3 rounded-xl",
+                        "text-[13.5px] font-medium leading-none",
+                        "transition-colors duration-150 group",
+                        isCollapsed
+                          ? "justify-center py-3 px-0"
+                          : "px-3 py-[11px]",
                         isActive
-                          ? "text-accent"
-                          : "text-foreground/38 group-hover:text-foreground/60"
+                          ? "bg-accent/[0.09] text-accent"
+                          : "text-foreground/55 hover:bg-black/[0.04] hover:text-foreground/80"
                       )}
-                    />
+                    >
+                      {/* Left active bar */}
+                      {isActive && (
+                        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-[18px] w-[3px] rounded-r-full bg-accent" />
+                      )}
 
-                    {!isCollapsed && (
-                      <span className="truncate">{title}</span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          ))}
-        </div>
+                      <Icon
+                        className={cn(
+                          "h-[17px] w-[17px] shrink-0 transition-colors duration-150",
+                          isActive
+                            ? "text-accent"
+                            : "text-foreground/38 group-hover:text-foreground/60"
+                        )}
+                      />
+
+                      {!isCollapsed && (
+                        <span className="truncate">{title}</span>
+                      )}
+                    </Link>
+                  );
+
+                  if (!isCollapsed) return <div key={url}>{linkEl}</div>;
+
+                  return (
+                    <Tooltip key={url}>
+                      <TooltipTrigger asChild>{linkEl}</TooltipTrigger>
+                      <TooltipContent side="right" sideOffset={8}>
+                        {title}
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            ))}
+          </div>
+        </TooltipProvider>
       </nav>
 
       {/* ─── User ────────────────────────────────────────── */}

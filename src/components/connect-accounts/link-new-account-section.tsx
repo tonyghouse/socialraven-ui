@@ -65,7 +65,7 @@ const PROVIDERS = [
     iconColor: "text-[#E1306C]",
     bg: "bg-gradient-to-b from-pink-50 to-purple-50/60",
     border: "border-pink-100",
-    enabled: false,
+    enabled: true,
   },
   {
     name: "Facebook",
@@ -75,7 +75,7 @@ const PROVIDERS = [
     iconColor: "text-[#1877F2]",
     bg: "bg-gradient-to-b from-blue-50 to-blue-100/40",
     border: "border-blue-100",
-    enabled: false,
+    enabled: true,
   },
   {
     name: "TikTok",
