@@ -5,46 +5,86 @@ export { PLANS };
 
 type GetToken = () => Promise<string | null>;
 
+const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 // ---------------------------------------------------------------------------
-// Mock APIs — replace each body with a real fetch() once backend is ready
+// Helpers
 // ---------------------------------------------------------------------------
 
-/** GET /plans/me */
-export async function fetchUserPlanApi(_getToken: GetToken): Promise<UserPlan> {
-  await new Promise((r) => setTimeout(r, 400));
-  // Mock: user is 7 days into their 14-day trial
+async function authHeaders(getToken: GetToken): Promise<HeadersInit> {
+  const token = await getToken();
   return {
-    currentPlan: "TRIAL",
-    startDate: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    renewalDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-    status: "TRIALING",
-    cancelAtPeriodEnd: false,
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
   };
 }
 
-/** PATCH /plans/me */
+/** Backend returns null for unlimited; map to "Unlimited" for the UI model */
+function resolveLimit(value: number | null): number | "Unlimited" {
+  return value === null || value === undefined ? "Unlimited" : value;
+}
+
+// ---------------------------------------------------------------------------
+// GET /plans/me
+// ---------------------------------------------------------------------------
+
+export async function fetchUserPlanApi(getToken: GetToken): Promise<UserPlan> {
+  const res = await fetch(`${BACKEND}/plans/me`, {
+    headers: await authHeaders(getToken),
+  });
+  if (!res.ok) throw new Error(`fetchUserPlan failed: ${res.statusText}`);
+  const data = await res.json();
+  return {
+    currentPlan: data.currentPlan as PlanType,
+    startDate: data.startDate,
+    renewalDate: data.renewalDate,
+    status: data.status,
+    cancelAtPeriodEnd: data.cancelAtPeriodEnd ?? false,
+    stripeSubscriptionId: data.stripeSubscriptionId ?? undefined,
+    trialEndsAt: data.trialEndsAt ?? undefined,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// PATCH /plans/me
+// ---------------------------------------------------------------------------
+
 export async function changeUserPlanApi(
-  _getToken: GetToken,
+  getToken: GetToken,
   newPlan: PlanType
 ): Promise<UserPlan> {
-  await new Promise((r) => setTimeout(r, 700));
+  const res = await fetch(`${BACKEND}/plans/me`, {
+    method: "PATCH",
+    headers: await authHeaders(getToken),
+    body: JSON.stringify({ planType: newPlan }),
+  });
+  if (!res.ok) throw new Error(`changePlan failed: ${res.statusText}`);
+  const data = await res.json();
   return {
-    currentPlan: newPlan,
-    startDate: new Date().toISOString(),
-    renewalDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    status: "ACTIVE",
-    cancelAtPeriodEnd: false,
+    currentPlan: data.currentPlan as PlanType,
+    startDate: data.startDate,
+    renewalDate: data.renewalDate,
+    status: data.status,
+    cancelAtPeriodEnd: data.cancelAtPeriodEnd ?? false,
+    stripeSubscriptionId: data.stripeSubscriptionId ?? undefined,
+    trialEndsAt: data.trialEndsAt ?? undefined,
   };
 }
 
-/** GET /plans/usage */
-export async function fetchUsageStatsApi(_getToken: GetToken): Promise<UsageStats> {
-  await new Promise((r) => setTimeout(r, 300));
+// ---------------------------------------------------------------------------
+// GET /plans/usage
+// ---------------------------------------------------------------------------
+
+export async function fetchUsageStatsApi(getToken: GetToken): Promise<UsageStats> {
+  const res = await fetch(`${BACKEND}/plans/usage`, {
+    headers: await authHeaders(getToken),
+  });
+  if (!res.ok) throw new Error(`fetchUsage failed: ${res.statusText}`);
+  const data = await res.json();
   return {
-    postsUsedThisMonth: 12,
-    postsLimit: 50,
-    connectedAccountsCount: 2,
-    connectedAccountsLimit: 5,
+    postsUsedThisMonth: data.postsUsedThisMonth,
+    postsLimit: resolveLimit(data.postsLimit),
+    connectedAccountsCount: data.connectedAccountsCount,
+    connectedAccountsLimit: resolveLimit(data.accountsLimit),
   };
 }
