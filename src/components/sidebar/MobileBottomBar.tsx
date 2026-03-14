@@ -8,12 +8,13 @@ import {
   Calendar,
   MoreHorizontal,
   CalendarCheck2,
+  CalendarClock,
   Cable,
   User,
   LogOut,
   CalendarDays,
   BarChart2,
-  BookOpen,
+  CalendarHeart,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,7 +24,7 @@ import { useClerk, useUser } from "@clerk/nextjs";
 // ── Items that live inside the More drawer ────────────────────────────────────
 const drawerItems = [
   { title: "Analytics",       url: "/analytics",        icon: BarChart2 },
-  { title: "Drafts",          url: "/drafts",           icon: BookOpen },
+  { title: "Drafts",          url: "/drafts",           icon: CalendarHeart },
   { title: "Published Posts", url: "/published-posts",  icon: CalendarCheck2 },
   { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
 ];
@@ -164,7 +165,7 @@ export function MobileBottomBar() {
           <NavTab
             url="/scheduled-posts"
             title="Scheduled"
-            icon={Calendar}
+            icon={CalendarClock}
             isActive={pathname.startsWith("/scheduled-posts")}
           />
 

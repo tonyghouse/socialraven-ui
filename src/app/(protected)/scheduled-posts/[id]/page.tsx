@@ -14,6 +14,7 @@ import {
   XCircle,
   AlertTriangle,
   ChevronRight,
+  ChevronLeft,
   Plus,
   Image as ImageIcon,
   Video,
@@ -227,6 +228,19 @@ const POST_TYPE_EDIT_DESCRIPTIONS: Record<string, string> = {
     "Edit your description, replace or add videos, configure platform-specific settings, and update the schedule time.",
   TEXT: "Edit your content, configure platform-specific settings, and update the schedule time.",
 };
+
+/* ─── Helpers ─────────────────────────────────────────────── */
+
+function getCountdown(target: Date): string | null {
+  const diff = target.getTime() - Date.now();
+  if (diff <= 0) return null;
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const mins = Math.floor((diff % 3600000) / 60000);
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h ${mins}m`;
+  return `${mins}m`;
+}
 
 /* ─── StepCard ────────────────────────────────────────────── */
 
@@ -650,15 +664,6 @@ export default function ScheduledCollectionDetailPage() {
     hour12: true,
   });
 
-  const accentGradient =
-    collection.overallStatus === "PUBLISHED"
-      ? "from-emerald-400 to-emerald-500"
-      : collection.overallStatus === "FAILED"
-      ? "from-red-400 to-red-500"
-      : collection.overallStatus === "PARTIAL_SUCCESS"
-      ? "from-amber-400 to-amber-500"
-      : "from-blue-400 to-blue-500";
-
   const platformCount = Object.keys(groupedPosts).length;
 
   const captionText =
@@ -921,55 +926,107 @@ export default function ScheduledCollectionDetailPage() {
           </header>
 
           <div className="px-4 sm:px-6 py-4 space-y-3">
-            {/* Compact hero strip */}
+            {/* Hero card */}
             <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div className={cn("h-1 w-full bg-gradient-to-r", accentGradient)} />
-              <div className="px-5 py-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-                <h1 className="text-lg font-bold text-foreground tracking-tight flex-1 min-w-0 truncate">
-                  {collection.title}
-                </h1>
-                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                  <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold border", type.className)}>
-                    <TypeIcon className="h-3 w-3" />
-                    {type.label}
-                  </span>
-                  <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border", status.className)}>
-                    <StatusIcon className="h-3 w-3" />
-                    {status.label}
-                  </span>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg text-[11px] font-medium text-muted-foreground bg-muted/50 border border-border/40">
+              <div className="px-5 pt-4 pb-4">
+                <div className="flex flex-wrap items-start gap-x-4 gap-y-2 mb-2.5">
+                  <h1 className="text-xl font-bold text-foreground tracking-tight flex-1 min-w-0">
+                    {collection.title}
+                  </h1>
+                  <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
+                    <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold border", type.className)}>
+                      <TypeIcon className="h-3 w-3" />
+                      {type.label}
+                    </span>
+                    <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border", status.className)}>
+                      <StatusIcon className="h-3 w-3" />
+                      {status.label}
+                    </span>
+                    <div className="flex items-center gap-1.5 sm:hidden">
+                      {isScheduled && (
+                        <button onClick={enterEditMode} className="h-7 w-7 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all">
+                          <Pencil className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                      <button onClick={() => setShowDeleteModal(true)} className="h-7 w-7 rounded-lg border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                {collection.description && (
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                    {collection.description}
+                  </p>
+                )}
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-muted-foreground bg-muted/40 border border-border/40">
                     <Calendar className="h-3 w-3" />
-                    <span>{formattedDate} &middot; {formattedTime}</span>
+                    <span>{formattedDate} · {formattedTime}</span>
                     {isScheduled && (
                       <button onClick={enterEditMode} className="ml-0.5 hover:text-foreground transition-colors" title="Edit schedule">
                         <Pencil className="h-2.5 w-2.5" />
                       </button>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 sm:hidden">
-                    {isScheduled && (
-                      <button onClick={enterEditMode} className="h-7 w-7 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all">
-                        <Pencil className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                    <button onClick={() => setShowDeleteModal(true)} className="h-7 w-7 rounded-lg border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                  <div className="flex items-center gap-1">
+                    {Object.keys(groupedPosts).map((plat) => {
+                      const platUpper = plat.toUpperCase();
+                      const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
+                      return (
+                        <div
+                          key={plat}
+                          title={platformDisplayName[platUpper] ?? plat}
+                          className={cn(
+                            "h-6 w-6 rounded-md border flex items-center justify-center flex-shrink-0",
+                            platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60"
+                          )}
+                        >
+                          {PlatIcon ? <PlatIcon className="h-3 w-3" /> : null}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
-              {collection.description && (
-                <p className="px-5 pb-3 text-sm text-muted-foreground leading-relaxed -mt-1 max-w-3xl">
-                  {collection.description}
-                </p>
-              )}
             </div>
 
             {/* Main layout: sidebar + platform sections */}
             <div className="flex flex-col lg:flex-row gap-3 items-start">
               {/* Left sidebar */}
               <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-3">
-                {/* Post content card: caption + media */}
+                {/* Schedule card */}
+                <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
+                    <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    <p className="text-xs font-semibold text-foreground flex-1">Schedule</p>
+                    {isScheduled && (
+                      <button onClick={enterEditMode} className="h-5 w-5 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit schedule">
+                        <Pencil className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+                  <div className="p-4 space-y-3">
+                    {isScheduled && getCountdown(scheduledDate) && (
+                      <div className="rounded-lg bg-primary/5 border border-primary/15 px-3 py-2.5 text-center">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">Publishing in</p>
+                        <p className="text-xl font-bold text-primary tabular-nums">{getCountdown(scheduledDate)}</p>
+                      </div>
+                    )}
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-xs">
+                        <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-foreground font-medium">{formattedDate}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs">
+                        <Clock className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                        <span className="text-foreground font-medium">{formattedTime}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Caption card */}
                 <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
                     <FileText className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
@@ -986,40 +1043,71 @@ export default function ScheduledCollectionDetailPage() {
                     ) : (
                       <p className="text-xs text-muted-foreground/50 italic">No caption specified</p>
                     )}
+                    {captionText && (
+                      <p className="text-[10px] text-muted-foreground/50 tabular-nums mt-2">{captionText.length} characters</p>
+                    )}
                   </div>
-                  {collection.media.length > 0 && (
-                    <div className="px-4 pb-4 border-t border-border/30 pt-3">
-                      <div className="flex items-center gap-1.5 mb-2">
-                        <ImageIcon className="h-3 w-3 text-muted-foreground" />
-                        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">
-                          Media &middot; {collection.media.length}
-                        </p>
-                        {isScheduled && collection.postCollectionType !== "TEXT" && (
-                          <button onClick={enterEditMode} className="ml-auto h-4 w-4 rounded flex items-center justify-center text-muted-foreground hover:text-foreground transition-all">
-                            <Pencil className="h-2.5 w-2.5" />
-                          </button>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {collection.media.map((m, i) => (
-                          <div key={m.id ?? i} className="rounded-lg overflow-hidden border border-border/40 shadow-sm">
-                            <MediaPreview media={mapMediaResponseToMedia(m)} className="h-14 w-14" showLightbox />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
-                {/* Stats */}
-                <div className="rounded-xl bg-card border border-border/60 shadow-sm px-4 py-3 flex items-center divide-x divide-border/40">
-                  <div className="flex-1 text-center pr-3">
-                    <p className="text-xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Posts</p>
+                {/* Media carousel */}
+                {collection.media.length > 0 && (
+                  <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                    <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
+                      <ImageIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                      <p className="text-xs font-semibold text-foreground flex-1">
+                        Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
+                      </p>
+                      {isScheduled && collection.postCollectionType !== "TEXT" && (
+                        <button onClick={enterEditMode} className="h-5 w-5 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
+                          <Pencil className="h-3 w-3" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="p-3">
+                      <MediaCarousel media={collection.media} />
+                    </div>
                   </div>
-                  <div className="flex-1 text-center pl-3">
-                    <p className="text-xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Platforms</p>
+                )}
+
+                {/* Stats card with platform breakdown */}
+                <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                  <div className="px-4 py-3 flex items-center divide-x divide-border/40">
+                    <div className="flex-1 text-center pr-3">
+                      <p className="text-xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Posts</p>
+                    </div>
+                    <div className="flex-1 text-center pl-3">
+                      <p className="text-xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Platforms</p>
+                    </div>
+                  </div>
+                  <div className="px-4 pb-3 border-t border-border/30 pt-3 space-y-2">
+                    {Object.entries(groupedPosts).map(([plat, platPosts]) => {
+                      const platUpper = plat.toUpperCase();
+                      const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
+                      const publishedCount = platPosts.filter((p) => p.postStatus === "PUBLISHED").length;
+                      const failedCount = platPosts.filter((p) => p.postStatus === "FAILED").length;
+                      const scheduledCount = platPosts.filter((p) => p.postStatus === "SCHEDULED").length;
+                      return (
+                        <div key={plat} className="flex items-center gap-2">
+                          <div className={cn("h-5 w-5 rounded-md border flex items-center justify-center flex-shrink-0", platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60")}>
+                            {PlatIcon ? <PlatIcon className="h-3 w-3" /> : null}
+                          </div>
+                          <span className="text-xs text-foreground flex-1 truncate">{platformDisplayName[platUpper] ?? plat}</span>
+                          <div className="flex items-center gap-1.5">
+                            {publishedCount > 0 && (
+                              <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">{publishedCount} done</span>
+                            )}
+                            {scheduledCount > 0 && (
+                              <span className="text-[10px] font-semibold text-blue-500 tabular-nums">{scheduledCount} sched.</span>
+                            )}
+                            {failedCount > 0 && (
+                              <span className="text-[10px] font-semibold text-red-500 tabular-nums">{failedCount} failed</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -1039,7 +1127,6 @@ export default function ScheduledCollectionDetailPage() {
                       posts={posts}
                       caption={captionText}
                       firstMedia={firstMedia}
-                      onPostClick={(id) => router.push(`/posts/${id}`)}
                     />
                   ))
                 )}
@@ -1371,19 +1458,80 @@ function ThreadsPreview({ caption, media, accountName, avatarSrc }: {
   );
 }
 
+/* ─── Media Carousel ──────────────────────────────────────── */
+
+function MediaCarousel({
+  media,
+}: {
+  media: PostCollectionResponse["media"];
+}) {
+  const [idx, setIdx] = useState(0);
+  if (media.length === 0) return null;
+
+  const current = media[idx];
+  const isVideo = current.mimeType?.startsWith("video/");
+
+  return (
+    <div>
+      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-border/40">
+        {isVideo ? (
+          // eslint-disable-next-line jsx-a11y/media-has-caption
+          <video src={current.fileUrl} className="w-full h-full object-cover" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={current.fileUrl} alt="Media" className="w-full h-full object-cover" />
+        )}
+        {media.length > 1 && (
+          <>
+            <button
+              onClick={() => setIdx((i) => (i - 1 + media.length) % media.length)}
+              className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full bg-black/40 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/60 transition-all"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setIdx((i) => (i + 1) % media.length)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full bg-black/40 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/60 transition-all"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
+              {idx + 1} / {media.length}
+            </div>
+          </>
+        )}
+      </div>
+      {media.length > 1 && (
+        <div className="flex justify-center gap-1 mt-2.5">
+          {media.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIdx(i)}
+              className={cn(
+                "rounded-full transition-all",
+                i === idx
+                  ? "w-4 h-1.5 bg-foreground"
+                  : "w-1.5 h-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+              )}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── Main PlatformSection ── */
 function PlatformSection({
   platform,
   posts,
   caption,
   firstMedia,
-  onPostClick,
 }: {
   platform: string;
   posts: PostResponse[];
   caption: string;
   firstMedia: { url: string; mimeType: string } | null;
-  onPostClick: (id: number) => void;
 }) {
   const p = platform.toUpperCase();
   const Icon = PLATFORM_ICONS[platform] ?? PLATFORM_ICONS[platform.toLowerCase()];
@@ -1437,11 +1585,9 @@ function PlatformSection({
         {posts.map((post) => {
           const src = getImageUrl(post.connectedAccount?.profilePicLink);
           return (
-            <button
+            <div
               key={post.id}
-              onClick={() => onPostClick(post.id)}
-              title={`View ${post.connectedAccount?.username ?? "account"}'s post`}
-              className="flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full bg-background/70 hover:bg-background border border-border/50 hover:border-border transition-all group shadow-sm"
+              className="flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full bg-background/70 border border-border/50 shadow-sm"
             >
               <div className="relative h-5 w-5 rounded-full overflow-hidden flex-shrink-0 bg-muted border border-border/30">
                 {src ? (
@@ -1452,7 +1598,7 @@ function PlatformSection({
                   </div>
                 )}
               </div>
-              <span className="text-xs font-medium text-foreground/75 group-hover:text-foreground max-w-[140px] truncate leading-none">
+              <span className="text-xs font-medium text-foreground/75 max-w-[140px] truncate leading-none">
                 {post.connectedAccount?.username ?? "Account"}
               </span>
               <div className={cn(
@@ -1461,7 +1607,7 @@ function PlatformSection({
                   : post.postStatus === "FAILED" ? "bg-red-500"
                   : "bg-blue-400"
               )} />
-            </button>
+            </div>
           );
         })}
       </div>

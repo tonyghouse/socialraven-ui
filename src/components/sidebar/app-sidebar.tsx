@@ -8,9 +8,11 @@ import {
   ChevronLeft,
   Send,
   CalendarDays,
-  BarChart2,
-  BookOpen,
+  CalendarClock,
+  CalendarHeart,
+  BarChart2
 } from "lucide-react";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -35,8 +37,8 @@ const navGroups = [
     items: [
       { title: "Schedule Post", url: "/schedule-post", icon: Send },
       { title: "Calendar", url: "/calendar", icon: CalendarDays },
-      { title: "Scheduled Posts", url: "/scheduled-posts", icon: Calendar },
-      { title: "Drafts", url: "/drafts", icon: BookOpen },
+      { title: "Scheduled Posts", url: "/scheduled-posts", icon: CalendarClock },
+      { title: "Drafts", url: "/drafts", icon: CalendarHeart },
       { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
     ],
   },

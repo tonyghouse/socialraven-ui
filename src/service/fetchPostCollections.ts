@@ -5,7 +5,10 @@ export async function fetchPostCollectionsApi(
   page: number,
   type?: "scheduled" | "published" | "draft",
   search?: string,
-  providerUserIds?: string[]
+  providerUserIds?: string[],
+  platform?: string,
+  sortDir?: "asc" | "desc",
+  dateRange?: "today" | "week" | "month"
 ): Promise<PostCollectionResponsePage> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const token = await getToken();
@@ -17,6 +20,9 @@ export async function fetchPostCollectionsApi(
   if (providerUserIds && providerUserIds.length > 0) {
     providerUserIds.forEach((id) => url.searchParams.append("providerUserIds", id));
   }
+  if (platform) url.searchParams.append("platform", platform);
+  if (sortDir) url.searchParams.append("sortDir", sortDir);
+  if (dateRange) url.searchParams.append("dateRange", dateRange);
 
   const res = await fetch(url.toString(), {
     method: "GET",

@@ -13,6 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 import { CollectionCard } from "@/components/posts/collection-card";
+import { PostCollectionFilters, type SortDir } from "@/components/posts/post-collection-filters";
 import { Pagination } from "@/components/generic/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -31,7 +32,12 @@ export default function DraftsPage() {
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const activeSearchRef = useRef("");
+  const activeProviderUserIdsRef = useRef<string[]>([]);
+  const activePlatformRef = useRef<string | undefined>(undefined);
+  const activeSortDirRef = useRef<SortDir>("desc");
   const loadingRef = useRef(false);
+  const skipNextPageEffectRef = useRef(false);
 
   const loadCollections = useCallback(
     async (page: number, isManualRefresh = false) => {
@@ -41,8 +47,21 @@ export default function DraftsPage() {
       else setLoading(true);
       setError(null);
 
+      const search = activeSearchRef.current;
+      const providerUserIds = activeProviderUserIdsRef.current;
+      const platform = activePlatformRef.current;
+      const sortDir = activeSortDirRef.current;
+
       try {
-        const res = await fetchPostCollectionsApi(getToken, page - 1, "draft");
+        const res = await fetchPostCollectionsApi(
+          getToken,
+          page - 1,
+          "draft",
+          search || undefined,
+          providerUserIds.length > 0 ? providerUserIds : undefined,
+          platform,
+          sortDir
+        );
         setCollections(res.content);
         setTotalPages(res.totalPages);
         setTotalElements(res.totalElements);
@@ -64,9 +83,39 @@ export default function DraftsPage() {
   };
 
   useEffect(() => {
+    if (skipNextPageEffectRef.current) {
+      skipNextPageEffectRef.current = false;
+      return;
+    }
     loadCollections(currentPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
+
+  const handleFiltersChange = useCallback(
+    (
+      search: string,
+      providerUserIds: string[],
+      platform?: string,
+      _dateRange?: unknown,
+      sortDir?: SortDir
+    ) => {
+      activeSearchRef.current = search;
+      activeProviderUserIdsRef.current = providerUserIds;
+      activePlatformRef.current = platform;
+      activeSortDirRef.current = sortDir ?? "desc";
+
+      if (currentPage !== 1) {
+        skipNextPageEffectRef.current = true;
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("page", "1");
+        router.replace(`?${params.toString()}`, { scroll: false });
+      }
+
+      loadCollections(1);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentPage, searchParams, router]
+  );
 
   const isEmpty = collections.length === 0 && !loading;
 
@@ -118,6 +167,13 @@ export default function DraftsPage() {
           </div>
         </div>
       </header>
+
+      {/* Filter bar */}
+      <div className="border-b border-border/50 bg-background/60">
+        <div className="px-4 sm:px-6 py-3">
+          <PostCollectionFilters onFiltersChange={handleFiltersChange} hidePeriod />
+        </div>
+      </div>
 
       {/* Content */}
       <div className="px-4 sm:px-6 py-8">
@@ -175,7 +231,8 @@ export default function DraftsPage() {
 function SkeletonCard() {
   return (
     <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 pt-5">
+      <div className="h-[3px] bg-gradient-to-r from-slate-400/40 via-slate-300/40 to-slate-200/40" />
+      <div className="flex items-center justify-between px-5 pt-4">
         <Skeleton className="h-6 w-16 rounded-lg" />
         <Skeleton className="h-6 w-20 rounded-full" />
       </div>
@@ -183,6 +240,18 @@ function SkeletonCard() {
         <Skeleton className="h-5 w-4/5 rounded-md" />
         <Skeleton className="h-4 w-full rounded-md" />
         <Skeleton className="h-4 w-3/5 rounded-md" />
+        <Skeleton className="h-8 w-40 rounded-lg mt-1" />
+      </div>
+      <div className="px-5">
+        <div className="h-px bg-border/40" />
+      </div>
+      <div className="px-5 py-4">
+        <Skeleton className="h-3 w-16 rounded mb-3" />
+        <div className="flex gap-2">
+          <Skeleton className="h-8 w-8 rounded-xl" />
+          <Skeleton className="h-8 w-8 rounded-xl" />
+          <Skeleton className="h-8 w-8 rounded-xl" />
+        </div>
       </div>
       <div className="px-5 py-3.5 border-t border-border/40 bg-muted/20 flex justify-between items-center">
         <Skeleton className="h-3.5 w-32 rounded" />

@@ -13,7 +13,7 @@ import {
   CalendarCheck2,
 } from "lucide-react";
 import { CollectionCard } from "@/components/posts/collection-card";
-import { PostCollectionFilters } from "@/components/posts/post-collection-filters";
+import { PostCollectionFilters, type DateRange, type SortDir } from "@/components/posts/post-collection-filters";
 import { Pagination } from "@/components/generic/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -37,6 +37,9 @@ export default function PublishedPostsPage() {
 
   const activeSearchRef = useRef("");
   const activeProviderUserIdsRef = useRef<string[]>([]);
+  const activePlatformRef = useRef<string | undefined>(undefined);
+  const activeDateRangeRef = useRef<DateRange | undefined>(undefined);
+  const activeSortDirRef = useRef<SortDir>("desc");
   const loadingRef = useRef(false);
   const needsRefreshRef = useRef(false);
   const skipNextPageEffectRef = useRef(false);
@@ -51,6 +54,9 @@ export default function PublishedPostsPage() {
 
       const search = activeSearchRef.current;
       const providerUserIds = activeProviderUserIdsRef.current;
+      const platform = activePlatformRef.current;
+      const dateRange = activeDateRangeRef.current;
+      const sortDir = activeSortDirRef.current;
 
       try {
         const res = await fetchPostCollectionsApi(
@@ -58,7 +64,10 @@ export default function PublishedPostsPage() {
           page - 1,
           "published",
           search || undefined,
-          providerUserIds.length > 0 ? providerUserIds : undefined
+          providerUserIds.length > 0 ? providerUserIds : undefined,
+          platform,
+          sortDir,
+          dateRange
         );
         setCollections(res.content);
         setTotalPages(res.totalPages);
@@ -113,9 +122,18 @@ export default function PublishedPostsPage() {
   }, [currentPage]);
 
   const handleFiltersChange = useCallback(
-    (search: string, providerUserIds: string[]) => {
+    (
+      search: string,
+      providerUserIds: string[],
+      platform?: string,
+      dateRange?: DateRange,
+      sortDir?: SortDir
+    ) => {
       activeSearchRef.current = search;
       activeProviderUserIdsRef.current = providerUserIds;
+      activePlatformRef.current = platform;
+      activeDateRangeRef.current = dateRange;
+      activeSortDirRef.current = sortDir ?? "desc";
 
       if (currentPage !== 1) {
         skipNextPageEffectRef.current = true;
@@ -255,7 +273,8 @@ export default function PublishedPostsPage() {
 function SkeletonCollectionCard() {
   return (
     <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-      <div className="flex items-center justify-between px-5 pt-5">
+      <div className="h-[3px] bg-gradient-to-r from-emerald-400/40 via-teal-400/40 to-cyan-400/40" />
+      <div className="flex items-center justify-between px-5 pt-4">
         <Skeleton className="h-6 w-16 rounded-lg" />
         <Skeleton className="h-6 w-20 rounded-full" />
       </div>
