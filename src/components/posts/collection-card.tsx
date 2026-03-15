@@ -141,6 +141,114 @@ const ACCENT_GRADIENT: Record<string, string> = {
 
 const TAB_H = 10;
 
+interface ContentPreviewProps {
+  type: "IMAGE" | "VIDEO" | "TEXT";
+  media: MediaResponse[];
+  previewText?: string;
+  hasVideo: boolean;
+}
+
+function ContentPreview({ type, media, previewText, hasVideo }: ContentPreviewProps) {
+  const mediaCount = media.length;
+
+  if (type === "TEXT") {
+    return (
+      <div className="px-4 pb-3 flex justify-center sm:justify-start">
+        <div className="w-full max-w-[150px] aspect-square rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/60 dark:from-slate-800/30 dark:to-slate-900/30 border border-border/40 p-4 flex flex-col overflow-hidden">
+          <p className="flex-1 text-[13px] leading-relaxed text-foreground/60 line-clamp-[8] overflow-hidden">
+            {previewText || "No preview — tap to view post content"}
+          </p>
+          <div className="flex items-center gap-1.5 pt-2 border-t border-border/30 mt-2">
+            <FileText className="h-3 w-3 text-muted-foreground/40" />
+            <span className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">
+              Text post
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (mediaCount === 0) {
+    return (
+      <div className="px-4 pb-3 flex justify-center sm:justify-start">
+        <div className="w-full max-w-[150px] aspect-square rounded-xl bg-muted/20 border border-dashed border-border/30 flex flex-col items-center justify-center gap-1.5">
+          <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
+          <span className="text-[11px] text-muted-foreground/40">No media attached</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Square container, X-style tiled grid — every cell object-cover, no stretching
+  return (
+    <div className="px-4 pb-3 flex justify-center sm:justify-start">
+      <div className="relative w-full max-w-[150px] aspect-square rounded-xl overflow-hidden border border-border/40 shadow-sm bg-muted">
+        {mediaCount === 1 && (
+          <div className="w-full h-full">
+            <MediaThumb media={media[0]} />
+          </div>
+        )}
+
+        {mediaCount === 2 && (
+          <div className="flex h-full gap-px">
+            <div className="flex-1 h-full overflow-hidden">
+              <MediaThumb media={media[0]} />
+            </div>
+            <div className="flex-1 h-full overflow-hidden">
+              <MediaThumb media={media[1]} />
+            </div>
+          </div>
+        )}
+
+        {mediaCount === 3 && (
+          <div className="flex h-full gap-px">
+            <div className="flex-1 h-full overflow-hidden">
+              <MediaThumb media={media[0]} />
+            </div>
+            <div className="flex-1 flex flex-col gap-px h-full">
+              <div className="flex-1 overflow-hidden">
+                <MediaThumb media={media[1]} />
+              </div>
+              <div className="flex-1 overflow-hidden">
+                <MediaThumb media={media[2]} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {mediaCount >= 4 && (
+          <div className="grid grid-cols-2 grid-rows-2 h-full gap-px">
+            {media.slice(0, 4).map((m, i) => (
+              <div key={m.id ?? i} className="relative overflow-hidden">
+                <MediaThumb media={m} />
+                {i === 3 && mediaCount > 4 && (
+                  <div className="absolute inset-0 bg-black/55 flex flex-col items-center justify-center gap-0.5">
+                    <span className="text-white text-sm font-bold leading-none">
+                      +{mediaCount - 4}
+                    </span>
+                    <span className="text-white/70 text-[10px]">more</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Type badge — bottom-right */}
+        <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5 pointer-events-none">
+          {hasVideo ? (
+            <Play className="h-2.5 w-2.5 text-white fill-white" />
+          ) : (
+            <ImageIcon className="h-2.5 w-2.5 text-white" />
+          )}
+          <span className="text-white text-[10px] font-semibold">{mediaCount}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function getTimeLabel(scheduledTime: string): { text: string; urgent: boolean } {
   const now = new Date();
   const scheduled = new Date(scheduledTime);
@@ -193,7 +301,7 @@ function MediaThumb({ media }: { media: MediaResponse }) {
     <img
       src={src}
       alt={media.fileName ?? "media"}
-      className="w-full h-full object-cover"
+      className="block w-full h-full object-cover"
       loading="lazy"
     />
   );
@@ -262,15 +370,8 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
   const handleNavigate = () =>
     router.push(href ?? `/scheduled-posts/${collection.id}`);
 
-  const FAN_PARAMS: [number, number, number][] = [
-    [0, 0, 4],
-    [-3.5, 22, 3],
-    [4.5, 44, 2],
-    [-5, 66, 1],
-  ];
-
   return (
-    <div className="relative">
+    <div className="relative h-full flex flex-col">
       {/* Folder tab */}
       <div
         className="absolute left-0 w-20 rounded-t-lg border border-b-0 border-border/50 bg-white dark:bg-card dark:border-border/40"
@@ -291,7 +392,7 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
         role="button"
         aria-label={`View collection: ${collection.title}`}
         className={cn(
-          "group relative flex flex-col rounded-2xl rounded-tl-none bg-white border border-border/60 overflow-hidden cursor-pointer",
+          "group relative flex-1 flex flex-col rounded-2xl rounded-tl-none bg-white border border-border/60 overflow-hidden cursor-pointer",
           "shadow-sm hover:shadow-2xl hover:-translate-y-1 active:scale-[0.99]",
           "transition-all duration-300 ease-out",
           "dark:bg-card dark:border-border/50",
@@ -313,7 +414,7 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
         />
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-4">
+        <div className="flex items-center justify-between px-4 pt-3">
           <div className="flex items-center gap-1.5">
             <span
               className={cn(
@@ -344,7 +445,7 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
         </div>
 
         {/* Title + description */}
-        <div className="px-5 pt-3 pb-3">
+        <div className="px-4 pt-2.5 pb-2">
           <h3 className="text-[16px] font-semibold text-card-foreground mb-1 line-clamp-2 tracking-tight leading-snug group-hover:text-primary transition-colors duration-200">
             {collection.title}
           </h3>
@@ -357,37 +458,34 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
 
         {/* Scheduled time pill — prominent */}
         {localDate && formattedDate && formattedTime && (
-          <div className="px-5 pb-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/60 border border-border/40">
+          <div className="px-4 pb-2">
+            <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-1.5 rounded-xl bg-muted/60 border border-border/40 max-w-full">
               <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-              <span className="text-[12px] font-semibold text-foreground">
+              <span className="text-[12px] font-semibold text-foreground whitespace-nowrap">
                 {formattedDate}
               </span>
-              <span className="h-3 w-px bg-border/70" />
-              <span className="text-[12px] text-muted-foreground">
+              <span className="hidden sm:block h-3 w-px bg-border/70" />
+              <span className="text-[12px] text-muted-foreground whitespace-nowrap">
                 {formattedTime}
               </span>
               {timeLabel && (
-                <>
-                  <span className="h-3 w-px bg-border/70" />
-                  <span
-                    className={cn(
-                      "text-[11px] font-bold",
-                      timeLabel.urgent ? "text-orange-600 dark:text-orange-400" : "text-muted-foreground"
-                    )}
-                  >
-                    {timeLabel.urgent && (
-                      <Zap className="h-3 w-3 inline mr-0.5 -mt-0.5" />
-                    )}
-                    {timeLabel.text}
-                  </span>
-                </>
+                <span
+                  className={cn(
+                    "text-[11px] font-bold whitespace-nowrap",
+                    timeLabel.urgent ? "text-orange-600 dark:text-orange-400" : "text-muted-foreground"
+                  )}
+                >
+                  {timeLabel.urgent && (
+                    <Zap className="h-3 w-3 inline mr-0.5 -mt-0.5" />
+                  )}
+                  {timeLabel.text}
+                </span>
               )}
             </div>
           </div>
         )}
         {!localDate && isDraft && (
-          <div className="px-5 pb-3">
+          <div className="px-4 pb-3">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/40 border border-border/30">
               <Calendar className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
               <span className="text-[12px] text-muted-foreground/70">
@@ -397,74 +495,21 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
           </div>
         )}
 
-        {/* Media: hero (1) or fanned stack (2+) */}
-        {mediaCount > 0 && (
-          <div className="px-5 pb-4">
-            {mediaCount === 1 ? (
-              <div
-                className="rounded-xl overflow-hidden border border-border/40 shadow-sm bg-muted"
-                style={{ height: 100 }}
-              >
-                <MediaThumb media={media[0]} />
-              </div>
-            ) : (
-              <div className="relative" style={{ height: 88 }}>
-                {media.slice(0, Math.min(4, mediaCount)).map((m, i) => {
-                  const [rot, xOff, zIdx] = FAN_PARAMS[i] ?? [0, i * 22, 4 - i];
-                  return (
-                    <div
-                      key={m.id ?? i}
-                      className="absolute rounded-xl overflow-hidden border border-border/30 bg-muted"
-                      style={{
-                        width: 72,
-                        height: 72,
-                        left: xOff,
-                        top: Math.abs(rot) * 0.65,
-                        transform: `rotate(${rot}deg)`,
-                        zIndex: zIdx,
-                        boxShadow:
-                          i === 0
-                            ? "0 4px 14px rgba(0,0,0,0.14)"
-                            : "0 2px 8px rgba(0,0,0,0.09)",
-                      }}
-                    >
-                      <MediaThumb media={m} />
-                    </div>
-                  );
-                })}
-                {mediaCount > 4 && (
-                  <div
-                    className="absolute rounded-xl bg-black/65 backdrop-blur-sm border border-white/10 flex flex-col items-center justify-center gap-0.5"
-                    style={{ width: 72, height: 72, left: 66, top: 4, zIndex: 0 }}
-                  >
-                    <span className="text-white text-xs font-bold leading-none">
-                      +{mediaCount - 4}
-                    </span>
-                    <span className="text-white/60 text-[9px]">more</span>
-                  </div>
-                )}
-                <div className="absolute right-0 bottom-0 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5">
-                  {hasVideo ? (
-                    <Play className="h-2.5 w-2.5 text-white fill-white" />
-                  ) : (
-                    <ImageIcon className="h-2.5 w-2.5 text-white" />
-                  )}
-                  <span className="text-white text-[10px] font-semibold">
-                    {mediaCount}
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        {/* Content preview — fixed height so all cards are equal */}
+        <ContentPreview
+          type={collection.postCollectionType}
+          media={media}
+          previewText={collection.posts[0]?.description || collection.description}
+          hasVideo={hasVideo}
+        />
 
         {/* Divider */}
-        <div className="px-5">
+        <div className="px-4">
           <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
         </div>
 
         {/* Platform icons with colored backgrounds */}
-        <div className="px-5 pt-3.5 pb-3">
+        <div className="px-4 pt-3 pb-2.5">
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
             Platforms
           </p>
@@ -503,7 +548,7 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
 
         {/* Account avatar stack */}
         {uniqueAccounts.length > 0 && (
-          <div className="px-5 pb-4 flex items-center gap-2">
+          <div className="px-4 pb-3 flex items-center gap-2">
             <div className="flex items-center flex-shrink-0">
               {uniqueAccounts.slice(0, 5).map((account, i) => (
                 <div
@@ -553,14 +598,14 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
         )}
 
         {/* Footer */}
-        <div className="mt-auto px-5 py-3 bg-gradient-to-b from-muted/10 to-muted/30 border-t border-border/40 flex items-center justify-between">
+        <div className="mt-auto px-4 py-2.5 bg-gradient-to-b from-muted/10 to-muted/30 border-t border-border/40 flex items-center justify-between">
           <p className="text-xs text-muted-foreground font-medium">
             {collection.posts.length} post
             {collection.posts.length !== 1 ? "s" : ""} ·{" "}
             {uniquePlatforms.length} platform
             {uniquePlatforms.length !== 1 ? "s" : ""}
           </p>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-primary opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-primary sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-2 sm:group-hover:translate-x-0 transition-all duration-200">
             <span>Open</span>
             <ArrowRight className="h-3.5 w-3.5" />
           </div>

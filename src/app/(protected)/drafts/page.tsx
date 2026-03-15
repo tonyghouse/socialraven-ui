@@ -11,6 +11,7 @@ import {
   BookOpen,
   Plus,
   FileText,
+  Sparkles,
 } from "lucide-react";
 import { CollectionCard } from "@/components/posts/collection-card";
 import { PostCollectionFilters, type SortDir } from "@/components/posts/post-collection-filters";
@@ -122,11 +123,11 @@ export default function DraftsPage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-border bg-card/90 backdrop-blur-xl">
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between gap-4 h-16">
             <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center flex-shrink-0">
+              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-slate-400/20 to-slate-400/5 flex items-center justify-center flex-shrink-0 border border-slate-400/10">
                 <BookOpen className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400" />
               </div>
               <div>
@@ -136,6 +137,8 @@ export default function DraftsPage() {
                 <p className="text-xs text-muted-foreground">
                   {loading && collections.length === 0
                     ? "Loading…"
+                    : totalElements === 0
+                    ? "No drafts saved yet"
                     : `${totalElements} draft${totalElements !== 1 ? "s" : ""} saved`}
                 </p>
               </div>
@@ -158,7 +161,7 @@ export default function DraftsPage() {
 
               <button
                 onClick={() => router.push("/schedule-post")}
-                className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
+                className="hidden sm:flex items-center gap-1.5 h-8 px-4 rounded-lg bg-accent text-accent-foreground hover:opacity-90 active:scale-95 transition-all text-xs font-semibold shadow-sm"
               >
                 <Plus className="h-3.5 w-3.5" />
                 New Post
@@ -176,7 +179,7 @@ export default function DraftsPage() {
       </div>
 
       {/* Content */}
-      <div className="px-4 sm:px-6 py-8">
+      <div className="px-4 sm:px-6 py-5 sm:py-8 pb-24 sm:pb-10">
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-destructive/10 text-destructive border border-destructive/20 flex gap-3 items-start">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
@@ -193,14 +196,14 @@ export default function DraftsPage() {
         )}
 
         {loading && collections.length === 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
         ) : !isEmpty ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-3 mb-8">
               {collections.map((collection) => (
                 <CollectionCard
                   key={collection.id}
@@ -224,6 +227,15 @@ export default function DraftsPage() {
           <EmptyState onCreatePost={() => router.push("/schedule-post")} />
         )}
       </div>
+
+      {/* Mobile FAB */}
+      <button
+        onClick={() => router.push("/schedule-post")}
+        className="sm:hidden fixed bottom-6 right-5 z-40 h-14 w-14 rounded-full bg-accent text-accent-foreground shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center justify-center"
+        aria-label="New Post"
+      >
+        <Plus className="h-6 w-6" />
+      </button>
     </main>
   );
 }
@@ -232,20 +244,25 @@ function SkeletonCard() {
   return (
     <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
       <div className="h-[3px] bg-gradient-to-r from-slate-400/40 via-slate-300/40 to-slate-200/40" />
-      <div className="flex items-center justify-between px-5 pt-4">
-        <Skeleton className="h-6 w-16 rounded-lg" />
-        <Skeleton className="h-6 w-20 rounded-full" />
+      <div className="flex items-center justify-between px-4 pt-3">
+        <Skeleton className="h-5 w-16 rounded-lg" />
+        <Skeleton className="h-5 w-20 rounded-full" />
       </div>
-      <div className="px-5 pt-3 pb-4 space-y-2.5">
+      <div className="px-4 pt-2.5 pb-2 space-y-2">
         <Skeleton className="h-5 w-4/5 rounded-md" />
         <Skeleton className="h-4 w-full rounded-md" />
-        <Skeleton className="h-4 w-3/5 rounded-md" />
-        <Skeleton className="h-8 w-40 rounded-lg mt-1" />
+        <Skeleton className="h-4 w-2/3 rounded-md" />
       </div>
-      <div className="px-5">
+      <div className="px-4 pb-2">
+        <Skeleton className="h-7 w-36 rounded-xl" />
+      </div>
+      <div className="px-4 pb-3">
+        <Skeleton className="w-[150px] h-[150px] rounded-xl" />
+      </div>
+      <div className="px-4">
         <div className="h-px bg-border/40" />
       </div>
-      <div className="px-5 py-4">
+      <div className="px-4 pt-3 pb-2.5">
         <Skeleton className="h-3 w-16 rounded mb-3" />
         <div className="flex gap-2">
           <Skeleton className="h-8 w-8 rounded-xl" />
@@ -253,7 +270,7 @@ function SkeletonCard() {
           <Skeleton className="h-8 w-8 rounded-xl" />
         </div>
       </div>
-      <div className="px-5 py-3.5 border-t border-border/40 bg-muted/20 flex justify-between items-center">
+      <div className="px-4 py-2.5 border-t border-border/40 bg-muted/20 flex justify-between items-center">
         <Skeleton className="h-3.5 w-32 rounded" />
         <Skeleton className="h-3.5 w-16 rounded" />
       </div>
@@ -264,25 +281,29 @@ function SkeletonCard() {
 function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="relative mb-6">
-        <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center border border-border/30">
-          <FileText className="w-8 h-8 text-muted-foreground/60" />
+      <div className="relative mb-7">
+        <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-slate-400/10 to-slate-400/[0.03] flex items-center justify-center border border-slate-400/10 shadow-sm">
+          <FileText className="w-8 h-8 text-slate-400/60" />
+        </div>
+        <div className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 flex items-center justify-center shadow-md">
+          <Sparkles className="h-3 w-3 text-white" />
         </div>
         <div className="absolute inset-0 rounded-3xl border border-border/20 scale-125 opacity-40" />
+        <div className="absolute inset-0 rounded-3xl border border-border/10 scale-150 opacity-20" />
       </div>
 
       <h3 className="text-xl font-semibold text-foreground mb-2 tracking-tight">
         No drafts yet
       </h3>
 
-      <p className="text-sm text-muted-foreground max-w-xs mb-8 leading-relaxed">
-        Save your work-in-progress posts as drafts. When you&apos;re ready,
-        schedule them with a single click.
+      <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-sm">
+        Save work-in-progress posts as drafts. When you&apos;re ready,
+        schedule them across all your platforms with a single click.
       </p>
 
       <button
         onClick={onCreatePost}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent text-accent-foreground hover:opacity-90 transition-all shadow-sm font-semibold text-sm"
+        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent text-accent-foreground hover:opacity-90 active:scale-95 transition-all shadow-sm font-semibold text-sm"
       >
         <Plus className="h-4 w-4" />
         Create Your First Draft

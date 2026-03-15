@@ -433,13 +433,13 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
   const isVideo = current.mimeType?.startsWith("video/");
   return (
     <div>
-      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-border/40">
+      <div className="relative aspect-video w-full max-h-40 rounded-xl overflow-hidden bg-neutral-950 border border-border/40">
         {isVideo ? (
           // eslint-disable-next-line jsx-a11y/media-has-caption
-          <video src={current.fileUrl} className="w-full h-full object-cover" />
+          <video src={current.fileUrl} className="w-full h-full object-contain" />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={current.fileUrl} alt="Media" className="w-full h-full object-cover" />
+          <img src={current.fileUrl} alt="Media" className="w-full h-full object-contain" />
         )}
         {media.length > 1 && (
           <>

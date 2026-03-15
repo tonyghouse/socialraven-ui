@@ -94,14 +94,14 @@ function DropdownButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 min-w-0",
+        "h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
         active
           ? "bg-primary/10 border-primary/40 text-primary"
           : "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
       )}
     >
       {icon}
-      <span className="truncate max-w-[120px]">{label}</span>
+      <span>{label}</span>
       <ChevronDown
         className={cn("h-3 w-3 flex-shrink-0 transition-transform", open && "rotate-180")}
       />
@@ -188,11 +188,11 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Row: all controls in one line */}
-      <div className="flex items-center gap-2 flex-wrap">
+      {/* Single row — horizontally scrollable on mobile so everything stays on one line */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-0.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
         {/* Search */}
-        <div className="relative">
+        <div className="relative flex-shrink-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <input
             type="text"
@@ -201,7 +201,7 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
             onChange={(e) => setSearch(e.target.value)}
             className={cn(
               "h-9 pl-9 pr-8 rounded-lg border text-sm text-foreground placeholder:text-muted-foreground",
-              "bg-background border-border/60 w-56 sm:w-72",
+              "bg-background border-border/60 w-44 sm:w-72",
               "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
             )}
           />
@@ -313,7 +313,7 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
           <PopoverTrigger asChild>
             <button
               className={cn(
-                "relative h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2",
+                "relative h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
                 accountFilterCount > 0
                   ? "bg-primary/10 border-primary/40 text-primary"
                   : "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
@@ -395,7 +395,7 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
           onClick={() => setSortDir((prev) => (prev === "desc" ? "asc" : "desc"))}
           title={sortDir === "desc" ? "Newest first — click for oldest first" : "Oldest first — click for newest first"}
           className={cn(
-            "h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2",
+            "h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
             "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
           )}
         >
@@ -411,7 +411,7 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
               setSelectedDateRange(undefined);
               clearAccounts();
             }}
-            className="h-9 px-3 rounded-lg border border-border/60 text-xs text-muted-foreground hover:text-foreground hover:border-border transition-all flex items-center gap-1.5"
+            className="h-9 px-3 rounded-lg border border-border/60 text-xs text-muted-foreground hover:text-foreground hover:border-border transition-all flex items-center gap-1.5 flex-shrink-0"
           >
             <X className="h-3 w-3" />
             Clear filters

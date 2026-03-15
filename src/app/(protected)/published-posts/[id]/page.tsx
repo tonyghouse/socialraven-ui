@@ -19,6 +19,15 @@ import {
   Video,
   FileText,
   User,
+  Heart,
+  MessageCircle,
+  ThumbsUp,
+  Repeat2,
+  Bookmark,
+  Send,
+  Share2,
+  MoreHorizontal,
+  Play,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
@@ -276,9 +285,10 @@ export default function PublishedCollectionDetailPage() {
     collection.description?.trim() ||
     "";
 
-  const firstMedia = collection.media[0]
-    ? { url: collection.media[0].fileUrl, mimeType: collection.media[0].mimeType }
-    : null;
+  const allMedia = collection.media.map((m) => ({
+    url: m.fileUrl,
+    mimeType: m.mimeType,
+  }));
 
   return (
     <main className="min-h-screen bg-background">
@@ -464,7 +474,7 @@ export default function PublishedCollectionDetailPage() {
                   platform={platform}
                   posts={posts}
                   caption={captionText}
-                  firstMedia={firstMedia}
+                  media={allMedia}
                 />
               ))
             )}
@@ -494,18 +504,74 @@ function AccountAvatar({ src, name, size = 8 }: { src: string | null; name: stri
   );
 }
 
-/* Generic media thumbnail used inside previews */
-function PreviewMedia({ media }: { media: { url: string; mimeType: string } | null }) {
-  if (!media) return null;
-  const isVideo = media.mimeType.startsWith("video/");
+/* Carousel media component for use inside platform previews */
+function PreviewMediaCarousel({
+  media,
+  aspectRatio = "video",
+  noMargin = false,
+}: {
+  media: { url: string; mimeType: string }[];
+  aspectRatio?: "square" | "video" | "portrait";
+  noMargin?: boolean;
+}) {
+  const [idx, setIdx] = useState(0);
+  if (!media.length) return null;
+  const current = media[idx];
+  const isVideo = current.mimeType.startsWith("video/");
+  const aspectClass =
+    aspectRatio === "square"
+      ? "aspect-square max-h-48"
+      : aspectRatio === "portrait"
+      ? "aspect-[9/16] max-h-56"
+      : "aspect-video max-h-36";
   return (
-    <div className="w-full overflow-hidden rounded-lg border border-black/10 dark:border-white/10 mt-2">
-      {isVideo ? (
-        // eslint-disable-next-line jsx-a11y/media-has-caption
-        <video src={media.url} className="w-full max-h-56 object-cover" />
-      ) : (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={media.url} alt="Post media" className="w-full max-h-56 object-cover" />
+    <div className={cn("relative w-full", !noMargin && "mt-2")}>
+      <div className={cn("relative w-full overflow-hidden rounded-lg bg-neutral-950", aspectClass)}>
+        {isVideo ? (
+          // eslint-disable-next-line jsx-a11y/media-has-caption
+          <video src={current.url} className="w-full h-full object-contain" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={current.url} alt="Post media" className="w-full h-full object-contain" />
+        )}
+        {media.length > 1 && (
+          <>
+            <button
+              onClick={() => setIdx((i) => (i - 1 + media.length) % media.length)}
+              aria-label="Previous media"
+              className="absolute left-1.5 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-black/55 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/75 transition-all"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setIdx((i) => (i + 1) % media.length)}
+              aria-label="Next media"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 h-6 w-6 rounded-full bg-black/55 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/75 transition-all"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+            <div className="absolute bottom-2 right-2 bg-black/65 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full backdrop-blur-sm tabular-nums">
+              {idx + 1}/{media.length}
+            </div>
+          </>
+        )}
+      </div>
+      {media.length > 1 && (
+        <div className="flex justify-center gap-1 mt-2">
+          {media.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIdx(i)}
+              aria-label={`Go to media ${i + 1}`}
+              className={cn(
+                "rounded-full transition-all duration-200",
+                i === idx
+                  ? "w-3.5 h-1 bg-neutral-700 dark:bg-neutral-300"
+                  : "w-1 h-1 bg-neutral-300 dark:bg-neutral-600 hover:bg-neutral-400 dark:hover:bg-neutral-500"
+              )}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
@@ -513,30 +579,37 @@ function PreviewMedia({ media }: { media: { url: string; mimeType: string } | nu
 
 /* ── X (Twitter) preview ── */
 function XPreview({ caption, media, accountName, avatarSrc }: {
-  caption: string; media: { url: string; mimeType: string } | null;
+  caption: string; media: { url: string; mimeType: string }[];
   accountName: string; avatarSrc: string | null;
 }) {
   const handle = "@" + (accountName.replace(/\s+/g, "").toLowerCase() || "account");
   return (
-    <div className="bg-white dark:bg-black rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 font-sans">
-      <div className="flex gap-3">
-        <AccountAvatar src={avatarSrc} name={accountName} size={10} />
+    <div className="bg-white dark:bg-black rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 font-sans">
+      <div className="flex gap-2.5">
+        <AccountAvatar src={avatarSrc} name={accountName} size={8} />
         <div className="flex-1 min-w-0">
-          <div className="flex items-baseline gap-1.5 flex-wrap">
-            <span className="text-sm font-bold text-neutral-900 dark:text-white">{accountName || "Your Account"}</span>
-            <span className="text-sm text-neutral-500">{handle}</span>
-            <span className="text-neutral-400 text-sm">·</span>
-            <span className="text-sm text-neutral-500">now</span>
+          <div className="flex items-baseline gap-1 flex-wrap">
+            <span className="text-xs font-bold text-neutral-900 dark:text-white truncate max-w-[120px]">{accountName || "Your Account"}</span>
+            <span className="text-xs text-neutral-500 truncate">{handle}</span>
+            <span className="text-neutral-400 text-xs">· now</span>
           </div>
           {caption && (
-            <p className="text-sm text-neutral-900 dark:text-neutral-100 mt-1 leading-relaxed whitespace-pre-wrap line-clamp-5">{caption}</p>
+            <p className="text-xs text-neutral-900 dark:text-neutral-100 mt-1 leading-relaxed whitespace-pre-wrap line-clamp-3">{caption}</p>
           )}
-          <PreviewMedia media={media} />
-          <div className="flex gap-6 mt-3 text-neutral-400 text-xs">
-            <span>Reply</span>
-            <span>Repost</span>
-            <span>Like</span>
-            <span>Views</span>
+          {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
+          <div className="flex gap-4 mt-2 text-neutral-400">
+            <button className="flex items-center gap-1 text-[11px] hover:text-blue-400 transition-colors">
+              <MessageCircle className="h-3 w-3" /><span>Reply</span>
+            </button>
+            <button className="flex items-center gap-1 text-[11px] hover:text-green-400 transition-colors">
+              <Repeat2 className="h-3 w-3" /><span>Repost</span>
+            </button>
+            <button className="flex items-center gap-1 text-[11px] hover:text-pink-400 transition-colors">
+              <Heart className="h-3 w-3" /><span>Like</span>
+            </button>
+            <button className="flex items-center gap-1 text-[11px] hover:text-blue-400 transition-colors ml-auto">
+              <MoreHorizontal className="h-3 w-3" />
+            </button>
           </div>
         </div>
       </div>
@@ -546,48 +619,47 @@ function XPreview({ caption, media, accountName, avatarSrc }: {
 
 /* ── Instagram preview ── */
 function InstagramPreview({ caption, media, accountName, avatarSrc }: {
-  caption: string; media: { url: string; mimeType: string } | null;
+  caption: string; media: { url: string; mimeType: string }[];
   accountName: string; avatarSrc: string | null;
 }) {
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden font-sans">
       {/* Header */}
-      <div className="flex items-center gap-2.5 px-3 py-2.5">
-        <div className="p-0.5 rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-purple-600">
-          <AccountAvatar src={avatarSrc} name={accountName} size={8} />
+      <div className="flex items-center gap-2 px-2.5 py-2">
+        <div className="p-0.5 rounded-full bg-gradient-to-tr from-amber-400 via-pink-500 to-purple-600 flex-shrink-0">
+          <AccountAvatar src={avatarSrc} name={accountName} size={7} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate">{accountName || "your_account"}</p>
-          <p className="text-[10px] text-neutral-500">Sponsored</p>
+          <p className="text-[11px] font-semibold text-neutral-900 dark:text-white truncate">{accountName || "your_account"}</p>
         </div>
-        <span className="text-neutral-400 text-lg leading-none">···</span>
+        <MoreHorizontal className="h-3.5 w-3.5 text-neutral-400 flex-shrink-0" />
       </div>
-      {/* Square media */}
-      {media ? (
-        <div className="w-full aspect-square bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
-          {media.mimeType.startsWith("video/") ? (
-            // eslint-disable-next-line jsx-a11y/media-has-caption
-            <video src={media.url} className="w-full h-full object-cover" />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={media.url} alt="" className="w-full h-full object-cover" />
-          )}
-        </div>
+      {/* Media — Instagram uses square format, bleeds edge-to-edge */}
+      {media.length > 0 ? (
+        <PreviewMediaCarousel media={media} aspectRatio="square" noMargin />
       ) : (
-        <div className="w-full aspect-video bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 flex items-center justify-center">
-          <span className="text-neutral-400 text-xs">No media</span>
+        <div className="w-full aspect-square bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-900 flex items-center justify-center">
+          <ImageIcon className="h-6 w-6 text-neutral-300 dark:text-neutral-600" />
         </div>
       )}
       {/* Actions + caption */}
-      <div className="px-3 py-2.5">
-        <div className="flex gap-3 mb-2 text-neutral-800 dark:text-neutral-200">
-          <span className="text-lg">♡</span>
-          <span className="text-lg">🗨</span>
-          <span className="text-lg rotate-12">↗</span>
-          <span className="ml-auto text-lg">⊡</span>
+      <div className="px-2.5 pt-2 pb-2.5">
+        <div className="flex items-center gap-2.5 mb-1.5 text-neutral-800 dark:text-neutral-200">
+          <button aria-label="Like" className="hover:text-red-500 transition-colors">
+            <Heart className="h-4 w-4" />
+          </button>
+          <button aria-label="Comment" className="hover:text-neutral-500 transition-colors">
+            <MessageCircle className="h-4 w-4" />
+          </button>
+          <button aria-label="Share" className="hover:text-neutral-500 transition-colors">
+            <Send className="h-4 w-4" />
+          </button>
+          <button aria-label="Save" className="ml-auto hover:text-neutral-500 transition-colors">
+            <Bookmark className="h-4 w-4" />
+          </button>
         </div>
         {caption && (
-          <p className="text-xs text-neutral-900 dark:text-neutral-100 leading-relaxed line-clamp-3">
+          <p className="text-[11px] text-neutral-900 dark:text-neutral-100 leading-relaxed line-clamp-2">
             <span className="font-semibold">{accountName || "your_account"}</span>{" "}{caption}
           </p>
         )}
@@ -598,35 +670,37 @@ function InstagramPreview({ caption, media, accountName, avatarSrc }: {
 
 /* ── LinkedIn preview ── */
 function LinkedInPreview({ caption, media, accountName, avatarSrc }: {
-  caption: string; media: { url: string; mimeType: string } | null;
+  caption: string; media: { url: string; mimeType: string }[];
   accountName: string; avatarSrc: string | null;
 }) {
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 font-sans overflow-hidden">
-      <div className="p-4">
-        <div className="flex gap-2.5 mb-3">
-          <AccountAvatar src={avatarSrc} name={accountName} size={10} />
+      <div className="p-3">
+        <div className="flex gap-2 mb-2">
+          <AccountAvatar src={avatarSrc} name={accountName} size={8} />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-neutral-900 dark:text-white truncate">{accountName || "Your Name"}</p>
-            <p className="text-xs text-neutral-500 truncate">Your Title • 1st</p>
-            <p className="text-xs text-neutral-400">Just now · 🌐</p>
+            <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate">{accountName || "Your Name"}</p>
+            <p className="text-[10px] text-neutral-500 truncate">Your Title · 1st</p>
+            <p className="text-[10px] text-neutral-400">Just now · 🌐</p>
           </div>
-          <span className="text-blue-600 font-semibold text-xs self-start cursor-default">+ Follow</span>
+          <span className="text-blue-600 font-semibold text-[10px] self-start flex-shrink-0 cursor-default">+ Follow</span>
         </div>
         {caption && (
-          <p className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-5 whitespace-pre-wrap">{caption}</p>
+          <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-3 whitespace-pre-wrap">{caption}</p>
         )}
+        {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
       </div>
-      {media && (
-        <div className="border-t border-neutral-100 dark:border-neutral-700 overflow-hidden">
-          <PreviewMedia media={media} />
-        </div>
-      )}
-      <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-700 flex gap-4 text-xs text-neutral-500">
-        <span>👍 Like</span>
-        <span>💬 Comment</span>
-        <span>🔁 Repost</span>
-        <span>↗ Send</span>
+      <div className="px-2 py-1.5 border-t border-neutral-100 dark:border-neutral-700 flex">
+        {[
+          { icon: ThumbsUp, label: "Like" },
+          { icon: MessageCircle, label: "Comment" },
+          { icon: Repeat2, label: "Repost" },
+          { icon: Send, label: "Send" },
+        ].map(({ icon: Icon, label }) => (
+          <button key={label} className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[10px] text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+            <Icon className="h-3 w-3" /><span>{label}</span>
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -634,32 +708,35 @@ function LinkedInPreview({ caption, media, accountName, avatarSrc }: {
 
 /* ── Facebook preview ── */
 function FacebookPreview({ caption, media, accountName, avatarSrc }: {
-  caption: string; media: { url: string; mimeType: string } | null;
+  caption: string; media: { url: string; mimeType: string }[];
   accountName: string; avatarSrc: string | null;
 }) {
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 font-sans overflow-hidden">
-      <div className="p-4">
-        <div className="flex gap-2.5 mb-3">
-          <AccountAvatar src={avatarSrc} name={accountName} size={10} />
-          <div>
-            <p className="text-sm font-semibold text-neutral-900 dark:text-white">{accountName || "Your Page"}</p>
-            <p className="text-xs text-neutral-500">Just now · 🌐</p>
+      <div className="p-3">
+        <div className="flex gap-2 mb-2">
+          <AccountAvatar src={avatarSrc} name={accountName} size={8} />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate">{accountName || "Your Page"}</p>
+            <p className="text-[10px] text-neutral-500">Just now · 🌐</p>
           </div>
+          <MoreHorizontal className="h-3.5 w-3.5 text-neutral-400 flex-shrink-0" />
         </div>
         {caption && (
-          <p className="text-sm text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-5 whitespace-pre-wrap">{caption}</p>
+          <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-3 whitespace-pre-wrap">{caption}</p>
         )}
+        {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
       </div>
-      {media && (
-        <div className="overflow-hidden border-t border-neutral-100 dark:border-neutral-700">
-          <PreviewMedia media={media} />
-        </div>
-      )}
-      <div className="px-4 py-2 border-t border-neutral-100 dark:border-neutral-700 flex gap-4 text-xs text-neutral-500">
-        <span>👍 Like</span>
-        <span>💬 Comment</span>
-        <span>↗ Share</span>
+      <div className="px-2 py-1.5 border-t border-neutral-100 dark:border-neutral-700 flex">
+        {[
+          { icon: ThumbsUp, label: "Like" },
+          { icon: MessageCircle, label: "Comment" },
+          { icon: Share2, label: "Share" },
+        ].map(({ icon: Icon, label }) => (
+          <button key={label} className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[10px] text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+            <Icon className="h-3 w-3" /><span>{label}</span>
+          </button>
+        ))}
       </div>
     </div>
   );
@@ -667,36 +744,36 @@ function FacebookPreview({ caption, media, accountName, avatarSrc }: {
 
 /* ── YouTube preview ── */
 function YouTubePreview({ caption, media, accountName, avatarSrc }: {
-  caption: string; media: { url: string; mimeType: string } | null;
+  caption: string; media: { url: string; mimeType: string }[];
   accountName: string; avatarSrc: string | null;
 }) {
   const title = caption?.split("\n")[0]?.slice(0, 100) || "Your Video Title";
+  const first = media[0] ?? null;
   return (
     <div className="bg-white dark:bg-neutral-900 rounded-xl overflow-hidden font-sans border border-neutral-200 dark:border-neutral-700">
-      {/* Thumbnail */}
-      <div className="relative w-full aspect-video bg-neutral-900 overflow-hidden">
-        {media ? (
-          media.mimeType.startsWith("video/") ? (
+      {/* Thumbnail — 16:9, object-contain, capped height */}
+      <div className="relative w-full aspect-video max-h-36 bg-neutral-950 overflow-hidden">
+        {first ? (
+          first.mimeType.startsWith("video/") ? (
             // eslint-disable-next-line jsx-a11y/media-has-caption
-            <video src={media.url} className="w-full h-full object-cover" />
+            <video src={first.url} className="w-full h-full object-contain" />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={media.url} alt="" className="w-full h-full object-cover" />
+            <img src={first.url} alt="" className="w-full h-full object-contain" />
           )
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-white/30 text-xs">Thumbnail</span>
+            <Play className="h-7 w-7 text-white/20" />
           </div>
         )}
-        {/* Duration badge */}
-        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded">0:00</div>
+        <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[9px] font-semibold px-1 py-0.5 rounded tabular-nums">0:00</div>
       </div>
-      <div className="p-3 flex gap-3">
-        <AccountAvatar src={avatarSrc} name={accountName} size={9} />
+      <div className="p-2.5 flex gap-2">
+        <AccountAvatar src={avatarSrc} name={accountName} size={7} />
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-neutral-900 dark:text-white line-clamp-2 leading-snug">{title}</p>
-          <p className="text-xs text-neutral-500 mt-0.5">{accountName || "Your Channel"}</p>
-          <p className="text-xs text-neutral-400">0 views · Just now</p>
+          <p className="text-xs font-semibold text-neutral-900 dark:text-white line-clamp-2 leading-snug">{title}</p>
+          <p className="text-[10px] text-neutral-500 mt-0.5 truncate">{accountName || "Your Channel"}</p>
+          <p className="text-[10px] text-neutral-400">0 views · Just now</p>
         </div>
       </div>
     </div>
@@ -705,27 +782,28 @@ function YouTubePreview({ caption, media, accountName, avatarSrc }: {
 
 /* ── TikTok preview ── */
 function TikTokPreview({ caption, media, accountName, avatarSrc }: {
-  caption: string; media: { url: string; mimeType: string } | null;
+  caption: string; media: { url: string; mimeType: string }[];
   accountName: string; avatarSrc: string | null;
 }) {
+  const first = media[0] ?? null;
   return (
     <div className="bg-black rounded-xl overflow-hidden font-sans relative border border-neutral-800">
-      <div className="relative w-full aspect-[9/16] max-h-72 overflow-hidden">
-        {media ? (
-          media.mimeType.startsWith("video/") ? (
+      <div className="relative w-full aspect-[9/16] max-h-56 overflow-hidden">
+        {first ? (
+          first.mimeType.startsWith("video/") ? (
             // eslint-disable-next-line jsx-a11y/media-has-caption
-            <video src={media.url} className="w-full h-full object-cover" />
+            <video src={first.url} className="w-full h-full object-contain" />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={media.url} alt="" className="w-full h-full object-cover" />
+            <img src={first.url} alt="" className="w-full h-full object-contain" />
           )
         ) : (
           <div className="w-full h-full bg-neutral-900 flex items-center justify-center">
-            <span className="text-white/30 text-xs">Video</span>
+            <Play className="h-8 w-8 text-white/20" />
           </div>
         )}
         {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
         <div className="absolute bottom-3 left-3 right-12">
           <p className="text-white text-xs font-semibold mb-1">@{accountName?.replace(/\s+/g, "").toLowerCase() || "account"}</p>
           {caption && <p className="text-white/90 text-xs leading-snug line-clamp-2">{caption}</p>}
@@ -736,8 +814,14 @@ function TikTokPreview({ caption, media, accountName, avatarSrc }: {
             <AccountAvatar src={avatarSrc} name={accountName} size={8} />
             <div className="-mt-1.5 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white font-bold">+</div>
           </div>
-          <div className="flex flex-col items-center gap-0.5"><span className="text-lg">♡</span><span className="text-[10px]">0</span></div>
-          <div className="flex flex-col items-center gap-0.5"><span className="text-lg">🗨</span><span className="text-[10px]">0</span></div>
+          <div className="flex flex-col items-center gap-0.5">
+            <Heart className="h-5 w-5" />
+            <span className="text-[10px]">0</span>
+          </div>
+          <div className="flex flex-col items-center gap-0.5">
+            <MessageCircle className="h-5 w-5" />
+            <span className="text-[10px]">0</span>
+          </div>
         </div>
       </div>
     </div>
@@ -746,27 +830,28 @@ function TikTokPreview({ caption, media, accountName, avatarSrc }: {
 
 /* ── Threads preview ── */
 function ThreadsPreview({ caption, media, accountName, avatarSrc }: {
-  caption: string; media: { url: string; mimeType: string } | null;
+  caption: string; media: { url: string; mimeType: string }[];
   accountName: string; avatarSrc: string | null;
 }) {
   return (
-    <div className="bg-white dark:bg-neutral-950 rounded-xl border border-neutral-200 dark:border-neutral-800 p-4 font-sans">
-      <div className="flex gap-3">
+    <div className="bg-white dark:bg-neutral-950 rounded-xl border border-neutral-200 dark:border-neutral-800 p-3 font-sans">
+      <div className="flex gap-2.5">
         <div className="flex flex-col items-center">
-          <AccountAvatar src={avatarSrc} name={accountName} size={10} />
-          <div className="w-0.5 flex-1 bg-neutral-200 dark:bg-neutral-700 mt-2 min-h-4" />
+          <AccountAvatar src={avatarSrc} name={accountName} size={8} />
+          <div className="w-0.5 flex-1 bg-neutral-200 dark:bg-neutral-700 mt-1.5 min-h-3" />
         </div>
-        <div className="flex-1 min-w-0 pb-2">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm font-semibold text-neutral-900 dark:text-white">{accountName || "your_account"}</span>
-            <span className="text-xs text-neutral-400">now</span>
+        <div className="flex-1 min-w-0 pb-1.5">
+          <div className="flex items-center gap-1">
+            <span className="text-xs font-semibold text-neutral-900 dark:text-white truncate max-w-[130px]">{accountName || "your_account"}</span>
+            <span className="text-[10px] text-neutral-400 flex-shrink-0">· now</span>
           </div>
-          {caption && <p className="text-sm text-neutral-800 dark:text-neutral-200 mt-1 leading-relaxed whitespace-pre-wrap line-clamp-5">{caption}</p>}
-          <PreviewMedia media={media} />
-          <div className="flex gap-4 mt-3 text-neutral-400">
-            <span className="text-base">♡</span>
-            <span className="text-base">🗨</span>
-            <span className="text-base rotate-12">↗</span>
+          {caption && <p className="text-xs text-neutral-800 dark:text-neutral-200 mt-1 leading-relaxed whitespace-pre-wrap line-clamp-3">{caption}</p>}
+          {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
+          <div className="flex gap-3 mt-2 text-neutral-400">
+            <button aria-label="Like" className="hover:text-red-400 transition-colors"><Heart className="h-3.5 w-3.5" /></button>
+            <button aria-label="Comment" className="hover:text-neutral-600 transition-colors"><MessageCircle className="h-3.5 w-3.5" /></button>
+            <button aria-label="Repost" className="hover:text-green-500 transition-colors"><Repeat2 className="h-3.5 w-3.5" /></button>
+            <button aria-label="Share" className="hover:text-neutral-600 transition-colors"><Send className="h-3.5 w-3.5" /></button>
           </div>
         </div>
       </div>
@@ -789,13 +874,13 @@ function MediaCarousel({
 
   return (
     <div>
-      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-border/40">
+      <div className="relative aspect-video w-full max-h-40 rounded-xl overflow-hidden bg-neutral-950 border border-border/40">
         {isVideo ? (
           // eslint-disable-next-line jsx-a11y/media-has-caption
-          <video src={current.fileUrl} className="w-full h-full object-cover" />
+          <video src={current.fileUrl} className="w-full h-full object-contain" />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={current.fileUrl} alt="Media" className="w-full h-full object-cover" />
+          <img src={current.fileUrl} alt="Media" className="w-full h-full object-contain" />
         )}
         {media.length > 1 && (
           <>
@@ -842,12 +927,12 @@ function PlatformSection({
   platform,
   posts,
   caption,
-  firstMedia,
+  media,
 }: {
   platform: string;
   posts: PostResponse[];
   caption: string;
-  firstMedia: { url: string; mimeType: string } | null;
+  media: { url: string; mimeType: string }[];
 }) {
   const p = platform.toUpperCase();
   const Icon = PLATFORM_ICONS[platform] ?? PLATFORM_ICONS[platform.toLowerCase()];
@@ -860,7 +945,7 @@ function PlatformSection({
     ? getImageUrl(previewAccount.profilePicLink)
     : null;
 
-  const previewProps = { caption, media: firstMedia, accountName: previewName, avatarSrc: previewAvatar };
+  const previewProps = { caption, media, accountName: previewName, avatarSrc: previewAvatar };
 
   return (
     <div className={cn("rounded-2xl border shadow-sm overflow-hidden", accent.cardBg, accent.cardBorder)}>
@@ -880,20 +965,22 @@ function PlatformSection({
       </div>
 
       {/* Platform-specific post preview */}
-      <div className="p-5 border-b border-border/30">
-        {p === "X" && <XPreview {...previewProps} />}
-        {p === "INSTAGRAM" && <InstagramPreview {...previewProps} />}
-        {p === "LINKEDIN" && <LinkedInPreview {...previewProps} />}
-        {p === "FACEBOOK" && <FacebookPreview {...previewProps} />}
-        {p === "YOUTUBE" && <YouTubePreview {...previewProps} />}
-        {p === "TIKTOK" && <TikTokPreview {...previewProps} />}
-        {p === "THREADS" && <ThreadsPreview {...previewProps} />}
-        {!["X","INSTAGRAM","LINKEDIN","FACEBOOK","YOUTUBE","TIKTOK","THREADS"].includes(p) && (
-          <div className="rounded-lg bg-muted/40 border border-border/40 p-4">
-            {caption && <p className="text-sm text-foreground/80 leading-relaxed line-clamp-5 whitespace-pre-wrap">{caption}</p>}
-            {firstMedia && <PreviewMedia media={firstMedia} />}
-          </div>
-        )}
+      <div className="px-4 py-3 border-b border-border/30">
+        <div className="max-w-xs mx-auto sm:max-w-sm">
+          {p === "X" && <XPreview {...previewProps} />}
+          {p === "INSTAGRAM" && <InstagramPreview {...previewProps} />}
+          {p === "LINKEDIN" && <LinkedInPreview {...previewProps} />}
+          {p === "FACEBOOK" && <FacebookPreview {...previewProps} />}
+          {p === "YOUTUBE" && <YouTubePreview {...previewProps} />}
+          {p === "TIKTOK" && <TikTokPreview {...previewProps} />}
+          {p === "THREADS" && <ThreadsPreview {...previewProps} />}
+          {!["X","INSTAGRAM","LINKEDIN","FACEBOOK","YOUTUBE","TIKTOK","THREADS"].includes(p) && (
+            <div className="rounded-lg bg-muted/40 border border-border/40 p-3">
+              {caption && <p className="text-xs text-foreground/80 leading-relaxed line-clamp-4 whitespace-pre-wrap">{caption}</p>}
+              {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Account list */}
