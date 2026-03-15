@@ -925,21 +925,22 @@ export default function ScheduledCollectionDetailPage() {
             </div>
           </header>
 
-          <div className="px-4 sm:px-6 py-4 space-y-3">
+          <div className="px-4 sm:px-6 py-6 space-y-5">
             {/* Hero card */}
-            <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div className="px-5 pt-4 pb-4">
-                <div className="flex flex-wrap items-start gap-x-4 gap-y-2 mb-2.5">
-                  <h1 className="text-xl font-bold text-foreground tracking-tight flex-1 min-w-0">
+            <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+              <div className="h-1 w-full bg-gradient-to-r from-violet-500 via-primary to-indigo-500" />
+              <div className="px-6 pt-6 pb-5">
+                <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
+                  <h1 className="text-2xl font-bold text-foreground tracking-tight flex-1 min-w-0">
                     {collection.title}
                   </h1>
                   <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                    <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold border", type.className)}>
-                      <TypeIcon className="h-3 w-3" />
+                    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border", type.className)}>
+                      <TypeIcon className="h-3.5 w-3.5" />
                       {type.label}
                     </span>
-                    <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border", status.className)}>
-                      <StatusIcon className="h-3 w-3" />
+                    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border", status.className)}>
+                      <StatusIcon className="h-3.5 w-3.5" />
                       {status.label}
                     </span>
                     <div className="flex items-center gap-1.5 sm:hidden">
@@ -959,9 +960,9 @@ export default function ScheduledCollectionDetailPage() {
                     {collection.description}
                   </p>
                 )}
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium text-muted-foreground bg-muted/40 border border-border/40">
-                    <Calendar className="h-3 w-3" />
+                <div className="flex items-center gap-3 flex-wrap">
+                  <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground bg-muted/40 border border-border/40">
+                    <Calendar className="h-3.5 w-3.5" />
                     <span>{formattedDate} · {formattedTime}</span>
                     {isScheduled && (
                       <button onClick={enterEditMode} className="ml-0.5 hover:text-foreground transition-colors" title="Edit schedule">
@@ -969,7 +970,7 @@ export default function ScheduledCollectionDetailPage() {
                       </button>
                     )}
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     {Object.keys(groupedPosts).map((plat) => {
                       const platUpper = plat.toUpperCase();
                       const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
@@ -978,11 +979,11 @@ export default function ScheduledCollectionDetailPage() {
                           key={plat}
                           title={platformDisplayName[platUpper] ?? plat}
                           className={cn(
-                            "h-6 w-6 rounded-md border flex items-center justify-center flex-shrink-0",
+                            "h-7 w-7 rounded-lg border flex items-center justify-center flex-shrink-0",
                             platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60"
                           )}
                         >
-                          {PlatIcon ? <PlatIcon className="h-3 w-3" /> : null}
+                          {PlatIcon ? <PlatIcon className="h-3.5 w-3.5" /> : null}
                         </div>
                       );
                     })}
@@ -992,34 +993,34 @@ export default function ScheduledCollectionDetailPage() {
             </div>
 
             {/* Main layout: sidebar + platform sections */}
-            <div className="flex flex-col lg:flex-row gap-3 items-start">
+            <div className="flex flex-col lg:flex-row gap-5 items-start">
               {/* Left sidebar */}
-              <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-3">
+              <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
                 {/* Schedule card */}
-                <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
-                    <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                    <p className="text-xs font-semibold text-foreground flex-1">Schedule</p>
+                <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+                    <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <p className="text-sm font-semibold text-foreground flex-1">Schedule</p>
                     {isScheduled && (
-                      <button onClick={enterEditMode} className="h-5 w-5 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit schedule">
-                        <Pencil className="h-3 w-3" />
+                      <button onClick={enterEditMode} className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit schedule">
+                        <Pencil className="h-3.5 w-3.5" />
                       </button>
                     )}
                   </div>
-                  <div className="p-4 space-y-3">
+                  <div className="p-5 space-y-4">
                     {isScheduled && getCountdown(scheduledDate) && (
-                      <div className="rounded-lg bg-primary/5 border border-primary/15 px-3 py-2.5 text-center">
-                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">Publishing in</p>
-                        <p className="text-xl font-bold text-primary tabular-nums">{getCountdown(scheduledDate)}</p>
+                      <div className="rounded-xl bg-primary/5 border border-primary/20 px-4 py-5 text-center">
+                        <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">Publishing in</p>
+                        <p className="text-3xl font-bold text-primary tabular-nums tracking-tight">{getCountdown(scheduledDate)}</p>
                       </div>
                     )}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-xs">
-                        <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    <div className="space-y-2.5">
+                      <div className="flex items-center gap-2.5 text-sm">
+                        <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <span className="text-foreground font-medium">{formattedDate}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        <Clock className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                      <div className="flex items-center gap-2.5 text-sm">
+                        <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <span className="text-foreground font-medium">{formattedTime}</span>
                       </div>
                     </div>
@@ -1027,84 +1028,71 @@ export default function ScheduledCollectionDetailPage() {
                 </div>
 
                 {/* Caption card */}
-                <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
-                    <FileText className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                    <p className="text-xs font-semibold text-foreground flex-1">Caption</p>
+                <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+                    <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <p className="text-sm font-semibold text-foreground flex-1">Caption</p>
                     {isScheduled && (
-                      <button onClick={enterEditMode} className="h-5 w-5 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
-                        <Pencil className="h-3 w-3" />
+                      <button onClick={enterEditMode} className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
+                        <Pencil className="h-3.5 w-3.5" />
                       </button>
                     )}
                   </div>
-                  <div className="p-4">
+                  <div className="p-5">
                     {captionText ? (
-                      <p className="text-xs text-foreground/80 leading-relaxed line-clamp-10 whitespace-pre-wrap">{captionText}</p>
+                      <p className="text-sm text-foreground/80 leading-relaxed line-clamp-10 whitespace-pre-wrap">{captionText}</p>
                     ) : (
-                      <p className="text-xs text-muted-foreground/50 italic">No caption specified</p>
+                      <p className="text-sm text-muted-foreground/50 italic">No caption specified</p>
                     )}
                     {captionText && (
-                      <p className="text-[10px] text-muted-foreground/50 tabular-nums mt-2">{captionText.length} characters</p>
+                      <p className="text-xs text-muted-foreground/40 tabular-nums mt-3">{captionText.length} characters</p>
                     )}
                   </div>
                 </div>
 
                 {/* Media carousel */}
                 {collection.media.length > 0 && (
-                  <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                    <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
-                      <ImageIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                      <p className="text-xs font-semibold text-foreground flex-1">
+                  <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                    <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+                      <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <p className="text-sm font-semibold text-foreground flex-1">
                         Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
                       </p>
                       {isScheduled && collection.postCollectionType !== "TEXT" && (
-                        <button onClick={enterEditMode} className="h-5 w-5 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
-                          <Pencil className="h-3 w-3" />
+                        <button onClick={enterEditMode} className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
+                          <Pencil className="h-3.5 w-3.5" />
                         </button>
                       )}
                     </div>
-                    <div className="p-3">
+                    <div className="p-4">
                       <MediaCarousel media={collection.media} />
                     </div>
                   </div>
                 )}
 
                 {/* Stats card with platform breakdown */}
-                <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                  <div className="px-4 py-3 flex items-center divide-x divide-border/40">
-                    <div className="flex-1 text-center pr-3">
-                      <p className="text-xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Posts</p>
+                <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                  <div className="px-5 py-4 flex items-center divide-x divide-border/40">
+                    <div className="flex-1 text-center pr-4">
+                      <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mt-1.5">Posts</p>
                     </div>
-                    <div className="flex-1 text-center pl-3">
-                      <p className="text-xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">Platforms</p>
+                    <div className="flex-1 text-center pl-4">
+                      <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mt-1.5">Platforms</p>
                     </div>
                   </div>
-                  <div className="px-4 pb-3 border-t border-border/30 pt-3 space-y-2">
+                  <div className="px-5 pb-4 border-t border-border/30 pt-4 space-y-3">
                     {Object.entries(groupedPosts).map(([plat, platPosts]) => {
                       const platUpper = plat.toUpperCase();
                       const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
-                      const publishedCount = platPosts.filter((p) => p.postStatus === "PUBLISHED").length;
-                      const failedCount = platPosts.filter((p) => p.postStatus === "FAILED").length;
-                      const scheduledCount = platPosts.filter((p) => p.postStatus === "SCHEDULED").length;
                       return (
-                        <div key={plat} className="flex items-center gap-2">
-                          <div className={cn("h-5 w-5 rounded-md border flex items-center justify-center flex-shrink-0", platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60")}>
-                            {PlatIcon ? <PlatIcon className="h-3 w-3" /> : null}
+                        <div key={plat} className="flex items-center gap-2.5">
+                          <div className={cn("h-6 w-6 rounded-lg border flex items-center justify-center flex-shrink-0", platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60")}>
+                            {PlatIcon ? <PlatIcon className="h-3.5 w-3.5" /> : null}
                           </div>
-                          <span className="text-xs text-foreground flex-1 truncate">{platformDisplayName[platUpper] ?? plat}</span>
-                          <div className="flex items-center gap-1.5">
-                            {publishedCount > 0 && (
-                              <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 tabular-nums">{publishedCount} done</span>
-                            )}
-                            {scheduledCount > 0 && (
-                              <span className="text-[10px] font-semibold text-blue-500 tabular-nums">{scheduledCount} sched.</span>
-                            )}
-                            {failedCount > 0 && (
-                              <span className="text-[10px] font-semibold text-red-500 tabular-nums">{failedCount} failed</span>
-                            )}
-                          </div>
+                          <span className="text-sm font-medium text-foreground flex-1 truncate">{platformDisplayName[platUpper] ?? plat}</span>
+                          <span className="text-xs text-muted-foreground tabular-nums">{platPosts.length} acct{platPosts.length !== 1 ? "s" : ""}</span>
                         </div>
                       );
                     })}
@@ -1113,7 +1101,7 @@ export default function ScheduledCollectionDetailPage() {
               </div>
 
               {/* Platform sections */}
-              <div className="flex-1 min-w-0 space-y-2.5">
+              <div className="flex-1 min-w-0 space-y-4">
                 {collection.posts.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-border/40 bg-muted/20">
                     <LayoutGrid className="h-8 w-8 text-muted-foreground/40 mb-2" />
@@ -1547,13 +1535,13 @@ function PlatformSection({
   const previewProps = { caption, media: firstMedia, accountName: previewName, avatarSrc: previewAvatar };
 
   return (
-    <div className={cn("rounded-xl border shadow-sm overflow-hidden", accent.cardBg, accent.cardBorder)}>
+    <div className={cn("rounded-2xl border shadow-sm overflow-hidden", accent.cardBg, accent.cardBorder)}>
       <div className="h-[3px] w-full" style={{ background: accent.bar }} />
 
       {/* Platform header row */}
-      <div className="flex items-center gap-2.5 px-4 py-3 border-b border-border/30">
-        <div className={cn("h-7 w-7 rounded-lg border flex items-center justify-center flex-shrink-0", accent.iconClass)}>
-          {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
+      <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
+        <div className={cn("h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0", accent.iconClass)}>
+          {Icon ? <Icon className="h-4.5 w-4.5" /> : null}
         </div>
         <p className="text-sm font-semibold text-foreground flex-1">
           {platformDisplayName[p] ?? platformDisplayName[platform] ?? platform}
@@ -1564,7 +1552,7 @@ function PlatformSection({
       </div>
 
       {/* Platform-specific post preview */}
-      <div className="p-4 border-b border-border/30">
+      <div className="p-5 border-b border-border/30">
         {p === "X" && <XPreview {...previewProps} />}
         {p === "INSTAGRAM" && <InstagramPreview {...previewProps} />}
         {p === "LINKEDIN" && <LinkedInPreview {...previewProps} />}
@@ -1581,15 +1569,15 @@ function PlatformSection({
       </div>
 
       {/* Account list */}
-      <div className="p-3 flex flex-wrap gap-1.5">
+      <div className="p-4 flex flex-wrap gap-2">
         {posts.map((post) => {
           const src = getImageUrl(post.connectedAccount?.profilePicLink);
           return (
             <div
               key={post.id}
-              className="flex items-center gap-1.5 pl-1 pr-2.5 py-1 rounded-full bg-background/70 border border-border/50 shadow-sm"
+              className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full bg-background/70 border border-border/50 shadow-sm"
             >
-              <div className="relative h-5 w-5 rounded-full overflow-hidden flex-shrink-0 bg-muted border border-border/30">
+              <div className="relative h-6 w-6 rounded-full overflow-hidden flex-shrink-0 bg-muted border border-border/30">
                 {src ? (
                   <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="20px" className="object-cover" />
                 ) : (
@@ -1602,7 +1590,7 @@ function PlatformSection({
                 {post.connectedAccount?.username ?? "Account"}
               </span>
               <div className={cn(
-                "h-1.5 w-1.5 rounded-full flex-shrink-0",
+                "h-2 w-2 rounded-full flex-shrink-0",
                 post.postStatus === "PUBLISHED" ? "bg-emerald-500"
                   : post.postStatus === "FAILED" ? "bg-red-500"
                   : "bg-blue-400"
