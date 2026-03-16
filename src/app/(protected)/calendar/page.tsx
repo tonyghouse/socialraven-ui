@@ -1057,7 +1057,7 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background overflow-hidden">
+    <div className="h-screen flex flex-col bg-background">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div className="shrink-0 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
