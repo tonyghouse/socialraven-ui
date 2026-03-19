@@ -33,7 +33,6 @@ import { cn } from "@/lib/utils";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
-import { fetchAccountGroupsApi } from "@/service/accountGroups";
 import {
   fetchAnalyticsOverviewApi,
   fetchPlatformStatsApi,
@@ -49,7 +48,6 @@ import {
   type HeatmapCell,
 } from "@/service/analytics";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
-import type { AccountGroup } from "@/model/AccountGroup";
 
 // ─── Platform meta ────────────────────────────────────────────────────────────
 
@@ -222,13 +220,11 @@ export default function AnalyticsPage() {
 
   // ── Filters ──────────────────────────────────────────────────────────────
   const [dateRange, setDateRange]         = useState<DateRange>("30d");
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null); // providerUserId
   const [snapshotType, setSnapshotType]   = useState<SnapshotType>("T30D");
 
-  // ── Account/group data ────────────────────────────────────────────────────
+  // ── Account data ──────────────────────────────────────────────────────────
   const [accounts, setAccounts]   = useState<ConnectedAccount[]>([]);
-  const [groups, setGroups]       = useState<AccountGroup[]>([]);
   const [acctLoading, setAcctLoading] = useState(true);
 
   // ── Analytics data ────────────────────────────────────────────────────────
@@ -241,16 +237,12 @@ export default function AnalyticsPage() {
   const [error, setError]             = useState<string | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
-  // ── Load accounts + groups ────────────────────────────────────────────────
+  // ── Load accounts ─────────────────────────────────────────────────────────
   useEffect(() => {
     async function load() {
       try {
-        const [accts, grps] = await Promise.all([
-          fetchConnectedAccountsApi(getToken, null),
-          fetchAccountGroupsApi(getToken),
-        ]);
+        const accts = await fetchConnectedAccountsApi(getToken, null);
         setAccounts(accts);
-        setGroups(grps);
       } catch (e) {
         console.error(e);
       } finally {
@@ -259,14 +251,6 @@ export default function AnalyticsPage() {
     }
     load();
   }, [getToken]);
-
-  // ── Accounts visible for selected group ───────────────────────────────────
-  const groupAccounts = useMemo(() => {
-    if (!selectedGroupId) return accounts;
-    const grp = groups.find((g) => g.id === selectedGroupId);
-    if (!grp) return accounts;
-    return accounts.filter((a) => grp.accountIds.includes(a.providerUserId));
-  }, [accounts, groups, selectedGroupId]);
 
   // ── Selected account object ───────────────────────────────────────────────
   const selectedAccount = useMemo(
@@ -404,63 +388,6 @@ export default function AnalyticsPage() {
         ───────────────────────────────────────────────────────────────── */}
         <section className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
 
-          {/* Account Groups */}
-          <div className="px-4 pt-4 pb-3 border-b border-border/40">
-            <p className="text-[10px] font-semibold text-foreground/35 uppercase tracking-widest mb-2.5">
-              Account Groups
-            </p>
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* All */}
-              <button
-                onClick={() => { setSelectedGroupId(null); setSelectedAccountId(null); }}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-medium border transition-all duration-150",
-                  selectedGroupId === null
-                    ? "bg-foreground text-background border-foreground"
-                    : "border-border/50 text-foreground/60 hover:border-border hover:text-foreground"
-                )}
-              >
-                All
-                <span className={cn(
-                  "text-[10px] px-1.5 py-0.5 rounded-md",
-                  selectedGroupId === null ? "bg-white/20" : "bg-foreground/[0.06] text-foreground/40"
-                )}>
-                  {accounts.length}
-                </span>
-              </button>
-
-              {acctLoading
-                ? Array.from({ length: 3 }).map((_, i) => <Sk key={i} className="h-8 w-24" />)
-                : groups.map((g) => {
-                    const cnt = g.accountIds.filter((id) => accounts.some((a) => a.providerUserId === id)).length;
-                    const isActive = selectedGroupId === g.id;
-                    return (
-                      <button
-                        key={g.id}
-                        onClick={() => { setSelectedGroupId(isActive ? null : g.id); setSelectedAccountId(null); }}
-                        className={cn(
-                          "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-medium border transition-all duration-150",
-                          isActive
-                            ? "text-white border-transparent"
-                            : "border-border/50 text-foreground/60 hover:border-border hover:text-foreground"
-                        )}
-                        style={isActive ? { backgroundColor: g.color, borderColor: g.color } : {}}
-                      >
-                        <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: g.color }} />
-                        {g.name}
-                        <span className={cn(
-                          "text-[10px] px-1.5 py-0.5 rounded-md",
-                          isActive ? "bg-white/20" : "bg-foreground/[0.06] text-foreground/40"
-                        )}>
-                          {cnt}
-                        </span>
-                      </button>
-                    );
-                  })
-              }
-            </div>
-          </div>
-
           {/* Connected Accounts */}
           <div className="px-4 py-3">
             <p className="text-[10px] font-semibold text-foreground/35 uppercase tracking-widest mb-2.5">
@@ -476,14 +403,14 @@ export default function AnalyticsPage() {
               <div className="flex items-center gap-2 flex-wrap">
                 {Array.from({ length: 4 }).map((_, i) => <Sk key={i} className="h-9 w-36" />)}
               </div>
-            ) : groupAccounts.length === 0 ? (
+            ) : accounts.length === 0 ? (
               <p className="text-[12px] text-foreground/35">
-                No connected accounts in this group. Go to{" "}
+                No connected accounts. Go to{" "}
                 <a href="/connect-accounts" className="text-accent underline underline-offset-2">Connect Accounts</a>.
               </p>
             ) : (
               <div className="flex items-center gap-2 flex-wrap">
-                {groupAccounts.map((a) => (
+                {accounts.map((a) => (
                   <AccountChip
                     key={a.providerUserId}
                     account={a}

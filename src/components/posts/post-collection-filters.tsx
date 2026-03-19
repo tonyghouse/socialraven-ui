@@ -18,9 +18,7 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { fetchAccountGroupsApi } from "@/service/accountGroups";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
-import { AccountGroup } from "@/model/AccountGroup";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { useAuth } from "@clerk/nextjs";
@@ -114,9 +112,7 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
 
   // Account filter popover state
   const [accountOpen, setAccountOpen] = useState(false);
-  const [groups, setGroups] = useState<AccountGroup[]>([]);
   const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
-  const [selectedGroupIds, setSelectedGroupIds] = useState<Set<string>>(new Set());
   const [selectedAccountIds, setSelectedAccountIds] = useState<Set<string>>(new Set());
   const [loadingFilters, setLoadingFilters] = useState(false);
 
@@ -139,17 +135,10 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
   const callbackRef = useRef(onFiltersChange);
   useEffect(() => { callbackRef.current = onFiltersChange; });
 
-  const computedProviderUserIds = useMemo(() => {
-    const ids = new Set<string>(selectedAccountIds);
-    for (const gid of selectedGroupIds) {
-      const group = groups.find((g) => g.id === gid);
-      if (group) group.accountIds.forEach((id) => ids.add(id));
-    }
-    return Array.from(ids);
-  }, [selectedGroupIds, selectedAccountIds, groups]);
+  const computedProviderUserIds = useMemo(() => Array.from(selectedAccountIds), [selectedAccountIds]);
 
   const providerIdsKey = computedProviderUserIds.join(",");
-  const accountFilterCount = selectedGroupIds.size + selectedAccountIds.size;
+  const accountFilterCount = selectedAccountIds.size;
 
   // Debounced callback
   useEffect(() => {
@@ -162,24 +151,21 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, providerIdsKey, selectedPlatform, selectedDateRange, sortDir]);
 
-  // Fetch accounts/groups when account popover opens
+  // Fetch accounts when account popover opens
   useEffect(() => {
     if (!accountOpen || dataFetchedRef.current) return;
     dataFetchedRef.current = true;
     setLoadingFilters(true);
-    Promise.all([fetchAccountGroupsApi(getToken), fetchAllConnectedAccountsApi(getToken)])
-      .then(([g, a]) => { setGroups(g); setAccounts(a); })
+    fetchAllConnectedAccountsApi(getToken)
+      .then((a) => { setAccounts(a); })
       .catch(() => {})
       .finally(() => setLoadingFilters(false));
   }, [accountOpen, getToken]);
 
-  const toggleGroup = (id: string) =>
-    setSelectedGroupIds((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
-
   const toggleAccount = (id: string) =>
     setSelectedAccountIds((prev) => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
 
-  const clearAccounts = () => { setSelectedGroupIds(new Set()); setSelectedAccountIds(new Set()); };
+  const clearAccounts = () => { setSelectedAccountIds(new Set()); };
 
   const platformLabel = selectedPlatform ? PLATFORM_LABELS[selectedPlatform] ?? selectedPlatform : "All Platforms";
   const periodLabel = selectedDateRange
@@ -342,29 +328,11 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
 
             {loadingFilters ? (
               <div className="py-8 text-center text-sm text-muted-foreground">Loading…</div>
-            ) : groups.length === 0 && accounts.length === 0 ? (
+            ) : accounts.length === 0 ? (
               <div className="py-8 text-center text-sm text-muted-foreground px-4">No connected accounts found.</div>
             ) : (
               <ScrollArea className="max-h-[320px]">
                 <div className="p-2 space-y-1">
-                  {groups.length > 0 && (
-                    <>
-                      <p className="px-2 pt-2 pb-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Account Groups</p>
-                      {groups.map((group) => {
-                        const isSelected = selectedGroupIds.has(group.id);
-                        return (
-                          <button key={group.id} onClick={() => toggleGroup(group.id)}
-                            className={cn("w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors text-left", isSelected ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground")}>
-                            <span className="h-2.5 w-2.5 rounded-full flex-shrink-0 ring-1 ring-black/10" style={{ backgroundColor: group.color }} />
-                            <span className="flex-1 truncate font-medium">{group.name}</span>
-                            <span className="text-[11px] text-muted-foreground tabular-nums">{group.accountIds.length}</span>
-                            {isSelected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
-                          </button>
-                        );
-                      })}
-                    </>
-                  )}
-
                   {accounts.length > 0 && (
                     <>
                       <p className="px-2 pt-3 pb-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Accounts</p>
@@ -420,21 +388,8 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
       </div>
 
       {/* Active filter chips */}
-      {(selectedGroupIds.size > 0 || selectedAccountIds.size > 0) && (
+      {selectedAccountIds.size > 0 && (
         <div className="flex items-center gap-1.5 flex-wrap">
-          {Array.from(selectedGroupIds).map((gid) => {
-            const group = groups.find((g) => g.id === gid);
-            if (!group) return null;
-            return (
-              <span key={gid} className="inline-flex items-center gap-1.5 h-7 pl-2.5 pr-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-medium text-primary">
-                <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: group.color }} />
-                {group.name}
-                <button onClick={() => toggleGroup(gid)} className="hover:bg-primary/20 rounded-full p-0.5 transition-colors">
-                  <X className="h-2.5 w-2.5" />
-                </button>
-              </span>
-            );
-          })}
           {Array.from(selectedAccountIds).map((uid) => {
             const account = accounts.find((a) => a.providerUserId === uid);
             if (!account) return null;

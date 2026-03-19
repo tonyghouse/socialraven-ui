@@ -3,10 +3,8 @@
 import { useState, useMemo, useCallback } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
-import type { AccountGroup } from "@/model/AccountGroup";
 import type { PostType } from "@/model/PostType";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,10 +14,8 @@ import {
   Search,
   Users,
   Check,
-  Info,
   ChevronRight,
   X,
-  Minus,
 } from "lucide-react";
 import { getImageUrl } from "@/service/getImageUrl";
 import { getInitials } from "@/service/getInitials";
@@ -35,30 +31,6 @@ const PLATFORM_LABELS: Record<string, string> = {
   threads: "Threads",
   tiktok: "TikTok",
 };
-
-// ── helpers ────────────────────────────────────────────────────────────────────
-
-type GroupState = "none" | "partial" | "all";
-
-function resolveGroupState(
-  group: AccountGroup,
-  selectedIds: string[],
-  accounts: ConnectedAccount[],
-  postType: PostType,
-): GroupState {
-  const eligible = accounts.filter(
-    (a) =>
-      group.accountIds.includes(a.providerUserId) &&
-      a.allowedFormats?.includes(postType),
-  );
-  if (eligible.length === 0) return "none";
-  const selectedCount = eligible.filter((a) =>
-    selectedIds.includes(a.providerUserId),
-  ).length;
-  if (selectedCount === 0) return "none";
-  if (selectedCount === eligible.length) return "all";
-  return "partial";
-}
 
 // ── StackedAvatar ──────────────────────────────────────────────────────────────
 
@@ -81,112 +53,6 @@ function StackedAvatar({ acc }: { acc: ConnectedAccount }) {
   );
 }
 
-// ── GroupCard ──────────────────────────────────────────────────────────────────
-
-function GroupCard({
-  group,
-  accounts,
-  pendingIds,
-  onToggle,
-  postType,
-}: {
-  group: AccountGroup;
-  accounts: ConnectedAccount[];
-  pendingIds: string[];
-  onToggle: (group: AccountGroup, select: boolean) => void;
-  postType: PostType;
-}) {
-  const eligible = accounts.filter(
-    (a) =>
-      group.accountIds.includes(a.providerUserId) &&
-      a.allowedFormats?.includes(postType),
-  );
-  const allInGroup = accounts.filter((a) =>
-    group.accountIds.includes(a.providerUserId),
-  );
-  const platforms = [...new Set(allInGroup.map((a) => a.platform))];
-  const state = resolveGroupState(group, pendingIds, accounts, postType);
-  const isDisabled = eligible.length === 0;
-  const unsupported = allInGroup.length - eligible.length;
-
-  return (
-    <button
-      type="button"
-      onClick={() => !isDisabled && onToggle(group, state !== "all")}
-      disabled={isDisabled}
-      className={cn(
-        "w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl border transition-all duration-150 text-left",
-        state === "all"
-          ? "border-accent bg-secondary"
-          : state === "partial"
-            ? "border-accent bg-muted"
-            : "border-border bg-card hover:bg-muted",
-        isDisabled && "opacity-40 cursor-not-allowed",
-      )}
-    >
-      {/* Color swatch */}
-      <div
-        className="w-2.5 h-2.5 rounded-full flex-shrink-0 mt-0.5"
-        style={{ backgroundColor: group.color }}
-      />
-
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm font-semibold text-foreground truncate">
-            {group.name}
-          </span>
-          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full whitespace-nowrap">
-            {eligible.length} account{eligible.length !== 1 ? "s" : ""}
-            {unsupported > 0 && (
-              <span className="ml-0.5 opacity-60">
-                &nbsp;· {unsupported} unsupported
-              </span>
-            )}
-          </span>
-        </div>
-
-        {platforms.length > 0 && (
-          <div className="flex items-center gap-1 mt-1.5">
-            {platforms.slice(0, 7).map((p) => {
-              const Icon =
-                PLATFORM_ICONS[p] ??
-                PLATFORM_ICONS[(p as string)?.toUpperCase()];
-              return Icon ? (
-                <Icon key={p} className="w-3.5 h-3.5 text-muted-foreground" />
-              ) : null;
-            })}
-            {platforms.length > 7 && (
-              <span className="text-[10px] text-muted-foreground">
-                +{platforms.length - 7}
-              </span>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Checkbox */}
-      <div
-        className={cn(
-          "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150",
-          state === "all"
-            ? "bg-accent border-accent"
-            : state === "partial"
-              ? "border-accent bg-muted"
-              : "border-border bg-background",
-        )}
-      >
-        {state === "all" && (
-          <Check className="w-3 h-3 text-accent-foreground" strokeWidth={3} />
-        )}
-        {state === "partial" && (
-          <Minus className="w-3 h-3 text-accent" strokeWidth={3} />
-        )}
-      </div>
-    </button>
-  );
-}
-
 // ── AccountRow ─────────────────────────────────────────────────────────────────
 
 function AccountRow({
@@ -194,13 +60,11 @@ function AccountRow({
   isSelected,
   isAllowed,
   toggle,
-  groupColor,
 }: {
   acc: ConnectedAccount;
   isSelected: boolean;
   isAllowed: boolean;
   toggle: (id: string) => void;
-  groupColor?: string;
 }) {
   const [imgErr, setImgErr] = useState(false);
   const Icon =
@@ -248,13 +112,6 @@ function AccountRow({
           <span className="text-sm font-medium text-foreground truncate">
             {acc.username}
           </span>
-          {groupColor && (
-            <span
-              className="w-2 h-2 rounded-full flex-shrink-0"
-              style={{ backgroundColor: groupColor }}
-              title="Part of an account group"
-            />
-          )}
         </div>
         <span className="text-xs text-muted-foreground">
           {PLATFORM_LABELS[acc.platform] ?? acc.platform}
@@ -284,7 +141,6 @@ function AccountRow({
 export interface AccountSelectorProps {
   postType: PostType;
   accounts: ConnectedAccount[];
-  groups: AccountGroup[];
   selectedAccountIds: string[];
   onChange: (ids: string[]) => void;
   loading: boolean;
@@ -293,7 +149,6 @@ export interface AccountSelectorProps {
 export function AccountSelector({
   postType,
   accounts,
-  groups,
   selectedAccountIds,
   onChange,
   loading,
@@ -302,7 +157,6 @@ export function AccountSelector({
   // Staged — only committed to parent on "Apply"
   const [pendingIds, setPendingIds] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  const [tab, setTab] = useState<"groups" | "accounts">("groups");
 
   // ── open / close ────────────────────────────────────────────────────────────
 
@@ -323,11 +177,6 @@ export function AccountSelector({
 
   const q = search.toLowerCase().trim();
 
-  const filteredGroups = useMemo(
-    () => groups.filter((g) => q === "" || g.name.toLowerCase().includes(q)),
-    [groups, q],
-  );
-
   const filteredAccounts = useMemo(
     () =>
       accounts.filter(
@@ -340,12 +189,6 @@ export function AccountSelector({
     [accounts, q],
   );
 
-  const accountGroupColorMap = useMemo(() => {
-    const map = new Map<string, string>();
-    groups.forEach((g) => g.accountIds.forEach((id) => map.set(id, g.color)));
-    return map;
-  }, [groups]);
-
   // ── staged toggles ───────────────────────────────────────────────────────────
 
   const toggleAccount = useCallback((id: string) => {
@@ -353,22 +196,6 @@ export function AccountSelector({
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   }, []);
-
-  const toggleGroup = useCallback(
-    (group: AccountGroup, select: boolean) => {
-      const eligibleIds = group.accountIds.filter((id) => {
-        const acc = accounts.find((a) => a.providerUserId === id);
-        return acc?.allowedFormats?.includes(postType);
-      });
-      if (select) {
-        setPendingIds((prev) => Array.from(new Set([...prev, ...eligibleIds])));
-      } else {
-        const toRemove = new Set(eligibleIds);
-        setPendingIds((prev) => prev.filter((id) => !toRemove.has(id)));
-      }
-    },
-    [accounts, postType],
-  );
 
   // ── derived ──────────────────────────────────────────────────────────────────
 
@@ -426,11 +253,10 @@ export function AccountSelector({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold text-foreground">
-                  Select accounts or groups
+                  Select accounts
                 </p>
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Choose individual profiles or pick from your saved account
-                  groups
+                  Choose the social profiles to publish this post to
                 </p>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
@@ -501,7 +327,7 @@ export function AccountSelector({
                 <Dialog.Description className="text-xs text-muted-foreground mt-0.5">
                   {pendingIds.length > 0
                     ? `${pendingIds.length} of ${accounts.length} selected — click Apply to confirm`
-                    : "Choose individual accounts or pick from a saved group"}
+                    : "Choose the accounts to publish to"}
                 </Dialog.Description>
               </div>
               <Dialog.Close asChild>
@@ -520,7 +346,7 @@ export function AccountSelector({
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search groups or accounts…"
+                placeholder="Search accounts…"
                 className="pl-9 h-9 text-sm bg-muted border-border focus-visible:bg-background"
               />
               {search && (
@@ -534,114 +360,31 @@ export function AccountSelector({
               )}
             </div>
 
-            {/* Tabs */}
-            <Tabs
-              value={tab}
-              onValueChange={(v) => setTab(v as "groups" | "accounts")}
-              className="mt-3"
-            >
-              <TabsList className="w-full h-8 bg-muted p-0.5 gap-0.5">
-                <TabsTrigger
-                  value="groups"
-                  className="flex-1 text-xs h-7 gap-1"
-                >
-                  Groups
-                  {groups.length > 0 && (
-                    <span className="opacity-50 font-normal">
-                      ({groups.length})
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger
-                  value="accounts"
-                  className="flex-1 text-xs h-7 gap-1"
-                >
-                  Accounts
-                  {accounts.length > 0 && (
-                    <span className="opacity-50 font-normal">
-                      ({accounts.length})
-                    </span>
-                  )}
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
           </div>
 
           {/* ── Scrollable content ── */}
           <div className="flex-1 overflow-y-auto px-4 py-4 min-h-0">
-            {/* Snapshot info banner */}
-            <div className="flex items-start gap-2.5 px-3.5 py-3 bg-muted border border-border rounded-xl mb-4">
-              <Info className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Groups are{" "}
-                <span className="font-semibold text-foreground">
-                  expanded to individual accounts
-                </span>{" "}
-                when the post is scheduled. Editing a group later won&apos;t
-                affect posts already scheduled.
-              </p>
+            <div className="space-y-2">
+              {filteredAccounts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-14 text-center">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {q
+                      ? "No accounts match your search"
+                      : "No connected accounts found"}
+                  </p>
+                </div>
+              ) : (
+                filteredAccounts.map((acc) => (
+                  <AccountRow
+                    key={acc.providerUserId}
+                    acc={acc}
+                    isSelected={pendingIds.includes(acc.providerUserId)}
+                    isAllowed={!!acc.allowedFormats?.includes(postType)}
+                    toggle={toggleAccount}
+                  />
+                ))
+              )}
             </div>
-
-            {/* Groups tab */}
-            {tab === "groups" && (
-              <div className="space-y-2">
-                {filteredGroups.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-14 text-center">
-                    <div className="w-12 h-12 rounded-2xl bg-muted flex items-center justify-center mb-3">
-                      <Users className="w-5 h-5 text-muted-foreground/40" />
-                    </div>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {q
-                        ? "No groups match your search"
-                        : "No account groups yet"}
-                    </p>
-                    {!q && (
-                      <p className="text-xs text-muted-foreground/60 mt-1.5 max-w-[220px] leading-relaxed">
-                        Create groups in Account Settings to select multiple
-                        accounts at once
-                      </p>
-                    )}
-                  </div>
-                ) : (
-                  filteredGroups.map((g) => (
-                    <GroupCard
-                      key={g.id}
-                      group={g}
-                      accounts={accounts}
-                      pendingIds={pendingIds}
-                      onToggle={toggleGroup}
-                      postType={postType}
-                    />
-                  ))
-                )}
-              </div>
-            )}
-
-            {/* Accounts tab */}
-            {tab === "accounts" && (
-              <div className="space-y-2">
-                {filteredAccounts.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-14 text-center">
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {q
-                        ? "No accounts match your search"
-                        : "No connected accounts found"}
-                    </p>
-                  </div>
-                ) : (
-                  filteredAccounts.map((acc) => (
-                    <AccountRow
-                      key={acc.providerUserId}
-                      acc={acc}
-                      isSelected={pendingIds.includes(acc.providerUserId)}
-                      isAllowed={!!acc.allowedFormats?.includes(postType)}
-                      toggle={toggleAccount}
-                      groupColor={accountGroupColorMap.get(acc.providerUserId)}
-                    />
-                  ))
-                )}
-              </div>
-            )}
           </div>
 
           {/* ── Footer ── */}

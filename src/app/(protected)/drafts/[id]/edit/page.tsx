@@ -18,10 +18,8 @@ import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
-import type { AccountGroup } from "@/model/AccountGroup";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
-import { fetchAccountGroupsApi } from "@/service/accountGroups";
 import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
 import EditImageForm from "@/components/schedule-post/edit-image-form";
 import EditVideoForm from "@/components/schedule-post/edit-video-form";
@@ -128,7 +126,6 @@ export default function DraftEditPage() {
 
   const [collection, setCollection]     = useState<PostCollectionResponse | null>(null);
   const [allAccounts, setAllAccounts]   = useState<ConnectedAccount[]>([]);
-  const [accountGroups, setAccountGroups] = useState<AccountGroup[]>([]);
   const [selectedIds, setSelectedIds]   = useState<string[]>([]);
   const [loading, setLoading]           = useState(true);
   const [error, setError]               = useState<string | null>(null);
@@ -138,10 +135,9 @@ export default function DraftEditPage() {
     async function load() {
       try {
         setLoading(true);
-        const [coll, accounts, groups] = await Promise.all([
+        const [coll, accounts] = await Promise.all([
           fetchPostCollectionByIdApi(getToken, id),
           fetchAllConnectedAccountsApi(getToken),
-          fetchAccountGroupsApi(getToken),
         ]);
         if (coll.overallStatus !== "DRAFT") {
           router.replace(`/scheduled-posts/${id}`);
@@ -149,7 +145,6 @@ export default function DraftEditPage() {
         }
         setCollection(coll);
         setAllAccounts(accounts);
-        setAccountGroups(groups);
         const existingIds = coll.posts
           .map((p) => p.connectedAccount?.providerUserId)
           .filter(Boolean) as string[];
@@ -296,7 +291,6 @@ export default function DraftEditPage() {
           <AccountSelector
             postType={collection.postCollectionType}
             accounts={allAccounts}
-            groups={accountGroups}
             selectedAccountIds={selectedIds}
             onChange={setSelectedIds}
             loading={false}

@@ -7,9 +7,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useSearchParams } from "next/navigation";
 
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
-import { fetchAccountGroupsApi } from "@/service/accountGroups";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { AccountGroup } from "@/model/AccountGroup";
 import { PostType } from "@/model/PostType";
 import PostTypeSelector from "@/components/schedule-post/post-type-selector";
 import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
@@ -94,7 +92,6 @@ export default function ScheduledPostCollectionPage() {
 
   const [postType, setPostType] = useState<PostType>("IMAGE");
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
-  const [accountGroups, setAccountGroups] = useState<AccountGroup[]>([]);
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -105,12 +102,8 @@ export default function ScheduledPostCollectionPage() {
   async function loadData() {
     try {
       setLoading(true);
-      const [accounts, groups] = await Promise.all([
-        fetchAllConnectedAccountsApi(getToken),
-        fetchAccountGroupsApi(getToken),
-      ]);
+      const accounts = await fetchAllConnectedAccountsApi(getToken);
       setConnectedAccounts(accounts);
-      setAccountGroups(groups);
     } catch (err: any) {
       toast.error(err.message ?? "Failed to load accounts");
     } finally {
@@ -208,7 +201,6 @@ export default function ScheduledPostCollectionPage() {
           <AccountSelector
             postType={postType}
             accounts={connectedAccounts}
-            groups={accountGroups}
             selectedAccountIds={selectedAccountIds}
             onChange={setSelectedAccountIds}
             loading={loading}

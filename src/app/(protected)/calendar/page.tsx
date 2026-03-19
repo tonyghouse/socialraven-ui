@@ -45,10 +45,8 @@ import {
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import { fetchCalendarPostsApi } from "@/service/calendarPosts";
-import { fetchAccountGroupsApi } from "@/service/accountGroups";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import type { CalendarPostResponse } from "@/model/CalendarPostResponse";
-import type { AccountGroup } from "@/model/AccountGroup";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 
@@ -711,114 +709,39 @@ function WeekView({
 // ── FilterBar ─────────────────────────────────────────────────────────────────
 
 function FilterBar({
-  groups,
   accounts,
-  selectedGroupId,
   selectedAccountIds,
-  onGroupChange,
   onAccountToggle,
   onClearFilters,
 }: {
-  groups: AccountGroup[];
   accounts: ConnectedAccount[];
-  selectedGroupId: string;
   selectedAccountIds: string[];
-  onGroupChange: (id: string) => void;
   onAccountToggle: (id: string) => void;
   onClearFilters: () => void;
 }) {
-  const [groupOpen,   setGroupOpen]   = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const groupRef   = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
   const timezone   = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (groupRef.current   && !groupRef.current.contains(e.target as Node))   setGroupOpen(false);
       if (accountRef.current && !accountRef.current.contains(e.target as Node)) setAccountOpen(false);
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const groupedIds = useMemo(() => new Set(groups.flatMap((g) => g.accountIds)), [groups]);
-
-  const scopeAccounts = useMemo(() => {
-    if (selectedGroupId === "all")       return accounts;
-    if (selectedGroupId === "ungrouped") return accounts.filter((a) => !groupedIds.has(a.providerUserId));
-    const grp = groups.find((g) => g.id === selectedGroupId);
-    return grp ? accounts.filter((a) => grp.accountIds.includes(a.providerUserId)) : accounts;
-  }, [selectedGroupId, groups, accounts, groupedIds]);
-
-  const selectedGroup = groups.find((g) => g.id === selectedGroupId);
-  const hasFilters    = selectedGroupId !== "all" || selectedAccountIds.length > 0;
-  const groupLabel    = selectedGroupId === "all" ? "All groups" : selectedGroupId === "ungrouped" ? "Ungrouped" : selectedGroup?.name ?? "Group";
+  const hasFilters    = selectedAccountIds.length > 0;
   const accountLabel  = selectedAccountIds.length === 0 ? "All accounts" : `${selectedAccountIds.length} account${selectedAccountIds.length !== 1 ? "s" : ""}`;
 
   return (
     <div className="flex items-center gap-2 px-4 py-2 border-b border-border/40 bg-background/80 backdrop-blur-sm flex-wrap">
       <Filter className="w-3 h-3 text-muted-foreground/60 shrink-0" />
 
-      {/* Group selector */}
-      <div className="relative" ref={groupRef}>
-        <button
-          onClick={() => { setGroupOpen((v) => !v); setAccountOpen(false); }}
-          className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all",
-            selectedGroupId !== "all"
-              ? "bg-blue-50 border-blue-200 text-blue-700"
-              : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
-          )}
-        >
-          {selectedGroup?.color && (
-            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: selectedGroup.color }} />
-          )}
-          {groupLabel}
-          <ChevronRight className={cn("w-3 h-3 transition-transform duration-200", groupOpen && "rotate-90")} />
-        </button>
-
-        <AnimatePresence>
-          {groupOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -4, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -4, scale: 0.97 }}
-              transition={{ duration: 0.12 }}
-              className="absolute top-full left-0 mt-1.5 w-52 bg-card border border-border rounded-xl shadow-xl z-30 overflow-hidden"
-            >
-              <div className="p-1">
-                {[
-                  { id: "all",       name: "All groups",  color: undefined },
-                  ...groups.map((g) => ({ id: g.id, name: g.name, color: g.color })),
-                  { id: "ungrouped", name: "Ungrouped",   color: undefined },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => { onGroupChange(item.id); setGroupOpen(false); }}
-                    className={cn(
-                      "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors",
-                      selectedGroupId === item.id ? "bg-blue-50 text-blue-700" : "text-foreground/70 hover:bg-muted"
-                    )}
-                  >
-                    <span
-                      className="w-2 h-2 rounded-full shrink-0"
-                      style={{ backgroundColor: item.color ?? "#94a3b8" }}
-                    />
-                    {item.name}
-                    {selectedGroupId === item.id && <CheckCircle2 className="w-3 h-3 ml-auto text-blue-500" />}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
       {/* Account selector */}
       <div className="relative" ref={accountRef}>
         <button
-          onClick={() => { setAccountOpen((v) => !v); setGroupOpen(false); }}
+          onClick={() => { setAccountOpen((v) => !v); }}
           className={cn(
             "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all",
             selectedAccountIds.length > 0
@@ -842,14 +765,14 @@ function FilterBar({
             >
               <div className="px-3 py-2 border-b border-border/40">
                 <p className="text-[11px] text-muted-foreground font-medium">
-                  {scopeAccounts.length} account{scopeAccounts.length !== 1 ? "s" : ""} in scope
+                  {accounts.length} account{accounts.length !== 1 ? "s" : ""} in scope
                 </p>
               </div>
               <div className="p-1 max-h-64 overflow-y-auto">
-                {scopeAccounts.length === 0 ? (
+                {accounts.length === 0 ? (
                   <p className="text-xs text-muted-foreground text-center py-3 px-2">No accounts in this group</p>
                 ) : (
-                  scopeAccounts.map((acc) => {
+                  accounts.map((acc) => {
                     const PIcon   = PLATFORM_ICONS[acc.platform];
                     const color   = PLATFORM_COLORS[acc.platform] ?? "#94a3b8";
                     const checked = selectedAccountIds.includes(acc.providerUserId);
@@ -909,13 +832,11 @@ export default function CalendarPage() {
   const [view, setView]               = useState<CalendarView>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [posts, setPosts]             = useState<CalendarPostResponse[]>([]);
-  const [groups, setGroups]           = useState<AccountGroup[]>([]);
   const [accounts, setAccounts]       = useState<ConnectedAccount[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [loadingPosts, setLoadingPosts] = useState(false);
   const [error, setError]             = useState<string | null>(null);
 
-  const [selectedGroupId,    setSelectedGroupId]    = useState("all");
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
 
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
@@ -926,18 +847,14 @@ export default function CalendarPage() {
     [accounts]
   );
 
-  // Load groups + accounts once
+  // Load accounts once
   useEffect(() => {
     let cancelled = false;
     async function load() {
       try {
         setLoadingData(true);
-        const [gs, accs] = await Promise.all([
-          fetchAccountGroupsApi(getToken),
-          fetchAllConnectedAccountsApi(getToken),
-        ]);
+        const accs = await fetchAllConnectedAccountsApi(getToken);
         if (cancelled) return;
-        setGroups(gs ?? []);
         setAccounts(accs ?? []);
       } catch (e: unknown) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load accounts");
@@ -978,25 +895,10 @@ export default function CalendarPage() {
 
   // Client-side filtering — instant, no extra API call
   const filteredPosts = useMemo(() => {
-    if (selectedAccountIds.length === 0 && selectedGroupId === "all") return posts;
-
-    let allowedIds: Set<string>;
-    if (selectedAccountIds.length > 0) {
-      allowedIds = new Set(selectedAccountIds);
-    } else if (selectedGroupId === "ungrouped") {
-      const groupedIds = new Set(groups.flatMap((g) => g.accountIds));
-      allowedIds = new Set(
-        accounts
-          .filter((a) => !groupedIds.has(a.providerUserId))
-          .map((a) => a.providerUserId)
-      );
-    } else {
-      const grp = groups.find((g) => g.id === selectedGroupId);
-      allowedIds = new Set(grp ? grp.accountIds : []);
-    }
-
+    if (selectedAccountIds.length === 0) return posts;
+    const allowedIds = new Set(selectedAccountIds);
     return posts.filter((p) => allowedIds.has(p.providerUserId));
-  }, [posts, selectedAccountIds, selectedGroupId, groups, accounts]);
+  }, [posts, selectedAccountIds]);
 
   const postsByDay = useMemo(() => groupPostsByDay(filteredPosts), [filteredPosts]);
 
@@ -1011,11 +913,6 @@ export default function CalendarPage() {
 
   function handleSchedule(date: string, time: string) {
     router.push(`/schedule-post?date=${date}&time=${time}`);
-  }
-
-  function handleGroupChange(id: string) {
-    setSelectedGroupId(id);
-    setSelectedAccountIds([]);
   }
 
   function handleAccountToggle(id: string) {
@@ -1118,13 +1015,10 @@ export default function CalendarPage() {
         </div>
 
         <FilterBar
-          groups={groups}
           accounts={accounts}
-          selectedGroupId={selectedGroupId}
           selectedAccountIds={selectedAccountIds}
-          onGroupChange={handleGroupChange}
           onAccountToggle={handleAccountToggle}
-          onClearFilters={() => { setSelectedGroupId("all"); setSelectedAccountIds([]); }}
+          onClearFilters={() => { setSelectedAccountIds([]); }}
         />
       </div>
 

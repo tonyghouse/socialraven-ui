@@ -1,6 +1,6 @@
 "use client";
 
-import { RefreshCw, LayoutGrid, FolderOpen, ShieldCheck } from "lucide-react";
+import { RefreshCw, ShieldCheck } from "lucide-react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import AppleSkeleton from "../generic/AppleSkelton";
 
@@ -10,9 +10,6 @@ import { toast } from "sonner";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import ConnectedAccountsGrid from "./connect-accounts-grid";
 import { deleteConnectedAccountApi } from "@/service/deleteConnectedAccountApi";
-import AccountGroupsManager from "./account-groups-manager";
-
-type Tab = "accounts" | "groups";
 
 export default function ConnectedAccountsSection() {
   const { getToken, isLoaded } = useAuth();
@@ -22,7 +19,6 @@ export default function ConnectedAccountsSection() {
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<Tab>("accounts");
 
   const loadAccounts = useCallback(async () => {
     try {
@@ -114,37 +110,6 @@ export default function ConnectedAccountsSection() {
         </button>
       </div>
 
-      {/* Tab switcher */}
-      <div className="flex items-center gap-0.5 p-1 rounded-xl bg-foreground/5 w-fit">
-        <button
-          onClick={() => setActiveTab("accounts")}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-            activeTab === "accounts"
-              ? "bg-white shadow-[0_1px_6px_rgba(0,0,0,0.08)] text-foreground"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <LayoutGrid className="w-3.5 h-3.5" />
-          By Platform
-        </button>
-        <button
-          onClick={() => setActiveTab("groups")}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-            activeTab === "groups"
-              ? "bg-white shadow-[0_1px_6px_rgba(0,0,0,0.08)] text-foreground"
-              : "text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <FolderOpen className="w-3.5 h-3.5" />
-          Groups
-          {connectedAccounts.length > 0 && (
-            <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] rounded-full bg-accent/12 text-accent text-[10px] font-semibold px-1">
-              {connectedAccounts.length}
-            </span>
-          )}
-        </button>
-      </div>
-
       {/* Content */}
       {loading ? (
         <div className="grid grid-cols-2 gap-3">
@@ -153,14 +118,12 @@ export default function ConnectedAccountsSection() {
           <AppleSkeleton className="h-[10rem] w-full" />
           <AppleSkeleton className="h-[10rem] w-full" />
         </div>
-      ) : activeTab === "accounts" ? (
+      ) : (
         <ConnectedAccountsGrid
           accounts={connectedAccounts}
           onRemove={handleRemove}
           onReconnect={handleReconnect}
         />
-      ) : (
-        <AccountGroupsManager accounts={connectedAccounts} />
       )}
     </div>
   );

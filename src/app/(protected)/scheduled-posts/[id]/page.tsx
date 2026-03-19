@@ -42,14 +42,12 @@ import { deletePostCollectionApi } from "@/service/deletePostCollectionApi";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { PostResponse } from "@/model/PostResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
-import type { AccountGroup } from "@/model/AccountGroup";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/service/getImageUrl";
 import { MediaPreview } from "@/components/generic/media-preview";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
-import { fetchAccountGroupsApi } from "@/service/accountGroups";
 import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
 import EditImageForm from "@/components/schedule-post/edit-image-form";
 import EditVideoForm from "@/components/schedule-post/edit-video-form";
@@ -507,7 +505,6 @@ export default function ScheduledCollectionDetailPage() {
   /* ── Edit mode ── */
   const [mode, setMode] = useState<"view" | "edit">("view");
   const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
-  const [accountGroups, setAccountGroups] = useState<AccountGroup[]>([]);
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
   const [accountsLoading, setAccountsLoading] = useState(false);
 
@@ -552,12 +549,8 @@ export default function ScheduledCollectionDetailPage() {
     (async () => {
       try {
         setAccountsLoading(true);
-        const [accounts, groups] = await Promise.all([
-          fetchAllConnectedAccountsApi(getToken),
-          fetchAccountGroupsApi(getToken),
-        ]);
+        const accounts = await fetchAllConnectedAccountsApi(getToken);
         setConnectedAccounts(accounts);
-        setAccountGroups(groups);
       } catch {
         /* Non-critical — only needed for edit mode */
       } finally {
@@ -831,7 +824,6 @@ export default function ScheduledCollectionDetailPage() {
               <AccountSelector
                 postType={collection.postCollectionType}
                 accounts={connectedAccounts}
-                groups={accountGroups}
                 selectedAccountIds={selectedAccountIds}
                 onChange={setSelectedAccountIds}
                 loading={accountsLoading}
