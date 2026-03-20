@@ -1,138 +1,195 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
+import { useState, useMemo, useRef, useId } from "react";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import type { PostType } from "@/model/PostType";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import {
-  Search,
-  Users,
-  Check,
-  ChevronRight,
-  X,
-} from "lucide-react";
+import { Search, X, Check, Users } from "lucide-react";
 import { getImageUrl } from "@/service/getImageUrl";
 import { getInitials } from "@/service/getInitials";
 
 // ── constants ──────────────────────────────────────────────────────────────────
 
 const PLATFORM_LABELS: Record<string, string> = {
-  facebook: "Facebook",
+  facebook:  "Facebook",
   instagram: "Instagram",
-  x: "X / Twitter",
-  linkedin: "LinkedIn",
-  youtube: "YouTube",
-  threads: "Threads",
-  tiktok: "TikTok",
+  x:         "X / Twitter",
+  linkedin:  "LinkedIn",
+  youtube:   "YouTube",
+  threads:   "Threads",
+  tiktok:    "TikTok",
 };
 
-// ── StackedAvatar ──────────────────────────────────────────────────────────────
+// Brand colours for the platform icon badge
+const PLATFORM_ICON_STYLES: Record<string, string> = {
+  facebook:  "bg-[#1877F2] text-white border-[#1877F2]/30",
+  instagram: "bg-gradient-to-br from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white border-transparent",
+  x:         "bg-black text-white border-black/20",
+  linkedin:  "bg-[#0A66C2] text-white border-[#0A66C2]/30",
+  youtube:   "bg-[#FF0000] text-white border-[#FF0000]/30",
+  threads:   "bg-black text-white border-black/20",
+  tiktok:    "bg-black text-white border-black/20",
+};
 
-function StackedAvatar({ acc }: { acc: ConnectedAccount }) {
-  const [imgErr, setImgErr] = useState(false);
-  const url = getImageUrl(acc.profilePicLink);
-  return (
-    <Avatar className="w-8 h-8 border-2 border-background">
-      {url && !imgErr ? (
-        <AvatarImage
-          src={url}
-          alt={acc.username}
-          onError={() => setImgErr(true)}
-        />
-      ) : null}
-      <AvatarFallback className="text-[10px] font-semibold bg-gradient-to-br from-violet-500 to-indigo-500 text-white">
-        {getInitials(acc.username)}
-      </AvatarFallback>
-    </Avatar>
-  );
-}
+// ── AccountChip ────────────────────────────────────────────────────────────────
 
-// ── AccountRow ─────────────────────────────────────────────────────────────────
-
-function AccountRow({
+function AccountChip({
   acc,
   isSelected,
   isAllowed,
-  toggle,
+  onToggle,
 }: {
   acc: ConnectedAccount;
   isSelected: boolean;
   isAllowed: boolean;
-  toggle: (id: string) => void;
+  onToggle: (id: string) => void;
 }) {
   const [imgErr, setImgErr] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const Icon =
     PLATFORM_ICONS[acc.platform] ??
     PLATFORM_ICONS[(acc.platform as string)?.toUpperCase()];
   const url = getImageUrl(acc.profilePicLink);
+  const platformLabel = PLATFORM_LABELS[acc.platform] ?? acc.platform;
+  const label = `${acc.username} on ${platformLabel}`;
+  const disabledReason = !isAllowed ? "Not supported for this post type" : undefined;
+  const iconStyle =
+    PLATFORM_ICON_STYLES[acc.platform.toLowerCase()] ??
+    "bg-muted text-foreground border-border";
 
   return (
-    <button
-      type="button"
-      onClick={() => isAllowed && toggle(acc.providerUserId)}
-      disabled={!isAllowed}
-      className={cn(
-        "w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-150 text-left",
-        isSelected
-          ? "border-accent bg-secondary"
-          : "border-border bg-card hover:bg-muted",
-        !isAllowed && "opacity-40 cursor-not-allowed",
-      )}
-    >
-      {/* Avatar + platform badge */}
-      <div className="relative flex-shrink-0">
-        <Avatar className="w-9 h-9">
-          {url && !imgErr ? (
-            <AvatarImage
-              src={url}
-              alt={acc.username}
-              onError={() => setImgErr(true)}
-            />
-          ) : null}
-          <AvatarFallback className="text-xs font-semibold bg-gradient-to-br from-violet-500 to-indigo-500 text-white">
-            {getInitials(acc.username)}
-          </AvatarFallback>
-        </Avatar>
-        {Icon && (
-          <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-background border border-border flex items-center justify-center shadow-sm">
-            <Icon className="w-2.5 h-2.5 text-foreground" />
-          </div>
-        )}
-      </div>
-
-      {/* Text */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-sm font-medium text-foreground truncate">
-            {acc.username}
-          </span>
-        </div>
-        <span className="text-xs text-muted-foreground">
-          {PLATFORM_LABELS[acc.platform] ?? acc.platform}
-          {!isAllowed && " · Not supported for this post type"}
-        </span>
-      </div>
-
-      {/* Checkbox */}
-      <div
+    <div className="relative flex-shrink-0">
+      <button
+        type="button"
+        role="checkbox"
+        aria-checked={isSelected}
+        aria-label={disabledReason ? `${label} — ${disabledReason}` : label}
+        aria-disabled={!isAllowed}
+        onClick={() => isAllowed && onToggle(acc.providerUserId)}
+        disabled={!isAllowed}
+        onMouseEnter={() => setShowTooltip(true)}
+        onMouseLeave={() => setShowTooltip(false)}
+        onFocus={() => setShowTooltip(true)}
+        onBlur={() => setShowTooltip(false)}
         className={cn(
-          "w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150",
+          "relative flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border transition-all duration-150",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "w-[72px]",
           isSelected
-            ? "bg-accent border-accent"
-            : "border-border bg-background",
+            ? "border-accent bg-accent/10 shadow-sm"
+            : "border-border bg-card hover:bg-muted hover:border-accent/50",
+          !isAllowed && "opacity-40 cursor-not-allowed",
         )}
       >
+        {/* Selected checkmark badge */}
         {isSelected && (
-          <Check className="w-3 h-3 text-accent-foreground" strokeWidth={3} />
+          <span
+            aria-hidden="true"
+            className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-accent flex items-center justify-center shadow-sm"
+          >
+            <Check className="w-2.5 h-2.5 text-accent-foreground" strokeWidth={3} />
+          </span>
         )}
-      </div>
-    </button>
+
+        {/* Avatar + platform icon */}
+        <div className="relative">
+          <Avatar className="w-9 h-9">
+            {url && !imgErr ? (
+              <AvatarImage src={url} alt="" onError={() => setImgErr(true)} />
+            ) : null}
+            <AvatarFallback className="text-[10px] font-semibold bg-gradient-to-br from-violet-500 to-indigo-500 text-white">
+              {getInitials(acc.username)}
+            </AvatarFallback>
+          </Avatar>
+          {Icon && (
+            <span
+              aria-hidden="true"
+              className={cn(
+                "absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border flex items-center justify-center shadow-sm",
+                iconStyle,
+              )}
+            >
+              <Icon className="w-2.5 h-2.5" />
+            </span>
+          )}
+        </div>
+
+        {/* Username */}
+        <span className="text-[10px] font-medium text-foreground leading-tight text-center w-full truncate">
+          {acc.username}
+        </span>
+      </button>
+
+      {/* Tooltip */}
+      {showTooltip && (
+        <div
+          role="tooltip"
+          className={cn(
+            "pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-50",
+            "animate-in fade-in-0 zoom-in-95 duration-150",
+          )}
+        >
+          <div className={cn(
+            "flex items-center gap-2.5 px-3 py-2.5 rounded-xl shadow-xl",
+            "bg-popover border border-border text-popover-foreground",
+            "w-max min-w-[140px] max-w-[200px]",
+          )}>
+            {/* Profile image */}
+            <div className="relative flex-shrink-0">
+              <Avatar className="w-9 h-9">
+                {url && !imgErr ? (
+                  <AvatarImage src={url} alt="" />
+                ) : null}
+                <AvatarFallback className="text-[10px] font-semibold bg-gradient-to-br from-violet-500 to-indigo-500 text-white">
+                  {getInitials(acc.username)}
+                </AvatarFallback>
+              </Avatar>
+              {/* Platform icon badge */}
+              {Icon && (
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full border flex items-center justify-center shadow-sm",
+                    iconStyle,
+                  )}
+                >
+                  <Icon className="w-2.5 h-2.5" />
+                </span>
+              )}
+            </div>
+
+            {/* Text */}
+            <div className="min-w-0">
+              <p className="text-xs font-semibold text-popover-foreground leading-tight truncate">
+                {acc.username}
+              </p>
+              <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+                {platformLabel}
+              </p>
+              {disabledReason && (
+                <p className="text-[10px] text-destructive leading-tight mt-0.5">
+                  {disabledReason}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Caret */}
+          <span
+            aria-hidden="true"
+            className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-border"
+          />
+          <span
+            aria-hidden="true"
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-[-1px] border-[5px] border-transparent border-t-popover"
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -153,27 +210,9 @@ export function AccountSelector({
   onChange,
   loading,
 }: AccountSelectorProps) {
-  const [open, setOpen] = useState(false);
-  // Staged — only committed to parent on "Apply"
-  const [pendingIds, setPendingIds] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-
-  // ── open / close ────────────────────────────────────────────────────────────
-
-  function handleOpenChange(isOpen: boolean) {
-    if (isOpen) {
-      setPendingIds([...selectedAccountIds]);
-      setSearch("");
-    }
-    setOpen(isOpen);
-  }
-
-  function handleApply() {
-    onChange(pendingIds);
-    setOpen(false);
-  }
-
-  // ── filtered data ────────────────────────────────────────────────────────────
+  const searchId = useId();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const q = search.toLowerCase().trim();
 
@@ -189,247 +228,132 @@ export function AccountSelector({
     [accounts, q],
   );
 
-  // ── staged toggles ───────────────────────────────────────────────────────────
-
-  const toggleAccount = useCallback((id: string) => {
-    setPendingIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+  function toggleAccount(id: string) {
+    onChange(
+      selectedAccountIds.includes(id)
+        ? selectedAccountIds.filter((x) => x !== id)
+        : [...selectedAccountIds, id],
     );
-  }, []);
+  }
 
-  // ── derived ──────────────────────────────────────────────────────────────────
+  const selectedCount = selectedAccountIds.length;
 
-  const selectedAccounts = useMemo(
-    () => accounts.filter((a) => selectedAccountIds.includes(a.providerUserId)),
-    [accounts, selectedAccountIds],
-  );
-  const selectedPlatforms = useMemo(
-    () => [...new Set(selectedAccounts.map((a) => a.platform))],
-    [selectedAccounts],
-  );
-  const hasSelection = selectedAccountIds.length > 0;
+  // ── loading skeletons ────────────────────────────────────────────────────────
 
-  const pendingAccounts = useMemo(
-    () => accounts.filter((a) => pendingIds.includes(a.providerUserId)),
-    [accounts, pendingIds],
-  );
-  const pendingPlatforms = useMemo(
-    () => [...new Set(pendingAccounts.map((a) => a.platform))],
-    [pendingAccounts],
-  );
-  const hasPending = pendingIds.length > 0;
+  if (loading) {
+    return (
+      <div
+        className="flex gap-2 overflow-x-auto pb-1"
+        aria-label="Loading accounts"
+        aria-busy="true"
+      >
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[72px] px-3 py-2.5"
+          >
+            <Skeleton className="w-9 h-9 rounded-full" />
+            <Skeleton className="w-10 h-2.5 rounded" />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
-  // ── render ───────────────────────────────────────────────────────────────────
+  // ── empty (no connected accounts) ───────────────────────────────────────────
+
+  if (accounts.length === 0) {
+    return (
+      <div className="flex items-center gap-3 py-4 text-muted-foreground">
+        <Users className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+        <p className="text-sm">No connected accounts found.</p>
+      </div>
+    );
+  }
+
+  // ── main ─────────────────────────────────────────────────────────────────────
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
-      {/* ── Trigger / summary ── */}
-      <Dialog.Trigger asChild>
-        <button
-          type="button"
-          disabled={loading}
-          className={cn(
-            "w-full rounded-xl border transition-all duration-200 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-            hasSelection
-              ? "border-accent bg-secondary hover:bg-muted"
-              : "border-dashed border-border hover:border-accent hover:bg-muted",
-            loading && "opacity-60 cursor-not-allowed",
-          )}
-        >
-          {loading ? (
-            <div className="flex items-center gap-3 px-4 py-4">
-              {[...Array(4)].map((_, i) => (
-                <Skeleton
-                  key={i}
-                  className="w-8 h-8 rounded-full flex-shrink-0"
-                />
-              ))}
-            </div>
-          ) : !hasSelection ? (
-            /* Empty state */
-            <div className="flex items-center gap-3.5 px-4 py-5">
-              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center flex-shrink-0">
-                <Users className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">
-                  Select accounts
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Choose the social profiles to publish this post to
-                </p>
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-            </div>
-          ) : (
-            /* Populated state */
-            <div className="flex items-center gap-3 px-4 py-3.5">
-              <div className="flex -space-x-2.5 flex-shrink-0">
-                {selectedAccounts.slice(0, 4).map((acc) => (
-                  <StackedAvatar key={acc.providerUserId} acc={acc} />
-                ))}
-                {selectedAccounts.length > 4 && (
-                  <div className="w-8 h-8 rounded-full bg-muted border-2 border-background flex items-center justify-center flex-shrink-0">
-                    <span className="text-[10px] font-semibold text-muted-foreground">
-                      +{selectedAccounts.length - 4}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground">
-                  {selectedAccountIds.length} account
-                  {selectedAccountIds.length !== 1 ? "s" : ""} selected
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {selectedPlatforms
-                    .map((p) => PLATFORM_LABELS[p] ?? p)
-                    .join(" · ")}
-                </p>
-              </div>
-              <span className="text-xs font-semibold text-accent flex-shrink-0 px-2.5 py-1 rounded-lg bg-secondary">
-                Edit
-              </span>
-            </div>
-          )}
-        </button>
-      </Dialog.Trigger>
+    <div className="space-y-3">
 
-      {/* ── Modal ── */}
-      <Dialog.Portal>
-        {/* Backdrop */}
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+      {/* Search bar */}
+      <div className="relative">
+        <label htmlFor={searchId} className="sr-only">
+          Search accounts
+        </label>
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none"
+          aria-hidden="true"
+        />
+        <Input
+          id={searchId}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search accounts…"
+          autoComplete="off"
+          className="pl-9 pr-9 h-9 text-sm bg-muted border-border focus-visible:bg-background"
+        />
+        {search && (
+          <button
+            type="button"
+            aria-label="Clear search"
+            onClick={() => setSearch("")}
+            className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          >
+            <X className="w-3.5 h-3.5" aria-hidden="true" />
+          </button>
+        )}
+      </div>
 
-        {/* Modal panel */}
-        <Dialog.Content
-          className={cn(
-            "fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2",
-            "w-[calc(100vw-2rem)] max-w-[560px]",
-            "bg-background border border-border rounded-2xl shadow-2xl",
-            "flex flex-col",
-            "max-h-[85vh]",
-            "focus:outline-none",
-            "data-[state=open]:animate-in data-[state=closed]:animate-out",
-            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
-            "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]",
-            "data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]",
-            "duration-200",
-          )}
-        >
-          {/* ── Header ── */}
-          <div className="flex-shrink-0 px-5 pt-5 pb-4 border-b border-border">
-            <div className="flex items-start justify-between gap-3 pr-1">
-              <div>
-                <Dialog.Title className="text-base font-bold text-foreground leading-tight">
-                  Select Accounts
-                </Dialog.Title>
-                <Dialog.Description className="text-xs text-muted-foreground mt-0.5">
-                  {pendingIds.length > 0
-                    ? `${pendingIds.length} of ${accounts.length} selected — click Apply to confirm`
-                    : "Choose the accounts to publish to"}
-                </Dialog.Description>
-              </div>
-              <Dialog.Close asChild>
-                <button
-                  type="button"
-                  className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </Dialog.Close>
-            </div>
+      {/* Horizontal scroll row */}
+      <div
+        ref={scrollRef}
+        role="group"
+        aria-label={`Select accounts — ${selectedCount} selected`}
+        className={cn(
+          "flex gap-2 overflow-x-auto pb-2",
+          // thin, cross-browser scrollbar
+          "scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent",
+          // hide scrollbar on touch devices (still scrollable)
+          "[&::-webkit-scrollbar]:h-1.5",
+          "[&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent",
+          "[&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/40",
+        )}
+      >
+        {filteredAccounts.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-2 px-1">
+            {q ? "No accounts match your search." : "No accounts available."}
+          </p>
+        ) : (
+          filteredAccounts.map((acc) => (
+            <AccountChip
+              key={acc.providerUserId}
+              acc={acc}
+              isSelected={selectedAccountIds.includes(acc.providerUserId)}
+              isAllowed={!!acc.allowedFormats?.includes(postType)}
+              onToggle={toggleAccount}
+            />
+          ))
+        )}
+      </div>
 
-            {/* Search */}
-            <div className="relative mt-3.5">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search accounts…"
-                className="pl-9 h-9 text-sm bg-muted border-border focus-visible:bg-background"
-              />
-              {search && (
-                <button
-                  type="button"
-                  onClick={() => setSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center text-muted-foreground hover:text-foreground"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
+      {/* Selection summary */}
+      {selectedCount > 0 && (
+        <div className="flex items-center justify-between pt-0.5" aria-live="polite" aria-atomic="true">
+          <p className="text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">{selectedCount}</span>{" "}
+            {selectedCount === 1 ? "account" : "accounts"} selected
+          </p>
+          <button
+            type="button"
+            onClick={() => onChange([])}
+            className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
 
-          </div>
-
-          {/* ── Scrollable content ── */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 min-h-0">
-            <div className="space-y-2">
-              {filteredAccounts.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-14 text-center">
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {q
-                      ? "No accounts match your search"
-                      : "No connected accounts found"}
-                  </p>
-                </div>
-              ) : (
-                filteredAccounts.map((acc) => (
-                  <AccountRow
-                    key={acc.providerUserId}
-                    acc={acc}
-                    isSelected={pendingIds.includes(acc.providerUserId)}
-                    isAllowed={!!acc.allowedFormats?.includes(postType)}
-                    toggle={toggleAccount}
-                  />
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* ── Footer ── */}
-          <div className="flex-shrink-0 px-5 py-4 border-t border-border bg-muted rounded-b-2xl">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground">
-                  {hasPending
-                    ? `${pendingIds.length} account${pendingIds.length !== 1 ? "s" : ""} selected`
-                    : "No accounts selected"}
-                </p>
-                {hasPending && (
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                    Across {pendingPlatforms.length} platform
-                    {pendingPlatforms.length !== 1 ? "s" : ""}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {hasPending && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setPendingIds([])}
-                    className="h-8 text-xs text-muted-foreground hover:text-foreground"
-                  >
-                    Clear all
-                  </Button>
-                )}
-                <Button
-                  type="button"
-                  size="sm"
-                  onClick={handleApply}
-                  disabled={!hasPending}
-                  className="h-8 px-5 text-xs font-semibold"
-                >
-                  Apply
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    </div>
   );
 }
