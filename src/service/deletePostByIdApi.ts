@@ -1,3 +1,5 @@
+import { workspaceIdHeader } from "@/lib/api-headers";
+
 export async function deletePostByIdApi(
   getToken: () => Promise<string | null>,
   postId: string
@@ -18,6 +20,7 @@ export async function deletePostByIdApi(
     method: "DELETE",
     headers: {
       ...(token && { Authorization: `Bearer ${token}` }),
+      ...workspaceIdHeader(),
     },
   });
 

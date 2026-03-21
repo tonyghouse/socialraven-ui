@@ -1,4 +1,5 @@
 // src/service/connectedAccounts.ts
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function deleteConnectedAccountApi(
   getToken: () => Promise<string | null>,
@@ -21,6 +22,7 @@ export async function deleteConnectedAccountApi(
       headers: {
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
+        ...workspaceIdHeader(),
       },
     }
   );

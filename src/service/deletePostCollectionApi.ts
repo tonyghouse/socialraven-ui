@@ -1,3 +1,5 @@
+import { workspaceIdHeader } from "@/lib/api-headers";
+
 export async function deletePostCollectionApi(
   getToken: () => Promise<string | null>,
   collectionId: string | number
@@ -13,6 +15,7 @@ export async function deletePostCollectionApi(
     method: "DELETE",
     headers: {
       ...(token && { Authorization: `Bearer ${token}` }),
+      ...workspaceIdHeader(),
     },
   });
 

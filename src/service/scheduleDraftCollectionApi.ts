@@ -1,4 +1,5 @@
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function scheduleDraftCollectionApi(
   getToken: () => Promise<string | null>,
@@ -14,6 +15,7 @@ export async function scheduleDraftCollectionApi(
       Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      ...workspaceIdHeader(),
     },
     body: JSON.stringify({ scheduledTime }),
   });

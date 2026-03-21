@@ -17,6 +17,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { UserAvatar } from "./UserAvatar";
+import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -109,6 +110,16 @@ export function AppSidebar() {
             )}
           />
         </button>
+      </div>
+
+      {/* ─── Workspace Switcher ───────────────────────────── */}
+      <div
+        className={cn(
+          "px-2 pt-2 pb-1 border-b border-foreground/[0.07]",
+          isCollapsed && "flex justify-center"
+        )}
+      >
+        <WorkspaceSwitcher collapsed={isCollapsed} />
       </div>
 
       {/* ─── Navigation ──────────────────────────────────── */}

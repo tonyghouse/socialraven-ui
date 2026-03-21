@@ -1,5 +1,6 @@
 // src/service/posts.ts
 import { PostResponse } from "@/model/PostResponse";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function fetchPostByIdApi(
   getToken: () => Promise<string | null>,
@@ -26,6 +27,7 @@ export async function fetchPostByIdApi(
       Accept: "application/json",
       "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
+      ...workspaceIdHeader(),
     },
   });
 

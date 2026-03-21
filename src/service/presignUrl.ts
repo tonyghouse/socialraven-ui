@@ -1,3 +1,5 @@
+import { workspaceIdHeader } from "@/lib/api-headers";
+
 export async function getPresignedUrl(file: File, getToken: any) {
   const token = await getToken();
 
@@ -6,6 +8,7 @@ export async function getPresignedUrl(file: File, getToken: any) {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/x-www-form-urlencoded",
+      ...workspaceIdHeader(),
     },
     body: new URLSearchParams({
       fileName: file.name,

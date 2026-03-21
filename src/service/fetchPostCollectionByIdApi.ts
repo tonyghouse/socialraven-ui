@@ -1,4 +1,5 @@
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function fetchPostCollectionByIdApi(
   getToken: () => Promise<string | null>,
@@ -13,6 +14,7 @@ export async function fetchPostCollectionByIdApi(
     headers: {
       Accept: "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
+      ...workspaceIdHeader(),
     },
   });
 

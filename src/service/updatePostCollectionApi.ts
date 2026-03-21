@@ -1,5 +1,6 @@
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export interface PostMediaPayload {
   fileName: string;
@@ -39,6 +40,7 @@ export async function updatePostCollectionApi(
     headers: {
       "Content-Type": "application/json",
       ...(token && { Authorization: `Bearer ${token}` }),
+      ...workspaceIdHeader(),
     },
     body: JSON.stringify(payload),
   });

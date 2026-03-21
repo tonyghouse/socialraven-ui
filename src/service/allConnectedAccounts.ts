@@ -1,6 +1,7 @@
 // src/service/connectedAccounts.ts
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { Platform } from "@/model/Platform";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function fetchAllConnectedAccountsApi(
   getToken: () => Promise<string | null>,
@@ -17,6 +18,7 @@ export async function fetchAllConnectedAccountsApi(
       Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      ...workspaceIdHeader(),
     },
   });
 

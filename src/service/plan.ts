@@ -1,5 +1,6 @@
 import { PlanType, UsageStats, UserPlan } from "@/model/Plan";
 import { PLANS } from "@/constants/plans";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export { PLANS };
 
@@ -16,6 +17,7 @@ async function authHeaders(getToken: GetToken): Promise<HeadersInit> {
   return {
     Authorization: `Bearer ${token}`,
     "Content-Type": "application/json",
+    ...workspaceIdHeader(),
   };
 }
 

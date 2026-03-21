@@ -1,5 +1,6 @@
 // src/service/posts.ts
 import { PostResponsePage } from "@/model/PostResponsePage"; // you will create this
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function fetchPaginatedPostsApi(
   getToken: () => Promise<string | null>,
@@ -21,6 +22,7 @@ export async function fetchPaginatedPostsApi(
       Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      ...workspaceIdHeader(),
     },
   });
 

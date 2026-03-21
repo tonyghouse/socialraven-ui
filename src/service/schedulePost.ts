@@ -1,5 +1,6 @@
 // src/service/connectedAccounts.ts
 import { PostCollection } from "@/model/PostCollection";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function postConnectedAccountsApi(
   getToken: () => Promise<string | null>,
@@ -14,6 +15,7 @@ export async function postConnectedAccountsApi(
       Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
+      ...workspaceIdHeader(),
     },
     body: JSON.stringify(post),
   });

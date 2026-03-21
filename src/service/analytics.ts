@@ -1,6 +1,8 @@
 // src/service/analytics.ts
 // Real analytics service — all calls go to the backend API.
 
+import { workspaceIdHeader } from "@/lib/api-headers";
+
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 type GetToken = () => Promise<string | null>;
@@ -93,6 +95,7 @@ async function apiFetch<T>(
     headers: {
       Accept: "application/json",
       Authorization: `Bearer ${token}`,
+      ...workspaceIdHeader(),
     },
   });
   const body = await res.text();

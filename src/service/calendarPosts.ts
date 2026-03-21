@@ -1,4 +1,5 @@
 import type { CalendarPostResponse } from "@/model/CalendarPostResponse";
+import { workspaceIdHeader } from "@/lib/api-headers";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL ?? "https://api.socialraven.io";
@@ -24,7 +25,7 @@ export async function fetchCalendarPostsApi(
   }
 
   const res = await fetch(`${BASE_URL}/posts/calendar?${params.toString()}`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}`, ...workspaceIdHeader() },
     cache: "no-store",
   });
 
