@@ -11,7 +11,7 @@ import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import ConnectedAccountsGrid from "./connect-accounts-grid";
 import { deleteConnectedAccountApi } from "@/service/deleteConnectedAccountApi";
 
-export default function ConnectedAccountsSection() {
+export default function ConnectedAccountsSection({ canWrite = true }: { canWrite?: boolean }) {
   const { getToken, isLoaded } = useAuth();
 
   const [connectedAccounts, setConnectedAccounts] = useState<
@@ -121,8 +121,9 @@ export default function ConnectedAccountsSection() {
       ) : (
         <ConnectedAccountsGrid
           accounts={connectedAccounts}
-          onRemove={handleRemove}
-          onReconnect={handleReconnect}
+          onRemove={canWrite ? handleRemove : undefined}
+          onReconnect={canWrite ? handleReconnect : undefined}
+          canWrite={canWrite}
         />
       )}
     </div>

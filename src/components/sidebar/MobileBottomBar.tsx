@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Send,
-  Calendar,
   MoreHorizontal,
   CalendarCheck2,
   CalendarClock,
@@ -15,19 +14,13 @@ import {
   CalendarDays,
   BarChart2,
   CalendarHeart,
+  Settings2,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
-
-// ── Items that live inside the More drawer ────────────────────────────────────
-const drawerItems = [
-  { title: "Analytics",       url: "/analytics",        icon: BarChart2 },
-  { title: "Drafts",          url: "/drafts",           icon: CalendarHeart },
-  { title: "Published Posts", url: "/published-posts",  icon: CalendarCheck2 },
-  { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
-];
+import { useRole } from "@/hooks/useRole";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -36,6 +29,15 @@ export function MobileBottomBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { canWrite, canManageWorkspace } = useRole();
+
+  const drawerItems = [
+    { title: "Analytics",        url: "/analytics",         icon: BarChart2 },
+    { title: "Drafts",           url: "/drafts",            icon: CalendarHeart },
+    { title: "Published Posts",  url: "/published-posts",   icon: CalendarCheck2 },
+    { title: "Connect Accounts", url: "/connect-accounts",  icon: Cable },
+    ...(canManageWorkspace ? [{ title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 }] : []),
+  ];
 
   const isMoreActive = drawerItems.some((item) =>
     pathname.startsWith(item.url)
@@ -171,23 +173,41 @@ export function MobileBottomBar() {
 
           {/* ── FAB ── */}
           <div className="flex-1 flex items-center justify-center">
-            <Link
-              href="/schedule-post"
-              aria-label="Schedule Post"
-              className={cn(
-                "flex flex-col items-center justify-center gap-1",
-                "w-[52px] h-[52px] rounded-[16px]",
-                "bg-accent",
-                "shadow-[0_4px_16px_-2px_rgba(59,130,246,0.45)]",
-                "transition-all duration-150 active:scale-90 active:shadow-none",
-                pathname.startsWith("/schedule-post") && "opacity-85"
-              )}
-            >
-              <Send className="h-[19px] w-[19px] text-white" />
-              <span className="text-[9.5px] font-semibold text-white/80 leading-none -mt-0.5">
-                Post
-              </span>
-            </Link>
+            {canWrite ? (
+              <Link
+                href="/schedule-post"
+                aria-label="Schedule Post"
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1",
+                  "w-[52px] h-[52px] rounded-[16px]",
+                  "bg-accent",
+                  "shadow-[0_4px_16px_-2px_rgba(59,130,246,0.45)]",
+                  "transition-all duration-150 active:scale-90 active:shadow-none",
+                  pathname.startsWith("/schedule-post") && "opacity-85"
+                )}
+              >
+                <Send className="h-[19px] w-[19px] text-white" />
+                <span className="text-[9.5px] font-semibold text-white/80 leading-none -mt-0.5">
+                  Post
+                </span>
+              </Link>
+            ) : (
+              <div
+                aria-label="Schedule Post (view only)"
+                title="Viewers cannot create posts"
+                className={cn(
+                  "flex flex-col items-center justify-center gap-1",
+                  "w-[52px] h-[52px] rounded-[16px]",
+                  "bg-foreground/15",
+                  "cursor-not-allowed opacity-50"
+                )}
+              >
+                <Send className="h-[19px] w-[19px] text-foreground/50" />
+                <span className="text-[9.5px] font-semibold text-foreground/40 leading-none -mt-0.5">
+                  Post
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Calendar */}

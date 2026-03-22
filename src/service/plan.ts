@@ -26,6 +26,12 @@ function resolveLimit(value: number | null): number | "Unlimited" {
   return value === null || value === undefined ? "Unlimited" : value;
 }
 
+/** Backend uses -1 for unlimited workspace counts */
+function resolveWorkspaceLimit(value: number | null): number | "Unlimited" {
+  if (value === null || value === undefined || value === -1) return "Unlimited";
+  return value;
+}
+
 // ---------------------------------------------------------------------------
 // GET /plans/me
 // ---------------------------------------------------------------------------
@@ -88,5 +94,7 @@ export async function fetchUsageStatsApi(getToken: GetToken): Promise<UsageStats
     postsLimit: resolveLimit(data.postsLimit),
     connectedAccountsCount: data.connectedAccountsCount,
     connectedAccountsLimit: resolveLimit(data.accountsLimit),
+    workspacesOwned: data.workspacesOwned ?? 0,
+    maxWorkspaces: resolveWorkspaceLimit(data.maxWorkspaces),
   };
 }

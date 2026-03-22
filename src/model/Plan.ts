@@ -1,4 +1,13 @@
-export type PlanType = "TRIAL" | "BASE" | "PRO" | "ENTERPRISE";
+export type PlanType =
+  | "TRIAL"
+  | "BASE"
+  | "PRO"
+  | "ENTERPRISE"
+  | "INFLUENCER_BASE"
+  | "INFLUENCER_PRO"
+  | "AGENCY_BASE"
+  | "AGENCY_PRO"
+  | "AGENCY_CUSTOM";
 
 export interface PlanLimits {
   scheduledPostsPerMonth: number | "Unlimited";
@@ -38,6 +47,10 @@ export interface UsageStats {
   postsLimit: number | "Unlimited";
   connectedAccountsCount: number;
   connectedAccountsLimit: number | "Unlimited";
+  /** Number of workspaces currently owned by the workspace owner */
+  workspacesOwned: number;
+  /** Max workspaces allowed by the plan; "Unlimited" for agency custom */
+  maxWorkspaces: number | "Unlimited";
 }
 
 export interface Invoice {

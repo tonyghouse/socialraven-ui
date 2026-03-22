@@ -14,6 +14,7 @@ type GridProps = {
   accounts: ConnectedAccount[];
   onRemove?: (acc: ConnectedAccount) => void;
   onReconnect?: (acc: ConnectedAccount) => void;
+  canWrite?: boolean;
 };
 
 interface PlatformMeta {
@@ -95,6 +96,7 @@ export default function ConnectedAccountsGrid({
   accounts,
   onRemove,
   onReconnect,
+  canWrite = true,
 }: GridProps) {
   return (
     <div className="grid md:grid-cols-2 gap-6">
@@ -118,6 +120,7 @@ export default function ConnectedAccountsGrid({
             comingSoon={meta.comingSoon}
             onRemove={onRemove}
             onReconnect={onReconnect}
+            canWrite={canWrite}
           />
         );
       })}

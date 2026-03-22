@@ -16,6 +16,7 @@ type Props = {
   comingSoon?: boolean;
   onRemove?: (acc: ConnectedAccount) => void;
   onReconnect?: (acc: ConnectedAccount) => void;
+  canWrite?: boolean;
 };
 
 const needsProxyDomains = ["linkedin.com", "licdn.com"];
@@ -64,6 +65,7 @@ export default function ConnectedAccountsColumn({
   comingSoon,
   onRemove,
   onReconnect,
+  canWrite = true,
 }: Props) {
   const iconStyle = PLATFORM_ICON_STYLE[platformKey] ?? {
     bg: "bg-foreground/5",
@@ -114,41 +116,47 @@ export default function ConnectedAccountsColumn({
             </div>
           </div>
         ) : accounts.length === 0 ? (
-          <Link
-            href={connectHref}
-            className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/15 hover:border-accent/35 hover:bg-accent/3 transition-all duration-200 group"
-          >
-            <div
-              className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconStyle.bg} transition-all`}
+          canWrite ? (
+            <Link
+              href={connectHref}
+              className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/15 hover:border-accent/35 hover:bg-accent/3 transition-all duration-200 group"
             >
-              <Plus className="w-4 h-4 text-foreground/40 group-hover:text-accent transition-colors" />
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconStyle.bg} transition-all`}
+              >
+                <Plus className="w-4 h-4 text-foreground/40 group-hover:text-accent transition-colors" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-foreground/65 group-hover:text-foreground transition-colors">
+                  Connect {label}
+                </p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Click to authorize your account
+                </p>
+              </div>
+              <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-accent group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+            </Link>
+          ) : (
+            <div className="flex items-center justify-center px-4 py-3.5 rounded-xl border border-dashed border-foreground/8">
+              <p className="text-sm text-muted-foreground/60">No accounts connected</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground/65 group-hover:text-foreground transition-colors">
-                Connect {label}
-              </p>
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Click to authorize your account
-              </p>
-            </div>
-            <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-accent group-hover:translate-x-0.5 transition-all flex-shrink-0" />
-          </Link>
+          )
         ) : (
           <div className="space-y-1.5 overflow-y-auto max-h-[200px] pr-0.5 scrollbar-thin">
             {accounts.map((acc) => (
               <AccountRow
                 key={acc.providerUserId}
                 acc={acc}
-                onRemove={onRemove}
-                onReconnect={onReconnect}
+                onRemove={canWrite ? onRemove : undefined}
+                onReconnect={canWrite ? onReconnect : undefined}
               />
             ))}
           </div>
         )}
       </div>
 
-      {/* Footer: add more */}
-      {!comingSoon && accounts.length > 0 && (
+      {/* Footer: add more — hidden for VIEWERs */}
+      {!comingSoon && accounts.length > 0 && canWrite && (
         <div className="px-4 pb-4">
           <Link
             href={connectHref}
@@ -200,23 +208,29 @@ function AccountRow({
         </div>
       </div>
 
-      {/* Actions revealed on hover */}
-      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
-        <button
-          onClick={() => onReconnect?.(acc)}
-          aria-label="Reconnect account"
-          className="p-1.5 rounded-lg hover:bg-white text-foreground/40 hover:text-foreground/70 transition-all"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-        </button>
-        <button
-          onClick={() => onRemove?.(acc)}
-          aria-label="Remove account"
-          className="p-1.5 rounded-lg hover:bg-red-50 text-foreground/40 hover:text-red-500 transition-all"
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-        </button>
-      </div>
+      {/* Actions revealed on hover — hidden for VIEWERs (no handlers passed) */}
+      {(onReconnect || onRemove) && (
+        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
+          {onReconnect && (
+            <button
+              onClick={() => onReconnect(acc)}
+              aria-label="Reconnect account"
+              className="p-1.5 rounded-lg hover:bg-white text-foreground/40 hover:text-foreground/70 transition-all"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+            </button>
+          )}
+          {onRemove && (
+            <button
+              onClick={() => onRemove(acc)}
+              aria-label="Remove account"
+              className="p-1.5 rounded-lg hover:bg-red-50 text-foreground/40 hover:text-red-500 transition-all"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

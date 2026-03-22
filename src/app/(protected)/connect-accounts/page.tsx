@@ -6,8 +6,10 @@ import { toast } from "sonner";
 import LinkNewAccountSection from "@/components/connect-accounts/link-new-account-section";
 import ConnectedAccountsSection from "@/components/connect-accounts/connected-accounts-section";
 import { Link2 } from "lucide-react";
+import { useRole } from "@/hooks/useRole";
 
 export default function ManageAccountsPage() {
+  const { canWrite } = useRole();
   const params = useSearchParams();
   const router = useRouter();
 
@@ -52,16 +54,20 @@ export default function ManageAccountsPage() {
         </div>
       </div>
 
-      {/* Section: Add a platform */}
-      <div className="px-4 sm:px-6 pt-8 pb-1">
-        <div className="flex items-center gap-3">
-          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
-            Add a Platform
-          </span>
-          <div className="flex-1 h-px bg-foreground/8" />
-        </div>
-      </div>
-      <LinkNewAccountSection />
+      {/* Section: Add a platform — hidden for VIEWERs */}
+      {canWrite && (
+        <>
+          <div className="px-4 sm:px-6 pt-8 pb-1">
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                Add a Platform
+              </span>
+              <div className="flex-1 h-px bg-foreground/8" />
+            </div>
+          </div>
+          <LinkNewAccountSection />
+        </>
+      )}
 
       {/* Section: Connected accounts */}
       <div className="px-4 sm:px-6 pb-3">
@@ -72,7 +78,7 @@ export default function ManageAccountsPage() {
           <div className="flex-1 h-px bg-foreground/8" />
         </div>
       </div>
-      <ConnectedAccountsSection />
+      <ConnectedAccountsSection canWrite={canWrite} />
     </div>
   );
 }

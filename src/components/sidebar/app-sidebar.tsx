@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Calendar,
   LayoutDashboard,
   CalendarCheck2,
   Cable,
@@ -10,7 +9,8 @@ import {
   CalendarDays,
   CalendarClock,
   CalendarHeart,
-  BarChart2
+  BarChart2,
+  Settings2,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -25,41 +25,44 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-
-const navGroups = [
-  {
-    label: null,
-    items: [
-      { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: "Content",
-    items: [
-      { title: "Schedule Post", url: "/schedule-post", icon: Send },
-      { title: "Calendar", url: "/calendar", icon: CalendarDays },
-      { title: "Scheduled Posts", url: "/scheduled-posts", icon: CalendarClock },
-      { title: "Drafts", url: "/drafts", icon: CalendarHeart },
-      { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
-    ],
-  },
-  {
-    label: "Insights",
-    items: [
-      { title: "Analytics", url: "/analytics", icon: BarChart2 },
-    ],
-  },
-  {
-    label: "Accounts",
-    items: [
-      { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
-    ],
-  },
-];
+import { useRole } from "@/hooks/useRole";
 
 export function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
+  const { canWrite, canManageWorkspace } = useRole();
+
+  const navGroups = [
+    {
+      label: null,
+      items: [
+        { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+      ],
+    },
+    {
+      label: "Content",
+      items: [
+        ...(canWrite ? [{ title: "Schedule Post", url: "/schedule-post", icon: Send }] : []),
+        { title: "Calendar", url: "/calendar", icon: CalendarDays },
+        { title: "Scheduled Posts", url: "/scheduled-posts", icon: CalendarClock },
+        { title: "Drafts", url: "/drafts", icon: CalendarHeart },
+        { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
+      ],
+    },
+    {
+      label: "Insights",
+      items: [
+        { title: "Analytics", url: "/analytics", icon: BarChart2 },
+      ],
+    },
+    {
+      label: "Accounts",
+      items: [
+        { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
+        ...(canManageWorkspace ? [{ title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 }] : []),
+      ],
+    },
+  ];
 
   return (
     <aside

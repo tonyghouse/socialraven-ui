@@ -16,7 +16,10 @@ import {
   Clock,
   Info,
   FileText,
+  Building2,
+  Lock,
 } from "lucide-react";
+import { useRole } from "@/hooks/useRole";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -159,6 +162,7 @@ function UsageBar({
 
 export default function ProfilePage() {
   const { getToken } = useAuth();
+  const { isOwner } = useRole();
 
   const [userPlan, setUserPlan]               = useState<UserPlan | null>(null);
   const [usageStats, setUsageStats]           = useState<UsageStats | null>(null);
@@ -263,9 +267,19 @@ export default function ProfilePage() {
       <Separator />
 
       {/* ══════════════════════════════════════════════════
-          SECTION 2 — CURRENT PLAN
+          SECTION 2 — CURRENT PLAN  (owner-only)
       ══════════════════════════════════════════════════ */}
-      <section className="space-y-4">
+      {!isOwner && (
+        <section className="space-y-4">
+          <div className="flex items-center gap-3 rounded-lg border border-foreground/10 bg-foreground/[0.02] p-4">
+            <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
+            <p className="text-sm text-muted-foreground">
+              Subscription and billing details are only visible to the workspace owner.
+            </p>
+          </div>
+        </section>
+      )}
+      {isOwner && <section className="space-y-4">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
             Subscription
@@ -452,15 +466,31 @@ export default function ProfilePage() {
                     />
                   </CardContent>
                 </Card>
+                <Card className="border-foreground/10 sm:col-span-2">
+                  <CardContent className="p-4">
+                    <UsageBar
+                      label="Workspaces"
+                      used={usageStats.workspacesOwned}
+                      limit={usageStats.maxWorkspaces}
+                      icon={Building2}
+                    />
+                    {usageStats.maxWorkspaces !== "Unlimited" &&
+                      usageStats.workspacesOwned >= usageStats.maxWorkspaces && (
+                        <p className="text-sm text-amber-600 mt-2 leading-snug">
+                          Workspace limit reached — upgrade your plan to create more workspaces.
+                        </p>
+                      )}
+                  </CardContent>
+                </Card>
               </div>
             )}
           </>
         ) : (
           <p className="text-sm text-muted-foreground py-4">Unable to load subscription information.</p>
         )}
-      </section>
+      </section>}
 
-      <Separator />
+      {isOwner && <><Separator />
 
       {/* ══════════════════════════════════════════════════
           SECTION 3 — AVAILABLE PLANS
@@ -732,7 +762,7 @@ export default function ProfilePage() {
             </p>
           </>
         )}
-      </section>
+      </section></>}
 
       <Separator />
 
