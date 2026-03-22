@@ -8,6 +8,6 @@ export interface OnboardingStatus {
 
 export interface CompleteOnboardingRequest {
   userType: UserType;
-  workspaceName?: string;
+  workspaceNames?: string[];
   companyName?: string;
 }

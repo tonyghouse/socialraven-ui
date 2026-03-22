@@ -42,8 +42,6 @@ export default function InvitePage() {
     setState({ status: "loading" });
     try {
       const { workspaceId } = await acceptInvitationApi(getToken, { token });
-      // Refresh workspaces so the new one appears
-      await refresh();
       setState({ status: "success", workspaceId });
     } catch (e: any) {
       const raw: string = e.message ?? "";

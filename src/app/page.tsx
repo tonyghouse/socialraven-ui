@@ -147,7 +147,7 @@ const TESTIMONIALS = [
   },
 ];
 
-const PAID_PLANS = PLANS.filter((p) => p.type !== "TRIAL");
+const PAID_PLANS = PLANS.filter((p) => !p.type.endsWith("_TRIAL"));
 
 const FAQ = [
   {
@@ -168,7 +168,7 @@ const FAQ = [
   {
     question: "Can I manage multiple clients from one account?",
     answer:
-      "Absolutely. Our Pro and Enterprise plans are designed for agencies — manage all your clients from a single, clean dashboard.",
+      "Absolutely. Our Pro and Agency plans are designed for agencies — manage all your clients from a single, clean dashboard.",
   },
   {
     question: "Can I cancel anytime?",
@@ -464,10 +464,10 @@ export default function LandingPage() {
 
               <div className="grid md:grid-cols-3 gap-4 items-start">
                 {PAID_PLANS.map((plan) => {
-                  const isEnterprise = plan.type === "ENTERPRISE";
-                  const cta     = isEnterprise ? "Contact sales" : "Start 14-day free trial";
-                  const ctaHref = isEnterprise
-                    ? "mailto:sales@socialraven.io?subject=Enterprise%20Plan%20Enquiry"
+                  const isAgencyCustom = plan.type === "AGENCY_CUSTOM";
+                  const cta     = isAgencyCustom ? "Contact sales" : "Start 14-day free trial";
+                  const ctaHref = isAgencyCustom
+                    ? "mailto:sales@socialraven.io?subject=Agency%20Plan%20Enquiry"
                     : "/sign-up";
 
                   return (

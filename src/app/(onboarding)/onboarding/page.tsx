@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
-import { Building2, Sparkles, ArrowRight, Loader2 } from "lucide-react";
+import { Building2, Sparkles, ArrowRight, Loader2, Plus, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { UserType } from "@/model/Onboarding";
 import { completeOnboardingApi } from "@/service/onboarding";
+
+const MAX_ONBOARDING_WORKSPACES = 10;
 
 type Step = "choose-type" | "agency-name";
 
@@ -21,9 +23,22 @@ export default function OnboardingPage() {
 
   const [step, setStep] = useState<Step>("choose-type");
   const [selectedType, setSelectedType] = useState<UserType | null>(null);
-  const [workspaceName, setWorkspaceName] = useState("");
-  const [companyName, setCompanyName] = useState("");
+  const [workspaceNames, setWorkspaceNames] = useState<string[]>([""]);
   const [loading, setLoading] = useState(false);
+
+  function updateWorkspaceName(index: number, value: string) {
+    setWorkspaceNames((prev) => prev.map((n, i) => (i === index ? value : n)));
+  }
+
+  function addWorkspace() {
+    if (workspaceNames.length < MAX_ONBOARDING_WORKSPACES) {
+      setWorkspaceNames((prev) => [...prev, ""]);
+    }
+  }
+
+  function removeWorkspace(index: number) {
+    setWorkspaceNames((prev) => prev.filter((_, i) => i !== index));
+  }
 
   async function handleInfluencerSelect() {
     setSelectedType("INFLUENCER");
@@ -50,16 +65,16 @@ export default function OnboardingPage() {
 
   async function handleAgencySubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!workspaceName.trim()) {
-      toast.error("Workspace name is required.");
+    const validNames = workspaceNames.map((n) => n.trim()).filter(Boolean);
+    if (validNames.length === 0) {
+      toast.error("At least one workspace name is required.");
       return;
     }
     setLoading(true);
     try {
       const status = await completeOnboardingApi(getToken, {
         userType: "AGENCY",
-        workspaceName: workspaceName.trim(),
-        companyName: companyName.trim() || undefined,
+        workspaceNames: validNames,
       });
       if (status.workspaceId) {
         localStorage.setItem("onboardingCompleted", "true");
@@ -168,43 +183,77 @@ export default function OnboardingPage() {
       {step === "agency-name" && (
         <div className="w-full max-w-md">
           <p className="text-center text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest">
-            Step 2 of 2 &mdash; Name your workspace
+            Step 2 of 2 &mdash; Name your workspaces
           </p>
 
           <form
             onSubmit={handleAgencySubmit}
             className="rounded-2xl border border-border bg-card p-8 space-y-5"
           >
-            <div className="space-y-2">
-              <Label htmlFor="workspaceName">Workspace name *</Label>
-              <Input
-                id="workspaceName"
-                placeholder="e.g. Acme Agency"
-                value={workspaceName}
-                onChange={(e) => setWorkspaceName(e.target.value)}
-                disabled={loading}
-                autoFocus
-              />
-              <p className="text-xs text-muted-foreground">
-                This is the name your team will see. You can change it later.
-              </p>
+            {/* Workspace name list */}
+            <div className="space-y-3">
+              {workspaceNames.map((name, index) => (
+                <div key={index} className="space-y-1">
+                  {index === 0 && (
+                    <Label htmlFor="workspace-0">
+                      Name your first workspace *
+                    </Label>
+                  )}
+                  <div className="flex gap-2">
+                    <Input
+                      id={index === 0 ? "workspace-0" : undefined}
+                      placeholder={index === 0 ? "e.g. Acme Agency" : `Workspace ${index + 1}`}
+                      value={name}
+                      onChange={(e) => updateWorkspaceName(index, e.target.value)}
+                      disabled={loading}
+                      autoFocus={index === 0}
+                    />
+                    {workspaceNames.length > 1 && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeWorkspace(index)}
+                        disabled={loading}
+                        className="shrink-0 text-muted-foreground hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                  {index === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      This is the name your team will see. You can change it later.
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              {/* Add workspace button */}
+              {workspaceNames.length < MAX_ONBOARDING_WORKSPACES && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addWorkspace}
+                  disabled={loading}
+                  className="w-full border-dashed text-muted-foreground hover:text-foreground"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add another workspace
+                </Button>
+              )}
+
+              {workspaceNames.length >= MAX_ONBOARDING_WORKSPACES && (
+                <p className="text-xs text-muted-foreground text-center">
+                  Maximum of {MAX_ONBOARDING_WORKSPACES} workspaces during setup. You can add more later from settings.
+                </p>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="companyName">
-                Company name <span className="text-muted-foreground">(optional)</span>
-              </Label>
-              <Input
-                id="companyName"
-                placeholder="e.g. Acme Inc."
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                disabled={loading}
-              />
-              <p className="text-xs text-muted-foreground">
-                Shown as a subtitle when team members switch workspaces.
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              You can add more workspaces later from your settings.
+            </p>
 
             <div className="flex gap-3 pt-2">
               <Button
@@ -216,11 +265,15 @@ export default function OnboardingPage() {
               >
                 Back
               </Button>
-              <Button type="submit" disabled={loading || !workspaceName.trim()} className="flex-1">
+              <Button
+                type="submit"
+                disabled={loading || !workspaceNames[0]?.trim()}
+                className="flex-1"
+              >
                 {loading ? (
                   <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating…</>
                 ) : (
-                  <>Create Workspace <ArrowRight className="ml-2 h-4 w-4" /></>
+                  <>Create Workspace{workspaceNames.filter(n => n.trim()).length > 1 ? "s" : ""} <ArrowRight className="ml-2 h-4 w-4" /></>
                 )}
               </Button>
             </div>

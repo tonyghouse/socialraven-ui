@@ -21,6 +21,9 @@ export interface WorkspaceMember {
   userId: string;
   role: WorkspaceRole;
   joinedAt: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
 }
 
 export interface WorkspaceInvitation {

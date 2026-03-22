@@ -11,6 +11,7 @@ import {
   CalendarHeart,
   BarChart2,
   Settings2,
+  CreditCard,
 } from "lucide-react";
 
 import Link from "next/link";
@@ -26,11 +27,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useRole } from "@/hooks/useRole";
+import { usePlan } from "@/hooks/usePlan";
+import { WorkspaceManageSheet } from "./WorkspaceManageSheet";
 
 export function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
-  const { canWrite, canManageWorkspace } = useRole();
+  const { canWrite, canManageWorkspace, isOwner } = useRole();
+  const { isInfluencer } = usePlan();
+  // Agency owners get the full workspace management panel; everyone else gets the switcher
+  const showManagePanel = !isInfluencer && isOwner;
 
   const navGroups = [
     {
@@ -60,6 +66,7 @@ export function AppSidebar() {
       items: [
         { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
         ...(canManageWorkspace ? [{ title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 }] : []),
+        ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
       ],
     },
   ];
@@ -115,14 +122,17 @@ export function AppSidebar() {
         </button>
       </div>
 
-      {/* ─── Workspace Switcher ───────────────────────────── */}
+      {/* ─── Workspace Switcher / Manage Panel ───────────────────────────── */}
       <div
         className={cn(
           "px-2 pt-2 pb-1 border-b border-foreground/[0.07]",
           isCollapsed && "flex justify-center"
         )}
       >
-        <WorkspaceSwitcher collapsed={isCollapsed} />
+        {showManagePanel
+          ? <WorkspaceManageSheet collapsed={isCollapsed} />
+          : <WorkspaceSwitcher collapsed={isCollapsed} />
+        }
       </div>
 
       {/* ─── Navigation ──────────────────────────────────── */}

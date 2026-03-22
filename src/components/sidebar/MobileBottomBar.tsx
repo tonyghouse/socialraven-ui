@@ -15,6 +15,7 @@ import {
   BarChart2,
   CalendarHeart,
   Settings2,
+  CreditCard,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,7 +30,7 @@ export function MobileBottomBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
-  const { canWrite, canManageWorkspace } = useRole();
+  const { canWrite, canManageWorkspace, isOwner } = useRole();
 
   const drawerItems = [
     { title: "Analytics",        url: "/analytics",         icon: BarChart2 },
@@ -37,6 +38,7 @@ export function MobileBottomBar() {
     { title: "Published Posts",  url: "/published-posts",   icon: CalendarCheck2 },
     { title: "Connect Accounts", url: "/connect-accounts",  icon: Cable },
     ...(canManageWorkspace ? [{ title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 }] : []),
+    ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
   ];
 
   const isMoreActive = drawerItems.some((item) =>

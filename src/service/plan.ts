@@ -40,7 +40,7 @@ export async function fetchUserPlanApi(getToken: GetToken): Promise<UserPlan> {
   const res = await fetch(`${BACKEND}/plans/me`, {
     headers: await authHeaders(getToken),
   });
-  if (!res.ok) throw new Error(`fetchUserPlan failed: ${res.statusText}`);
+  if (!res.ok) throw new Error(`fetchUserPlan failed: ${res.status} ${res.statusText}`.trimEnd());
   const data = await res.json();
   return {
     currentPlan: data.currentPlan as PlanType,
@@ -87,7 +87,7 @@ export async function fetchUsageStatsApi(getToken: GetToken): Promise<UsageStats
   const res = await fetch(`${BACKEND}/plans/usage`, {
     headers: await authHeaders(getToken),
   });
-  if (!res.ok) throw new Error(`fetchUsage failed: ${res.statusText}`);
+  if (!res.ok) throw new Error(`fetchUsage failed: ${res.status} ${res.statusText}`.trimEnd());
   const data = await res.json();
   return {
     postsUsedThisMonth: data.postsUsedThisMonth,

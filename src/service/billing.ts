@@ -116,7 +116,7 @@ export async function cancelSubscriptionApi(_getToken: GetToken): Promise<UserPl
 
   await new Promise((r) => setTimeout(r, 800));
   return {
-    currentPlan: "PRO",
+    currentPlan: "AGENCY_PRO",
     startDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
     renewalDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
     status: "ACTIVE",

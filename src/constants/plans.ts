@@ -1,86 +1,27 @@
-import { Clock, Zap, Sparkles, Building2, Star, Crown, Briefcase, Rocket, Infinity } from "lucide-react";
+import { Clock, Star, Crown, Building2, Briefcase, Rocket, Infinity } from "lucide-react";
 import type { Plan, PlanType } from "@/model/Plan";
 
 export const PLANS: Plan[] = [
+  // ─── Influencer plans ────────────────────────────────────────────────────────
   {
-    type: "TRIAL",
-    name: "Trial",
+    type: "INFLUENCER_TRIAL",
+    name: "Influencer Trial",
     price: 0,
     trialDays: 14,
-    description: "Full access for 14 days — no credit card required",
+    description: "Full influencer access for 14 days — no credit card required",
     features: [
       "14-day free trial",
       "50 scheduled posts",
       "5 connected accounts",
+      "1 workspace (main)",
       "All post types (image, video, text)",
-      "Priority support",
     ],
     limits: {
       scheduledPostsPerMonth: 50,
       connectedAccounts: 5,
-      teamMembers: 3,
-    },
-  },
-  {
-    type: "BASE",
-    name: "Base",
-    price: 15,
-    description: "For individuals getting started",
-    stripePriceId: "price_todo_base_monthly",
-    features: [
-      "500 scheduled posts / month",
-      "30 connected accounts",
-      "All post types (image, video, text)",
-      "Email support",
-    ],
-    limits: {
-      scheduledPostsPerMonth: 500,
-      connectedAccounts: 25,
       teamMembers: 1,
     },
   },
-  {
-    type: "PRO",
-    name: "Pro",
-    price: 25,
-    description: "For creators growing their audience",
-    popular: true,
-    stripePriceId: "price_todo_pro_monthly",
-    features: [
-      "2000 scheduled posts / month",
-      "100 connected accounts",
-      "Advanced analytics",
-      "Image, video & text posts",
-      "Priority support",
-    ],
-    limits: {
-      scheduledPostsPerMonth: 2000,
-      connectedAccounts: 100,
-      teamMembers: 5,
-    },
-  },
-  {
-    type: "ENTERPRISE",
-    name: "Enterprise",
-    price: 1000,
-    customPricing: true,
-    description: "For teams managing multiple brands",
-    stripePriceId: "price_todo_enterprise_monthly",
-    features: [
-      "Unlimited scheduled posts",
-      "Unlimited connected accounts",
-      "Advanced analytics",
-      "All post types",
-      "Dedicated support",
-      "Custom branding",
-    ],
-    limits: {
-      scheduledPostsPerMonth: "Unlimited",
-      connectedAccounts: "Unlimited",
-      teamMembers: "Unlimited",
-    },
-  },
-  // ─── Influencer plans ────────────────────────────────────────────────────────
   {
     type: "INFLUENCER_BASE",
     name: "Influencer Base",
@@ -120,7 +61,26 @@ export const PLANS: Plan[] = [
       teamMembers: 1,
     },
   },
-  // ─── Agency plans ────────────────────────────────────────────────────────────
+  // ─── Agency plans ─────────────────────────────────────────────────────────────
+  {
+    type: "AGENCY_TRIAL",
+    name: "Agency Trial",
+    price: 0,
+    trialDays: 14,
+    description: "Full agency access for 14 days — no credit card required",
+    features: [
+      "14-day free trial",
+      "Up to 3 workspaces",
+      "300 posts / month per workspace",
+      "10 accounts per workspace",
+      "Team members (unlimited seats)",
+    ],
+    limits: {
+      scheduledPostsPerMonth: 300,
+      connectedAccounts: 10,
+      teamMembers: "Unlimited",
+    },
+  },
   {
     type: "AGENCY_BASE",
     name: "Agency Base",
@@ -165,7 +125,7 @@ export const PLANS: Plan[] = [
     name: "Agency Custom",
     price: 0,
     customPricing: true,
-    description: "Tailored for enterprise agencies",
+    description: "Tailored for large agencies",
     features: [
       "Unlimited workspaces",
       "Unlimited posts per workspace",
@@ -182,13 +142,11 @@ export const PLANS: Plan[] = [
 ];
 
 export const PLAN_ICONS: Record<PlanType, React.ElementType> = {
-  TRIAL:           Clock,
-  BASE:            Zap,
-  PRO:             Sparkles,
-  ENTERPRISE:      Building2,
-  INFLUENCER_BASE: Star,
-  INFLUENCER_PRO:  Crown,
-  AGENCY_BASE:     Briefcase,
-  AGENCY_PRO:      Rocket,
-  AGENCY_CUSTOM:   Infinity,
+  INFLUENCER_TRIAL:  Clock,
+  INFLUENCER_BASE:   Star,
+  INFLUENCER_PRO:    Crown,
+  AGENCY_TRIAL:  Building2,
+  AGENCY_BASE:   Briefcase,
+  AGENCY_PRO:    Rocket,
+  AGENCY_CUSTOM: Infinity,
 };

@@ -32,11 +32,11 @@ const CONTACTS = [
     response: "Within 24 hours",
   },
   {
-    label: "Sales & Enterprise",
+    label: "Sales & Agency",
     description:
       "Custom plans, white-labelling, volume pricing, or agency onboarding.",
     detail:
-      "We offer bespoke packages for large agencies and enterprise teams. Let's find the right fit for your scale.",
+      "We offer bespoke packages for large agencies. Let's find the right fit for your scale.",
     email: "team+sales@socialraven.io",
     icon: Building2,
     response: "Within 4 hours",
@@ -85,7 +85,7 @@ const FAQS = [
   },
   {
     q: "Can I manage multiple client accounts?",
-    a: "Absolutely. Our Pro and Enterprise plans are designed for agencies. Manage all your clients from a single, clean dashboard.",
+    a: "Absolutely. Our Pro and Agency plans are designed for agencies. Manage all your clients from a single, clean dashboard.",
   },
   {
     q: "Which platforms does Social Raven support?",
@@ -97,7 +97,7 @@ const FAQS = [
   },
 ];
 
-const ENTERPRISE_FEATURES = [
+const AGENCY_FEATURES = [
   "Custom seat limits",
   "Dedicated onboarding",
   "White-label options",
@@ -130,7 +130,7 @@ export default function ContactPage() {
               We&apos;re here when you need us.
             </h1>
             <p className="text-lg text-[hsl(var(--muted-foreground))] leading-relaxed max-w-xl mb-12">
-              Reach the right team directly — whether it&apos;s a support question, an enterprise enquiry, or a legal matter.
+              Reach the right team directly — whether it&apos;s a support question, an agency enquiry, or a legal matter.
             </p>
             <div className="flex flex-wrap gap-8">
               {TRUST.map(({ icon: Icon, label, sub }) => (
@@ -216,13 +216,13 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Enterprise CTA */}
+        {/* Agency CTA */}
         <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
           <div className="">
             <div className="rounded-2xl bg-[hsl(var(--foreground))] p-10 md:p-14">
               <div className="grid md:grid-cols-2 gap-10 items-center">
                 <div className="space-y-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Enterprise</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Agency</p>
                   <h2 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
                     Need something built for scale?
                   </h2>
@@ -230,14 +230,14 @@ export default function ContactPage() {
                     Custom seat limits, dedicated onboarding, white-label options, and SLA guarantees. We partner with agencies and businesses that need more than an off-the-shelf plan.
                   </p>
                   <a
-                    href="mailto:team+sales@socialraven.io?subject=Enterprise%20Enquiry"
+                    href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry"
                     className="inline-flex items-center gap-2 h-11 px-7 rounded-full bg-white text-[hsl(var(--foreground))] text-sm font-medium hover:bg-gray-100 transition-colors"
                   >
                     Talk to sales <ArrowRight className="w-4 h-4" />
                   </a>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                  {ENTERPRISE_FEATURES.map((f) => (
+                  {AGENCY_FEATURES.map((f) => (
                     <div key={f} className="flex items-center gap-2.5 text-sm text-white/70">
                       <CheckCircle2 className="w-4 h-4 text-white/40 flex-shrink-0" />
                       {f}

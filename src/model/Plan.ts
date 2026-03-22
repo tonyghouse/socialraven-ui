@@ -1,10 +1,8 @@
 export type PlanType =
-  | "TRIAL"
-  | "BASE"
-  | "PRO"
-  | "ENTERPRISE"
+  | "INFLUENCER_TRIAL"
   | "INFLUENCER_BASE"
   | "INFLUENCER_PRO"
+  | "AGENCY_TRIAL"
   | "AGENCY_BASE"
   | "AGENCY_PRO"
   | "AGENCY_CUSTOM";

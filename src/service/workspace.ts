@@ -1,4 +1,5 @@
 import { CreateWorkspaceRequest, WorkspaceResponse } from "@/model/Workspace";
+import { apiHeaders } from "@/lib/api-headers";
 
 type GetToken = () => Promise<string | null>;
 
@@ -35,6 +36,24 @@ export async function createWorkspaceApi(
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`createWorkspace failed: ${res.status} - ${body}`);
+  }
+  return res.json();
+}
+
+export async function updateWorkspaceApi(
+  getToken: GetToken,
+  workspaceId: string,
+  req: { name?: string; companyName?: string }
+): Promise<WorkspaceResponse> {
+  const headers = await apiHeaders(getToken, { "X-Workspace-Id": workspaceId });
+  const res = await fetch(`${BACKEND}/workspaces/${workspaceId}`, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify(req),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`updateWorkspace failed: ${res.status} - ${body}`);
   }
   return res.json();
 }

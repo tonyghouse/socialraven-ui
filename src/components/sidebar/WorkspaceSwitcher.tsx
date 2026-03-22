@@ -5,6 +5,13 @@ import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { WorkspaceResponse } from "@/model/Workspace";
+import { usePlan } from "@/hooks/usePlan";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface WorkspaceSwitcherProps {
   collapsed: boolean;
@@ -12,6 +19,7 @@ interface WorkspaceSwitcherProps {
 
 export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
   const { workspaces, activeWorkspace, switchWorkspace } = useWorkspace();
+  const { isInfluencer } = usePlan();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -26,8 +34,75 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Only render when there are 2+ workspaces
-  if (workspaces.length < 2) return null;
+  // Influencer plans: single static workspace display
+  if (isInfluencer) {
+    if (collapsed) {
+      return (
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10">
+                <Building2 className="h-4 w-4 text-accent" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={8}>
+              Workspace: main
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+    return (
+      <div className="flex items-center gap-2 w-full rounded-xl px-2 py-2">
+        <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
+          <Building2 className="h-3.5 w-3.5 text-accent" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 leading-none mb-0.5">
+            Workspace
+          </span>
+          <span className="text-[13px] font-medium text-foreground/70 truncate leading-none">
+            main
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Single workspace: show static display (no dropdown)
+  if (workspaces.length < 2) {
+    if (collapsed) {
+      return (
+        <TooltipProvider delayDuration={300}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10">
+                <Building2 className="h-4 w-4 text-accent" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={8}>
+              {activeWorkspace?.name ?? "Workspace"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+    return (
+      <div className="flex items-center gap-2 w-full rounded-xl px-2 py-2">
+        <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
+          <Building2 className="h-3.5 w-3.5 text-accent" />
+        </div>
+        <div className="flex flex-col min-w-0">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 leading-none mb-0.5">
+            Workspace
+          </span>
+          <span className="text-[13px] font-medium text-foreground/70 truncate leading-none">
+            {activeWorkspace?.name ?? "—"}
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   function handleSelect(w: WorkspaceResponse) {
     switchWorkspace(w);

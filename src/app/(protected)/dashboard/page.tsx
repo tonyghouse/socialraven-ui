@@ -116,22 +116,27 @@ export default function DashboardPage() {
     async function load() {
       try {
         setLoading(true);
-        const [upcomingRes, accountsRes, publishedRes, failedRes, usageRes, planRes] = await Promise.all([
-          fetchPaginatedPostsApi(getToken, 0, "SCHEDULED"),
-          fetchConnectedAccountsApi(getToken, null),
-          fetchPostCollectionsApi(getToken, 0, "published"),
-          fetchPaginatedPostsApi(getToken, 0, "FAILED"),
-          fetchUsageStatsApi(getToken),
-          fetchUserPlanApi(getToken),
-        ]);
-        setScheduledPosts(upcomingRes.content);
-        setAccounts(accountsRes);
-        setPublishedCols(publishedRes.content);
-        setFailedPosts(failedRes.content);
-        setUsageStats(usageRes);
-        setUserPlan(planRes);
-      } catch (err) {
-        console.error("Dashboard load error:", err);
+        const [upcomingRes, accountsRes, publishedRes, failedRes, usageRes, planRes] =
+          await Promise.allSettled([
+            fetchPaginatedPostsApi(getToken, 0, "SCHEDULED"),
+            fetchConnectedAccountsApi(getToken, null),
+            fetchPostCollectionsApi(getToken, 0, "published"),
+            fetchPaginatedPostsApi(getToken, 0, "FAILED"),
+            fetchUsageStatsApi(getToken),
+            fetchUserPlanApi(getToken),
+          ]);
+
+        if (upcomingRes.status === "fulfilled")  setScheduledPosts(upcomingRes.value.content);
+        if (accountsRes.status === "fulfilled")  setAccounts(accountsRes.value);
+        if (publishedRes.status === "fulfilled") setPublishedCols(publishedRes.value.content);
+        if (failedRes.status === "fulfilled")    setFailedPosts(failedRes.value.content);
+        if (usageRes.status === "fulfilled")     setUsageStats(usageRes.value);
+        if (planRes.status === "fulfilled")      setUserPlan(planRes.value);
+
+        const errors = [upcomingRes, accountsRes, publishedRes, failedRes, usageRes, planRes]
+          .filter((r) => r.status === "rejected")
+          .map((r) => (r as PromiseRejectedResult).reason);
+        if (errors.length > 0) console.error("Dashboard load errors:", errors);
       } finally {
         setLoading(false);
       }
@@ -516,9 +521,9 @@ export default function DashboardPage() {
                       <span
                         className={cn(
                           "text-[11px] font-bold px-2.5 py-1 rounded-full border",
-                          userPlan.currentPlan === "TRIAL"      ? "bg-violet-50 text-violet-600 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800/40" :
-                          userPlan.currentPlan === "PRO"        ? "bg-accent/10 text-accent border-accent/20" :
-                          userPlan.currentPlan === "ENTERPRISE" ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400" :
+                          userPlan.currentPlan.endsWith("_TRIAL")   ? "bg-violet-50 text-violet-600 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800/40" :
+                          userPlan.currentPlan.endsWith("_PRO")     ? "bg-accent/10 text-accent border-accent/20" :
+                          userPlan.currentPlan.startsWith("AGENCY")  ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400" :
                           "bg-muted text-muted-foreground border-border/50"
                         )}
                       >
