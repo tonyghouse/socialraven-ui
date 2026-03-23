@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth, SignIn } from "@clerk/nextjs";
 import { acceptInvitationApi } from "@/service/invitation";
@@ -15,6 +15,20 @@ type State =
   | { status: "needs-auth" };
 
 export default function InvitePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <InvitePageContent />
+    </Suspense>
+  );
+}
+
+function InvitePageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isLoaded, isSignedIn, getToken } = useAuth();
