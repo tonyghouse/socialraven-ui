@@ -74,7 +74,11 @@ export default function ConnectedAccountsSection({ canWrite = true }: { canWrite
     toast("Opening reconnect flow...", {
       icon: <RefreshCw className="w-4 h-4" />,
     });
-    window.open(`/api/auth/${acc.platform}`, "_blank");
+    const workspaceId = localStorage.getItem("activeWorkspaceId");
+    const url = workspaceId
+      ? `/api/auth/${acc.platform}?workspaceId=${workspaceId}`
+      : `/api/auth/${acc.platform}`;
+    window.open(url, "_blank");
   };
 
   return (

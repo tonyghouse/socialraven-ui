@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing code" }, { status: 400 });
   }
 
-  const { getToken } = auth();
+  const { getToken } = await auth();
   const token = await getToken();
 
   if (!token) {
@@ -19,6 +19,8 @@ export async function GET(req: Request) {
     );
   }
 
+  const workspaceId = req.cookies.get("oauth_workspace_id")?.value ?? "";
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/linkedin/callback`,
     {
@@ -26,6 +28,7 @@ export async function GET(req: Request) {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        ...(workspaceId ? { "X-Workspace-Id": workspaceId } : {}),
       },
       body: JSON.stringify({ code }),
     }

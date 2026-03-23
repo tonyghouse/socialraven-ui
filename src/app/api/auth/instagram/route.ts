@@ -13,6 +13,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  const workspaceId = new URL(request.url).searchParams.get("workspaceId") ?? "";
+
   // Build Instagram OAuth URL (matching your developer console format)
   const authUrl = new URL('https://www.instagram.com/oauth/authorize');
   authUrl.searchParams.set('client_id', appId);
@@ -21,6 +23,15 @@ export async function GET(request: NextRequest) {
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('force_reauth', 'true'); // Optional: force re-auth each time
 
-  // Redirect user to Instagram OAuth (instagram.com, not facebook.com!)
-  return NextResponse.redirect(authUrl.toString());
+  const res = NextResponse.redirect(authUrl.toString());
+  if (workspaceId) {
+    res.cookies.set("oauth_workspace_id", workspaceId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 10 * 60,
+      path: "/",
+    });
+  }
+  return res;
 }

@@ -99,6 +99,12 @@ const PROVIDERS = [
   },
 ];
 
+function oauthUrl(base: string) {
+  if (typeof window === "undefined") return base;
+  const workspaceId = localStorage.getItem("activeWorkspaceId");
+  return workspaceId ? `${base}?workspaceId=${workspaceId}` : base;
+}
+
 export default function LinkNewAccountSection() {
   const [error, setError] = useState<string | null>(null);
 
@@ -123,7 +129,7 @@ export default function LinkNewAccountSection() {
         {PROVIDERS.map((provider) => (
           <a
             key={provider.key}
-            href={provider.enabled ? provider.href : undefined}
+            href={provider.enabled ? oauthUrl(provider.href) : undefined}
             onClick={(e) => {
               if (!provider.enabled) e.preventDefault();
             }}

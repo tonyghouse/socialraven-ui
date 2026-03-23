@@ -37,13 +37,15 @@ function generateOAuthSignature(
 export async function GET(req: NextRequest) {
   console.log("🔵 OAuth 1.0a Callback hit");
 
-  const { getToken } = auth();
+  const { getToken } = await auth();
   const jwt = await getToken();
 
   if (!jwt) {
     console.error("❌ Not authenticated with Clerk");
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
+
+  const workspaceId = req.cookies.get("oauth_workspace_id")?.value ?? "";
 
   const url = new URL(req.url);
   const oauthToken = url.searchParams.get("oauth_token");
@@ -188,6 +190,7 @@ export async function GET(req: NextRequest) {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
+          ...(workspaceId ? { "X-Workspace-Id": workspaceId } : {}),
         },
         body: JSON.stringify({
           accessToken,
@@ -215,7 +218,8 @@ export async function GET(req: NextRequest) {
       `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=x&status=success`
     );
     successResponse.cookies.delete("x_oauth_token_secret");
-    
+    successResponse.cookies.delete("oauth_workspace_id");
+
     return successResponse;
 
   } catch (error) {

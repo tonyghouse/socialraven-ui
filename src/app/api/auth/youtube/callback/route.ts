@@ -1,15 +1,16 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
 
-      const { getToken } = auth();
+      const { getToken } = await auth();
       const jwt = await getToken();
-    
+
       if (!jwt) {
         return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
       }
 
+  const workspaceId = req.cookies.get("oauth_workspace_id")?.value ?? "";
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
 
@@ -24,10 +25,11 @@ export async function GET(req: Request) {
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/youtube/callback`,
       {
         method: "POST",
-           headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+          ...(workspaceId ? { "X-Workspace-Id": workspaceId } : {}),
+        },
         body: JSON.stringify({ code }),
       }
     );

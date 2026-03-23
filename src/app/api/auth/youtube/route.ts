@@ -1,10 +1,12 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const clientId = process.env.YT_CLIENT_ID!;
   const redirectUri = encodeURIComponent(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/youtube/callback`
   );
+
+  const workspaceId = new URL(req.url).searchParams.get("workspaceId") ?? "";
 
   const scopes = [
     "https://www.googleapis.com/auth/youtube.upload",
@@ -20,5 +22,15 @@ export async function GET() {
     `&access_type=offline` +
     `&prompt=consent`;
 
-  return NextResponse.redirect(authUrl);
+  const res = NextResponse.redirect(authUrl);
+  if (workspaceId) {
+    res.cookies.set("oauth_workspace_id", workspaceId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 10 * 60,
+      path: "/",
+    });
+  }
+  return res;
 }

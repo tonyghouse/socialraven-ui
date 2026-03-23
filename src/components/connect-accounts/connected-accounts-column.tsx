@@ -1,10 +1,15 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { Trash2, RefreshCw, Plus, ArrowRight } from "lucide-react";
+
+function oauthUrl(base: string) {
+  if (typeof window === "undefined") return base;
+  const workspaceId = localStorage.getItem("activeWorkspaceId");
+  return workspaceId ? `${base}?workspaceId=${workspaceId}` : base;
+}
 
 type Props = {
   platformKey: string;
@@ -117,9 +122,9 @@ export default function ConnectedAccountsColumn({
           </div>
         ) : accounts.length === 0 ? (
           canWrite ? (
-            <Link
-              href={connectHref}
-              className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/15 hover:border-accent/35 hover:bg-accent/3 transition-all duration-200 group"
+            <button
+              onClick={() => { window.location.href = oauthUrl(connectHref); }}
+              className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/15 hover:border-accent/35 hover:bg-accent/3 transition-all duration-200 group w-full text-left"
             >
               <div
                 className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconStyle.bg} transition-all`}
@@ -135,7 +140,7 @@ export default function ConnectedAccountsColumn({
                 </p>
               </div>
               <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-accent group-hover:translate-x-0.5 transition-all flex-shrink-0" />
-            </Link>
+            </button>
           ) : (
             <div className="flex items-center justify-center px-4 py-3.5 rounded-xl border border-dashed border-foreground/8">
               <p className="text-sm text-muted-foreground/60">No accounts connected</p>
@@ -158,13 +163,13 @@ export default function ConnectedAccountsColumn({
       {/* Footer: add more — hidden for VIEWERs */}
       {!comingSoon && accounts.length > 0 && canWrite && (
         <div className="px-4 pb-4">
-          <Link
-            href={connectHref}
-            className="flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-accent hover:bg-accent/5 border border-dashed border-foreground/10 hover:border-accent/20 transition-all duration-200"
+          <button
+            onClick={() => { window.location.href = oauthUrl(connectHref); }}
+            className="flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-accent hover:bg-accent/5 border border-dashed border-foreground/10 hover:border-accent/20 transition-all duration-200 w-full"
           >
             <Plus className="w-3.5 h-3.5" />
             Add another account
-          </Link>
+          </button>
         </div>
       )}
     </div>

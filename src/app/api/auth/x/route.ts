@@ -43,7 +43,9 @@ function generateOAuthSignature(
 export async function GET(req: NextRequest) {
   console.log("🟢 Starting X OAuth 1.0a flow");
 
-  const { getToken } = auth();
+  const workspaceId = new URL(req.url).searchParams.get("workspaceId") ?? "";
+
+  const { getToken } = await auth();
   const jwt = await getToken();
 
   if (!jwt) {
@@ -136,6 +138,17 @@ export async function GET(req: NextRequest) {
     const authorizeUrl = `https://api.twitter.com/oauth/authorize?oauth_token=${oauthToken}`;
 
     const res = NextResponse.redirect(authorizeUrl);
+
+    // Store workspaceId for use in callback
+    if (workspaceId) {
+      res.cookies.set("oauth_workspace_id", workspaceId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 10 * 60,
+        path: "/",
+      });
+    }
 
     // Fallback: Store token secret in cookie (in case backend storage fails)
     res.cookies.set("x_oauth_token_secret", oauthTokenSecret, {
