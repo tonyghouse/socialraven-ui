@@ -36,7 +36,16 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
     checked.current = true;
 
     if (workspaces.length === 0) {
-      router.replace("/onboarding");
+      // If the user arrived here via an invitation link, send them back to accept it
+      const pendingToken =
+        typeof window !== "undefined"
+          ? localStorage.getItem("pendingInviteToken")
+          : null;
+      if (pendingToken) {
+        router.replace(`/invite?token=${pendingToken}`);
+      } else {
+        router.replace("/onboarding");
+      }
       return;
     }
 

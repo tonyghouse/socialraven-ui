@@ -111,16 +111,17 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
 
   if (collapsed) {
     return (
-      <button
-        onClick={() => setOpen((v) => !v)}
-        title={activeWorkspace?.name ?? "Switch workspace"}
-        className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10 hover:bg-accent/20 transition-colors"
-      >
-        <Building2 className="h-4 w-4 text-accent" />
+      <div ref={ref} className="relative">
+        <button
+          onClick={() => setOpen((v) => !v)}
+          title={activeWorkspace?.name ?? "Switch workspace"}
+          className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10 hover:bg-accent/20 transition-colors"
+        >
+          <Building2 className="h-4 w-4 text-accent" />
+        </button>
 
         {open && (
           <div
-            ref={ref}
             className="absolute left-full top-0 ml-3 w-52 rounded-xl border border-border/60 bg-white shadow-lg py-1 z-50"
           >
             {workspaces.map((w) => (
@@ -138,7 +139,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
             ))}
           </div>
         )}
-      </button>
+      </div>
     );
   }
 

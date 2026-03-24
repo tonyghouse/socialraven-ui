@@ -43,9 +43,13 @@ function InvitePageContent() {
       return;
     }
     if (!isSignedIn) {
+      // Persist token so WorkspaceGate can redirect back here after sign-up
+      localStorage.setItem("pendingInviteToken", token);
       setState({ status: "needs-auth" });
       return;
     }
+    // Clear any stored pending token — we're about to accept it now
+    localStorage.removeItem("pendingInviteToken");
     // Auto-accept once signed in
     accept();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,8 +95,8 @@ function InvitePageContent() {
               Sign in or create an account to accept this workspace invitation.
             </p>
             <SignIn
-              afterSignInUrl={`/invite?token=${token}`}
-              afterSignUpUrl={`/invite?token=${token}`}
+              forceRedirectUrl={`/invite?token=${token}`}
+              signUpForceRedirectUrl={`/invite?token=${token}`}
               routing="hash"
             />
           </div>
