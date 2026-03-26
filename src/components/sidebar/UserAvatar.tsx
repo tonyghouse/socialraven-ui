@@ -7,6 +7,7 @@ import { LogOut, User, Crown, ShieldCheck, Users, Eye, Sparkles } from "lucide-r
 import { cn } from "@/lib/utils";
 import { useRole } from "@/hooks/useRole";
 import { usePlan } from "@/hooks/usePlan";
+import { useWorkspace } from "@/context/WorkspaceContext";
 import { WorkspaceRole } from "@/model/Workspace";
 import { PlanType } from "@/model/Plan";
 
@@ -45,6 +46,7 @@ export function UserAvatar({
   const { signOut } = useClerk();
   const { role } = useRole();
   const { plan, isInfluencer } = usePlan();
+  const { workspaces } = useWorkspace();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -63,15 +65,41 @@ export function UserAvatar({
     `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase() || "?";
 
   // Build badge config
-  const badge = isInfluencer
-    ? {
-        label: plan ? (PLAN_LABELS[plan] ?? "Influencer") : "Influencer",
-        icon: Sparkles,
-        bg: "bg-purple-50",
-        text: "text-purple-700",
-        border: "border-purple-200/80",
-      }
-    : (ROLE_BADGE[role] ?? ROLE_BADGE.VIEWER);
+  let badge: { label: string; icon: React.ElementType; bg: string; text: string; border: string };
+
+  if (isInfluencer) {
+    badge = {
+      label: plan ? (PLAN_LABELS[plan] ?? "Influencer") : "Influencer",
+      icon: Sparkles,
+      bg: "bg-purple-50",
+      text: "text-purple-700",
+      border: "border-purple-200/80",
+    };
+  } else if (role === "OWNER" || role === "VIEWER") {
+    // No change for owners and viewers
+    badge = ROLE_BADGE[role];
+  } else {
+    // Teammate: collect unique ADMIN/MEMBER roles across all workspaces
+    const teamRoles = [
+      ...new Set(
+        workspaces
+          .map((w) => w.role)
+          .filter((r): r is "ADMIN" | "MEMBER" => r === "ADMIN" || r === "MEMBER")
+      ),
+    ];
+    const hasAdmin = teamRoles.includes("ADMIN");
+    const hasMember = teamRoles.includes("MEMBER");
+    const parts: string[] = [];
+    if (hasAdmin) parts.push("Admin");
+    if (hasMember) parts.push("Member");
+    badge = {
+      label: parts.join(" / ") || ROLE_BADGE[role].label,
+      icon: hasAdmin ? ShieldCheck : Users,
+      bg: hasAdmin ? "bg-blue-50" : "bg-emerald-50",
+      text: hasAdmin ? "text-blue-700" : "text-emerald-700",
+      border: hasAdmin ? "border-blue-200/80" : "border-emerald-200/80",
+    };
+  }
 
   const BadgeIcon = badge.icon;
 

@@ -10,12 +10,13 @@ import React, {
 } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { WorkspaceResponse } from "@/model/Workspace";
-import { getMyWorkspacesApi } from "@/service/workspace";
+import { AccountDeactivatedError, getMyWorkspacesApi } from "@/service/workspace";
 
 interface WorkspaceContextValue {
   workspaces: WorkspaceResponse[];
   activeWorkspace: WorkspaceResponse | null;
   isLoading: boolean;
+  isDeactivated: boolean;
   switchWorkspace: (workspace: WorkspaceResponse) => void;
   refresh: () => Promise<void>;
 }
@@ -24,6 +25,7 @@ const WorkspaceCtx = createContext<WorkspaceContextValue>({
   workspaces: [],
   activeWorkspace: null,
   isLoading: true,
+  isDeactivated: false,
   switchWorkspace: () => {},
   refresh: async () => {},
 });
@@ -34,6 +36,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const [activeWorkspace, setActiveWorkspace] =
     useState<WorkspaceResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeactivated, setIsDeactivated] = useState(false);
   const initialized = useRef(false);
 
   const load = useCallback(async () => {
@@ -58,7 +61,10 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
       }
 
       setActiveWorkspace(active);
-    } catch {
+    } catch (e) {
+      if (e instanceof AccountDeactivatedError) {
+        setIsDeactivated(true);
+      }
       // Non-fatal — keep current state
     } finally {
       setIsLoading(false);
@@ -83,6 +89,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         workspaces,
         activeWorkspace,
         isLoading,
+        isDeactivated,
         switchWorkspace,
         refresh: load,
       }}

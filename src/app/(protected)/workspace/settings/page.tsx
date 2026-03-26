@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { WorkspaceInvitation, WorkspaceMember, WorkspaceResponse, WorkspaceRole } from "@/model/Workspace";
@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trash2, UserPlus, Mail, Users, Clock, Info, ChevronDown, Check, Building2, Plus, X } from "lucide-react";
+import { Trash2, UserPlus, Mail, Users, Clock, Info, ChevronDown, Check, Building2, Plus, X, ShieldCheck, Eye, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
 import { createWorkspaceApi } from "@/service/workspace";
@@ -77,6 +77,59 @@ function RoleGroupHeading({ role, count }: { role: WorkspaceRole; count: number 
       </span>
       <span className="text-xs text-muted-foreground">·</span>
       <span className="text-xs text-muted-foreground">{count}</span>
+    </div>
+  );
+}
+
+const ROLE_CONTEXT: Record<WorkspaceRole, { icon: React.ElementType; bg: string; border: string; iconColor: string; textColor: string; label: string; description: string }> = {
+  OWNER: {
+    icon: ShieldCheck,
+    bg: "bg-amber-50",
+    border: "border-amber-200",
+    iconColor: "text-amber-500",
+    textColor: "text-amber-900",
+    label: "You are the Owner",
+    description: "You have full control over this workspace — invite members, manage roles, rename the workspace, and create new workspaces.",
+  },
+  ADMIN: {
+    icon: Shield,
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    iconColor: "text-blue-500",
+    textColor: "text-blue-900",
+    label: "You are an Admin",
+    description: "You can invite members and remove non-owner members. Role assignment and workspace renaming are restricted to the Owner.",
+  },
+  MEMBER: {
+    icon: Eye,
+    bg: "bg-muted/60",
+    border: "border-border",
+    iconColor: "text-muted-foreground",
+    textColor: "text-foreground",
+    label: "You are a Member",
+    description: "You can view the team list but cannot invite, remove, or change roles. Contact an Admin or Owner to make changes.",
+  },
+  VIEWER: {
+    icon: Eye,
+    bg: "bg-muted/60",
+    border: "border-border",
+    iconColor: "text-muted-foreground",
+    textColor: "text-foreground",
+    label: "You are a Viewer",
+    description: "You have read-only access to this workspace. Contact an Admin or Owner to request elevated permissions.",
+  },
+};
+
+function RoleContextBanner({ role }: { role: WorkspaceRole }) {
+  const ctx = ROLE_CONTEXT[role];
+  const Icon = ctx.icon;
+  return (
+    <div className={cn("flex items-start gap-3 rounded-xl border px-4 py-3 mb-6", ctx.bg, ctx.border)}>
+      <Icon className={cn("h-4 w-4 mt-0.5 shrink-0", ctx.iconColor)} />
+      <div className="text-sm">
+        <p className={cn("font-medium mb-0.5", ctx.textColor)}>{ctx.label}</p>
+        <p className={cn("text-[13px] leading-relaxed", ctx.textColor, "opacity-80")}>{ctx.description}</p>
+      </div>
     </div>
   );
 }
@@ -256,9 +309,14 @@ export default function WorkspaceSettingsPage() {
     <div className="w-full p-6 md:p-8 max-w-3xl">
       {/* Page header */}
       <h1 className="text-2xl font-semibold tracking-tight mb-1">Workspace Settings</h1>
-      <p className="text-sm text-muted-foreground mb-6">
+      <p className="text-sm text-muted-foreground mb-4">
         Manage members, roles, and invitations for your workspace.
       </p>
+
+      {/* Role context banner */}
+      {myRole && (
+        <RoleContextBanner role={myRole} />
+      )}
 
       {/* Workspace selector */}
       <div className="mb-6">

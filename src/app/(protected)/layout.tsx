@@ -17,16 +17,16 @@ import { WorkspaceProvider, useWorkspace } from "@/context/WorkspaceContext";
 function WorkspaceGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { workspaces, activeWorkspace, isLoading } = useWorkspace();
+  const { workspaces, activeWorkspace, isLoading, isDeactivated } = useWorkspace();
   const [gateOpen, setGateOpen] = useState(false);
   const checked = useRef(false);
 
-  // The workspace-select page is itself under this layout — let it render freely
-  // so the user can pick a workspace without triggering a redirect loop.
+  // These pages are under this layout but must bypass the workspace gate
   const isWorkspaceSelectPage = pathname === "/workspace-select";
+  const isNoWorkspacePage = pathname === "/no-workspace";
 
   useEffect(() => {
-    if (isWorkspaceSelectPage) {
+    if (isWorkspaceSelectPage || isNoWorkspacePage) {
       setGateOpen(true);
       return;
     }
@@ -34,6 +34,11 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
     if (isLoading) return;
     if (checked.current) return;
     checked.current = true;
+
+    if (isDeactivated) {
+      router.replace("/no-workspace");
+      return;
+    }
 
     if (workspaces.length === 0) {
       // If the user arrived here via an invitation link, send them back to accept it
@@ -84,8 +89,8 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
   const pathname = usePathname();
 
-  // Workspace-select page gets a full-screen layout without sidebar/nav
-  if (pathname === "/workspace-select") {
+  // These pages get a full-screen layout without sidebar/nav
+  if (pathname === "/workspace-select" || pathname === "/no-workspace") {
     return (
       <WorkspaceGate>
         <main>{children}</main>

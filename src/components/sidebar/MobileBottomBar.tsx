@@ -30,14 +30,14 @@ export function MobileBottomBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
-  const { canWrite, canManageWorkspace, isOwner } = useRole();
+  const { canWrite, isOwner } = useRole();
 
   const drawerItems = [
     { title: "Analytics",        url: "/analytics",         icon: BarChart2 },
     { title: "Drafts",           url: "/drafts",            icon: CalendarHeart },
     { title: "Published Posts",  url: "/published-posts",   icon: CalendarCheck2 },
     { title: "Connect Accounts", url: "/connect-accounts",  icon: Cable },
-    ...(canManageWorkspace ? [{ title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 }] : []),
+    { title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 },
     ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
   ];
 

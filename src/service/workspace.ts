@@ -5,6 +5,13 @@ type GetToken = () => Promise<string | null>;
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
 
+export class AccountDeactivatedError extends Error {
+  constructor() {
+    super("ACCOUNT_DEACTIVATED");
+    this.name = "AccountDeactivatedError";
+  }
+}
+
 export async function getMyWorkspacesApi(
   getToken: GetToken
 ): Promise<WorkspaceResponse[]> {
@@ -15,6 +22,10 @@ export async function getMyWorkspacesApi(
       Accept: "application/json",
     },
   });
+  if (res.status === 403) {
+    const body = await res.json().catch(() => ({}));
+    if (body?.error === "ACCOUNT_DEACTIVATED") throw new AccountDeactivatedError();
+  }
   if (!res.ok) throw new Error(`getMyWorkspaces failed: ${res.status}`);
   return res.json();
 }

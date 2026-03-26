@@ -33,7 +33,7 @@ import { WorkspaceManageSheet } from "./WorkspaceManageSheet";
 export function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
-  const { canWrite, canManageWorkspace, isOwner } = useRole();
+  const { canWrite, isOwner } = useRole();
   const { isInfluencer } = usePlan();
   // Agency owners get the full workspace management panel; everyone else gets the switcher
   const showManagePanel = !isInfluencer && isOwner;
@@ -65,7 +65,7 @@ export function AppSidebar() {
       label: "Accounts",
       items: [
         { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
-        ...(canManageWorkspace ? [{ title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 }] : []),
+        { title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 },
         ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
       ],
     },
