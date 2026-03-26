@@ -19,6 +19,8 @@ import { Trash2, UserPlus, Mail, Users, Clock, Info, ChevronDown, Check, Buildin
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
 import { createWorkspaceApi } from "@/service/workspace";
+import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type Tab = "team" | "invitations";
 
@@ -98,6 +100,9 @@ export default function WorkspaceSettingsPage() {
   const [newWorkspaceName, setNewWorkspaceName] = useState("");
   const [createWorkspaceBusy, setCreateWorkspaceBusy] = useState(false);
   const [createWorkspaceError, setCreateWorkspaceError] = useState<string | null>(null);
+
+  // Confirm dialog
+  const [pendingConfirm, setPendingConfirm] = useState<{ title: string; description: string; onConfirm: () => void } | null>(null);
 
   // Invite form state
   const [showInviteForm, setShowInviteForm] = useState(false);
@@ -180,29 +185,41 @@ export default function WorkspaceSettingsPage() {
       await updateMemberRoleApi(getToken, workspaceId, userId, role);
       await loadData();
     } catch (e: any) {
-      alert(e.message ?? "Failed to update role");
+      toast.error(e.message ?? "Failed to update role");
     }
   }
 
-  async function handleRemove(userId: string) {
+  function handleRemove(userId: string) {
     if (!workspaceId) return;
-    if (!confirm("Remove this member from the workspace?")) return;
-    try {
-      await removeMemberApi(getToken, workspaceId, userId);
-      await loadData();
-    } catch (e: any) {
-      alert(e.message ?? "Failed to remove member");
-    }
+    setPendingConfirm({
+      title: "Remove member?",
+      description: "This will remove the member from the workspace.",
+      onConfirm: async () => {
+        setPendingConfirm(null);
+        try {
+          await removeMemberApi(getToken, workspaceId, userId);
+          await loadData();
+        } catch (e: any) {
+          toast.error(e.message ?? "Failed to remove member");
+        }
+      },
+    });
   }
 
-  async function handleRevokeInvitation(token: string) {
-    if (!confirm("Revoke this invitation?")) return;
-    try {
-      await revokeInvitationApi(getToken, token);
-      await loadData();
-    } catch (e: any) {
-      alert(e.message ?? "Failed to revoke invitation");
-    }
+  function handleRevokeInvitation(token: string) {
+    setPendingConfirm({
+      title: "Revoke invitation?",
+      description: "The invited user will no longer be able to join using this link.",
+      onConfirm: async () => {
+        setPendingConfirm(null);
+        try {
+          await revokeInvitationApi(getToken, token);
+          await loadData();
+        } catch (e: any) {
+          toast.error(e.message ?? "Failed to revoke invitation");
+        }
+      },
+    });
   }
 
   if (!activeWorkspace) {
@@ -226,6 +243,16 @@ export default function WorkspaceSettingsPage() {
   const roleGroups: WorkspaceRole[] = ["OWNER", "ADMIN", "MEMBER", "VIEWER"];
 
   return (
+    <>
+    <ConfirmDialog
+      open={!!pendingConfirm}
+      title={pendingConfirm?.title}
+      description={pendingConfirm?.description ?? ""}
+      confirmLabel="Confirm"
+      destructive
+      onConfirm={() => pendingConfirm?.onConfirm()}
+      onCancel={() => setPendingConfirm(null)}
+    />
     <div className="w-full p-6 md:p-8 max-w-3xl">
       {/* Page header */}
       <h1 className="text-2xl font-semibold tracking-tight mb-1">Workspace Settings</h1>
@@ -564,5 +591,6 @@ export default function WorkspaceSettingsPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

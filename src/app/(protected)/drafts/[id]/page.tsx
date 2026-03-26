@@ -32,6 +32,7 @@ import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker"
 import { localToUTC } from "@/lib/timeUtil";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 const TYPE_CONFIG = {
   IMAGE: { label: "Image", Icon: ImageIcon },
@@ -53,6 +54,7 @@ export default function DraftDetailPage() {
   const [scheduleTime, setScheduleTime]             = useState("");
   const [scheduling, setScheduling]                 = useState(false);
   const [deleting, setDeleting]                     = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen]   = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -91,9 +93,14 @@ export default function DraftDetailPage() {
     }
   }
 
-  async function handleDelete() {
+  function handleDelete() {
     if (!collection) return;
-    if (!confirm("Delete this draft? This cannot be undone.")) return;
+    setConfirmDeleteOpen(true);
+  }
+
+  async function doDelete() {
+    if (!collection) return;
+    setConfirmDeleteOpen(false);
     setDeleting(true);
     try {
       await deletePostCollectionApi(getToken, collection.id);
@@ -116,6 +123,16 @@ export default function DraftDetailPage() {
   const captionText   = collection.description?.trim() ?? "";
 
   return (
+    <>
+    <ConfirmDialog
+      open={confirmDeleteOpen}
+      title="Delete draft?"
+      description="This cannot be undone."
+      confirmLabel="Delete"
+      destructive
+      onConfirm={doDelete}
+      onCancel={() => setConfirmDeleteOpen(false)}
+    />
     <main className="min-h-screen bg-background">
       {/* ── Sticky Header ── */}
       <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
@@ -422,6 +439,7 @@ export default function DraftDetailPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }
 

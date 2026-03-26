@@ -10,6 +10,12 @@ import { toast } from "sonner";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import ConnectedAccountsGrid from "./connect-accounts-grid";
 import { deleteConnectedAccountApi } from "@/service/deleteConnectedAccountApi";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+
+interface PendingConfirm {
+  description: string;
+  onConfirm: () => void;
+}
 
 export default function ConnectedAccountsSection({ canWrite = true }: { canWrite?: boolean }) {
   const { getToken, isLoaded } = useAuth();
@@ -19,6 +25,7 @@ export default function ConnectedAccountsSection({ canWrite = true }: { canWrite
   >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [refreshing, setRefreshing] = useState<boolean>(false);
+  const [pendingConfirm, setPendingConfirm] = useState<PendingConfirm | null>(null);
 
   const loadAccounts = useCallback(async () => {
     try {
@@ -50,24 +57,25 @@ export default function ConnectedAccountsSection({ canWrite = true }: { canWrite
   };
 
   const handleRemove = async (acc: ConnectedAccount) => {
-    const ok = window.confirm(
-      `Remove account ${acc.username}? This will disconnect it from Social Raven.`
-    );
-    if (!ok) return;
-
-    toast.promise(
-      (async () => {
-        await deleteConnectedAccountApi(getToken, acc.providerUserId);
-        setConnectedAccounts((prev) =>
-          prev.filter((a) => a.providerUserId !== acc.providerUserId)
+    setPendingConfirm({
+      description: `Remove account ${acc.username}? This will disconnect it from Social Raven.`,
+      onConfirm: () => {
+        setPendingConfirm(null);
+        toast.promise(
+          (async () => {
+            await deleteConnectedAccountApi(getToken, acc.providerUserId);
+            setConnectedAccounts((prev) =>
+              prev.filter((a) => a.providerUserId !== acc.providerUserId)
+            );
+          })(),
+          {
+            loading: "Removing…",
+            success: "Account removed",
+            error: "Failed to remove",
+          }
         );
-      })(),
-      {
-        loading: "Removing…",
-        success: "Account removed",
-        error: "Failed to remove",
-      }
-    );
+      },
+    });
   };
 
   const handleReconnect = async (acc: ConnectedAccount) => {
@@ -82,6 +90,15 @@ export default function ConnectedAccountsSection({ canWrite = true }: { canWrite
   };
 
   return (
+    <>
+    <ConfirmDialog
+      open={!!pendingConfirm}
+      description={pendingConfirm?.description ?? ""}
+      confirmLabel="Remove"
+      destructive
+      onConfirm={() => pendingConfirm?.onConfirm()}
+      onCancel={() => setPendingConfirm(null)}
+    />
     <div className="px-4 sm:px-6 pb-12 space-y-5">
       {/* Section header */}
       <div className="flex items-center justify-between gap-4 px-5 py-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-foreground/8 shadow-[0_2px_16px_rgba(0,0,0,0.05)]">
@@ -131,5 +148,6 @@ export default function ConnectedAccountsSection({ canWrite = true }: { canWrite
         />
       )}
     </div>
+    </>
   );
 }

@@ -15,6 +15,7 @@ import { WorkspaceResponse } from "@/model/Workspace";
 import { createWorkspaceApi, updateWorkspaceApi } from "@/service/workspace";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface WorkspaceManageSheetProps {
   collapsed: boolean;
@@ -62,7 +63,7 @@ export function WorkspaceManageSheet({ collapsed }: WorkspaceManageSheetProps) {
       await refresh();
       setEditingWorkspaceId(null);
     } catch (e: any) {
-      alert(e.message ?? "Failed to rename workspace");
+      toast.error(e.message ?? "Failed to rename workspace");
     } finally {
       setRenameBusy(false);
     }
