@@ -19,6 +19,44 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
+import ImageCropDialog from "./image-crop-dialog";
+
+// ── Crop helpers (Instagram only) ─────────────────────────────────────────────
+
+const CROP_PRESETS = [
+  { label: "Original", ratio: null  as number | null },
+  { label: "1:1",      ratio: 1     as number | null },
+  { label: "4:5",      ratio: 4 / 5 as number | null },
+  { label: "16:9",     ratio: 16/ 9 as number | null },
+];
+
+function centerCropRegion(w: number, h: number, ratio: number) {
+  const natural = w / h;
+  if (natural > ratio) {
+    const cw = Math.round(h * ratio);
+    return { x: Math.round((w - cw) / 2), y: 0, w: cw, h };
+  }
+  const ch = Math.round(w / ratio);
+  return { x: 0, y: Math.round((h - ch) / 2), w, h: ch };
+}
+
+async function cropFileToRatio(file: File, ratio: number): Promise<File> {
+  const url = URL.createObjectURL(file);
+  const img  = new window.Image();
+  await new Promise<void>((res) => { img.onload = () => res(); img.src = url; });
+  const region = centerCropRegion(img.naturalWidth, img.naturalHeight, ratio);
+  const canvas = document.createElement("canvas");
+  canvas.width  = region.w;
+  canvas.height = region.h;
+  canvas.getContext("2d")!.drawImage(img, region.x, region.y, region.w, region.h, 0, 0, region.w, region.h);
+  URL.revokeObjectURL(url);
+  return new Promise<File>((res, rej) =>
+    canvas.toBlob((blob) => {
+      if (!blob) { rej(new Error("toBlob failed")); return; }
+      res(new File([blob], file.name, { type: file.type }));
+    }, file.type),
+  );
+}
 
 // ── Platform brand styles ─────────────────────────────────────────────────────
 
@@ -156,9 +194,101 @@ function FacebookPanel({ config, onChange }: { config: FacebookConfig; onChange:
   );
 }
 
-function InstagramPanel({ config, onChange }: { config: InstagramConfig; onChange: (c: InstagramConfig) => void }) {
+function InstagramPanel({
+  config,
+  onChange,
+  files,
+  onReplaceFiles,
+}: {
+  config: InstagramConfig;
+  onChange: (c: InstagramConfig) => void;
+  files?: File[];
+  onReplaceFiles?: (files: File[]) => void;
+}) {
+  const [selectedRatio, setSelectedRatio] = useState<number | null>(null);
+  const [cropTarget, setCropTarget]       = useState<File | null>(null);
+  const [applying, setApplying]           = useState(false);
+
+  const imageFiles = (files ?? []).filter((f) => f.type.startsWith("image/"));
+
+  async function applyToAll() {
+    if (!imageFiles.length || selectedRatio === null || applying) return;
+    setApplying(true);
+    try {
+      const cropped = await Promise.all(
+        (files ?? []).map((f) =>
+          f.type.startsWith("image/") ? cropFileToRatio(f, selectedRatio) : Promise.resolve(f),
+        ),
+      );
+      onReplaceFiles?.(cropped);
+    } finally {
+      setApplying(false);
+    }
+  }
+
   return (
     <div className="space-y-4">
+      {/* Aspect ratio crop — only shown when images are attached */}
+      {imageFiles.length > 0 && (
+        <ConfigRow label="Aspect Ratio">
+          <div className="flex gap-2">
+            {CROP_PRESETS.map(({ label, ratio }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => setSelectedRatio(ratio)}
+                className={cn(
+                  "flex-1 py-1.5 text-xs font-semibold rounded-lg border transition-colors",
+                  selectedRatio === ratio
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {selectedRatio !== null && (
+            <button
+              type="button"
+              onClick={applyToAll}
+              disabled={applying}
+              className="w-full mt-2 py-1.5 text-xs font-semibold rounded-lg border border-primary/40 text-primary hover:bg-primary/5 transition-colors disabled:opacity-50"
+            >
+              {applying
+                ? "Cropping…"
+                : `Apply ${imageFiles.length > 1 ? `to all ${imageFiles.length} images` : "crop"}`}
+            </button>
+          )}
+
+          {/* Per-image crop — thumbnail strip */}
+          {imageFiles.length > 1 && (
+            <div className="flex gap-2 mt-2 overflow-x-auto pb-1">
+              {imageFiles.map((file) => (
+                <button
+                  key={file.name + file.size}
+                  type="button"
+                  onClick={() => setCropTarget(file)}
+                  className="relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border border-border hover:border-primary/50 transition-colors group"
+                  title={`Crop ${file.name} individually`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={file.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-[9px] font-bold text-white">Crop</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </ConfigRow>
+      )}
+
       <ConfigRow label="Alt Text (Accessibility)">
         <Input
           placeholder="Describe your image for screen readers..."
@@ -180,6 +310,17 @@ function InstagramPanel({ config, onChange }: { config: InstagramConfig; onChang
         description="Prevent others from commenting on this post"
         checked={config.disableComments ?? false}
         onChange={(v) => onChange({ ...config, disableComments: v })}
+      />
+
+      <ImageCropDialog
+        file={cropTarget}
+        open={cropTarget !== null}
+        onClose={() => setCropTarget(null)}
+        onCrop={(croppedFile) => {
+          if (!files || !onReplaceFiles) return;
+          onReplaceFiles(files.map((f) => (f === cropTarget ? croppedFile : f)));
+          setCropTarget(null);
+        }}
       />
     </div>
   );
@@ -401,12 +542,16 @@ function PlatformAccordionCard({
   onChange,
   showErrors,
   postType,
+  files,
+  onReplaceFiles,
 }: {
   platform: string;
   config: any;
   onChange: (c: any) => void;
   showErrors?: boolean;
   postType?: PostType;
+  files?: File[];
+  onReplaceFiles?: (files: File[]) => void;
 }) {
   const [open, setOpen] = useState(true);
   const styles = PLATFORM_STYLES[platform] ?? PLATFORM_STYLES["x"];
@@ -423,7 +568,7 @@ function PlatformAccordionCard({
   function renderPanel() {
     switch (platform) {
       case "facebook":  return <FacebookPanel  config={config ?? {}} onChange={onChange} />;
-      case "instagram": return <InstagramPanel config={config ?? {}} onChange={onChange} />;
+      case "instagram": return <InstagramPanel config={config ?? {}} onChange={onChange} files={files} onReplaceFiles={onReplaceFiles} />;
       case "x":         return <XPanel         config={config ?? {}} onChange={onChange} />;
       case "youtube":   return <YouTubePanel   config={config ?? {}} onChange={onChange} showErrors={showErrors} postType={postType} />;
       case "threads":   return <ThreadsPanel   config={config ?? {}} onChange={onChange} />;
@@ -481,9 +626,11 @@ interface Props {
   onChange: (configs: PlatformConfigs) => void;
   showErrors?: boolean;
   postType?: PostType;
+  files?: File[];
+  onReplaceFiles?: (files: File[]) => void;
 }
 
-export default function PlatformConfigsPanel({ selectedAccounts, configs, onChange, showErrors, postType }: Props) {
+export default function PlatformConfigsPanel({ selectedAccounts, configs, onChange, showErrors, postType, files, onReplaceFiles }: Props) {
   const platforms = useMemo(() => {
     const seen = new Set<string>();
     return selectedAccounts
@@ -515,6 +662,8 @@ export default function PlatformConfigsPanel({ selectedAccounts, configs, onChan
             onChange={(c) => update(platform, c)}
             showErrors={showErrors}
             postType={postType}
+            files={platform === "instagram" ? files : undefined}
+            onReplaceFiles={platform === "instagram" ? onReplaceFiles : undefined}
           />
         ))}
       </div>

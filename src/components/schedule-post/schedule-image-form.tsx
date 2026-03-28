@@ -292,6 +292,8 @@ export default function ScheduleImageForm({
         onChange={setPlatformConfigs}
         showErrors={showErrors}
         postType="IMAGE"
+        files={files}
+        onReplaceFiles={setFiles}
       />
 
       {selectedAccounts.length > 0 && <div className="border-t border-border/60" />}
