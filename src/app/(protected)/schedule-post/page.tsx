@@ -384,7 +384,6 @@ export default function ScheduledPostCollectionPage() {
       if (postType !== "TEXT" && media.length === 0) { toast.error("No valid files found"); return; }
 
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description,
         postType,
         media,
@@ -417,7 +416,6 @@ export default function ScheduledPostCollectionPage() {
       }
 
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description,
         postType,
         media,
@@ -493,7 +491,7 @@ export default function ScheduledPostCollectionPage() {
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
 
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="px-4 sm:px-6">
           <div className="flex items-center gap-3 h-16">
             <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">

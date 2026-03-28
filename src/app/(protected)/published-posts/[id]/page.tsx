@@ -293,7 +293,7 @@ export default function PublishedCollectionDetailPage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Sticky Breadcrumb Header */}
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <nav className="flex items-center gap-1.5 text-sm min-w-0">
             <button
@@ -307,7 +307,7 @@ export default function PublishedCollectionDetailPage() {
             </button>
             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
             <span className="font-medium text-foreground truncate">
-              {collection.title}
+              {collection.description}
             </span>
           </nav>
 
@@ -330,7 +330,7 @@ export default function PublishedCollectionDetailPage() {
           <div className="px-6 pt-6 pb-5">
             <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
               <h1 className="text-2xl font-bold text-foreground tracking-tight flex-1 min-w-0">
-                {collection.title}
+                {collection.description}
               </h1>
               <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                 <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border", type.className)}>
@@ -343,11 +343,6 @@ export default function PublishedCollectionDetailPage() {
                 </span>
               </div>
             </div>
-            {collection.description && (
-              <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                {collection.description}
-              </p>
-            )}
             <div className="flex items-center gap-3 flex-wrap">
               <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground bg-muted/40 border border-border/40">
                 <Calendar className="h-3.5 w-3.5" />
@@ -1006,7 +1001,7 @@ function PlatformSection({
               </span>
               <div className={cn(
                 "h-2 w-2 rounded-full flex-shrink-0",
-                ["PUBLISHED", "POSTED"].includes(post.postStatus) ? "bg-emerald-500"
+                post.postStatus === "PUBLISHED" ? "bg-emerald-500"
                   : post.postStatus === "FAILED" ? "bg-red-500"
                   : "bg-blue-400"
               )} />
@@ -1023,7 +1018,7 @@ function PlatformSection({
 function SkeletonDetailPage() {
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />

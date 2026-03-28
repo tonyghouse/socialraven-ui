@@ -11,7 +11,6 @@ export interface PostMediaPayload {
 }
 
 export interface UpdatePostCollectionPayload {
-  title?: string;
   description?: string;
   scheduledTime?: string; // ISO 8601 UTC string
   platformConfigs?: Record<string, any>;

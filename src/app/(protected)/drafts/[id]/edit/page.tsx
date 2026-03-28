@@ -518,7 +518,7 @@ export default function DraftEditPage() {
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
 
       {/* ── Sticky Header ── */}
-      <div className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="px-4 sm:px-6">
           <div className="flex items-center gap-3 h-16">
             <button
@@ -538,7 +538,7 @@ export default function DraftEditPage() {
                 Edit Draft
               </h1>
               <p className="text-xs text-muted-foreground leading-tight truncate">
-                {collection.title || "Untitled Draft"}
+                {collection.description || "Untitled Draft"}
               </p>
             </div>
 
@@ -834,7 +834,7 @@ export default function DraftEditPage() {
 function LoadingSkeleton() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-      <div className="sticky top-0 z-50 border-b border-border bg-background/95 h-16" />
+      <div className="sticky top-0 z-10 border-b border-border bg-background/95 h-16" />
       <div className="px-4 sm:px-6 py-6 space-y-4">
         {[1, 2, 3].map((i) => (
           <div key={i} className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">

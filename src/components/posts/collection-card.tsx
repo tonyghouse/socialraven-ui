@@ -390,7 +390,7 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
         }}
         tabIndex={0}
         role="button"
-        aria-label={`View collection: ${collection.title}`}
+        aria-label={`View collection`}
         className={cn(
           "group relative flex-1 flex flex-col rounded-2xl rounded-tl-none bg-white border border-border/60 overflow-hidden cursor-pointer",
           "shadow-sm hover:shadow-2xl hover:-translate-y-1 active:scale-[0.99]",
@@ -444,16 +444,11 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
           </span>
         </div>
 
-        {/* Title + description */}
+        {/* Description */}
         <div className="px-4 pt-2.5 pb-2">
-          <h3 className="text-[16px] font-semibold text-card-foreground mb-1 line-clamp-2 tracking-tight leading-snug group-hover:text-primary transition-colors duration-200">
-            {collection.title}
-          </h3>
-          {collection.description && (
-            <p className="text-[13px] text-muted-foreground/80 line-clamp-2 leading-relaxed">
-              {collection.description}
-            </p>
-          )}
+          <p className="text-[14px] font-medium text-card-foreground line-clamp-3 leading-snug group-hover:text-primary transition-colors duration-200">
+            {collection.description || <span className="text-muted-foreground/50 italic">No content</span>}
+          </p>
         </div>
 
         {/* Scheduled time pill — prominent */}

@@ -149,7 +149,6 @@ export default function ScheduleImageForm({
       }
 
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description,
         postType: "IMAGE",
         media,
@@ -191,7 +190,6 @@ export default function ScheduleImageForm({
       }
 
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description,
         postType: "IMAGE",
         media,

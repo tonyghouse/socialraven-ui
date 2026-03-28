@@ -16,12 +16,15 @@ import {
   CalendarHeart,
   Settings2,
   CreditCard,
+  Building2,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useRole } from "@/hooks/useRole";
+import { useWorkspace } from "@/context/WorkspaceContext";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -31,6 +34,7 @@ export function MobileBottomBar() {
   const { user } = useUser();
   const { signOut } = useClerk();
   const { canWrite, isOwner } = useRole();
+  const { workspaces, activeWorkspace, switchWorkspace } = useWorkspace();
 
   const drawerItems = [
     { title: "Analytics",        url: "/analytics",         icon: BarChart2 },
@@ -106,6 +110,45 @@ export function MobileBottomBar() {
             );
           })}
         </div>
+
+        {/* Divider */}
+        <div className="mx-4 my-1 border-t border-foreground/[0.07]" />
+
+        {/* Workspace switcher */}
+        {workspaces.length > 0 && (
+          <div className="px-2 pb-1">
+            <p className="px-3.5 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 select-none">
+              Workspace
+            </p>
+            {workspaces.map((w) => (
+              <button
+                key={w.id}
+                onClick={() => {
+                  setDrawerOpen(false);
+                  if (activeWorkspace?.id !== w.id) switchWorkspace(w);
+                }}
+                className={cn(
+                  "flex items-center gap-3.5 px-3.5 py-2.5 w-full rounded-xl",
+                  "text-[14px] font-medium transition-colors duration-150",
+                  activeWorkspace?.id === w.id
+                    ? "bg-accent/[0.09] text-accent"
+                    : "text-foreground/60 hover:bg-black/[0.04] hover:text-foreground/85"
+                )}
+              >
+                <Building2
+                  className={cn(
+                    "h-[18px] w-[18px] shrink-0",
+                    activeWorkspace?.id === w.id ? "text-accent" : "text-foreground/38"
+                  )}
+                />
+                <span className="flex-1 truncate text-left">{w.name}</span>
+                {activeWorkspace?.id === w.id && (
+                  <Check className="h-3.5 w-3.5 shrink-0 text-accent" />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Divider */}
         <div className="mx-4 my-1 border-t border-foreground/[0.07]" />

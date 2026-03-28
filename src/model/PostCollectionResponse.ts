@@ -3,7 +3,6 @@ import { MediaResponse } from "./MediaResponse";
 
 export interface PostCollectionResponse {
   id: number;
-  title: string;
   description: string;
   scheduledTime: string | null;
   postCollectionType: "IMAGE" | "VIDEO" | "TEXT";

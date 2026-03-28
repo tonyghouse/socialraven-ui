@@ -29,7 +29,6 @@ export function PostCard({ post }: { post: PostResponse }) {
       "bg-blue-500/10 text-blue-700 backdrop-blur-xl border-blue-500/20 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30",
     PUBLISHED:
       "bg-green-500/10 text-green-700 backdrop-blur-xl border-green-500/20 dark:bg-green-500/15 dark:text-green-400 dark:border-green-500/30",
-    FAILED: "bg-destructive/10 text-destructive backdrop-blur-xl border-destructive/20",
   };
 
   const localDate = new Date(post.scheduledTime ?? "");
@@ -148,7 +147,7 @@ export function PostCard({ post }: { post: PostResponse }) {
       {/* Content */}
       <div className="relative p-6 pt-5 flex flex-col flex-1">
         <h3 className="text-[17px] font-semibold text-card-foreground mb-2.5 line-clamp-2 group-hover:text-accent transition-colors tracking-tight leading-snug">
-          {post.title}
+          {post.description}
         </h3>
 
         {post.description && (

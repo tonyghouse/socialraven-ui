@@ -80,7 +80,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const switchWorkspace = useCallback((workspace: WorkspaceResponse) => {
     localStorage.setItem("activeWorkspaceId", workspace.id);
     localStorage.setItem("activeWorkspaceRole", workspace.role);
-    setActiveWorkspace(workspace);
+    window.location.reload();
   }, []);
 
   return (

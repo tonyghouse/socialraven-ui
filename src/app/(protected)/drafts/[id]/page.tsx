@@ -135,7 +135,7 @@ export default function DraftDetailPage() {
     />
     <main className="min-h-screen bg-background">
       {/* ── Sticky Header ── */}
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-1.5 text-sm min-w-0">
@@ -148,7 +148,7 @@ export default function DraftDetailPage() {
             </button>
             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
             <span className="font-medium text-foreground truncate">
-              {collection.title || "Untitled Draft"}
+              {collection.description || "Untitled Draft"}
             </span>
           </nav>
 
@@ -187,7 +187,7 @@ export default function DraftDetailPage() {
           <div className="px-6 pt-6 pb-5">
             <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
               <h1 className="text-2xl font-bold text-foreground tracking-tight flex-1 min-w-0">
-                {collection.title || "Untitled Draft"}
+                {collection.description || "Untitled Draft"}
               </h1>
               <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30">
@@ -501,7 +501,7 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
 function LoadingSkeleton() {
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />

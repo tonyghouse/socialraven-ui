@@ -79,7 +79,6 @@ export default function ScheduleTextForm({
     setLoading(true);
     try {
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description: content,
         postType: "TEXT",
         media: [],
@@ -111,7 +110,6 @@ export default function ScheduleTextForm({
     setDraftLoading(true);
     try {
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description: content,
         postType: "TEXT",
         media: [],

@@ -161,7 +161,6 @@ export default function ScheduleVideoForm({
       }
 
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description,
         postType: "VIDEO",
         media,
@@ -204,7 +203,6 @@ export default function ScheduleVideoForm({
       }
 
       await postConnectedAccountsApi(getToken, {
-        title: "",
         description,
         postType: "VIDEO",
         media,

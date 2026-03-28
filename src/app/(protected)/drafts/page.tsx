@@ -123,7 +123,7 @@ export default function DraftsPage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Sticky Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-card/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-10 border-b border-border bg-card/90 backdrop-blur-xl">
         <div className="px-4 sm:px-6">
           <div className="flex items-center justify-between gap-4 h-16">
             <div className="flex items-center gap-3">

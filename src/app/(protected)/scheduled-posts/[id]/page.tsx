@@ -483,7 +483,7 @@ function DeleteModal({
                 Collection
               </p>
               <p className="text-sm font-semibold text-foreground truncate">
-                {collection.title}
+                {collection.description}
               </p>
             </div>
 
@@ -843,7 +843,7 @@ export default function ScheduledCollectionDetailPage() {
       {mode === "view" && (
         <>
           {/* Sticky Breadcrumb Header */}
-          <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+          <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
             <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
               <nav className="flex items-center gap-1.5 text-sm min-w-0">
                 <button
@@ -857,7 +857,7 @@ export default function ScheduledCollectionDetailPage() {
                 </button>
                 <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
                 <span className="font-medium text-foreground truncate">
-                  {collection.title}
+                  {collection.description}
                 </span>
               </nav>
 
@@ -900,7 +900,7 @@ export default function ScheduledCollectionDetailPage() {
               <div className="px-6 pt-6 pb-5">
                 <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
                   <h1 className="text-2xl font-bold text-foreground tracking-tight flex-1 min-w-0">
-                    {collection.title}
+                    {collection.description}
                   </h1>
                   <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
                     <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border", type.className)}>
@@ -1348,7 +1348,7 @@ function EditModePanel({
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur-xl">
         <div className="px-4 sm:px-6">
           <div className="flex items-center gap-3 h-16">
             <button
@@ -1366,7 +1366,7 @@ function EditModePanel({
                 Edit Collection
               </h1>
               <p className="text-xs text-muted-foreground leading-tight truncate">
-                {collection.title}
+                {collection.description}
               </p>
             </div>
             {selectedAccountIds.length > 0 && (
@@ -2197,7 +2197,7 @@ function PlatformSection({
 function SkeletonDetailPage() {
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />

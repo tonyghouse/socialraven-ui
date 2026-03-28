@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useAuth } from "@clerk/nextjs";
 import {
   Building2,
@@ -26,6 +27,8 @@ export function WorkspaceManageSheet({ collapsed }: WorkspaceManageSheetProps) {
   const { workspaces, activeWorkspace, switchWorkspace, refresh } = useWorkspace();
 
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   // Create workspace form
   const [showCreate, setShowCreate] = useState(false);
@@ -104,14 +107,15 @@ export function WorkspaceManageSheet({ collapsed }: WorkspaceManageSheetProps) {
     <>
       {trigger}
 
-      {/* Backdrop + Sheet */}
-      {open && (
+      {/* Backdrop + Sheet — rendered in a portal so it escapes the sidebar's
+           backdrop-blur containing block and sits in the root stacking context */}
+      {open && mounted && createPortal(
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm"
+            className="fixed inset-0 z-[200] bg-black/20 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <div className="fixed left-0 top-0 h-full z-50 w-[340px] bg-white shadow-2xl flex flex-col border-r border-border/60">
+          <div className="fixed left-0 top-0 h-full z-[201] w-[340px] bg-white shadow-2xl flex flex-col border-r border-border/60">
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/60">
               <h2 className="text-sm font-semibold text-foreground">Workspaces</h2>
@@ -236,7 +240,8 @@ export function WorkspaceManageSheet({ collapsed }: WorkspaceManageSheetProps) {
               </>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </>
   );

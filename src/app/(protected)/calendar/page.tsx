@@ -19,7 +19,6 @@ import {
   Loader2,
   AlertCircle,
   CheckCircle2,
-  XCircle,
   Globe,
   Users,
   Filter,
@@ -79,8 +78,7 @@ const STATUS_CONFIG: Record<
   { color: string; bg: string; text: string; border: string; label: string; Icon: React.ElementType }
 > = {
   SCHEDULED: { color: "#3b82f6", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", label: "Scheduled", Icon: Clock },
-  POSTED:    { color: "#22c55e", bg: "bg-green-50", text: "text-green-700", border: "border-green-200", label: "Published", Icon: CheckCircle2 },
-  FAILED:    { color: "#ef4444", bg: "bg-red-50", text: "text-red-700", border: "border-red-200", label: "Failed", Icon: XCircle },
+  PUBLISHED: { color: "#22c55e", bg: "bg-green-50", text: "text-green-700", border: "border-green-200", label: "Published", Icon: CheckCircle2 },
 };
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -210,9 +208,6 @@ function PostTimelineCard({
             {PLATFORM_LABELS[post.platform] ?? post.platform}
           </span>
         </div>
-        {post.title && (
-          <p className="text-[11px] text-muted-foreground truncate mb-1">{post.title}</p>
-        )}
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] font-medium text-muted-foreground">
             {formatTime(post.scheduledTime)}
@@ -882,7 +877,7 @@ export default function CalendarPage() {
           range.startDate,
           range.endDate
         );
-        if (!cancelled) setPosts(data ?? []);
+        if (!cancelled) setPosts((data ?? []).filter((p) => p.postStatus !== "FAILED"));
       } catch (e: unknown) {
         if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load calendar posts");
       } finally {

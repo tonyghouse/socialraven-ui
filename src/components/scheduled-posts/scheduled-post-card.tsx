@@ -17,7 +17,6 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
     SCHEDULED: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900",
     DRAFT: "bg-muted text-muted-foreground border-border",
     PUBLISHED: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900",
-    FAILED: "bg-destructive/10 text-destructive border-destructive/20",
   };
 
   const localDate = new Date(post.scheduledTime ?? "");
@@ -53,7 +52,7 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
-      aria-label={`View details for ${post.title}`}
+      aria-label="View scheduled post"
       className="group rounded-xl bg-card border border-border shadow-sm 
         hover:shadow-lg hover:border-primary/30 hover:-translate-y-1
         focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
@@ -97,9 +96,9 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
 
       {/* Content */}
       <div className="p-5 flex-1 flex flex-col">
-        <h3 className="text-base font-semibold text-card-foreground mb-2 line-clamp-2 
+        <h3 className="text-base font-semibold text-card-foreground mb-2 line-clamp-2
           group-hover:text-primary transition-colors">
-          {post.title}
+          {post.description}
         </h3>
 
         {post.description && (

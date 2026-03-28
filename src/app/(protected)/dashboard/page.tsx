@@ -105,7 +105,6 @@ export default function DashboardPage() {
 
   const [scheduledPosts, setScheduledPosts] = useState<PostResponse[]>([]);
   const [publishedCols,  setPublishedCols]  = useState<PostCollectionResponse[]>([]);
-  const [failedPosts,    setFailedPosts]    = useState<PostResponse[]>([]);
   const [accounts,       setAccounts]       = useState<ConnectedAccount[]>([]);
   const [usageStats,     setUsageStats]     = useState<UsageStats | null>(null);
   const [userPlan,       setUserPlan]       = useState<UserPlan | null>(null);
@@ -116,12 +115,11 @@ export default function DashboardPage() {
     async function load() {
       try {
         setLoading(true);
-        const [upcomingRes, accountsRes, publishedRes, failedRes, usageRes, planRes] =
+        const [upcomingRes, accountsRes, publishedRes, usageRes, planRes] =
           await Promise.allSettled([
             fetchPaginatedPostsApi(getToken, 0, "SCHEDULED"),
             fetchConnectedAccountsApi(getToken, null),
             fetchPostCollectionsApi(getToken, 0, "published"),
-            fetchPaginatedPostsApi(getToken, 0, "FAILED"),
             fetchUsageStatsApi(getToken),
             fetchUserPlanApi(getToken),
           ]);
@@ -129,11 +127,10 @@ export default function DashboardPage() {
         if (upcomingRes.status === "fulfilled")  setScheduledPosts(upcomingRes.value.content);
         if (accountsRes.status === "fulfilled")  setAccounts(accountsRes.value);
         if (publishedRes.status === "fulfilled") setPublishedCols(publishedRes.value.content);
-        if (failedRes.status === "fulfilled")    setFailedPosts(failedRes.value.content);
         if (usageRes.status === "fulfilled")     setUsageStats(usageRes.value);
         if (planRes.status === "fulfilled")      setUserPlan(planRes.value);
 
-        const errors = [upcomingRes, accountsRes, publishedRes, failedRes, usageRes, planRes]
+        const errors = [upcomingRes, accountsRes, publishedRes, usageRes, planRes]
           .filter((r) => r.status === "rejected")
           .map((r) => (r as PromiseRejectedResult).reason);
         if (errors.length > 0) console.error("Dashboard load errors:", errors);
@@ -150,7 +147,6 @@ export default function DashboardPage() {
   const weekFromNow  = new Date(Date.now() + 7 * 86_400_000).toISOString();
   const scheduledToday    = scheduledPosts.filter((p) => p.scheduledTime?.startsWith(today)).length;
   const scheduledThisWeek = scheduledPosts.filter((p) => p.scheduledTime && p.scheduledTime <= weekFromNow).length;
-  const failedCount  = failedPosts.length;
   const firstName    = user?.firstName ?? "";
 
   // platform distribution (scheduled queue)
@@ -194,7 +190,7 @@ export default function DashboardPage() {
     <main className="min-h-screen bg-background">
 
       {/* ── Sticky header ────────────────────────────────────────── */}
-      <div className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-b border-border/60 bg-background/90 backdrop-blur-xl">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div>
             <h1 className="text-[17px] font-semibold text-foreground tracking-tight leading-tight">
@@ -206,16 +202,6 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Failed badge */}
-            {failedCount > 0 && (
-              <Link href="/scheduled-posts">
-                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 border border-red-100 text-red-600 text-xs font-semibold hover:bg-red-100 transition-colors">
-                  <AlertTriangle className="w-3.5 h-3.5" />
-                  {failedCount} failed
-                </div>
-              </Link>
-            )}
-
             {/* Refresh */}
             <button
               onClick={() => setRefreshKey((k) => k + 1)}
@@ -328,7 +314,7 @@ export default function DashboardPage() {
 
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-foreground truncate leading-snug">
-                              {post.title || "Untitled Post"}
+                              {post.description || "No content"}
                             </p>
                             <p className="text-[11px] text-muted-foreground mt-0.5 capitalize">
                               {post.provider}
@@ -456,7 +442,7 @@ export default function DashboardPage() {
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{col.title}</p>
+                            <p className="text-sm font-medium text-foreground truncate">{col.description}</p>
                             <p className="text-[11px] text-muted-foreground mt-0.5">{col.scheduledTime ? formatShort(col.scheduledTime) : ""}</p>
                           </div>
 
@@ -616,26 +602,6 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            {/* Failed posts alert */}
-            {failedCount > 0 && (
-              <Link href="/scheduled-posts">
-                <div className="rounded-2xl bg-red-50 dark:bg-red-900/15 border border-red-100 dark:border-red-800/30 p-4 hover:bg-red-100/60 dark:hover:bg-red-900/25 transition-colors cursor-pointer">
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-red-700 dark:text-red-400">
-                        {failedCount} post{failedCount !== 1 ? "s" : ""} failed to publish
-                      </p>
-                      <p className="text-xs text-red-500/80 mt-0.5">
-                        Review and reschedule to fix publishing issues
-                      </p>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-red-400 flex-shrink-0" />
-                  </div>
-                </div>
-              </Link>
-            )}
-
           </div>
         </div>
       </div>
@@ -793,7 +759,7 @@ function DashboardSkeleton() {
     <main className="min-h-screen bg-background">
 
       {/* Sticky header */}
-      <div className="sticky top-0 z-50 border-b border-border/60 bg-background/90 backdrop-blur-xl">
+      <div className="sticky top-0 z-10 border-b border-border/60 bg-background/90 backdrop-blur-xl">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="space-y-2">
             <Bone className="h-4 w-44" />

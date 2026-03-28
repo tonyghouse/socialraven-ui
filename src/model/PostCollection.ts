@@ -57,7 +57,6 @@ export interface PlatformConfigs {
 // ---------- Main collection type ----------
 
 export interface PostCollection {
-  title: string;
   description: string;
   postType: PostType;
   media: PostMedia[]; // multiple media files as byte arrays homogenous image or video either one

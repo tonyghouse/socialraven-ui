@@ -143,7 +143,7 @@ function YouTubePreview({ post }: { post: PostResponse }) {
         <ProfileAvatar src={src} username={username} fallbackClass="bg-red-600" />
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-[13px] line-clamp-2 leading-snug">
-            {post.title}
+            {post.description}
           </p>
           <p className="text-[11px] text-muted-foreground mt-0.5">
             {username} · Just now
@@ -438,7 +438,7 @@ export default function PostDetailPage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Sticky Top Bar */}
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <nav className="flex items-center gap-1.5 text-sm min-w-0">
             <button
@@ -467,7 +467,7 @@ export default function PostDetailPage() {
 
             <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
             <span className="font-medium text-foreground truncate">
-              {post.title}
+              {post.description}
             </span>
           </nav>
 
@@ -757,7 +757,7 @@ function SkeletonPostPage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-card/80 backdrop-blur-xl border-b border-border/60">
+      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
         <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />

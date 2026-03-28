@@ -36,7 +36,7 @@ export default function ManageAccountsPage() {
   return (
     <div className="w-full min-h-screen">
       {/* Sticky page header */}
-      <div className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-xl shadow-sm">
+      <div className="sticky top-0 z-10 border-b border-border bg-card/80 backdrop-blur-xl shadow-sm">
         <div className="px-4 sm:px-6 h-16 flex items-center">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-xl bg-accent/10 flex items-center justify-center">
