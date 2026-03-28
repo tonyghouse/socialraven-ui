@@ -4,7 +4,7 @@
  * Single source of truth for all per-platform media constraints and validation.
  * Edit this file to update any platform limit — nothing else needs to change.
  *
- * Sources (as of 2025):
+ * Sources (as of 2025–2026):
  *  - Instagram Graph API docs
  *  - Twitter/X Developer Platform docs
  *  - Facebook Graph API docs
@@ -93,9 +93,9 @@ export const PLATFORM_IMAGE_CONSTRAINTS: Record<string, PlatformMediaConstraints
   },
   facebook: {
     maxFiles: 10,
-    maxFileSizeMB: 4,
-    supportedFormats: ["image/jpeg", "image/png", "image/gif"],
-    summary: "Max 10 · 4 MB each · JPG, PNG, or GIF",
+    maxFileSizeMB: 30,
+    supportedFormats: ["image/jpeg", "image/png", "image/gif", "image/bmp", "image/tiff"],
+    summary: "Max 10 · 30 MB each · JPG, PNG, GIF, BMP, or TIFF",
   },
   x: {
     maxFiles: 4,
@@ -104,18 +104,18 @@ export const PLATFORM_IMAGE_CONSTRAINTS: Record<string, PlatformMediaConstraints
     summary: "Max 4 per tweet · 5 MB each · JPG, PNG, GIF, or WebP",
   },
   linkedin: {
-    maxFiles: 9,
+    maxFiles: 20,
     maxFileSizeMB: 5,
     supportedFormats: ["image/jpeg", "image/png", "image/gif"],
-    summary: "Max 9 · 5 MB each · JPG, PNG, or GIF",
+    summary: "Max 20 · 5 MB each · JPG, PNG, or GIF",
   },
   threads: {
-    maxFiles: 10,
+    maxFiles: 20,
     maxFileSizeMB: 8,
     supportedFormats: ["image/jpeg", "image/png"],
-    minAspectRatio: 0.8,
-    maxAspectRatio: 1.91,
-    summary: "Max 10 · 8 MB each · JPG/PNG · Aspect ratio 4:5 to 1.91:1",
+    // No minimum aspect ratio enforced by Threads API (unlike Instagram)
+    maxAspectRatio: 10,
+    summary: "Max 20 · 8 MB each · JPG/PNG · Max aspect ratio 10:1 (portrait and landscape both accepted)",
   },
   tiktok: {
     maxFiles: 35,
@@ -160,18 +160,18 @@ export const PLATFORM_VIDEO_CONSTRAINTS: Record<string, PlatformMediaConstraints
   },
   linkedin: {
     maxFiles: 1,
-    maxFileSizeMB: 200,
+    maxFileSizeMB: 500,
     supportedFormats: ["video/mp4"],
-    maxDurationSec: 600,   // 10 minutes
+    maxDurationSec: 1800,  // 30 minutes
     minDurationSec: 3,
-    summary: "1 video · Max 200 MB · MP4 only · 3 seconds to 10 minutes",
+    summary: "1 video · Max 500 MB · MP4 only · 3 seconds to 30 minutes",
   },
   threads: {
     maxFiles: 1,
-    maxFileSizeMB: 500,
+    maxFileSizeMB: 1024,   // 1 GB
     supportedFormats: ["video/mp4", "video/quicktime"],
     maxDurationSec: 300,   // 5 minutes
-    summary: "1 video · Max 500 MB · MP4 or MOV · Up to 5 minutes",
+    summary: "1 video · Max 1 GB · MP4 or MOV · Up to 5 minutes",
   },
   tiktok: {
     maxFiles: 1,
