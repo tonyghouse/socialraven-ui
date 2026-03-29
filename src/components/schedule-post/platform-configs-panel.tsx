@@ -23,11 +23,11 @@ import ImageCropDialog from "./image-crop-dialog";
 
 // ── Crop helpers (Instagram only) ─────────────────────────────────────────────
 
-const CROP_PRESETS = [
-  { label: "Original", ratio: null  as number | null },
-  { label: "1:1",      ratio: 1     as number | null },
-  { label: "4:5",      ratio: 4 / 5 as number | null },
-  { label: "16:9",     ratio: 16/ 9 as number | null },
+const CROP_PRESETS: { label: string; ratio: number | null; pw: number; ph: number }[] = [
+  { label: "Original", ratio: null,   pw: 18, ph: 13 },
+  { label: "1:1",      ratio: 1,      pw: 14, ph: 14 },
+  { label: "4:5",      ratio: 4 / 5,  pw: 11, ph: 14 },
+  { label: "16:9",     ratio: 16 / 9, pw: 25, ph: 14 },
 ];
 
 function centerCropRegion(w: number, h: number, ratio: number) {
@@ -205,19 +205,23 @@ function InstagramPanel({
   files?: File[];
   onReplaceFiles?: (files: File[]) => void;
 }) {
-  const [selectedRatio, setSelectedRatio] = useState<number | null>(null);
+  // "Original" (null) is the default — no cropping applied
+  const [selectedRatio, setSelectedRatio] = useState<number | null | "original">("original");
   const [cropTarget, setCropTarget]       = useState<File | null>(null);
   const [applying, setApplying]           = useState(false);
 
   const imageFiles = (files ?? []).filter((f) => f.type.startsWith("image/"));
 
+  // Actual crop ratio: null when "Original" is selected
+  const cropRatio = selectedRatio === "original" ? null : selectedRatio;
+
   async function applyToAll() {
-    if (!imageFiles.length || selectedRatio === null || applying) return;
+    if (!imageFiles.length || cropRatio === null || applying) return;
     setApplying(true);
     try {
       const cropped = await Promise.all(
         (files ?? []).map((f) =>
-          f.type.startsWith("image/") ? cropFileToRatio(f, selectedRatio) : Promise.resolve(f),
+          f.type.startsWith("image/") ? cropFileToRatio(f, cropRatio!) : Promise.resolve(f),
         ),
       );
       onReplaceFiles?.(cropped);
@@ -232,24 +236,35 @@ function InstagramPanel({
       {imageFiles.length > 0 && (
         <ConfigRow label="Aspect Ratio">
           <div className="flex gap-2">
-            {CROP_PRESETS.map(({ label, ratio }) => (
-              <button
-                key={label}
-                type="button"
-                onClick={() => setSelectedRatio(ratio)}
-                className={cn(
-                  "flex-1 py-1.5 text-xs font-semibold rounded-lg border transition-colors",
-                  selectedRatio === ratio
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
-                )}
-              >
-                {label}
-              </button>
-            ))}
+            {CROP_PRESETS.map(({ label, ratio, pw, ph }) => {
+              const isSelected = selectedRatio === (ratio === null ? "original" : ratio);
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => setSelectedRatio(ratio === null ? "original" : ratio)}
+                  className={cn(
+                    "flex-1 flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-lg border transition-colors",
+                    isSelected
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                  )}
+                >
+                  {/* Visual ratio preview */}
+                  <div
+                    style={{ width: pw, height: ph }}
+                    className={cn(
+                      "rounded-sm border-2 flex-shrink-0",
+                      isSelected ? "border-primary-foreground/80" : "border-current"
+                    )}
+                  />
+                  <span className="text-[10px] font-semibold leading-none">{label}</span>
+                </button>
+              );
+            })}
           </div>
 
-          {selectedRatio !== null && (
+          {cropRatio !== null && (
             <button
               type="button"
               onClick={applyToAll}

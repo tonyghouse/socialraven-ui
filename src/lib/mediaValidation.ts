@@ -87,9 +87,8 @@ export const PLATFORM_IMAGE_CONSTRAINTS: Record<string, PlatformMediaConstraints
     supportedFormats: ["image/jpeg", "image/png"],
     minWidthPx: 320,
     maxWidthPx: 1440,
-    minAspectRatio: 0.8,   // 4:5  — most portrait allowed
-    maxAspectRatio: 1.91,  // 1.91:1 — most landscape allowed
-    summary: "Max 10 · 8 MB each · JPG/PNG · Aspect ratio 4:5 to 1.91:1 · Min 320 px wide",
+    // Aspect ratio is handled by the processor (cropping applied before upload)
+    summary: "Max 10 · 8 MB each · JPG/PNG · Min 320 px wide",
   },
   facebook: {
     maxFiles: 10,
