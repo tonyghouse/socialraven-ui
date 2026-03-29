@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
-import { UserX, Mail, LayoutDashboard } from "lucide-react";
+import { UserX, Mail, ArchiveRestore } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NoWorkspacePage() {
@@ -29,20 +29,20 @@ export default function NoWorkspacePage() {
         </h1>
         <p className="text-sm text-muted-foreground mb-8 max-w-xs mx-auto">
           You&apos;ve been removed from all workspaces. Ask your team admin to
-          re-invite you, or start your own workspace.
+          re-invite you and check your email for an invitation.
         </p>
 
         <div className="space-y-3">
           <Button
+            variant="outline"
             className="w-full"
-            onClick={() => router.push("/onboarding")}
+            onClick={() => router.push("/workspace/settings")}
           >
-            <LayoutDashboard className="h-4 w-4 mr-2" />
-            Start your own workspace
+            <ArchiveRestore className="h-4 w-4 mr-2" />
+            Manage deleted workspaces
           </Button>
 
           <Button
-            variant="outline"
             className="w-full"
             onClick={() => {
               // Clear any stale workspace state so the invite flow works cleanly

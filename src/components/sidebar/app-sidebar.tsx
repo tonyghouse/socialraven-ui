@@ -1,20 +1,21 @@
 "use client";
 
 import {
-  LayoutDashboard,
-  CalendarCheck2,
-  Cable,
-  ChevronLeft,
-  Send,
-  CalendarDays,
-  CalendarClock,
-  CalendarHeart,
-  BarChart2,
-  Settings2,
+  Buildings,
+  Calendar,
+  CalendarCheck,
+  CaretLeft,
+  ChartBar,
+  ClockCounterClockwise,
   CreditCard,
-} from "lucide-react";
+  House,
+  NotePencil,
+  PaperPlaneTilt,
+  PlugsConnected,
+} from "@phosphor-icons/react";
+import type { Icon } from "@phosphor-icons/react";
 
-import Link from "next/link";
+import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { UserAvatar } from "./UserAvatar";
@@ -42,30 +43,30 @@ export function AppSidebar() {
     {
       label: null,
       items: [
-        { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+        { title: "Dashboard", url: "/dashboard", icon: House },
       ],
     },
     {
       label: "Content",
       items: [
-        ...(canWrite ? [{ title: "Schedule Post", url: "/schedule-post", icon: Send }] : []),
-        { title: "Calendar", url: "/calendar", icon: CalendarDays },
-        { title: "Scheduled Posts", url: "/scheduled-posts", icon: CalendarClock },
-        { title: "Drafts", url: "/drafts", icon: CalendarHeart },
-        { title: "Published Posts", url: "/published-posts", icon: CalendarCheck2 },
+        ...(canWrite ? [{ title: "Schedule Post", url: "/schedule-post", icon: PaperPlaneTilt }] : []),
+        { title: "Calendar", url: "/calendar", icon: Calendar },
+        { title: "Scheduled Posts", url: "/scheduled-posts", icon: ClockCounterClockwise },
+        { title: "Drafts", url: "/drafts", icon: NotePencil },
+        { title: "Published Posts", url: "/published-posts", icon: CalendarCheck },
       ],
     },
     {
       label: "Insights",
       items: [
-        { title: "Analytics", url: "/analytics", icon: BarChart2 },
+        { title: "Analytics", url: "/analytics", icon: ChartBar },
       ],
     },
     {
       label: "Accounts",
       items: [
-        { title: "Connect Accounts", url: "/connect-accounts", icon: Cable },
-        { title: "Workspace Settings", url: "/workspace/settings", icon: Settings2 },
+        { title: "Connect Accounts", url: "/connect-accounts", icon: PlugsConnected },
+        { title: "Workspace Settings", url: "/workspace/settings", icon: Buildings },
         ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
       ],
     },
@@ -92,7 +93,7 @@ export function AppSidebar() {
             : "flex-row justify-between px-4 h-16"
         )}
       >
-        <Link
+        <NextLink
           href="/dashboard"
           className="flex items-center gap-2.5 min-w-0"
         >
@@ -106,14 +107,14 @@ export function AppSidebar() {
               SocialRaven
             </span>
           )}
-        </Link>
+        </NextLink>
 
         <button
           onClick={() => setIsCollapsed((v) => !v)}
           className="p-1.5 rounded-lg text-foreground/30 hover:text-foreground/60 hover:bg-black/[0.05] transition-colors shrink-0"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <ChevronLeft
+          <CaretLeft
             className={cn(
               "h-4 w-4 transition-transform duration-300",
               isCollapsed && "rotate-180"
@@ -158,7 +159,7 @@ export function AppSidebar() {
                   const isActive =
                     pathname === url || pathname.startsWith(url + "/");
                   const linkEl = (
-                    <Link
+                    <NextLink
                       key={url}
                       href={url}
                       className={cn(
@@ -190,7 +191,7 @@ export function AppSidebar() {
                       {!isCollapsed && (
                         <span className="truncate">{title}</span>
                       )}
-                    </Link>
+                    </NextLink>
                   );
 
                   if (!isCollapsed) return <div key={url}>{linkEl}</div>;

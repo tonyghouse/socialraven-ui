@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { WorkspaceResponse } from "@/model/Workspace";
+import { getOnboardingStatusApi } from "@/service/onboarding";
 import { AccountDeactivatedError, getMyWorkspacesApi } from "@/service/workspace";
 
 interface WorkspaceContextValue {
@@ -17,6 +18,8 @@ interface WorkspaceContextValue {
   activeWorkspace: WorkspaceResponse | null;
   isLoading: boolean;
   isDeactivated: boolean;
+  hasCompletedOnboarding: boolean;
+  canCreateWorkspaces: boolean;
   switchWorkspace: (workspace: WorkspaceResponse) => void;
   refresh: () => Promise<void>;
 }
@@ -26,6 +29,8 @@ const WorkspaceCtx = createContext<WorkspaceContextValue>({
   activeWorkspace: null,
   isLoading: true,
   isDeactivated: false,
+  hasCompletedOnboarding: false,
+  canCreateWorkspaces: false,
   switchWorkspace: () => {},
   refresh: async () => {},
 });
@@ -37,12 +42,44 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
     useState<WorkspaceResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDeactivated, setIsDeactivated] = useState(false);
+  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [canCreateWorkspaces, setCanCreateWorkspaces] = useState(false);
   const initialized = useRef(false);
 
   const load = useCallback(async () => {
+    setIsLoading(true);
+    setIsDeactivated(false);
+
     try {
-      const list = await getMyWorkspacesApi(getToken);
+      const [workspacesResult, onboardingResult] = await Promise.allSettled([
+        getMyWorkspacesApi(getToken),
+        getOnboardingStatusApi(getToken),
+      ]);
+
+      if (
+        workspacesResult.status === "rejected" &&
+        workspacesResult.reason instanceof AccountDeactivatedError
+      ) {
+        setIsDeactivated(true);
+        setWorkspaces([]);
+        setActiveWorkspace(null);
+        return;
+      }
+
+      if (workspacesResult.status === "rejected") {
+        throw workspacesResult.reason;
+      }
+
+      const list = workspacesResult.value;
       setWorkspaces(list);
+
+      if (onboardingResult.status === "fulfilled") {
+        setHasCompletedOnboarding(onboardingResult.value.completed);
+        setCanCreateWorkspaces(onboardingResult.value.canCreateWorkspaces);
+      } else {
+        setHasCompletedOnboarding(list.length > 0);
+        setCanCreateWorkspaces(false);
+      }
 
       const storedId =
         typeof window !== "undefined"
@@ -58,6 +95,9 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
           "activeWorkspaceRole",
           active.role
         );
+      } else if (typeof window !== "undefined") {
+        localStorage.removeItem("activeWorkspaceId");
+        localStorage.removeItem("activeWorkspaceRole");
       }
 
       setActiveWorkspace(active);
@@ -90,6 +130,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
         activeWorkspace,
         isLoading,
         isDeactivated,
+        hasCompletedOnboarding,
+        canCreateWorkspaces,
         switchWorkspace,
         refresh: load,
       }}

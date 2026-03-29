@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import { Building2, Plus, Check } from "lucide-react";
@@ -15,13 +15,45 @@ import { cn } from "@/lib/utils";
 export default function WorkspaceSelectPage() {
   const router = useRouter();
   const { getToken } = useAuth();
-  const { workspaces, switchWorkspace, refresh } = useWorkspace();
+  const {
+    workspaces,
+    refresh,
+    isLoading,
+    canCreateWorkspaces,
+  } = useWorkspace();
 
   const [selected, setSelected] = useState<WorkspaceResponse | null>(null);
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  function activateWorkspace(workspace: WorkspaceResponse) {
+    localStorage.setItem("activeWorkspaceId", workspace.id);
+    localStorage.setItem("activeWorkspaceRole", workspace.role);
+  }
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (!canCreateWorkspaces) {
+      if (workspaces.length === 0) {
+        router.replace("/no-workspace");
+      } else {
+        router.replace("/dashboard");
+      }
+      return;
+    }
+
+    if (workspaces.length === 1) {
+      router.replace("/dashboard");
+      return;
+    }
+
+    if (workspaces.length === 0) {
+      router.replace("/no-workspace");
+    }
+  }, [isLoading, workspaces, canCreateWorkspaces, router]);
 
   function handleSelect(w: WorkspaceResponse) {
     setSelected(w);
@@ -30,24 +62,34 @@ export default function WorkspaceSelectPage() {
 
   async function handleEnter() {
     if (!selected) return;
-    switchWorkspace(selected);
+    activateWorkspace(selected);
     router.replace("/dashboard");
   }
 
   async function handleCreate() {
+    if (!canCreateWorkspaces) return;
     if (!newName.trim()) return;
     setBusy(true);
     setError(null);
     try {
       const workspace = await createWorkspaceApi(getToken, { name: newName.trim() });
       await refresh();
-      switchWorkspace(workspace);
+      activateWorkspace(workspace);
       router.replace("/dashboard");
     } catch (e: any) {
       setError(e.message ?? "Failed to create workspace");
     } finally {
       setBusy(false);
     }
+  }
+
+  if (
+    isLoading ||
+    !canCreateWorkspaces ||
+    workspaces.length === 1 ||
+    workspaces.length === 0
+  ) {
+    return null;
   }
 
   return (
@@ -96,30 +138,31 @@ export default function WorkspaceSelectPage() {
             </button>
           ))}
 
-          {/* Create new workspace option */}
-          <button
-            onClick={() => {
-              setCreating(true);
-              setSelected(null);
-            }}
-            className={cn(
-              "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
-              creating
-                ? "border-accent bg-accent/5 shadow-sm"
-                : "border-dashed border-border/60 hover:border-accent/40 hover:bg-muted/40"
-            )}
-          >
-            <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
-              <Plus className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <p className="text-sm font-medium text-muted-foreground">
-              Create new workspace
-            </p>
-          </button>
+          {canCreateWorkspaces && (
+            <button
+              onClick={() => {
+                setCreating(true);
+                setSelected(null);
+              }}
+              className={cn(
+                "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                creating
+                  ? "border-accent bg-accent/5 shadow-sm"
+                  : "border-dashed border-border/60 hover:border-accent/40 hover:bg-muted/40"
+              )}
+            >
+              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                <Plus className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">
+                Create new workspace
+              </p>
+            </button>
+          )}
         </div>
 
         {/* Create form */}
-        {creating && (
+        {creating && canCreateWorkspaces && (
           <div className="rounded-xl border border-accent/20 bg-accent/5 p-4 mb-4 space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="ws-name" className="text-sm">

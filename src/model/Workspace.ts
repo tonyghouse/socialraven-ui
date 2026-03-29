@@ -9,6 +9,7 @@ export interface WorkspaceResponse {
   role: WorkspaceRole;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 export interface CreateWorkspaceRequest {

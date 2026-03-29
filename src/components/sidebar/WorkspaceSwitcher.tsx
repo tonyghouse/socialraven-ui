@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, Check, ChevronDown } from "lucide-react";
+import { ArrowLeftRight, Check, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useWorkspace } from "@/context/WorkspaceContext";
@@ -18,10 +18,15 @@ interface WorkspaceSwitcherProps {
 }
 
 export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
-  const { workspaces, activeWorkspace, switchWorkspace } = useWorkspace();
+  const { workspaces, activeWorkspace, switchWorkspace, refresh } = useWorkspace();
   const { isInfluencer } = usePlan();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  function openDropdown() {
+    if (!open) refresh(); // fetch fresh list whenever dropdown is opened
+    setOpen((v) => !v);
+  }
 
   // Close on outside click — must be called unconditionally (rules of hooks)
   useEffect(() => {
@@ -42,7 +47,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10">
-                <Building2 className="h-4 w-4 text-accent" />
+                <ArrowLeftRight className="h-4 w-4 text-accent" />
               </div>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={8}>
@@ -55,7 +60,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
     return (
       <div className="flex items-center gap-2 w-full rounded-xl px-2 py-2">
         <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
-          <Building2 className="h-3.5 w-3.5 text-accent" />
+          <ArrowLeftRight className="h-3.5 w-3.5 text-accent" />
         </div>
         <div className="flex flex-col min-w-0">
           <span className="text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 leading-none mb-0.5">
@@ -77,7 +82,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10">
-                <Building2 className="h-4 w-4 text-accent" />
+                <ArrowLeftRight className="h-4 w-4 text-accent" />
               </div>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={8}>
@@ -90,7 +95,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
     return (
       <div className="flex items-center gap-2 w-full rounded-xl px-2 py-2">
         <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
-          <Building2 className="h-3.5 w-3.5 text-accent" />
+          <ArrowLeftRight className="h-3.5 w-3.5 text-accent" />
         </div>
         <div className="flex flex-col min-w-0">
           <span className="text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 leading-none mb-0.5">
@@ -113,11 +118,11 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
     return (
       <div ref={ref} className="relative">
         <button
-          onClick={() => setOpen((v) => !v)}
+          onClick={openDropdown}
           title={activeWorkspace?.name ?? "Switch workspace"}
           className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10 hover:bg-accent/20 transition-colors"
         >
-          <Building2 className="h-4 w-4 text-accent" />
+          <ArrowLeftRight className="h-4 w-4 text-accent" />
         </button>
 
         {open && (
@@ -130,7 +135,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
                 onClick={() => handleSelect(w)}
                 className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors"
               >
-                <Building2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                <ArrowLeftRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
                 <span className="flex-1 truncate text-left">{w.name}</span>
                 {activeWorkspace?.id === w.id && (
                   <Check className="h-3.5 w-3.5 text-accent shrink-0" />
@@ -146,7 +151,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen((v) => !v)}
+        onClick={openDropdown}
         className={cn(
           "flex items-center gap-2 w-full rounded-xl px-2 py-2",
           "text-sm font-medium text-foreground/70 hover:bg-black/[0.04]",
@@ -154,7 +159,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
         )}
       >
         <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
-          <Building2 className="h-3.5 w-3.5 text-accent" />
+          <ArrowLeftRight className="h-3.5 w-3.5 text-accent" />
         </div>
         <span className="flex-1 truncate text-left text-[13px]">
           {activeWorkspace?.name ?? "Select workspace"}
@@ -175,7 +180,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
               onClick={() => handleSelect(w)}
               className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors"
             >
-              <Building2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <ArrowLeftRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
               <span className="flex-1 truncate text-left">{w.name}</span>
               {activeWorkspace?.id === w.id && (
                 <Check className="h-3.5 w-3.5 text-accent shrink-0" />

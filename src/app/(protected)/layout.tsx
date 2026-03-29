@@ -10,14 +10,21 @@ import { WorkspaceProvider, useWorkspace } from "@/context/WorkspaceContext";
 
 /**
  * Hard gate: wait for workspaces to load, then:
- *  - 0 workspaces  → /onboarding
+ *  - 0 workspaces  → /onboarding for first-time users, /no-workspace for removed users
  *  - 1 workspace   → auto-select + enter app
  *  - 2+ workspaces → /workspace-select (unless one is already active in localStorage)
  */
 function WorkspaceGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { workspaces, activeWorkspace, isLoading, isDeactivated } = useWorkspace();
+  const {
+    workspaces,
+    activeWorkspace,
+    isLoading,
+    isDeactivated,
+    hasCompletedOnboarding,
+    canCreateWorkspaces,
+  } = useWorkspace();
   const [gateOpen, setGateOpen] = useState(false);
   const checked = useRef(false);
 
@@ -26,8 +33,40 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
   const isNoWorkspacePage = pathname === "/no-workspace";
 
   useEffect(() => {
-    if (isWorkspaceSelectPage || isNoWorkspacePage) {
+    if (isWorkspaceSelectPage) {
+      if (isLoading) return;
+
+      if (!canCreateWorkspaces) {
+        if (workspaces.length === 0) {
+          router.replace("/no-workspace");
+        } else {
+          router.replace("/dashboard");
+        }
+        return;
+      }
+
       setGateOpen(true);
+      return;
+    }
+
+    if (isNoWorkspacePage) {
+      if (isLoading) return;
+
+      if (isDeactivated) {
+        setGateOpen(true);
+        return;
+      }
+
+      if (workspaces.length === 0) {
+        setGateOpen(true);
+        return;
+      }
+
+      if (workspaces.length === 1) {
+        router.replace("/dashboard");
+      } else {
+        router.replace(canCreateWorkspaces ? "/workspace-select" : "/dashboard");
+      }
       return;
     }
 
@@ -48,6 +87,8 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
           : null;
       if (pendingToken) {
         router.replace(`/invite?token=${pendingToken}`);
+      } else if (hasCompletedOnboarding) {
+        router.replace("/no-workspace");
       } else {
         router.replace("/onboarding");
       }
@@ -56,6 +97,11 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
 
     if (workspaces.length === 1) {
       // Single workspace — auto-selected by WorkspaceProvider, enter app
+      setGateOpen(true);
+      return;
+    }
+
+    if (!canCreateWorkspaces) {
       setGateOpen(true);
       return;
     }
@@ -75,7 +121,17 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
     } else {
       router.replace("/workspace-select");
     }
-  }, [isLoading, workspaces, activeWorkspace, router, isWorkspaceSelectPage]);
+  }, [
+    isLoading,
+    workspaces,
+    activeWorkspace,
+    router,
+    isWorkspaceSelectPage,
+    isNoWorkspacePage,
+    isDeactivated,
+    hasCompletedOnboarding,
+    canCreateWorkspaces,
+  ]);
 
   if (!gateOpen) {
     // Minimal blank state while checking — avoids flash of protected content

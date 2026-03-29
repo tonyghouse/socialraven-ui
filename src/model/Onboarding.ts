@@ -4,6 +4,7 @@ export interface OnboardingStatus {
   completed: boolean;
   userType: UserType | null;
   workspaceId: string | null;
+  canCreateWorkspaces: boolean;
 }
 
 export interface CompleteOnboardingRequest {

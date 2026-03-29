@@ -68,3 +68,51 @@ export async function updateWorkspaceApi(
   }
   return res.json();
 }
+
+export async function deleteWorkspaceApi(
+  getToken: GetToken,
+  workspaceId: string
+): Promise<void> {
+  const headers = await apiHeaders(getToken, { "X-Workspace-Id": workspaceId });
+  const res = await fetch(`${BACKEND}/workspaces/${workspaceId}`, {
+    method: "DELETE",
+    headers,
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`deleteWorkspace failed: ${res.status} - ${body}`);
+  }
+}
+
+export async function getDeletedWorkspacesApi(
+  getToken: GetToken
+): Promise<WorkspaceResponse[]> {
+  const token = await getToken();
+  const res = await fetch(`${BACKEND}/workspaces/deleted`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+    },
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`getDeletedWorkspaces failed: ${res.status} - ${body}`);
+  }
+  return res.json();
+}
+
+export async function restoreWorkspaceApi(
+  getToken: GetToken,
+  workspaceId: string
+): Promise<WorkspaceResponse> {
+  const headers = await apiHeaders(getToken);
+  const res = await fetch(`${BACKEND}/workspaces/${workspaceId}/restore`, {
+    method: "POST",
+    headers,
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`restoreWorkspace failed: ${res.status} - ${body}`);
+  }
+  return res.json();
+}
