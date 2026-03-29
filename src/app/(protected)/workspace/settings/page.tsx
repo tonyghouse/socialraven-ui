@@ -505,7 +505,7 @@ export default function WorkspaceSettingsPage() {
                     <div className="min-w-0">
                       <p className="truncate text-[15px] font-medium text-slate-900">{workspace.name}</p>
                       <p className="mt-1 text-xs text-slate-500">
-                        Deleted {formatDisplayDate(workspace.deletedAt)}
+                        Deleted {formatDisplayDate(workspace.deletedAt ?? undefined)}
                       </p>
                     </div>
                     <Button
@@ -1140,7 +1140,7 @@ export default function WorkspaceSettingsPage() {
                           <div className="min-w-0">
                             <p className="truncate text-[15px] font-medium text-slate-900">{workspace.name}</p>
                             <p className="mt-1 text-xs text-slate-500">
-                              Deleted {formatDisplayDate(workspace.deletedAt)}
+                              Deleted {formatDisplayDate(workspace.deletedAt ?? undefined)}
                             </p>
                             <p className="mt-1 text-[11px] capitalize text-slate-400">
                               Your access: {workspace.role.toLowerCase()}
