@@ -14,6 +14,7 @@ import {
 import { useRole } from "@/hooks/useRole";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 
 export default function ManageAccountsPage() {
   const { canWrite } = useRole();
@@ -42,23 +43,12 @@ export default function ManageAccountsPage() {
 
   return (
     <div className="min-h-screen w-full bg-[hsl(var(--background))]">
-      <header className="sticky top-0 z-20 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background)/0.96)] backdrop-blur-xl">
-        <div className="flex h-16 w-full items-center justify-between gap-4 px-4 sm:px-6">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))] shadow-sm">
-              <Link2 size={18} />
-            </div>
-            <div className="min-w-0">
-              <h1 className="truncate text-[17px] font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">
-                Connect Accounts
-              </h1>
-              <p className="truncate text-xs text-[hsl(var(--foreground-muted))] sm:text-sm">
-                Manage channel access for this workspace.
-              </p>
-            </div>
-          </div>
-
-          {canWrite && (
+      <ProtectedPageHeader
+        title="Connect Accounts"
+        description="Manage channel access for this workspace."
+        icon={<Link2 size={16} />}
+        actions={
+          canWrite ? (
             <Button
               size="sm"
               className="hidden rounded-lg px-3.5 sm:inline-flex"
@@ -71,9 +61,9 @@ export default function ManageAccountsPage() {
               <PlugZap size={15} />
               Add account
             </Button>
-          )}
-        </div>
-      </header>
+          ) : undefined
+        }
+      />
 
       <main className="px-4 py-6 sm:px-6 sm:py-8">
         <section className="space-y-6">

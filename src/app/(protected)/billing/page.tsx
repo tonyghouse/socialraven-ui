@@ -25,8 +25,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import {
   PLANS,
   fetchUserPlanApi,
@@ -76,14 +76,29 @@ function trialDaysLeft(trialEndsAt: string): number {
 
 function PlanStatusBadge({ status }: { status: UserPlan["status"] }) {
   const map: Record<UserPlan["status"], { label: string; cls: string }> = {
-    ACTIVE:    { label: "Active",    cls: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400" },
-    TRIALING:  { label: "Trial",     cls: "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400" },
-    PAST_DUE:  { label: "Past Due",  cls: "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400" },
-    CANCELLED: { label: "Cancelled", cls: "bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-400" },
+    ACTIVE: {
+      label: "Active",
+      cls: "border-emerald-200/70 bg-emerald-50 text-emerald-700 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-300",
+    },
+    TRIALING: {
+      label: "Trial",
+      cls: "border-sky-200/70 bg-sky-50 text-sky-700 dark:border-sky-500/25 dark:bg-sky-500/10 dark:text-sky-300",
+    },
+    PAST_DUE: {
+      label: "Past Due",
+      cls: "border-amber-200/70 bg-amber-50 text-amber-700 dark:border-amber-500/25 dark:bg-amber-500/10 dark:text-amber-300",
+    },
+    CANCELLED: {
+      label: "Cancelled",
+      cls: "border-rose-200/70 bg-rose-50 text-rose-700 dark:border-rose-500/25 dark:bg-rose-500/10 dark:text-rose-300",
+    },
   };
   const v = map[status] ?? map.ACTIVE;
   return (
-    <Badge variant="secondary" className={cn("text-sm font-medium", v.cls)}>
+    <Badge
+      variant="secondary"
+      className={cn("border px-2.5 py-0.5 text-xs font-semibold tracking-normal", v.cls)}
+    >
       {v.label}
     </Badge>
   );
@@ -91,14 +106,18 @@ function PlanStatusBadge({ status }: { status: UserPlan["status"] }) {
 
 function InvoiceStatusBadge({ status }: { status: Invoice["status"] }) {
   const map: Record<Invoice["status"], string> = {
-    paid:          "bg-emerald-100 text-emerald-700",
-    open:          "bg-amber-100 text-amber-700",
-    draft:         "bg-gray-100 text-gray-500",
-    void:          "bg-gray-100 text-gray-400",
-    uncollectible: "bg-red-100 text-red-700",
+    paid: "border-emerald-200/70 bg-emerald-50 text-emerald-700 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-300",
+    open: "border-amber-200/70 bg-amber-50 text-amber-700 dark:border-amber-500/25 dark:bg-amber-500/10 dark:text-amber-300",
+    draft: "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))] dark:bg-[hsl(var(--surface-sunken))]",
+    void: "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-subtle))] dark:bg-[hsl(var(--surface-sunken))]",
+    uncollectible:
+      "border-rose-200/70 bg-rose-50 text-rose-700 dark:border-rose-500/25 dark:bg-rose-500/10 dark:text-rose-300",
   };
   return (
-    <Badge variant="secondary" className={cn("text-sm capitalize", map[status])}>
+    <Badge
+      variant="secondary"
+      className={cn("border text-xs font-semibold capitalize", map[status])}
+    >
       {status}
     </Badge>
   );
@@ -116,43 +135,52 @@ function UsageBar({
   icon: React.ElementType;
 }) {
   const unlimited = limit === "Unlimited";
-  const pct       = unlimited ? 100 : Math.min(100, Math.round((used / (limit as number)) * 100));
+  const pct = unlimited ? 100 : Math.min(100, Math.round((used / (limit as number)) * 100));
   const nearLimit = !unlimited && pct >= 80;
   const atLimit   = !unlimited && pct >= 100;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2.5">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-          <Icon className="w-3.5 h-3.5" />
+        <div className="flex items-center gap-1.5 text-sm font-medium text-[hsl(var(--foreground-muted))]">
+          <Icon className="h-3.5 w-3.5" />
           {label}
         </div>
         <span
           className={cn(
             "text-sm font-medium tabular-nums",
-            atLimit ? "text-red-600" : nearLimit ? "text-amber-600" : "text-foreground"
+            atLimit
+              ? "text-rose-600 dark:text-rose-300"
+              : nearLimit
+                ? "text-amber-600 dark:text-amber-300"
+                : "text-foreground"
           )}
         >
           {unlimited ? `${used} / ∞` : `${used} / ${limit}`}
         </span>
       </div>
-      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+      <div className="relative h-2 w-full overflow-hidden rounded-full bg-[hsl(var(--surface-sunken))] dark:bg-[hsl(var(--surface-raised))]">
         <div
           className={cn(
             "h-full rounded-full transition-all duration-500",
-            unlimited ? "bg-emerald-500 w-full" :
-            atLimit   ? "bg-red-500" :
-            nearLimit ? "bg-amber-500" :
-            "bg-primary"
+            unlimited
+              ? "w-full bg-emerald-500 dark:bg-emerald-400"
+              : atLimit
+                ? "bg-rose-500 dark:bg-rose-400"
+                : nearLimit
+                  ? "bg-amber-500 dark:bg-amber-400"
+                  : "bg-[hsl(var(--accent))]"
           )}
           style={!unlimited ? { width: `${pct}%` } : undefined}
         />
       </div>
       {atLimit && (
-        <p className="text-sm text-red-600 leading-none">Limit reached — upgrade to continue</p>
+        <p className="text-sm leading-none text-rose-600 dark:text-rose-300">
+          Limit reached — upgrade to continue
+        </p>
       )}
       {nearLimit && !atLimit && (
-        <p className="text-sm text-amber-600 leading-none">Approaching limit</p>
+        <p className="text-sm leading-none text-amber-600 dark:text-amber-300">Approaching limit</p>
       )}
     </div>
   );
@@ -235,44 +263,44 @@ export default function BillingPage() {
   );
 
   return (
-    <div className="w-full py-8 px-8 space-y-10">
+    <div className="w-full bg-background">
+      <ProtectedPageHeader
+        title="Billing & Plans"
+        description="Manage your subscription, usage, and payment details."
+        icon={<CreditCard className="h-4 w-4" />}
+      />
 
-      {/* ── Page Header ── */}
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">Billing & Plans</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Manage your subscription, usage, and payment details.
-        </p>
-      </div>
+      <div className="px-4 py-6 sm:px-6 lg:px-8">
+      <div className="flex w-full flex-col gap-6">
+        {/* Non-owner notice */}
+        {!isOwner && (
+          <section className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-4">
+            <div className="flex items-center gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4 dark:bg-[hsl(var(--surface-sunken))]">
+              <Lock className="h-4 w-4 shrink-0 text-[hsl(var(--foreground-muted))]" />
+              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                Subscription and billing details are only visible to the workspace owner.
+              </p>
+            </div>
+          </section>
+        )}
 
-      <Separator />
-
-      {/* Non-owner notice */}
-      {!isOwner && (
-        <section className="space-y-4">
-          <div className="flex items-center gap-3 rounded-lg border border-foreground/10 bg-foreground/[0.02] p-4">
-            <Lock className="w-4 h-4 text-muted-foreground shrink-0" />
-            <p className="text-sm text-muted-foreground">
-              Subscription and billing details are only visible to the workspace owner.
-            </p>
-          </div>
-        </section>
-      )}
-
-      {isOwner && (
-        <>
+        {isOwner && (
+          <>
           {/* ══════════════════════════════════════════════════
               SECTION 1 — CURRENT SUBSCRIPTION
           ══════════════════════════════════════════════════ */}
-          <section className="space-y-4">
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Subscription
-              </h2>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                Your active plan and resource usage for this billing period.
-              </p>
+          <section className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
+            <div className="flex items-start justify-between gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-5 py-4 dark:bg-[hsl(var(--surface-sunken))] sm:px-6">
+              <div className="space-y-1">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                  Subscription
+                </h2>
+                <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                  Your active plan and resource usage for this billing period.
+                </p>
+              </div>
             </div>
+            <div className="space-y-5 px-5 py-5 sm:px-6">
 
             {planLoading ? (
               <div className="space-y-3">
@@ -288,24 +316,28 @@ export default function BillingPage() {
                 {isTrialing && daysLeft !== null && (
                   <div
                     className={cn(
-                      "flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border p-4",
+                      "flex flex-col justify-between gap-3 rounded-lg border px-4 py-4 sm:flex-row sm:items-center",
                       daysLeft <= 3
-                        ? "border-red-200 bg-red-50 dark:border-red-900/40 dark:bg-red-950/20"
-                        : "border-amber-200 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-950/20"
+                        ? "border-rose-200/80 bg-rose-50 dark:border-rose-500/25 dark:bg-rose-500/10"
+                        : "border-amber-200/80 bg-amber-50 dark:border-amber-500/25 dark:bg-amber-500/10"
                     )}
                   >
                     <div className="flex items-start gap-2.5">
                       <AlertTriangle
                         className={cn(
-                          "w-4 h-4 mt-0.5 shrink-0",
-                          daysLeft <= 3 ? "text-red-600" : "text-amber-600"
+                          "mt-0.5 h-4 w-4 shrink-0",
+                          daysLeft <= 3
+                            ? "text-rose-600 dark:text-rose-300"
+                            : "text-amber-600 dark:text-amber-300"
                         )}
                       />
                       <div>
                         <p
                           className={cn(
                             "text-sm font-semibold",
-                            daysLeft <= 3 ? "text-red-900 dark:text-red-200" : "text-amber-900 dark:text-amber-200"
+                            daysLeft <= 3
+                              ? "text-rose-900 dark:text-rose-100"
+                              : "text-amber-900 dark:text-amber-100"
                           )}
                         >
                           {daysLeft === 0
@@ -315,7 +347,9 @@ export default function BillingPage() {
                         <p
                           className={cn(
                             "text-sm mt-0.5",
-                            daysLeft <= 3 ? "text-red-700 dark:text-red-300" : "text-amber-700 dark:text-amber-300"
+                            daysLeft <= 3
+                              ? "text-rose-700 dark:text-rose-200"
+                              : "text-amber-700 dark:text-amber-200"
                           )}
                         >
                           Upgrade to a paid plan to keep full access to SocialRaven.
@@ -337,37 +371,40 @@ export default function BillingPage() {
                 )}
 
                 {/* Plan status card */}
-                <Card>
+                <Card className="overflow-hidden rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-none">
                   <CardContent className="p-5">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="shrink-0 p-2.5 rounded-lg bg-foreground/5 border border-foreground/10">
+                    <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-start">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="shrink-0 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-2.5 dark:bg-[hsl(var(--surface-sunken))]">
                           {(() => {
                             const Icon = PLAN_ICONS[userPlan.currentPlan];
-                            return <Icon className="w-4 h-4" />;
+                            return <Icon className="h-4 w-4 text-[hsl(var(--accent))]" />;
                           })()}
                         </div>
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-semibold text-base">{currentPlan.name} Plan</span>
+                            <span className="text-base font-semibold">{currentPlan.name} Plan</span>
                             <PlanStatusBadge status={userPlan.status} />
                             {userPlan.cancelAtPeriodEnd && (
-                              <Badge variant="secondary" className="text-sm bg-amber-100 text-amber-700">
+                              <Badge
+                                variant="secondary"
+                                className="border border-amber-200/70 bg-amber-50 text-sm text-amber-700 dark:border-amber-500/25 dark:bg-amber-500/10 dark:text-amber-300"
+                              >
                                 Cancels at period end
                               </Badge>
                             )}
                           </div>
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-                            <span className="text-sm text-muted-foreground flex items-center gap-1">
-                              <CalendarDays className="w-3 h-3" />
+                          <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
+                            <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <CalendarDays className="h-3 w-3" />
                               {isTrialing
                                 ? `Trial ends ${formatDate(userPlan.trialEndsAt!)}`
                                 : userPlan.cancelAtPeriodEnd
-                                ? `Expires ${formatDate(userPlan.renewalDate)}`
-                                : `Renews ${formatDate(userPlan.renewalDate)}`}
+                                  ? `Expires ${formatDate(userPlan.renewalDate)}`
+                                  : `Renews ${formatDate(userPlan.renewalDate)}`}
                             </span>
                             {currentPlan.price > 0 && (
-                              <span className="text-sm text-muted-foreground font-medium">
+                              <span className="text-sm font-medium text-muted-foreground">
                                 {currentPlan.customPricing ? "Custom pricing" : `$${currentPlan.price} / month`}
                               </span>
                             )}
@@ -375,37 +412,59 @@ export default function BillingPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        {isPaidPlan && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={handleBillingPortal}
-                            disabled={portalLoading}
-                            className="gap-1.5 text-sm"
-                          >
-                            {portalLoading ? (
-                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                            ) : (
-                              <CreditCard className="w-3.5 h-3.5" />
-                            )}
-                            Manage Billing
-                          </Button>
-                        )}
-                        {!isPaidPlan && (
-                          <Button
-                            size="sm"
-                            className="gap-1.5 text-sm"
-                            onClick={() =>
-                              document
-                                .getElementById("plans-section")
-                                ?.scrollIntoView({ behavior: "smooth" })
-                            }
-                          >
-                            <Zap className="w-3.5 h-3.5" />
-                            View Plans
-                          </Button>
-                        )}
+                      <div className="grid gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-3 dark:bg-[hsl(var(--surface-sunken))] lg:min-w-[280px]">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="space-y-1">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[hsl(var(--foreground-subtle))]">
+                              Status
+                            </p>
+                            <PlanStatusBadge status={userPlan.status} />
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[hsl(var(--foreground-subtle))]">
+                              Price
+                            </p>
+                            <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                              {currentPlan.price > 0
+                                ? currentPlan.customPricing
+                                  ? "Custom pricing"
+                                  : `$${currentPlan.price} / month`
+                                : "Free"}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          {isPaidPlan && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={handleBillingPortal}
+                              disabled={portalLoading}
+                              className="w-full gap-1.5 border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-sm hover:bg-[hsl(var(--surface))] dark:bg-[hsl(var(--surface))]"
+                            >
+                              {portalLoading ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <CreditCard className="h-3.5 w-3.5" />
+                              )}
+                              Manage Billing
+                            </Button>
+                          )}
+                          {!isPaidPlan && (
+                            <Button
+                              size="sm"
+                              className="w-full gap-1.5 text-sm shadow-none"
+                              onClick={() =>
+                                document
+                                  .getElementById("plans-section")
+                                  ?.scrollIntoView({ behavior: "smooth" })
+                              }
+                            >
+                              <Zap className="h-3.5 w-3.5" />
+                              View Plans
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
@@ -413,8 +472,8 @@ export default function BillingPage() {
 
                 {/* Cancellation warning (paid plans only) */}
                 {userPlan.cancelAtPeriodEnd && !isTrialing && (
-                  <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-950/20 p-4 text-sm text-amber-800 dark:text-amber-300">
-                    <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                  <div className="flex items-start gap-2.5 rounded-xl border border-amber-200/80 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-500/25 dark:bg-amber-500/10 dark:text-amber-200">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                     <span>
                       Your subscription ends on <strong>{formatDate(userPlan.renewalDate)}</strong>.
                       After that your account will be paused.{" "}
@@ -430,8 +489,8 @@ export default function BillingPage() {
 
                 {/* Usage stats */}
                 {usageStats && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Card className="border-foreground/10">
+                  <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
+                    <Card className="rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-none">
                       <CardContent className="p-4">
                         <UsageBar
                           label="Posts this month"
@@ -441,7 +500,7 @@ export default function BillingPage() {
                         />
                       </CardContent>
                     </Card>
-                    <Card className="border-foreground/10">
+                    <Card className="rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-none">
                       <CardContent className="p-4">
                         <UsageBar
                           label="Connected accounts"
@@ -451,7 +510,7 @@ export default function BillingPage() {
                         />
                       </CardContent>
                     </Card>
-                    <Card className="border-foreground/10 sm:col-span-2">
+                    <Card className="rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-none lg:col-span-1">
                       <CardContent className="p-4">
                         <UsageBar
                           label="Workspaces"
@@ -461,7 +520,7 @@ export default function BillingPage() {
                         />
                         {usageStats.maxWorkspaces !== "Unlimited" &&
                           usageStats.workspacesOwned >= usageStats.maxWorkspaces && (
-                            <p className="text-sm text-amber-600 mt-2 leading-snug">
+                            <p className="mt-2 text-sm leading-snug text-amber-600 dark:text-amber-300">
                               Workspace limit reached — upgrade your plan to create more workspaces.
                             </p>
                           )}
@@ -473,22 +532,27 @@ export default function BillingPage() {
             ) : (
               <p className="text-sm text-muted-foreground py-4">Unable to load subscription information.</p>
             )}
+            </div>
           </section>
-
-          <Separator />
 
           {/* ══════════════════════════════════════════════════
               SECTION 2 — AVAILABLE PLANS
           ══════════════════════════════════════════════════ */}
-          <section className="space-y-4" id="plans-section">
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Plans
-              </h2>
-              <p className="text-sm text-muted-foreground mt-0.5">
-                All prices in USD, billed monthly. Upgrades take effect immediately.
-              </p>
+          <section
+            className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]"
+            id="plans-section"
+          >
+            <div className="flex items-start justify-between gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-5 py-4 dark:bg-[hsl(var(--surface-sunken))] sm:px-6">
+              <div className="space-y-1">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                  Plans
+                </h2>
+                <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                  All prices in USD, billed monthly. Upgrades take effect immediately.
+                </p>
+              </div>
             </div>
+            <div className="space-y-5 px-5 py-5 sm:px-6">
 
             <div
               className={cn(
@@ -512,16 +576,16 @@ export default function BillingPage() {
                   <div
                     key={plan.type}
                     className={cn(
-                      "relative rounded-xl border p-5 flex flex-col gap-4 transition-all bg-card",
+                      "relative flex flex-col gap-4 rounded-lg border p-4 transition-colors bg-[hsl(var(--surface))]",
                       isCurrent
-                        ? "border-foreground/25 ring-1 ring-foreground/15 shadow-sm"
-                        : "border-border hover:border-foreground/20 hover:shadow-sm",
-                      plan.popular && !isCurrent && "border-primary/30"
+                        ? "border-[hsl(var(--accent)/0.45)] bg-[hsl(var(--accent)/0.03)]"
+                        : "border-[hsl(var(--border-subtle))] hover:border-[hsl(var(--border))] hover:bg-[hsl(var(--surface-raised))]/45",
+                      plan.popular && !isCurrent && "border-[hsl(var(--accent)/0.25)]"
                     )}
                   >
                     {plan.popular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                        <Badge className="text-sm px-2.5 py-0.5 font-semibold shadow-sm">
+                      <div className="absolute right-4 top-4 z-10">
+                        <Badge className="border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.08)] px-2 py-0.5 text-xs font-semibold text-[hsl(var(--accent))] shadow-none">
                           Most Popular
                         </Badge>
                       </div>
@@ -530,8 +594,8 @@ export default function BillingPage() {
                     {/* Header */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2.5">
-                        <div className="p-1.5 rounded-md bg-foreground/5 border border-foreground/10">
-                          <PlanIcon className="w-3.5 h-3.5" />
+                        <div className="rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-1.5 dark:bg-[hsl(var(--surface-sunken))]">
+                          <PlanIcon className="h-3.5 w-3.5 text-[hsl(var(--accent))]" />
                         </div>
                         <div>
                           <div className="flex items-center gap-1.5">
@@ -539,13 +603,13 @@ export default function BillingPage() {
                             {isCurrent && (
                               <Badge
                                 variant="secondary"
-                                className="text-sm px-1.5 py-0 bg-foreground/10 font-normal"
+                                className="border border-[hsl(var(--accent)/0.16)] bg-[hsl(var(--accent)/0.08)] px-1.5 py-0 text-xs font-semibold text-[hsl(var(--accent))]"
                               >
                                 Current
                               </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground mt-0.5 leading-snug">
+                          <p className="mt-0.5 text-sm leading-snug text-[hsl(var(--foreground-muted))]">
                             {plan.description}
                           </p>
                         </div>
@@ -565,11 +629,11 @@ export default function BillingPage() {
                     </div>
 
                     {/* Features */}
-                    <ul className="space-y-1.5 flex-1">
+                    <ul className="flex-1 space-y-2 border-t border-[hsl(var(--border-subtle))] pt-4">
                       {plan.features.map((f) => (
                         <li key={f} className="flex items-start gap-1.5 text-sm">
-                          <Check className="w-3 h-3 mt-0.5 text-emerald-600 shrink-0" />
-                          <span className="text-muted-foreground">{f}</span>
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[hsl(var(--accent))]" />
+                          <span className="text-[hsl(var(--foreground-muted))]">{f}</span>
                         </li>
                       ))}
                     </ul>
@@ -578,7 +642,11 @@ export default function BillingPage() {
                     <Button
                       variant={isCurrent ? "outline" : plan.popular ? "default" : "outline"}
                       size="sm"
-                      className="w-full text-sm"
+                      className={cn(
+                        "w-full text-sm",
+                        !isCurrent && !plan.popular &&
+                          "border-[hsl(var(--border))] bg-[hsl(var(--surface))] hover:bg-[hsl(var(--surface-raised))] dark:bg-[hsl(var(--surface))]"
+                      )}
                       disabled={isCurrent || isChanging || changingTo !== null || planLoading}
                       onClick={() => {
                         if (plan.type === "AGENCY_CUSTOM" && isUpgrade) {
@@ -611,24 +679,23 @@ export default function BillingPage() {
               })}
             </div>
 
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="text-sm leading-relaxed text-[hsl(var(--foreground-muted))]">
               Downgrades take effect at the end of the current billing period. You may cancel at any
               time without penalty. All prices exclude applicable taxes.
             </p>
+            </div>
           </section>
-
-          <Separator />
 
           {/* ══════════════════════════════════════════════════
               SECTION 3 — BILLING
           ══════════════════════════════════════════════════ */}
-          <section className="space-y-4">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          <section className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
+            <div className="flex items-start justify-between gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-5 py-4 dark:bg-[hsl(var(--surface-sunken))] sm:px-6">
+              <div className="space-y-1">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
                   Billing
                 </h2>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
                   Invoices and payment management.
                 </p>
               </div>
@@ -637,7 +704,7 @@ export default function BillingPage() {
                 variant="outline"
                 onClick={handleBillingPortal}
                 disabled={portalLoading}
-                className="gap-1.5 text-sm shrink-0"
+                className="gap-1.5 shrink-0 border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-sm hover:bg-[hsl(var(--surface))] dark:bg-[hsl(var(--surface))]"
               >
                 {portalLoading ? (
                   <Loader2 className="w-3 h-3 animate-spin" />
@@ -647,15 +714,16 @@ export default function BillingPage() {
                 Billing Portal
               </Button>
             </div>
+            <div className="space-y-5 px-5 py-5 sm:px-6">
 
             {/* Stripe coming-soon notice */}
-            <div className="flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 dark:border-blue-900/40 dark:bg-blue-950/20 p-4">
-              <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+            <div className="flex items-start gap-3 rounded-lg border border-sky-200/80 bg-sky-50 p-4 dark:border-sky-500/25 dark:bg-sky-500/10">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-sky-600 dark:text-sky-300" />
               <div>
-                <p className="text-base font-medium text-blue-900 dark:text-blue-200">
+                <p className="text-base font-medium text-sky-900 dark:text-sky-100">
                   Stripe Billing — Coming Soon
                 </p>
-                <p className="text-sm text-blue-700 dark:text-blue-300 mt-1 leading-relaxed">
+                <p className="mt-1 text-sm leading-relaxed text-sky-700 dark:text-sky-200">
                   We are finalising our Stripe integration. Once live, you can update your payment
                   method, download VAT-compliant invoices, and manage your subscription here. You
                   will be notified by email as soon as billing goes live.
@@ -671,7 +739,7 @@ export default function BillingPage() {
             ) : (
               <>
                 {upcomingInvoice && (
-                  <Card>
+                  <Card className="rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-none">
                     <CardContent className="p-5">
                       <div className="flex items-center justify-between gap-4">
                         <div>
@@ -685,34 +753,34 @@ export default function BillingPage() {
                             {upcomingInvoice.description} · Due {formatDate(upcomingInvoice.dueDate)}
                           </p>
                         </div>
-                        <Clock className="w-9 h-9 text-muted-foreground/20 shrink-0" />
+                        <Clock className="h-9 w-9 shrink-0 text-[hsl(var(--foreground))/0.14]" />
                       </div>
                     </CardContent>
                   </Card>
                 )}
 
-                <Card>
-                  <CardHeader className="p-4 pb-0">
-                    <CardTitle className="text-sm font-medium flex items-center gap-2">
-                      <FileText className="w-3.5 h-3.5 text-muted-foreground" />
+                <Card className="overflow-hidden rounded-lg border-[hsl(var(--border-subtle))] shadow-none">
+                  <CardHeader className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4 pb-4 dark:bg-[hsl(var(--surface-sunken))]">
+                    <CardTitle className="flex items-center gap-2 text-sm font-medium">
+                      <FileText className="h-3.5 w-3.5 text-[hsl(var(--foreground-muted))]" />
                       Invoice History
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="p-0 pt-3">
+                  <CardContent className="p-0">
                     {invoices.length === 0 ? (
-                      <p className="px-4 pb-4 text-sm text-muted-foreground">
+                      <p className="px-4 py-4 text-sm text-[hsl(var(--foreground-muted))]">
                         No invoices yet. They will appear here once a paid subscription is active.
                       </p>
                     ) : (
-                      <div className="divide-y divide-border">
+                      <div className="divide-y divide-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
                         {invoices.map((inv) => (
                           <div
                             key={inv.id}
-                            className="flex items-center justify-between px-4 py-3 gap-4"
+                            className="flex items-center justify-between gap-4 px-4 py-3 transition-colors hover:bg-[hsl(var(--surface-raised))]/65 dark:hover:bg-[hsl(var(--surface-sunken))]"
                           >
                             <div className="min-w-0">
                               <p className="text-sm truncate">{inv.description}</p>
-                              <p className="text-sm text-muted-foreground mt-0.5">
+                              <p className="mt-0.5 text-sm text-[hsl(var(--foreground-muted))]">
                                 {formatDate(inv.date)}
                               </p>
                             </div>
@@ -727,9 +795,9 @@ export default function BillingPage() {
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   aria-label="Download invoice"
-                                  className="text-muted-foreground hover:text-foreground transition-colors"
+                                  className="text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
                                 >
-                                  <ExternalLink className="w-3.5 h-3.5" />
+                                  <ExternalLink className="h-3.5 w-3.5" />
                                 </a>
                               )}
                             </div>
@@ -740,16 +808,18 @@ export default function BillingPage() {
                   </CardContent>
                 </Card>
 
-                <p className="text-sm text-muted-foreground flex items-center gap-1.5">
-                  <Shield className="w-3 h-3 shrink-0" />
+                <p className="flex items-center gap-1.5 text-sm text-[hsl(var(--foreground-muted))]">
+                  <Shield className="h-3 w-3 shrink-0" />
                   Payments are processed securely by Stripe. SocialRaven never stores your card details.
                 </p>
               </>
             )}
+            </div>
           </section>
-        </>
-      )}
-
+          </>
+        )}
+      </div>
+      </div>
     </div>
   );
 }

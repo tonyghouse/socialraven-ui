@@ -1,632 +1,678 @@
 # SocialRaven UI Design Guidelines
 
-This document is the canonical UI design guideline for `socialraven-ui`.
+This document is the canonical UI guideline for `socialraven-ui`.
 
-Any agent, developer, or CLI assistant working on UI design or redesign in this project should read and follow this file before making visual changes.
+Any agent, developer, or CLI assistant working on UI in this project must read and follow this file before making visual changes.
 
 This applies to:
 - Codex CLI
 - Claude Code CLI
 - Human contributors
 
-If another design note conflicts with this file, follow this file for UI decisions unless the user explicitly says otherwise.
+If another note conflicts with this file, follow this file for UI decisions unless the user explicitly overrides it.
 
 ---
 
-## 1. Product Intent
+## 1. Purpose
 
 SocialRaven should feel:
-- Clear
-- Confident
-- Structured
-- Trustworthy
-- Operationally mature for US and EU customers
+- clear
+- trustworthy
+- operational
+- collaborative
+- enterprise-ready
 
-The visual tone is **Atlassian design system inspired**: practical, collaborative, legible, and enterprise-ready. The product should feel like software teams can rely on every day, not a trendy dashboard experiment.
+The reference direction is the current Atlassian Design System:
+- token-first
+- calm, structured surfaces
+- strong information hierarchy
+- obvious actions
+- restrained color use
+- accessible by default
 
-The interface should not look like:
+SocialRaven is **Atlassian-inspired**, not an Atlassian clone.
+
+That means:
+- copy the discipline, not the branding literally
+- use Atlassian interaction patterns and color roles as the mental model
+- keep SocialRaven-specific implementation grounded in this repo's tokens and components
+
+The UI must not look like:
 - a glossy startup landing page
-- a dark-only power-tool aesthetic
+- a dark-only power tool
 - a template-heavy admin dashboard
 - a playful consumer app
-- a Linear clone
-
-The reference direction is Atlassian products and patterns: calm surfaces, strong hierarchy, obvious actions, generous readability, and disciplined use of blue.
-
-Component direction:
-- Prefer Atlassian components and Atlassian-style interaction patterns when available and appropriate
-- Use shadcn/ui as a fallback implementation layer, not as the visual source of truth
-- If a shadcn primitive conflicts with Atlassian behavior, spacing, or hierarchy, adapt it to the Atlassian system
+- a one-off visual experiment
 
 ---
 
-## 2. Non-Negotiable Principles
+## 2. Product Principles
 
-### 2.1 Clarity over personality
+### 2.1 Clarity first
 
-Every screen must make the primary action obvious.
+Every screen must make the main task obvious.
 
 Prefer:
-- plain language
-- stable layouts
 - visible labels
-- predictable controls
-- obvious state changes
+- predictable layouts
+- explicit actions
+- stable states
+- plain language
 
 Avoid:
 - decorative UI that competes with the task
-- clever but unclear interaction patterns
-- hiding important actions behind icon-only affordances
-- over-styled empty states in serious workflow areas
+- ambiguous icon-only actions for important workflows
+- hidden state changes
+- clever interaction patterns that reduce readability
 
-### 2.2 Systematic, not dramatic
+### 2.2 System over improvisation
 
-Atlassian-style UI works because it is consistent. The product should feel assembled from a system, not individually art-directed screen by screen.
+The product should feel assembled from a consistent system.
 
 Do not:
-- mix multiple visual styles in one flow
+- invent one-off radii, shadows, or control heights
 - change spacing rhythm between similar screens
-- invent one-off radii, colors, or control heights
-- use visual novelty to solve hierarchy problems
+- mix unrelated visual styles in one flow
+- solve hierarchy problems with novelty
 
-### 2.3 Enterprise trust matters
-
-The UI should signal reliability and operational maturity.
+### 2.3 Trustworthy, not flashy
 
 Prefer:
-- clear separators
-- readable forms
-- modest emphasis
+- neutral surfaces
+- crisp borders
+- measured emphasis
 - conservative semantic color use
-- layouts that stay stable as data changes
+- layouts that hold up under real data
 
-Do not:
-- rely on heavy gradients or glass effects
-- overuse shadows
-- create loud, saturated surfaces
-- make serious settings pages feel playful
+Avoid:
+- glassmorphism
+- loud gradients across product surfaces
+- heavy shadows on standard cards
+- playful treatment in analytics, billing, settings, or operational views
 
-### 2.4 Accessibility is part of the look
+### 2.4 Accessibility is part of the design
 
-Readable contrast, focus treatment, and large enough targets are part of the design quality bar.
+Readable contrast, visible focus, and non-color cues are mandatory.
 
 Prefer:
 - visible focus rings
 - sentence-case labels
 - 14px minimum for standard UI text
-- states that do not depend on color alone
+- icons or labels that reinforce color-coded meaning
+
+Do not:
+- rely on color alone for state
+- place critical text on low-contrast fills
+- hide interaction states
 
 ---
 
-## 3. Themes
+## 3. Repo-Specific Implementation Constraints
 
-SocialRaven ships **both light and dark themes**. Both must feel intentional, but the Atlassian-inspired baseline should be designed in light mode first, then translated carefully to dark.
+These constraints are mandatory for AI tools working in this repo.
 
-Theme is controlled via the `class` strategy on `<html>` via `next-themes`.
+### 3.1 Theme system
 
-### 3.1 Light theme — primary
+Theme is controlled via `next-themes` using the `class` strategy on `<html>`.
 
-Light mode should be the flagship experience.
+Current implementation facts:
+- default theme is `light`
+- `dark` theme is supported and must remain production-ready
+- product colors are defined in [`socialraven-ui/src/app/globals.css`](/Users/mac/Workspace/RemoteRepo/socialraven/socialraven-ui/src/app/globals.css)
 
-Character:
-- soft neutral page background
-- white or near-white content surfaces
-- crisp borders
-- restrained blue accents
-- strong readability without looking stark
+### 3.2 Token-first rule
 
-### 3.2 Dark theme — secondary but polished
+For product UI, use local CSS tokens, not ad hoc colors.
 
-Dark mode should keep the same information architecture, not become a different visual language.
+Primary local tokens already available:
+- `--background`
+- `--surface`
+- `--surface-raised`
+- `--surface-sunken`
+- `--foreground`
+- `--foreground-muted`
+- `--foreground-subtle`
+- `--border`
+- `--border-subtle`
+- `--accent`
+- `--accent-hover`
+- `--accent-active`
+- `--accent-foreground`
+- `--success`
+- `--warning`
+- `--destructive`
+- `--info`
 
-Character:
-- deep navy-charcoal backgrounds, not pure black
-- clearly separated layers
-- slightly brighter borders than a typical dark SaaS UI
-- the same blue accent family, tuned for contrast
+Do not hard-code colors for:
+- surfaces
+- text
+- borders
+- standard buttons
+- form controls
+- nav states
+- badges
+
+Hard-coded values are allowed only for:
+- external platform brand colors
+- illustrations
+- charts when a documented chart token is missing and a real token migration is being added
+- exact brand assets
+
+### 3.3 Current typography constraint
+
+Atlassian's current app typefaces are Atlassian Sans and Atlassian Mono.
+
+SocialRaven currently uses **Inter** in the actual app via [`socialraven-ui/src/app/layout.tsx`](/Users/mac/Workspace/RemoteRepo/socialraven/socialraven-ui/src/app/layout.tsx).
+
+For this repo:
+- keep **Inter** as the app UI font unless the user explicitly requests a font migration
+- follow Atlassian's density, hierarchy, and readability principles
+- do not introduce a second UI sans-serif family into the protected app
+
+This is important for AI tools:
+- use Atlassian as the design language reference
+- do not silently switch the product font to Atlassian Sans in implementation work
 
 ---
 
-## 4. Color System
+## 4. Color Model
 
-### 4.1 Canonical brand palette
+This section corrects the most important misunderstanding in the previous doc.
 
-The canonical brand palette for SocialRaven's Atlassian-aligned UI is:
+Atlassian's color system is **role-based**, not "use one blue everywhere".
 
-- **Squid Ink — `#172B4D`**
-- **White — `#FFFFFF`**
-- **Pacific Bridge — `#0052CC`**
+When choosing color, think in this order:
+1. neutral
+2. brand
+3. semantic status
+4. accent
+5. chart
 
-These values should be treated as the brand-reference colors for logo work, key product theming, and any design-system decisions that need a canonical Atlassian base.
+### 4.1 Color roles
 
-### 4.2 Primary accent
+Use these roles conceptually:
+- `neutral`: standard UI surfaces, text, borders, chrome
+- `brand`: primary product identity and main action emphasis
+- `information`: informative but non-dangerous system messaging
+- `success`: positive state
+- `warning`: caution or attention needed
+- `danger`: destructive or severe issue
+- `discovery`: something new or exploratory
+- `accent`: color with no semantic meaning, interchangeable with other accent hues
+- `inverse`: text/icons on bold fills
+- `input`: form-field-specific treatments
 
-**Pacific Bridge — `#0052CC`**
+### 4.2 SocialRaven mapping
 
-This is the primary product accent for SocialRaven and should also drive the logo direction by default.
+For SocialRaven:
+- the product's blue identity maps to the **brand** role
+- the local token `--accent` currently behaves as the product **brand** token in implementation
+- do not treat `--accent` as a generic free-choice accent in this repo
 
-Use this blue for:
-- primary actions
-- active navigation state
+This distinction matters:
+- **brand** = SocialRaven blue for primary action and selected emphasis
+- **accent** = non-semantic categorical emphasis where the exact hue is interchangeable
+
+### 4.3 Brand color usage
+
+Use SocialRaven blue for:
+- primary buttons
+- selected navigation
 - links
-- focus rings
-- selected states
-- important progress or attention moments that are not semantic alerts
+- focused states
+- selected controls
+- key informational emphasis
+- single-series default analytics marks
 
-Do not use this blue for:
-- large background washes
-- decorative gradients across product surfaces
-- multiple competing highlights in the same viewport
+Do not use SocialRaven blue for:
+- large decorative page washes
+- multiple unrelated highlights in one viewport
+- warning, success, or destructive meanings
+- every series in a multi-series chart
 
-### 4.3 Supporting palette
+### 4.4 Semantic colors
 
-Use the rest of the Atlassian palette intentionally:
+Use semantic colors only for real meaning:
+- `--success` for success and healthy status
+- `--warning` for caution, limits, or degraded state
+- `--destructive` for destructive action, severe error, or failed state
+- `--info` for informational states when blue informational emphasis is appropriate
 
-- `#172B4D` Squid Ink for high-emphasis text, strong headers, and dark-surface grounding
-- `#FFFFFF` White for primary surfaces and text on dark brand fills
-- `#0052CC` Pacific Bridge for the main accent and CTA color
+Do not use brand blue as a replacement for semantic meaning.
 
-Do not replace semantic tokens with brand colors. Squid Ink is not a status color; Pacific Bridge is not a warning or success color.
+### 4.5 Accent colors
 
-### 4.4 Supporting blues
+Atlassian accent colors are interchangeable non-semantic hues.
 
-Use a restrained blue ramp around the primary brand color.
+Use accent colors only when color is:
+- organizational
+- categorical
+- decorative in a restrained way
+- user-assigned
+- non-semantic and swappable
 
-Recommended supporting values:
-- `#0C66E4` for brighter interactive emphasis
-- `#85B8FF` for softer emphasis on dark surfaces
-- `#0055CC` for pressed or stronger active states
+Good uses:
+- calendar/event chips
+- category indicators
+- optional visual grouping
+- non-semantic highlights in a dense workspace
 
-Do not build a rainbow system around the product. Blue is the product identity; semantic colors are separate.
+Bad uses:
+- success, warning, error, or status meaning
+- primary CTA styling
+- text that needs strong contrast on subtle accent fills
+- replacing a chart palette
 
-### 4.5 Light theme tokens
+### 4.6 Emphasis levels
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--background` | `220 16% 96%` | app background |
-| `--surface` | `0 0% 100%` | cards, panels, dialogs |
-| `--surface-raised` | `220 14% 93%` | secondary inner containers |
-| `--surface-sunken` | `228 14% 93%` | page sections, table headers |
-| `--border` | `223 12% 89%` | default borders |
-| `--border-subtle` | `228 14% 93%` | dividers |
-| `--foreground` | `218 54% 20%` | primary text, Squid Ink family |
-| `--foreground-muted` | `218 25% 35%` | secondary text |
-| `--foreground-subtle` | `218 13% 48%` | tertiary text |
-| `--accent` | `216 100% 40%` | Pacific Bridge |
-| `--accent-hover` | `215 90% 47%` | hover |
-| `--accent-active` | `216 100% 34%` | pressed |
-| `--accent-foreground` | `0 0% 100%` | text on accent |
-| `--destructive` | `12 91% 46%` | destructive states |
-| `--warning` | `40 100% 50%` | warning states |
-| `--success` | `155 54% 46%` | success states |
-| `--info` | `216 100% 40%` | informational states |
+Atlassian color usage relies heavily on emphasis levels.
 
-### 4.6 Dark theme tokens
+In practical terms:
+- use neutral surfaces first
+- use subtle/subtler fills for low-emphasis grouping
+- use bold fills sparingly for primary emphasis
+- pair subtle backgrounds with borders when contrast needs reinforcement
 
-| Token | Value | Usage |
-|-------|-------|-------|
-| `--background` | `218 47% 12%` | app background |
-| `--surface` | `218 45% 15%` | cards, panels, dialogs |
-| `--surface-raised` | `218 38% 18%` | elevated inner containers |
-| `--surface-sunken` | `218 52% 10%` | recessed sections |
-| `--border` | `218 25% 35%` | default borders |
-| `--border-subtle` | `218 32% 24%` | dividers |
-| `--foreground` | `0 0% 100%` | primary text |
-| `--foreground-muted` | `215 18% 72%` | secondary text |
-| `--foreground-subtle` | `216 14% 79%` | tertiary text |
-| `--accent` | `215 90% 47%` | brightened Pacific Bridge family |
-| `--accent-hover` | `215 100% 76%` | hover |
-| `--accent-active` | `216 100% 40%` | pressed |
-| `--accent-foreground` | `0 0% 100%` | text on accent |
-| `--destructive` | `12 91% 56%` | destructive states |
-| `--warning` | `40 100% 50%` | warning states |
-| `--success` | `155 54% 46%` | success states |
-| `--info` | `215 90% 47%` | informational states |
+For AI tools:
+- prefer border + subtle background over saturated fills
+- prefer selected states that read clearly in both themes
+- if a subtle fill is too low-contrast, add the matching border instead of jumping straight to a bold fill
 
-### 4.7 Color rules
+### 4.7 Current local tokens
 
-- Neutral surfaces stay neutral
-- Pacific Bridge blue marks interaction and selection, not decoration
-- Squid Ink should anchor text hierarchy and dark-surface grounding
-- Semantic colors are reserved for status and feedback
-- Platform brand colors should appear only when representing external networks
-- Do not tint whole product areas blue just because the logo is blue
+The current repo token values in [`socialraven-ui/src/app/globals.css`](/Users/mac/Workspace/RemoteRepo/socialraven/socialraven-ui/src/app/globals.css) remain the implementation source of truth unless the task explicitly includes a token refactor.
+
+Use these mental mappings:
+
+| Local token | Role |
+|-------|-------|
+| `--background` | app canvas neutral |
+| `--surface` | default container neutral |
+| `--surface-raised` | raised neutral |
+| `--surface-sunken` | recessed neutral |
+| `--foreground` | primary text |
+| `--foreground-muted` | secondary text |
+| `--foreground-subtle` | tertiary text |
+| `--border` | standard border |
+| `--border-subtle` | subtle separator |
+| `--accent` | SocialRaven brand blue |
+| `--accent-hover` | hovered brand blue |
+| `--accent-active` | pressed brand blue |
+| `--success` | success semantic |
+| `--warning` | warning semantic |
+| `--destructive` | danger semantic |
+| `--info` | informational semantic |
+
+### 4.8 Mandatory color rules
+
+- Neutral surfaces stay neutral.
+- Brand blue marks interaction and selected emphasis, not decoration.
+- Semantic colors are reserved for true status meaning.
+- Accent hues are interchangeable and non-semantic.
+- Platform brand colors appear only when representing external social networks.
+- Never tint entire product sections blue just because the logo is blue.
 
 ---
 
-## 5. Typography
+## 5. Analytics and Graph Color Rules
 
-### 5.1 Typeface
+This section is mandatory for dashboards, reports, charts, and KPI views.
 
-**Inter** remains the product typeface for UI.
+Atlassian's guidance is clear:
+- use **chart tokens** for chart marks
+- use normal text and border tokens for axes, legends, labels, and gridlines
+- do not treat chart colors like normal UI accent colors
+
+### 5.1 Chart UI versus chart data
 
 Use:
-- Inter for all UI, tables, forms, nav, and dashboards
-- `font-mono` only where code-like or token-like content genuinely needs it
+- `color.text` equivalent for chart title and legend text
+- `color.text.subtle` equivalent for tick labels and secondary labels
+- `color.border` equivalent for gridlines and frames
+- chart tokens for bars, lines, areas, points, thresholds, and segments
 
-Do not introduce:
-- display fonts in the app shell
-- Apple-style system font references as a design direction
-- multiple sans-serif families in core product UI
+In this repo, that means:
+- axes, labels, legends, and support text should use `--foreground`, `--foreground-muted`, `--foreground-subtle`, and `--border`
+- chart marks should use dedicated chart tokens, not generic `--accent` plus random Tailwind colors
 
-### 5.2 Scale
+### 5.2 Single-series charts
 
-Use a practical, product-first scale.
+For one primary series:
+- use the brand chart color as the default
+- use neutral chart color for de-emphasized comparisons or historical context
 
-| Role | Size | Weight | Tracking |
-|------|------|--------|----------|
-| Page title | `text-2xl` (24px) | 600 | `-0.01em` |
-| Section heading | `text-lg` (18px) | 600 | `-0.005em` |
-| Subsection heading | `text-base` (16px) | 600 | `0` |
-| UI text / labels | `text-sm` (14px) | 400–500 | `0` |
-| Body copy | `text-sm` (14px) | 400 | `0` |
-| Caption / metadata | `text-xs` (12px) | 400–500 | `0` |
-| Table dense text | `text-xs` to `text-sm` | 400–500 | `0` |
+Examples:
+- follower growth over time
+- scheduled posts volume
+- engagement trend line
 
-### 5.3 Rules
+### 5.3 Multi-series charts
 
-- Page titles can use `text-2xl font-semibold` in product UI
-- Use sentence case everywhere unless a real data label requires otherwise
-- Reserve bold for headings, selected values, and important actions
-- Secondary text should still be comfortably readable
-- Avoid oversized hero-style typography inside the protected app
+For categorical multi-series charts:
+- use a dedicated categorical chart palette
+- keep series count reasonable
+- preserve a stable series-to-color mapping across filters and refreshes
 
----
+Do not:
+- repeat brand blue across every series
+- use semantic colors unless the series itself carries semantic meaning
+- build chart palettes from random Tailwind classes
 
-## 6. Iconography
+### 5.4 Status and severity charts
 
-### 6.1 Preferred library
+If the chart encodes meaning like health or severity:
+- use success, warning, danger, information, discovery, and neutral appropriately
+- do not use categorical hues when the color is supposed to communicate status
 
-**Atlassian icons via Atlaskit** should be the target icon system.
+Examples:
+- publish success rate by platform
+- failed posts versus warning states
+- account health or connection reliability
 
-Preferred pack:
-- `@atlaskit/icon`
+### 5.5 Accessibility rules for charts
 
-Rationale:
-- it is the closest match to the Atlassian visual language
-- it keeps product chrome aligned with the intended brand direction
-- it will sit naturally beside an Atlassian-blue logo
+- Do not rely on color alone to distinguish series.
+- Use labels, legends, tooltips, patterns, markers, or direct annotations.
+- Do not place regular text directly on chart colors unless contrast is explicitly verified.
+- Add separation between adjacent segments when colors touch, especially in stacked bars and pie/donut charts.
+- Use neutral chart lines for thresholds, targets, and baselines unless the threshold itself is semantic.
 
-Do not mix icon libraries inside the same screen. If migration is partial, new product-facing work should still bias toward the Atlassian icon style.
+### 5.6 SocialRaven chart implementation rule
 
-### 6.2 Style rules
+The current repo has only generic chart tokens:
+- `--chart-1`
+- `--chart-2`
+- `--chart-3`
+- `--chart-4`
+- `--chart-5`
 
-- Use simple, functional icons
-- Default icon color should inherit surrounding text color
-- Avoid decorative icon backgrounds unless the icon represents a status or object type
-- Prefer outline or neutral product icons over playful metaphors
+That is not strong enough guidance for reliable AI-generated analytics UI.
 
-### 6.3 Sizes
+When creating or refactoring analytics UI, prefer introducing or mapping to a more explicit chart token model such as:
+- `--chart-brand`
+- `--chart-neutral`
+- `--chart-categorical-1`
+- `--chart-categorical-2`
+- `--chart-categorical-3`
+- `--chart-categorical-4`
+- `--chart-categorical-5`
+- `--chart-categorical-6`
+- `--chart-success`
+- `--chart-warning`
+- `--chart-danger`
+- `--chart-discovery`
 
-| Context | Size |
-|---------|------|
-| Dense inline UI | `14–16` |
-| Standard buttons / inputs / nav | `16` |
-| Sidebar / toolbar / tabs | `16–18` |
-| Section summaries / cards | `20` |
-| Empty states | `24–32` |
+If a task does not include token refactoring:
+- use the existing `--chart-*` tokens consistently
+- document the mapping in the component
+- do not mix them with random hard-coded chart colors
 
-### 6.4 Rules
+### 5.7 Analytics screen visual tone
 
-- Pair icons with labels unless the meaning is already standard
-- Icon-only actions need clear tooltip text
-- Keep icon usage disciplined; not every label needs an icon
-- Use platform logos only when representing connected social networks, never as generic decoration
-
----
-
-## 7. Spacing and Layout
-
-### 7.1 Spacing scale
-
-Stick to the Tailwind default spacing scale.
-
-Common rhythms:
-- Tight inline spacing: `gap-1.5` or `gap-2`
-- Control groups: `gap-2` or `gap-3`
-- Section blocks inside cards: `gap-4`
-- Larger page sections: `gap-6` or `gap-8`
-- Card padding: `p-4` or `p-5`
-- Dialog padding: `p-6`
-- Page content padding: `px-6 py-6` or `px-8 py-6`
-
-### 7.2 Border radius
-
-Atlassian-style product UI is slightly softer than the previous Linear direction, but still disciplined.
-
-| Element | Radius | Tailwind class | Notes |
-|---------|--------|----------------|-------|
-| Layout shell sections | `0–8px` | none or `rounded-lg` only when clearly containerized | Do not over-round page structure |
-| Buttons | `8px` | `rounded-lg` | Standard control feel |
-| Inputs, selects, textareas | `8px` | `rounded-lg` | Match button language |
-| Menus, popovers, tooltips | `8px` | `rounded-lg` | |
-| Cards, panels | `12px` | `rounded-xl` | Primary content container |
-| Modals, dialogs | `12px` | `rounded-xl` | |
-| Pills, tags, avatars | full | `rounded-full` | Only where shape semantics call for it |
-
-Rules:
-- Use the same radius for controls across a screen
-- Cards can be slightly softer than controls
-- Do not jump between `rounded`, `rounded-lg`, `rounded-xl`, and arbitrary values without a system reason
-- Avoid extra-soft `rounded-2xl` and above in the protected app
-
-### 7.3 Layout width
-
-Protected pages should use the available horizontal space intelligently.
+Analytics views should feel:
+- analytical, not decorative
+- easy to scan
+- dense but readable
+- calm under heavy data
 
 Prefer:
-- full-width app layouts with strong internal grouping
-- responsive grids for dashboards
-- stable columns for settings and details
+- clear section titles
+- compact legends
+- small supporting notes
+- visible time-range controls
+- restrained highlight usage
 
 Avoid:
-- narrow centered layouts for operational screens
-- giant empty gutters with compressed content
-- overly dense full-width tables without visual grouping
+- glowing charts
+- multiple saturated backgrounds
+- oversized metric cards fighting with the chart
+- decorative gradients in data regions
 
 ---
 
-## 8. Elevation and Surfaces
+## 6. Themes
 
-### 8.1 Borders and surfaces first
+SocialRaven supports both light and dark themes.
 
-Depth should come primarily from surface contrast and clean borders.
+### 6.1 Light theme
+
+Light mode is the flagship experience.
+
+It should feel:
+- neutral
+- crisp
+- readable
+- structured
+
+### 6.2 Dark theme
+
+Dark mode should preserve the same hierarchy and system logic.
+
+It should not become:
+- a new brand
+- a neon dashboard
+- a high-gloss aesthetic
 
 Use:
-- `border border-[--border]`
-- subtle surface changes between page, card, and nested container
-- light shadows only when a component truly floats
+- deep neutral backgrounds
+- clearly separated layers
+- brighter borders than typical dark SaaS products
+- brand emphasis sparingly
 
-### 8.2 Shadow use cases
+### 6.3 Theme rules
 
-| Component | Shadow |
-|-----------|--------|
-| Standard cards | none or `shadow-sm` |
-| Hoverable cards | `shadow-sm` |
-| Dropdowns / popovers | `shadow-md` |
-| Modals / dialogs | `shadow-lg` |
-| Sticky toolbars | minimal or none |
-
-Rules:
-- Do not stack multiple shadows
-- Avoid dramatic blur or soft ambient glows
-- Prefer borders over shadow when structure alone can solve the separation
-
-### 8.3 Background effects
-
-Use blur and translucency sparingly.
-
-Allowed:
-- mobile sheets
-- command-style overlays
-- lightweight sticky headers when needed
-
-Not allowed:
-- glassmorphism on standard product cards
-- decorative blur behind dashboard content
+- Do not hard-code light-only or dark-only product colors in component classes.
+- If a color must work in both themes, it should come from repo tokens.
+- Do not rely on third-party default colors without checking both themes.
+- Verify every meaningful UI change in both light and dark mode.
 
 ---
 
-## 9. Component Guidance
+## 7. Typography
 
-### 9.0 Component sourcing
+### 7.1 Type direction
 
-When choosing or building a component:
+SocialRaven currently uses **Inter** for app UI.
 
-- Prefer Atlassian components, Atlaskit components, or Atlassian interaction patterns when they cleanly fit the use case
-- Use shadcn/ui primitives when they are acting as a low-level implementation detail
-- Do not let shadcn default styling dictate the product look
-- If a component exists in both ecosystems, choose the Atlassian-style version for behavior, layout, spacing, naming, and state treatment
-- Wrap or restyle shadcn components as needed so the result reads like Atlassian product UI, not stock shadcn
+Use:
+- Inter for app shell, forms, tables, cards, and dashboards
+- `font-mono` only for code-like values, IDs, or tokens
 
-shadcn is acceptable for:
-- low-level primitives
-- Radix-backed accessibility scaffolding
-- small internal wrappers that will be fully themed to this system
+Do not introduce:
+- display fonts in the protected app
+- multiple sans-serif families
+- marketing-style typography in operational screens
 
-shadcn is not the visual source of truth for:
-- page composition
-- data-heavy patterns
-- settings forms
-- navigation
-- tables
-- banners, notices, or lozenges
+### 7.2 Hierarchy and density
 
-### 9.1 Buttons
+Use a practical product-first scale.
+
+| Role | Size | Weight |
+|------|------|--------|
+| Page title | `20px` to `24px` | `600` |
+| Section heading | `16px` to `18px` | `600` |
+| Card heading | `14px` to `16px` | `600` |
+| Standard UI text | `14px` | `400` to `500` |
+| Dense nav / compact labels | `13px` | `400` to `500` |
+| Secondary metadata | `12px` | `400` to `500` |
+
+Rules:
+- if there is no reason to go larger, use `13px` or `14px`
+- keep protected-app typography compact and consistent
+- prefer emphasis through weight and color before increasing font size
+- use sentence case by default
+
+---
+
+## 8. Iconography
+
+If choosing a new icon direction, Atlaskit aligns best with the target visual language.
+
+Rules:
+- do not mix icon styles inside the same screen
+- default icon color should inherit surrounding text color
+- use platform logos only for external networks
+- pair icons with labels unless the meaning is already standard
+- icon-only actions need tooltips and should be used sparingly for important tasks
+
+---
+
+## 9. Spacing, Radius, and Elevation
+
+### 9.1 Spacing
+
+Use a stable spacing rhythm.
+
+Common defaults:
+- tight inline spacing: `gap-1.5` or `gap-2`
+- control groups: `gap-2` or `gap-3`
+- card sections: `gap-4`
+- major page sections: `gap-6` or `gap-8`
+- card padding: `p-4` or `p-5`
+- dialog padding: `p-6`
+
+### 9.2 Radius
+
+Use disciplined rounding.
+
+| Element | Radius |
+|-------|-------|
+| Buttons and inputs | `8px` |
+| Menus and popovers | `8px` |
+| Cards and panels | `12px` |
+| Dialogs | `12px` |
+| Pills and avatars | `full` only when semantically appropriate |
+
+Do not jump between arbitrary radii on the same screen.
+
+### 9.3 Elevation
+
+Prefer borders and surface contrast before shadows.
+
+Use:
+- no shadow or very light shadow for standard cards
+- moderate shadow for popovers and dialogs
+
+Avoid:
+- layered shadows
+- ambient glows
+- dramatic floating-card treatment
+
+---
+
+## 10. Component Guidance
+
+### 10.1 Sourcing
+
+When choosing or building components:
+- prefer Atlassian patterns and behavior
+- use shadcn/ui as an implementation layer, not the visual source of truth
+- restyle wrappers when needed so the result reads as one coherent system
+
+### 10.2 Buttons
 
 Hierarchy:
 - `primary` for the main action
 - `secondary` for supporting actions
 - `subtle` or `ghost` for low-emphasis actions
-- `destructive` only when the result is destructive
+- `destructive` only for destructive outcomes
 
 Rules:
-- Standard height: `h-9` or `h-10`
-- Font: `text-sm font-medium`
-- One primary action per major section
-- Labels should be direct and short
-- Leading icons are preferred over trailing icons when an icon helps recognition
+- standard height: `h-9` or `h-10`
+- one primary action per major section
+- labels should be direct
+- use brand blue intentionally
 
-Avoid:
-- multiple primary buttons competing in one area
-- oversized CTA styling in workspace settings
-- ambiguous labels like `Continue` when the action can be explicit
+### 10.3 Inputs
 
-### 9.2 Inputs and selects
+- keep labels outside the field
+- use help text below the field
+- keep validation adjacent and specific
+- align related controls when viewport width allows
 
-- Height: `h-9` or `h-10`
-- Labels stay outside the field
-- Help text should sit below the field, not replace the label
-- Validation text should be specific and adjacent
-- Related controls should align in rows when the viewport allows it
+### 10.4 Cards and panels
 
-### 9.3 Cards and panels
+- use neutral surfaces
+- use clear headers when content mixes multiple concerns
+- solve grouping with spacing first, dividers second
+- use nested sunken surfaces sparingly
 
-- `bg-[--surface] border border-[--border] rounded-xl`
-- Use clear headers when the card contains more than one type of information
-- Separate sections with spacing first, dividers second
-- Use nested sunken surfaces sparingly for grouped secondary information
+### 10.5 Navigation
 
-### 9.4 Navigation and sidebar
+- active state should be clear and brand-led
+- inactive items should still be easy to scan
+- structure should prioritize orientation over ornament
 
-- Navigation should feel structured, not ornamental
-- Active item should use a blue-selected state with strong contrast
-- Inactive items should remain easy to scan
-- Group labels should be subtle but readable
-- Sidebar structure should prioritize fast orientation over visual flair
-
-### 9.5 Tables and data views
-
-Data-heavy screens should feel especially Atlassian-like: calm, readable, and operational.
+### 10.6 Tables and dense data
 
 Prefer:
-- clear column labels
-- sticky headers where useful
+- clear headers
+- visible filters
+- compact density options
 - row hover states
-- compact density options for large datasets
-- filters above the table, not buried elsewhere
-
-Do not:
-- rely on color alone to convey state
-- add oversized cards when a table is the right tool
-- bury row actions behind unpredictable affordances
-
-### 9.6 Badges and lozenges
-
-Atlassian-style status chips should be compact and semantic.
-
-- Use `text-xs font-medium`
-- Keep padding tight
-- Use semantic fills or subtle outlined treatments
-- Reserve blue lozenges for informational or selected states, not decoration
-
-### 9.7 Tabs and segmented controls
-
-- Tabs should be quiet and easy to scan
-- Active state can use blue text, underline, or selected container treatment
-- Do not turn tabs into loud pills unless the pattern is clearly segmented control behavior
-
-### 9.8 Banners, flags, and notices
-
-- Keep copy concise
-- Lead with the status, then the action or explanation
-- Use semantic color lightly
-- Avoid large marketing-style announcement bars inside the app shell
-
-### 9.9 Modals and dialogs
-
-- Standard widths: `max-w-sm`, `max-w-md`, `max-w-lg`
-- Title, body, and footer should be visually separated through spacing
-- Confirmation dialogs should be short and explicit
-- Dangerous actions must be unambiguous
-
----
-
-## 10. Motion and Interaction
-
-Animations should support comprehension.
-
-Rules:
-- Use short durations: `120–220ms` for most UI transitions
-- Favor `ease-out` for enter states
-- Keep hover and press states immediate
-- Use motion to clarify hierarchy changes, not to entertain
+- predictable row actions
 
 Avoid:
-- springy or playful transitions in serious product areas
-- long page transitions
-- stagger animations on every dashboard render
-- loading choreography where a skeleton or direct state update is enough
+- cardifying everything when a table is the correct tool
+- hiding critical actions
+- using color alone to convey row state
+
+### 10.7 Badges and lozenges
+
+- keep them compact
+- use semantic colors only for real meaning
+- use blue only for informational or selected states, not generic decoration
+
+### 10.8 Dialogs
+
+- keep titles explicit
+- keep confirmation copy short
+- make dangerous actions unmistakable
 
 ---
 
-## 11. Audience Fit: US and EU Customers
+## 11. What AI Tools Must Not Do
 
-The product should feel credible to agencies, operators, and teams in both markets.
-
-That means:
-- polished but restrained
-- secure and administratively trustworthy
-- readable under real work conditions
-- suitable for collaborative, role-based workflows
-- mature enough for procurement-sensitive buyers
-
-The UI should signal:
-- reliability
-- accountability
-- clarity
-- teamwork
-- business readiness
+Do not:
+- treat the current local `--accent` token as a generic accent bucket
+- turn every emphasis element blue
+- use brand blue as a substitute for semantic warning, success, or danger
+- build analytics colors from random Tailwind palette classes
+- put chart labels, legends, and axes on arbitrary chart colors
+- use decorative gradients in protected app workflows
+- apply heavy shadows to standard cards
+- introduce a second UI font family
+- blindly ship stock shadcn styling
+- rely on color alone for meaning
 
 ---
 
-## 12. What to Avoid
+## 12. Workflow for UI Changes
 
-Do not introduce:
-- Linear-style violet as the system accent
-- stock shadcn look-and-feel when an Atlassian-style pattern should be used
-- large decorative gradients in the protected app
-- multiple competing accent colors in one workflow
-- heavy shadows on standard cards
-- over-rounded consumer-style components
-- playful illustrations in workspace, billing, analytics, or settings flows
-- icon-only navigation for non-standard features
-- tiny metadata text that weakens readability
-- dense data screens without grouping, filters, or hierarchy
-- one-off token values that break system consistency
-
----
-
-## 13. Redesign Workflow
-
-Whenever redesigning an existing page:
+Whenever redesigning or creating a page:
 
 1. Read this file first.
-2. Inspect the local page and nearby components before making changes.
-3. Preserve information architecture unless there is a clear usability issue.
-4. Preserve business logic and permissions behavior unless behavior changes are explicitly requested.
-5. Improve hierarchy and task clarity before changing style details.
-6. Normalize spacing and control patterns before inventing new UI.
-7. Use Atlassian blue intentionally, not everywhere.
-8. Keep forms, tables, and settings pages especially calm and legible.
-9. Verify both light and dark themes after any visual change.
-10. Prefer system consistency over a one-screen flourish.
+2. Inspect the local page and nearby components.
+3. Preserve business logic and permissions behavior unless behavior changes are requested.
+4. Normalize spacing, hierarchy, and state treatment before inventing new visuals.
+5. Use neutral surfaces first and brand emphasis second.
+6. Use semantic colors only when the meaning is semantic.
+7. For analytics, separate chart-mark colors from chart-interface colors.
+8. Verify both light and dark themes.
+9. Keep the result production-ready, not exploratory.
 
 ---
 
-## 14. Implementation Notes for CLI Agents
-
-When a user asks for UI work in `socialraven-ui`, the agent should:
-
-1. Read this file first.
-2. Inspect the local page and nearby components before redesigning.
-3. Use Inter for all product typography.
-4. Prefer Atlassian components and Atlassian-style patterns over stock shadcn patterns whenever the component choice matters.
-5. Use the canonical palette from this file: Squid Ink `#172B4D`, White `#FFFFFF`, Pacific Bridge `#0052CC`.
-6. Prefer Atlaskit iconography (`@atlaskit/icon`) as the intended icon system and avoid mixing icon packs in new UI work.
-7. Apply colors through CSS variables, not scattered hardcoded values.
-8. Keep the result production-ready, not exploratory.
-9. Verify the result in both `light` and `dark` theme classes.
-10. Keep interaction patterns obvious and enterprise-appropriate.
-
-When in doubt:
-- simplify
-- clarify the primary action
-- reduce decorative treatment
-- strengthen hierarchy
-- keep the UI calm, structured, and blue-led
-
----
-
-## 15. Definition of Done for UI Changes
+## 13. Definition of Done
 
 A UI task is not complete unless the result is:
-- visually cleaner than before
+- cleaner than before
 - easier to scan
 - aligned with this guideline
-- consistent with nearby app pages
+- consistent with nearby screens
 - correct in both light and dark themes
 - responsive
 - accessible in common states
-- using accent blue intentionally rather than excessively
-- appropriate for a premium B2B or prosumer SaaS audience
+- using brand and semantic color correctly
+- using analytics colors intentionally and consistently
+- appropriate for a mature B2B product

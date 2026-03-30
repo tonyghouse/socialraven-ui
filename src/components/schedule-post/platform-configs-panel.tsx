@@ -61,13 +61,13 @@ async function cropFileToRatio(file: File, ratio: number): Promise<File> {
 // ── Platform brand styles ─────────────────────────────────────────────────────
 
 const PLATFORM_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-  facebook:  { bg: "bg-[#1877F2]/8",  text: "text-[#1877F2]", border: "border-[#1877F2]/25", dot: "bg-[#1877F2]" },
-  instagram: { bg: "bg-pink-50",       text: "text-pink-600",   border: "border-pink-200",      dot: "bg-pink-500" },
-  x:         { bg: "bg-foreground/5",  text: "text-foreground", border: "border-border",         dot: "bg-foreground" },
-  linkedin:  { bg: "bg-[#0A66C2]/8",  text: "text-[#0A66C2]", border: "border-[#0A66C2]/25",  dot: "bg-[#0A66C2]" },
-  youtube:   { bg: "bg-red-50",        text: "text-red-600",    border: "border-red-200",        dot: "bg-red-500" },
-  threads:   { bg: "bg-foreground/5",  text: "text-foreground", border: "border-border",         dot: "bg-foreground" },
-  tiktok:    { bg: "bg-foreground/5",  text: "text-foreground", border: "border-border",         dot: "bg-foreground" },
+  facebook:  { bg: "bg-surface-raised", text: "text-[#1877F2]", border: "border-border-subtle", dot: "bg-[#1877F2]" },
+  instagram: { bg: "bg-surface-raised", text: "text-[#C13584]", border: "border-border-subtle", dot: "bg-[#C13584]" },
+  x:         { bg: "bg-surface-raised", text: "text-foreground", border: "border-border-subtle", dot: "bg-foreground" },
+  linkedin:  { bg: "bg-surface-raised", text: "text-[#0A66C2]", border: "border-border-subtle", dot: "bg-[#0A66C2]" },
+  youtube:   { bg: "bg-surface-raised", text: "text-[#FF0000]", border: "border-border-subtle", dot: "bg-[#FF0000]" },
+  threads:   { bg: "bg-surface-raised", text: "text-foreground", border: "border-border-subtle", dot: "bg-foreground" },
+  tiktok:    { bg: "bg-surface-raised", text: "text-foreground", border: "border-border-subtle", dot: "bg-foreground" },
 };
 
 const PLATFORM_NAMES: Record<string, string> = {
@@ -90,8 +90,8 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
-        checked ? "bg-primary" : "bg-muted"
+        "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35",
+        checked ? "bg-[hsl(var(--accent))]" : "bg-surface-raised"
       )}
     >
       <span
@@ -116,10 +116,10 @@ function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between py-2.5 border-b border-border/40 last:border-0">
+    <div className="flex items-center justify-between border-b border-border-subtle py-2.5 last:border-0">
       <div className="flex-1 min-w-0 pr-4">
         <p className="text-sm font-medium text-foreground">{label}</p>
-        {description && <p className="text-xs text-muted-foreground mt-0.5">{description}</p>}
+        {description && <p className="mt-0.5 text-xs text-foreground-muted">{description}</p>}
       </div>
       <Toggle checked={checked} onChange={onChange} />
     </div>
@@ -143,10 +143,10 @@ function RadioPills<T extends string>({
           type="button"
           onClick={() => onChange(opt.value)}
           className={cn(
-            "px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150",
+            "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors duration-150",
             value === opt.value
-              ? "bg-primary text-primary-foreground border-primary shadow-sm"
-              : "bg-background text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+              ? "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+              : "border-border-subtle bg-surface text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground"
           )}
         >
           {opt.label}
@@ -159,7 +159,7 @@ function RadioPills<T extends string>({
 function ConfigRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-2">
-      <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</Label>
+      <Label className="text-xs font-semibold uppercase tracking-[0.08em] text-foreground-muted">{label}</Label>
       {children}
     </div>
   );
@@ -244,10 +244,10 @@ function InstagramPanel({
                   type="button"
                   onClick={() => setSelectedRatio(ratio === null ? "original" : ratio)}
                   className={cn(
-                    "flex-1 flex flex-col items-center gap-1.5 py-2.5 px-1 rounded-lg border transition-colors",
+                    "flex flex-1 flex-col items-center gap-1.5 rounded-lg border px-1 py-2.5 transition-colors",
                     isSelected
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
+                      ? "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                      : "border-border-subtle text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground",
                   )}
                 >
                   {/* Visual ratio preview */}
@@ -255,7 +255,7 @@ function InstagramPanel({
                     style={{ width: pw, height: ph }}
                     className={cn(
                       "rounded-sm border-2 flex-shrink-0",
-                      isSelected ? "border-primary-foreground/80" : "border-current"
+                      isSelected ? "border-[hsl(var(--accent))]" : "border-current"
                     )}
                   />
                   <span className="text-[10px] font-semibold leading-none">{label}</span>
@@ -269,7 +269,7 @@ function InstagramPanel({
               type="button"
               onClick={applyToAll}
               disabled={applying}
-              className="w-full mt-2 py-1.5 text-xs font-semibold rounded-lg border border-primary/40 text-primary hover:bg-primary/5 transition-colors disabled:opacity-50"
+              className="mt-2 w-full rounded-lg border border-[hsl(var(--accent))]/20 py-1.5 text-xs font-semibold text-[hsl(var(--accent))] transition-colors hover:bg-[hsl(var(--accent))]/8 disabled:opacity-50"
             >
               {applying
                 ? "Cropping…"
@@ -285,7 +285,7 @@ function InstagramPanel({
                   key={file.name + file.size}
                   type="button"
                   onClick={() => setCropTarget(file)}
-                  className="relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border border-border hover:border-primary/50 transition-colors group"
+                  className="group relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-border-subtle transition-colors hover:border-[hsl(var(--accent))]/25"
                   title={`Crop ${file.name} individually`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -294,7 +294,7 @@ function InstagramPanel({
                     alt={file.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center bg-[hsl(var(--foreground)/0.38)] opacity-0 transition-opacity group-hover:opacity-100">
                     <span className="text-[9px] font-bold text-white">Crop</span>
                   </div>
                 </button>
@@ -396,10 +396,15 @@ function YouTubePanel({
           placeholder="Enter a compelling video title..."
           value={config.videoTitle ?? ""}
           onChange={(e) => onChange({ ...config, videoTitle: e.target.value })}
-          className={cn("text-sm", titleError ? "border-red-400 focus-visible:ring-red-400/30" : "")}
+          className={cn(
+            "text-sm",
+            titleError
+              ? "border-destructive/60 focus-visible:ring-destructive/20"
+              : "border-border-subtle"
+          )}
         />
         {titleError && (
-          <p className="flex items-center gap-1.5 text-xs text-red-500">
+          <p className="flex items-center gap-1.5 text-xs text-destructive">
             <AlertCircle className="w-3 h-3 flex-shrink-0" />
             Video title is required for YouTube
           </p>
@@ -428,7 +433,7 @@ function YouTubePanel({
           <button
             type="button"
             onClick={addTag}
-            className="px-3 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-lg flex-shrink-0 hover:bg-primary/90 transition-colors"
+            className="flex-shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-[hsl(var(--accent-hover))]"
           >
             Add
           </button>
@@ -436,12 +441,12 @@ function YouTubePanel({
         {(config.tags ?? []).length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-2">
             {(config.tags ?? []).map((tag) => (
-              <span key={tag} className="inline-flex items-center gap-1 px-2.5 py-1 bg-muted rounded-full text-xs font-medium">
+              <span key={tag} className="inline-flex items-center gap-1 rounded-md border border-border-subtle bg-surface-raised px-2.5 py-1 text-xs font-medium">
                 {tag}
                 <button
                   type="button"
                   onClick={() => onChange({ ...config, tags: (config.tags ?? []).filter((t) => t !== tag) })}
-                  className="text-muted-foreground hover:text-foreground ml-0.5 leading-none"
+                  className="ml-0.5 leading-none text-foreground-muted hover:text-foreground"
                   aria-label={`Remove tag ${tag}`}
                 >
                   ×
@@ -594,12 +599,12 @@ function PlatformAccordionCard({
   }
 
   return (
-    <div className={cn("rounded-xl border overflow-hidden transition-shadow", styles.border, open ? "shadow-sm" : "")}>
+    <div className={cn("overflow-hidden rounded-xl border transition-shadow", styles.border, open ? "shadow-sm" : "")}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          "w-full flex items-center justify-between px-4 py-3 transition-colors hover:brightness-95",
+          "flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-[hsl(var(--background))]",
           styles.bg
         )}
       >
@@ -612,7 +617,7 @@ function PlatformAccordionCard({
           {Icon && <Icon className={cn("w-4 h-4 flex-shrink-0", styles.text)} />}
           <span className={cn("text-sm font-semibold", styles.text)}>{name}</span>
           {hasError && (
-            <span className="flex items-center gap-1 text-[10px] font-semibold text-red-600 bg-red-50 border border-red-200 rounded-full px-2 py-px">
+            <span className="flex items-center gap-1 rounded-md border border-destructive/20 bg-destructive/10 px-2 py-px text-[10px] font-semibold text-destructive">
               <AlertCircle className="w-2.5 h-2.5" />
               Required field missing
             </span>
@@ -625,7 +630,7 @@ function PlatformAccordionCard({
       </button>
 
       {open && (
-        <div className="px-4 py-4 bg-card border-t border-border/40">
+        <div className="border-t border-border-subtle bg-surface px-4 py-4">
           {renderPanel()}
         </div>
       )}
@@ -662,10 +667,12 @@ export default function PlatformConfigsPanel({ selectedAccounts, configs, onChan
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Settings2 className="w-4 h-4 text-muted-foreground" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-subtle bg-surface-raised text-[hsl(var(--accent))]">
+          <Settings2 className="h-4 w-4" />
+        </div>
         <div>
           <h3 className="text-sm font-semibold text-foreground">Platform Settings</h3>
-          <p className="text-xs text-muted-foreground">Customize how your post appears on each platform</p>
+          <p className="text-xs text-foreground-muted">Customize how your post appears on each platform</p>
         </div>
       </div>
       <div className="space-y-2">

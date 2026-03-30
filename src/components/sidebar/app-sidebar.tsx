@@ -29,17 +29,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useRole } from "@/hooks/useRole";
-import { usePlan } from "@/hooks/usePlan";
-import { WorkspaceManageSheet } from "./WorkspaceManageSheet";
 import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 export function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const { canWrite, isOwner } = useRole();
-  const { isInfluencer } = usePlan();
-  // Agency owners get the full workspace management panel; everyone else gets the switcher
-  const showManagePanel = !isInfluencer && isOwner;
 
   const navGroups = [
     {
@@ -160,10 +155,7 @@ export function AppSidebar() {
             isCollapsed ? "flex justify-center px-2 py-2" : "p-2"
           )}
         >
-          {showManagePanel
-            ? <WorkspaceManageSheet collapsed={isCollapsed} />
-            : <WorkspaceSwitcher collapsed={isCollapsed} />
-          }
+          <WorkspaceSwitcher collapsed={isCollapsed} />
         </div>
       </div>
 

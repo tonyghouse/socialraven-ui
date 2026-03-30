@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-import { Calendar, Clock, Globe } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { DatePicker, TimePicker } from "@atlaskit/datetime-picker";
+import { Globe } from "lucide-react";
 
 interface Props {
   date: string;
@@ -14,12 +14,38 @@ interface Props {
 export default function ScheduleDateTimePicker({ date, setDate, time, setTime }: Props) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const minDate  = new Date().toISOString().split("T")[0];
+  const pickerThemeClassName = [
+    "w-full",
+    "[--ds-background-input:hsl(var(--surface))]",
+    "[--ds-background-input-hovered:hsl(var(--surface-raised))]",
+    "[--ds-background-input-pressed:hsl(var(--surface-raised))]",
+    "[--ds-background-disabled:hsl(var(--surface-raised))]",
+    "[--ds-border-input:hsl(var(--border))]",
+    "[--ds-border-focused:hsl(var(--accent))]",
+    "[--ds-border-danger:hsl(var(--destructive))]",
+    "[--ds-surface-overlay:hsl(var(--surface))]",
+    "[--ds-text:hsl(var(--foreground))]",
+    "[--ds-text-subtle:hsl(var(--foreground-muted))]",
+    "[--ds-text-subtlest:hsl(var(--foreground-subtle))]",
+    "[--ds-text-disabled:hsl(var(--foreground-subtle))]",
+    "[--ds-text-selected:hsl(var(--accent-foreground))]",
+    "[--ds-background-selected:hsl(var(--accent))]",
+    "[--ds-background-selected-hovered:hsl(var(--accent-hover))]",
+    "[--ds-background-neutral-subtle-hovered:hsl(var(--surface-raised))]",
+    "[--ds-background-neutral-subtle-pressed:hsl(var(--surface-raised))]",
+    "[--ds-shadow-overlay:var(--shadow-lg)]",
+  ].join(" ");
+  const timeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
+    const hour = String(Math.floor(index / 4)).padStart(2, "0");
+    const minute = String((index % 4) * 15).padStart(2, "0");
+    return `${hour}:${minute}`;
+  });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 rounded-xl border border-border-subtle bg-surface p-4">
       <div className="flex items-center justify-between">
         <label className="text-sm font-semibold text-foreground">Schedule</label>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/60 px-2.5 py-1 rounded-full">
+        <div className="flex items-center gap-1.5 rounded-md border border-border-subtle bg-surface-raised px-2.5 py-1 text-xs text-foreground-muted">
           <Globe className="w-3 h-3 flex-shrink-0" />
           <span className="truncate max-w-[180px]">{timezone}</span>
         </div>
@@ -30,45 +56,39 @@ export default function ScheduleDateTimePicker({ date, setDate, time, setTime }:
           <label htmlFor="post-date" className="text-xs font-medium text-muted-foreground">
             Date
           </label>
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-            <input
-              id="post-date"
-              type="date"
-              min={minDate}
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className={cn(
-                "w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border bg-background text-foreground",
-                "border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                "transition-all duration-200 [color-scheme:light] dark:[color-scheme:dark]"
-              )}
-            />
-          </div>
+          <DatePicker
+            id="post-date"
+            value={date}
+            onChange={(value) => setDate(value)}
+            minDate={minDate}
+            locale="en-US"
+            placeholder="Select date"
+            shouldShowCalendarButton
+            label="Schedule date"
+            innerProps={{ className: `${pickerThemeClassName} schedule-date-picker` }}
+          />
         </div>
 
         <div className="space-y-1.5">
           <label htmlFor="post-time" className="text-xs font-medium text-muted-foreground">
             Time
           </label>
-          <div className="relative">
-            <Clock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-            <input
-              id="post-time"
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              className={cn(
-                "w-full pl-9 pr-3 py-2.5 text-sm rounded-lg border bg-background text-foreground",
-                "border-border focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
-                "transition-all duration-200 [color-scheme:light] dark:[color-scheme:dark]"
-              )}
-            />
-          </div>
+          <TimePicker
+            id="post-time"
+            value={time}
+            onChange={(value) => setTime(value)}
+            placeholder="Select time"
+            label="Schedule time"
+            locale="en-US"
+            timeFormat="HH:mm"
+            times={timeOptions}
+            timeIsEditable
+            innerProps={{ className: pickerThemeClassName }}
+          />
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      <p className="border-t border-border-subtle pt-3 text-xs text-foreground-muted">
         Select when you want your post to go live — time is based on your local timezone.
       </p>
     </div>

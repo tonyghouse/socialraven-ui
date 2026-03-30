@@ -175,6 +175,26 @@
   --sidebar-accent-foreground: 215 100% 76%;
   --sidebar-border: var(--border);
   --sidebar-ring: var(--accent);
+
+  /* Atlaskit design tokens used by layered datetime picker UI */
+  --ds-background-input: hsl(var(--surface));
+  --ds-background-input-hovered: hsl(var(--surface-raised));
+  --ds-background-input-pressed: hsl(var(--surface-raised));
+  --ds-background-disabled: hsl(var(--surface-raised));
+  --ds-surface-overlay: hsl(var(--surface));
+  --ds-border-input: hsl(var(--border));
+  --ds-border-focused: hsl(var(--accent));
+  --ds-border-danger: hsl(var(--destructive));
+  --ds-text: hsl(var(--foreground));
+  --ds-text-subtle: hsl(var(--foreground-muted));
+  --ds-text-subtlest: hsl(var(--foreground-subtle));
+  --ds-text-disabled: hsl(var(--foreground-subtle));
+  --ds-text-selected: hsl(var(--accent-foreground));
+  --ds-background-selected: hsl(var(--accent));
+  --ds-background-selected-hovered: hsl(var(--accent-hover));
+  --ds-background-neutral-subtle-hovered: hsl(var(--surface-raised));
+  --ds-background-neutral-subtle-pressed: hsl(var(--surface-raised));
+  --ds-shadow-overlay: var(--shadow-lg);
 }
 
 @layer base {
@@ -211,4 +231,12 @@
     background:
       linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-sunken)));
   }
+}
+
+.dark .schedule-date-picker button svg {
+  color: hsl(var(--foreground-muted));
+}
+
+.dark .schedule-date-picker button:hover svg {
+  color: hsl(var(--foreground));
 }

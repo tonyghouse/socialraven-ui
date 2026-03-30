@@ -1,5 +1,9 @@
 "use client";
 
+import AtlassianButton from "@atlaskit/button/new";
+import Lozenge from "@atlaskit/lozenge";
+import SectionMessage from "@atlaskit/section-message";
+import Tag from "@atlaskit/tag";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -43,6 +47,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { toast } from "sonner";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import { deletePostCollectionApi } from "@/service/deletePostCollectionApi";
@@ -263,6 +268,32 @@ function getCountdown(target: Date): string | null {
   return `${mins}m`;
 }
 
+function getStatusLozengeAppearance(status: string) {
+  switch (status) {
+    case "PUBLISHED":
+      return "success";
+    case "PARTIAL_SUCCESS":
+      return "moved";
+    case "FAILED":
+      return "removed";
+    case "SCHEDULED":
+    default:
+      return "inprogress";
+  }
+}
+
+function getTypeLozengeAppearance(type: string) {
+  switch (type) {
+    case "VIDEO":
+      return "new";
+    case "TEXT":
+      return "default";
+    case "IMAGE":
+    default:
+      return "information";
+  }
+}
+
 /* ─── Helper functions ────────────────────────────────────── */
 
 function toLocalDateString(date: Date) {
@@ -453,15 +484,12 @@ function DeleteModal({
       />
 
       {/* Panel */}
-      <div className="relative w-full max-w-md rounded-2xl bg-card border border-border/60 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Red accent top bar */}
-        <div className="h-1 w-full bg-gradient-to-r from-red-400 to-red-600" />
-
+      <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_8px_24px_rgba(9,30,66,0.24)] animate-in fade-in zoom-in-95 duration-200">
         <div className="p-6">
           {/* Icon + heading */}
           <div className="flex items-start gap-4 mb-5">
-            <div className="h-11 w-11 rounded-2xl bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 flex items-center justify-center flex-shrink-0">
-              <Trash2 className="h-5 w-5 text-red-600 dark:text-red-400" />
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+              <Trash2 className="h-5 w-5 text-[hsl(var(--destructive))]" />
             </div>
             <div>
               <h2
@@ -470,14 +498,17 @@ function DeleteModal({
               >
                 Delete this collection?
               </h2>
-              <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
-                This action is permanent and cannot be undone.
-              </p>
             </div>
           </div>
 
+          <div className="mb-5">
+            <SectionMessage appearance="error" title="This action cannot be undone.">
+              This will permanently remove the scheduled collection and its posts.
+            </SectionMessage>
+          </div>
+
           {/* Collection preview card */}
-          <div className="rounded-xl border border-border/50 bg-muted/30 p-4 mb-5 space-y-3">
+          <div className="mb-5 space-y-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] p-4">
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
                 Collection
@@ -724,24 +755,15 @@ export default function ScheduledCollectionDetailPage() {
 
   if (error || !collection) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
-          <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-7 w-7 text-red-500" />
-          </div>
-          <h3 className="font-semibold text-foreground mb-1">
-            Collection not found
-          </h3>
-          <p className="text-sm text-muted-foreground mb-6">
-            This collection couldn&apos;t be loaded. It may have been deleted.
-          </p>
-          <button
-            onClick={() => router.push("/scheduled-posts")}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-opacity mx-auto"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Scheduled Posts
-          </button>
+      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
+        <div className="w-full max-w-md rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <SectionMessage appearance="error" title="Collection not found">
+            <div className="mt-3">
+              <AtlassianButton appearance="primary" onClick={() => router.push("/scheduled-posts")}>
+                Back to Scheduled Posts
+              </AtlassianButton>
+            </div>
+          </SectionMessage>
         </div>
       </div>
     );
@@ -751,8 +773,6 @@ export default function ScheduledCollectionDetailPage() {
   const scheduledDate = new Date(collection.scheduledTime ?? "");
   const status = statusConfig[collection.overallStatus] ?? statusConfig.SCHEDULED;
   const type = typeConfig[collection.postCollectionType] ?? typeConfig.TEXT;
-  const StatusIcon = status.Icon;
-  const TypeIcon = type.Icon;
   const isScheduled = collection.overallStatus === "SCHEDULED";
 
   // Group posts by platform
@@ -791,7 +811,7 @@ export default function ScheduledCollectionDetailPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[hsl(var(--background))]">
       {/* Toast */}
       {toast && (
         <div
@@ -842,144 +862,125 @@ export default function ScheduledCollectionDetailPage() {
       ══════════════════════════════════════════════ */}
       {mode === "view" && (
         <>
-          {/* Sticky Breadcrumb Header */}
-          <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-            <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-              <nav className="flex items-center gap-1.5 text-sm min-w-0">
-                <button
-                  onClick={() => router.push("/scheduled-posts")}
-                  className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-                >
-                  <Layers className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline font-medium">
-                    Scheduled Posts
-                  </span>
-                </button>
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-                <span className="font-medium text-foreground truncate">
-                  {collection.description}
-                </span>
-              </nav>
-
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Edit button */}
+          <ProtectedPageHeader
+            title={collection.description}
+            description="Scheduled post details."
+            icon={<Layers className="h-4 w-4" />}
+            actions={
+              <>
                 {isScheduled && (
-                  <button
-                    onClick={enterEditMode}
-                    className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-border/60 text-foreground hover:bg-muted/50 transition-all text-xs font-semibold"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                    Edit
-                  </button>
+                  <div className="hidden sm:inline-flex">
+                    <AtlassianButton appearance="subtle" onClick={enterEditMode}>
+                      <Pencil className="mr-1 h-3.5 w-3.5" />
+                      Edit
+                    </AtlassianButton>
+                  </div>
                 )}
 
-                {/* Delete button */}
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all text-xs font-semibold"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                  Delete
-                </button>
+                <div className="hidden sm:inline-flex">
+                  <AtlassianButton
+                    appearance="danger"
+                    onClick={() => setShowDeleteModal(true)}
+                  >
+                    <Trash2 className="mr-1 h-3.5 w-3.5" />
+                    Delete
+                  </AtlassianButton>
+                </div>
 
-                <button
-                  onClick={() => router.push("/schedule-post")}
-                  className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  New Post
-                </button>
-              </div>
-            </div>
-          </header>
+                <div className="hidden sm:inline-flex">
+                  <AtlassianButton
+                    appearance="primary"
+                    onClick={() => router.push("/schedule-post")}
+                  >
+                    <Plus className="mr-1 h-3.5 w-3.5" />
+                    New Post
+                  </AtlassianButton>
+                </div>
+              </>
+            }
+          />
 
-          <div className="px-4 sm:px-6 py-6 space-y-5">
-            {/* Hero card */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div className="h-1 w-full bg-gradient-to-r from-violet-500 via-primary to-indigo-500" />
-              <div className="px-6 pt-6 pb-5">
-                <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
-                  <h1 className="text-2xl font-bold text-foreground tracking-tight flex-1 min-w-0">
+          <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+            <nav className="flex min-w-0 items-center gap-1.5 text-sm">
+              <AtlassianButton
+                appearance="subtle"
+                onClick={() => router.push("/scheduled-posts")}
+                spacing="compact"
+              >
+                <Layers className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Scheduled Posts</span>
+              </AtlassianButton>
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+              <span className="font-medium text-foreground truncate">
+                {collection.description}
+              </span>
+            </nav>
+          </div>
+
+          <div className="px-4 py-6 space-y-5 sm:px-6">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="border-b border-[hsl(var(--border-subtle))] px-6 py-5">
+                <div className="mb-3 flex flex-wrap items-start gap-3">
+                  <h1 className="min-w-0 flex-1 text-[24px] font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))]">
                     {collection.description}
                   </h1>
                   <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border", type.className)}>
-                      <TypeIcon className="h-3.5 w-3.5" />
+                    <Lozenge appearance={getTypeLozengeAppearance(collection.postCollectionType)}>
                       {type.label}
-                    </span>
-                    <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border", status.className)}>
-                      <StatusIcon className="h-3.5 w-3.5" />
+                    </Lozenge>
+                    <Lozenge appearance={getStatusLozengeAppearance(collection.overallStatus)} isBold>
                       {status.label}
-                    </span>
+                    </Lozenge>
                     <div className="flex items-center gap-1.5 sm:hidden">
                       {isScheduled && (
-                        <button onClick={enterEditMode} className="h-7 w-7 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all">
+                        <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
                           <Pencil className="h-3.5 w-3.5" />
-                        </button>
+                        </AtlassianButton>
                       )}
-                      <button onClick={() => setShowDeleteModal(true)} className="h-7 w-7 rounded-lg border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
+                      <AtlassianButton appearance="danger" onClick={() => setShowDeleteModal(true)} spacing="compact">
                         <Trash2 className="h-3.5 w-3.5" />
-                      </button>
+                      </AtlassianButton>
                     </div>
                   </div>
                 </div>
-                {collection.description && (
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-                    {collection.description}
-                  </p>
-                )}
-                <div className="flex items-center gap-3 flex-wrap">
-                  <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground bg-muted/40 border border-border/40">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <span>{formattedDate} · {formattedTime}</span>
-                    {isScheduled && (
-                      <button onClick={enterEditMode} className="ml-0.5 hover:text-foreground transition-colors" title="Edit schedule">
-                        <Pencil className="h-2.5 w-2.5" />
-                      </button>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {Object.keys(groupedPosts).map((plat) => {
-                      const platUpper = plat.toUpperCase();
-                      const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
-                      return (
-                        <div
-                          key={plat}
-                          title={platformDisplayName[platUpper] ?? plat}
-                          className={cn(
-                            "h-7 w-7 rounded-lg border flex items-center justify-center flex-shrink-0",
-                            platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60"
-                          )}
-                        >
-                          {PlatIcon ? <PlatIcon className="h-3.5 w-3.5" /> : null}
-                        </div>
-                      );
-                    })}
-                  </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Tag text={`${formattedDate} · ${formattedTime}`} />
+                  <Tag text={`${collection.posts.length} post${collection.posts.length !== 1 ? "s" : ""}`} />
+                  <Tag text={`${platformCount} platform${platformCount !== 1 ? "s" : ""}`} />
+                  {Object.keys(groupedPosts).map((plat) => (
+                    <Tag
+                      key={plat}
+                      text={platformDisplayName[plat.toUpperCase()] ?? plat}
+                    />
+                  ))}
                 </div>
               </div>
+              {captionText && (
+                <div className="px-6 py-4">
+                  <p className="whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                    {captionText}
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Main layout: sidebar + platform sections */}
             <div className="flex flex-col lg:flex-row gap-5 items-start">
-              {/* Left sidebar */}
               <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
-                {/* Schedule card */}
-                <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                     <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <p className="text-sm font-semibold text-foreground flex-1">Schedule</p>
                     {isScheduled && (
-                      <button onClick={enterEditMode} className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit schedule">
+                      <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
                         <Pencil className="h-3.5 w-3.5" />
-                      </button>
+                      </AtlassianButton>
                     )}
                   </div>
                   <div className="p-5 space-y-4">
                     {isScheduled && getCountdown(scheduledDate) && (
-                      <div className="rounded-xl bg-primary/5 border border-primary/20 px-4 py-5 text-center">
-                        <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1.5">Publishing in</p>
-                        <p className="text-3xl font-bold text-primary tabular-nums tracking-tight">{getCountdown(scheduledDate)}</p>
+                      <div className="rounded-lg border border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 px-4 py-4">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Publishing in</p>
+                        <p className="mt-1 text-[28px] font-semibold tracking-[-0.03em] text-[hsl(var(--accent))] tabular-nums">{getCountdown(scheduledDate)}</p>
                       </div>
                     )}
                     <div className="space-y-2.5">
@@ -995,22 +996,21 @@ export default function ScheduledCollectionDetailPage() {
                   </div>
                 </div>
 
-                {/* Caption card */}
-                <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                     <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <p className="text-sm font-semibold text-foreground flex-1">Caption</p>
                     {isScheduled && (
-                      <button onClick={enterEditMode} className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
+                      <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
                         <Pencil className="h-3.5 w-3.5" />
-                      </button>
+                      </AtlassianButton>
                     )}
                   </div>
                   <div className="p-5">
                     {captionText ? (
                       <p className="text-sm text-foreground/80 leading-relaxed line-clamp-10 whitespace-pre-wrap">{captionText}</p>
                     ) : (
-                      <p className="text-sm text-muted-foreground/50 italic">No caption specified</p>
+                      <p className="text-sm text-muted-foreground/50 italic">No caption</p>
                     )}
                     {captionText && (
                       <p className="text-xs text-muted-foreground/40 tabular-nums mt-3">{captionText.length} characters</p>
@@ -1020,16 +1020,16 @@ export default function ScheduledCollectionDetailPage() {
 
                 {/* Media carousel */}
                 {collection.media.length > 0 && (
-                  <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                    <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+                  <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                    <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                       <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <p className="text-sm font-semibold text-foreground flex-1">
                         Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
                       </p>
                       {isScheduled && collection.postCollectionType !== "TEXT" && (
-                        <button onClick={enterEditMode} className="h-6 w-6 rounded-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all" title="Edit">
+                        <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
                           <Pencil className="h-3.5 w-3.5" />
-                        </button>
+                        </AtlassianButton>
                       )}
                     </div>
                     <div className="p-4">
@@ -1038,16 +1038,15 @@ export default function ScheduledCollectionDetailPage() {
                   </div>
                 )}
 
-                {/* Stats card with platform breakdown */}
-                <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                   <div className="px-5 py-4 flex items-center divide-x divide-border/40">
                     <div className="flex-1 text-center pr-4">
-                      <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mt-1.5">Posts</p>
+                      <p className="text-2xl font-semibold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
+                      <p className="mt-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Posts</p>
                     </div>
                     <div className="flex-1 text-center pl-4">
-                      <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mt-1.5">Platforms</p>
+                      <p className="text-2xl font-semibold text-foreground tabular-nums leading-none">{platformCount}</p>
+                      <p className="mt-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Platforms</p>
                     </div>
                   </div>
                   <div className="px-5 pb-4 border-t border-border/30 pt-4 space-y-3">
@@ -1068,12 +1067,12 @@ export default function ScheduledCollectionDetailPage() {
                 </div>
               </div>
 
-              {/* Platform sections */}
               <div className="flex-1 min-w-0 space-y-4">
                 {collection.posts.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-border/40 bg-muted/20">
-                    <LayoutGrid className="h-8 w-8 text-muted-foreground/40 mb-2" />
-                    <p className="text-sm text-muted-foreground">No posts in this collection</p>
+                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                    <SectionMessage appearance="information" title="No posts in this collection">
+                      Add posts to this collection to preview them here by platform.
+                    </SectionMessage>
                   </div>
                 ) : (
                   Object.entries(groupedPosts).map(([platform, posts]) => (
@@ -1089,24 +1088,17 @@ export default function ScheduledCollectionDetailPage() {
               </div>
             </div>
 
-            {/* Mobile bottom actions */}
             <div className="sm:hidden flex gap-3 pt-1 pb-6">
               {isScheduled && (
-                <button
-                  onClick={enterEditMode}
-                  className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-border/60 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
-                >
-                  <Pencil className="h-4 w-4" />
+                <AtlassianButton appearance="subtle" onClick={enterEditMode} shouldFitContainer>
+                  <Pencil className="mr-1 h-4 w-4" />
                   Edit
-                </button>
+                </AtlassianButton>
               )}
-              <button
-                onClick={() => setShowDeleteModal(true)}
-                className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-red-200 dark:border-red-800/40 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
+              <AtlassianButton appearance="danger" onClick={() => setShowDeleteModal(true)} shouldFitContainer>
+                <Trash2 className="mr-1 h-4 w-4" />
                 Delete
-              </button>
+              </AtlassianButton>
             </div>
           </div>
         </>
@@ -1348,55 +1340,48 @@ function EditModePanel({
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur-xl">
-        <div className="px-4 sm:px-6">
-          <div className="flex items-center gap-3 h-16">
-            <button
-              onClick={onCancel}
-              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              <span className="text-sm font-medium hidden sm:inline">Back</span>
-            </button>
-            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <Pencil className="w-[18px] h-[18px] text-primary" />
+      <ProtectedPageHeader
+        title="Edit Collection"
+        description={collection.description}
+        icon={<Pencil className="h-4 w-4" />}
+        leading={
+          <button
+            onClick={onCancel}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="text-sm font-medium hidden sm:inline">Back</span>
+          </button>
+        }
+        actions={
+          selectedAccountIds.length > 0 ? (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-semibold text-primary flex-shrink-0 border border-primary/20">
+              <Zap className="w-3 h-3" />
+              {selectedAccountIds.length}{" "}
+              {selectedAccountIds.length === 1 ? "account" : "accounts"}
             </div>
-            <div className="flex-1 min-w-0">
-              <h1 className="text-base font-bold text-foreground tracking-tight leading-tight">
-                Edit Collection
-              </h1>
-              <p className="text-xs text-muted-foreground leading-tight truncate">
-                {collection.description}
-              </p>
-            </div>
-            {selectedAccountIds.length > 0 && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-semibold text-primary flex-shrink-0 border border-primary/20">
-                <Zap className="w-3 h-3" />
-                {selectedAccountIds.length}{" "}
-                {selectedAccountIds.length === 1 ? "account" : "accounts"}
-              </div>
-            )}
-          </div>
+          ) : undefined
+        }
+      />
 
-          {/* Platform badges row */}
-          {selectedPlatformKeys.length > 0 && (
-            <div className="flex items-center gap-1.5 pb-2.5 flex-wrap">
-              <span className="text-xs text-muted-foreground">Posting to:</span>
-              {selectedPlatformKeys.map((p) => (
-                <span
-                  key={p}
-                  className={cn(
-                    "text-xs font-medium px-2 py-0.5 rounded-full border",
-                    PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border"
-                  )}
-                >
-                  {PLATFORM_LABELS[p] ?? p}
-                </span>
-              ))}
-            </div>
-          )}
+      {selectedPlatformKeys.length > 0 && (
+        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs text-muted-foreground">Posting to:</span>
+            {selectedPlatformKeys.map((p) => (
+              <span
+                key={p}
+                className={cn(
+                  "text-xs font-medium px-2 py-0.5 rounded-full border",
+                  PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border"
+                )}
+              >
+                {PLATFORM_LABELS[p] ?? p}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Steps ── */}
       <div className="px-4 sm:px-6 py-6 space-y-4">
@@ -2197,8 +2182,8 @@ function PlatformSection({
 function SkeletonDetailPage() {
   return (
     <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
+        <div className="px-4 sm:px-6 h-[60px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />
             <Skeleton className="h-4 w-32 rounded hidden sm:block" />

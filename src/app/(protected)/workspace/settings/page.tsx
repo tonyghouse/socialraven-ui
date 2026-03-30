@@ -43,6 +43,7 @@ import {
   sendInviteApi,
 } from "@/service/invitation";
 import { Button } from "@/components/ui/button";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -778,56 +779,51 @@ export default function WorkspaceSettingsPage() {
         </div>
       )}
 
+      <ProtectedPageHeader
+        title={`Manage ${workspaceName}`}
+        description="Administer members, invitations, and workspace controls."
+        icon={<FolderKanban className="h-4 w-4" />}
+        actions={
+          <>
+            <div
+              className={cn(
+                "hidden items-center gap-2 rounded-md border bg-white/80 px-3 py-2 text-sm shadow-sm backdrop-blur-sm md:inline-flex dark:bg-white/5",
+                dividerClass
+              )}
+            >
+              <span
+                className={cn(
+                  "h-2 w-2 rounded-full bg-[#1f845a]",
+                  refreshing && "animate-pulse"
+                )}
+              />
+              <span className={subtleTextClass}>
+                {refreshing ? "Syncing workspace..." : refreshLabel}
+              </span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => loadData({ silent: true, syncWorkspaceList: true })}
+              disabled={loading || refreshing}
+              className="h-8 rounded-md border-slate-300 bg-white/80 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+            >
+              <RefreshCw
+                size={16}
+                className={cn((loading || refreshing) && "animate-spin")}
+              />
+              Refresh
+            </Button>
+          </>
+        }
+      />
+
       <div className="w-full px-6 py-6 md:px-8 md:py-8">
         <div className="space-y-6">
-          <div className={cn(surfaceClass, "overflow-hidden")}>
-            <div className="flex flex-col gap-4 bg-[linear-gradient(135deg,#f7fbff_0%,#ffffff_38%,#eef4ff_100%)] px-4 py-4 md:px-5 md:py-5 dark:bg-[linear-gradient(135deg,#1a2230_0%,#161a22_40%,#1b2638_100%)] xl:flex-row xl:items-start xl:justify-between">
-              <div className="space-y-2">
-                <div className={pillClass}>
-                  <FolderKanban size={14} className={atlBlueTextClass} />
-                  Workspace settings
-                </div>
-                <div className="space-y-1">
-                  <h1 className="text-xl font-semibold tracking-[-0.01em] text-slate-900 dark:text-[#f1f5f9]">
-                    Manage {workspaceName}
-                  </h1>
-                  <p className={cn("max-w-2xl text-sm leading-5", subtleTextClass)}>
-                    Atlassian-style administration for members, invitations, and workspace controls.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <div
-                  className={cn(
-                    "inline-flex items-center gap-2 rounded-md border bg-white/80 px-3 py-2 text-sm shadow-sm backdrop-blur-sm dark:bg-white/5",
-                    dividerClass
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "h-2 w-2 rounded-full bg-[#1f845a]",
-                      refreshing && "animate-pulse"
-                    )}
-                  />
-                  <span className={subtleTextClass}>
-                    {refreshing ? "Syncing workspace..." : refreshLabel}
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => loadData({ silent: true, syncWorkspaceList: true })}
-                  disabled={loading || refreshing}
-                  className="h-8 rounded-md border-slate-300 bg-white/80 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
-                >
-                  <RefreshCw
-                    size={16}
-                    className={cn((loading || refreshing) && "animate-spin")}
-                  />
-                  Refresh
-                </Button>
-              </div>
+          <div className={cn(surfaceClass, "px-4 py-3 md:px-5")}>
+            <div className={pillClass}>
+              <FolderKanban size={14} className={atlBlueTextClass} />
+              Workspace settings
             </div>
           </div>
 

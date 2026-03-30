@@ -59,7 +59,7 @@ function AccountChip({
   const disabledReason = !isAllowed ? "Not supported for this post type" : undefined;
   const iconStyle =
     PLATFORM_ICON_STYLES[acc.platform.toLowerCase()] ??
-    "bg-muted text-foreground border-border";
+    "bg-surface-raised text-foreground border-border-subtle";
 
   return (
     <div className="relative flex-shrink-0">
@@ -76,12 +76,12 @@ function AccountChip({
         onFocus={() => setShowTooltip(true)}
         onBlur={() => setShowTooltip(false)}
         className={cn(
-          "relative flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border transition-all duration-150",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          "relative flex flex-col items-center gap-1.5 rounded-xl border px-3 py-2.5 transition-[border-color,background-color,box-shadow] duration-150",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-offset-2",
           "w-[72px]",
           isSelected
-            ? "border-accent bg-accent/10 shadow-sm"
-            : "border-border bg-card hover:bg-muted hover:border-accent/50",
+            ? "border-[hsl(var(--accent))]/30 bg-surface-raised shadow-sm"
+            : "border-border-subtle bg-surface hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised",
           !isAllowed && "opacity-40 cursor-not-allowed",
         )}
       >
@@ -89,7 +89,7 @@ function AccountChip({
         {isSelected && (
           <span
             aria-hidden="true"
-            className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-accent flex items-center justify-center shadow-sm"
+            className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[hsl(var(--accent))] shadow-sm"
           >
             <Check className="w-2.5 h-2.5 text-accent-foreground" strokeWidth={3} />
           </span>
@@ -101,7 +101,7 @@ function AccountChip({
             {url && !imgErr ? (
               <AvatarImage src={url} alt="" onError={() => setImgErr(true)} />
             ) : null}
-            <AvatarFallback className="text-[10px] font-semibold bg-gradient-to-br from-violet-500 to-indigo-500 text-white">
+            <AvatarFallback className="bg-surface-raised text-[10px] font-semibold text-foreground">
               {getInitials(acc.username)}
             </AvatarFallback>
           </Avatar>
@@ -135,7 +135,7 @@ function AccountChip({
         >
           <div className={cn(
             "flex items-center gap-2.5 px-3 py-2.5 rounded-xl shadow-xl",
-            "bg-popover border border-border text-popover-foreground",
+            "bg-popover border border-border-subtle text-popover-foreground",
             "w-max min-w-[140px] max-w-[200px]",
           )}>
             {/* Profile image */}
@@ -144,7 +144,7 @@ function AccountChip({
                 {url && !imgErr ? (
                   <AvatarImage src={url} alt="" />
                 ) : null}
-                <AvatarFallback className="text-[10px] font-semibold bg-gradient-to-br from-violet-500 to-indigo-500 text-white">
+                <AvatarFallback className="bg-surface-raised text-[10px] font-semibold text-foreground">
                   {getInitials(acc.username)}
                 </AvatarFallback>
               </Avatar>
@@ -196,7 +196,7 @@ function AccountChip({
 // ── AccountSelector ────────────────────────────────────────────────────────────
 
 export interface AccountSelectorProps {
-  postType: PostType;
+  postType: PostType | null;
   accounts: ConnectedAccount[];
   selectedAccountIds: string[];
   onChange: (ids: string[]) => void;
@@ -291,7 +291,7 @@ export function AccountSelector({
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search accounts…"
           autoComplete="off"
-          className="pl-9 pr-9 h-9 text-sm bg-muted border-border focus-visible:bg-background"
+          className="h-9 border-border-subtle bg-surface pl-9 pr-9 text-sm focus-visible:border-[hsl(var(--accent))] focus-visible:bg-background"
         />
         {search && (
           <button
@@ -311,7 +311,7 @@ export function AccountSelector({
         role="group"
         aria-label={`Select accounts — ${selectedCount} selected`}
         className={cn(
-          "flex gap-2 overflow-x-auto pb-2",
+          "flex gap-2 overflow-x-auto rounded-xl border border-border-subtle bg-surface p-3 pb-2",
           // thin, cross-browser scrollbar
           "scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent",
           // hide scrollbar on touch devices (still scrollable)
@@ -330,7 +330,7 @@ export function AccountSelector({
               key={acc.providerUserId}
               acc={acc}
               isSelected={selectedAccountIds.includes(acc.providerUserId)}
-              isAllowed={!!acc.allowedFormats?.includes(postType)}
+              isAllowed={postType ? !!acc.allowedFormats?.includes(postType) : false}
               onToggle={toggleAccount}
             />
           ))

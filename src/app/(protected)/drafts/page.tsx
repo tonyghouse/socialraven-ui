@@ -1,21 +1,18 @@
 "use client";
 
+import AtlassianButton from "@atlaskit/button/new";
+import Lozenge from "@atlaskit/lozenge";
+import SectionMessage from "@atlaskit/section-message";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { fetchPostCollectionsApi } from "@/service/fetchPostCollections";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { useAuth } from "@clerk/nextjs";
-import {
-  AlertCircle,
-  RefreshCw,
-  BookOpen,
-  Plus,
-  FileText,
-  Sparkles,
-} from "lucide-react";
+import { RefreshCw, BookOpen, Plus, FileText } from "lucide-react";
 import { CollectionCard } from "@/components/posts/collection-card";
 import { PostCollectionFilters, type SortDir } from "@/components/posts/post-collection-filters";
 import { Pagination } from "@/components/generic/pagination";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -121,89 +118,73 @@ export default function DraftsPage() {
   const isEmpty = collections.length === 0 && !loading;
 
   return (
-    <main className="min-h-screen bg-background">
-      {/* Sticky Header */}
-      <header className="sticky top-0 z-10 border-b border-border bg-card/90 backdrop-blur-xl">
-        <div className="px-4 sm:px-6">
-          <div className="flex items-center justify-between gap-4 h-16">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-slate-400/20 to-slate-400/5 flex items-center justify-center flex-shrink-0 border border-slate-400/10">
-                <BookOpen className="w-[18px] h-[18px] text-slate-600 dark:text-slate-400" />
-              </div>
-              <div>
-                <h1 className="text-[17px] font-semibold text-foreground tracking-tight leading-tight">
-                  Drafts
-                </h1>
-                <p className="text-xs text-muted-foreground">
-                  {loading && collections.length === 0
-                    ? "Loading…"
-                    : totalElements === 0
-                    ? "No drafts saved yet"
-                    : `${totalElements} draft${totalElements !== 1 ? "s" : ""} saved`}
-                </p>
-              </div>
+    <main className="min-h-screen bg-[hsl(var(--background))]">
+      <ProtectedPageHeader
+        title="Drafts"
+        description="Review saved draft collections and continue editing when ready."
+        icon={<BookOpen className="h-4 w-4" />}
+        actions={
+          <>
+            <AtlassianButton
+              appearance="subtle"
+              onClick={() => loadCollections(currentPage, true)}
+              isDisabled={isRefreshing}
+              title="Refresh"
+            >
+              <RefreshCw className={cn("h-3.5 w-3.5", isRefreshing && "animate-spin")} />
+            </AtlassianButton>
+            <div className="hidden sm:block">
+              <AtlassianButton appearance="primary" onClick={() => router.push("/schedule-post")}>
+                <span className="inline-flex items-center gap-1.5">
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>New Post</span>
+                </span>
+              </AtlassianButton>
             </div>
+          </>
+        }
+      />
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => loadCollections(currentPage, true)}
-                disabled={isRefreshing}
-                className="h-8 w-8 rounded-lg bg-secondary hover:bg-secondary/70 disabled:opacity-50 transition-all flex items-center justify-center"
-                title="Refresh"
-              >
-                <RefreshCw
-                  className={cn(
-                    "h-3.5 w-3.5 text-muted-foreground",
-                    isRefreshing && "animate-spin"
-                  )}
-                />
-              </button>
-
-              <button
-                onClick={() => router.push("/schedule-post")}
-                className="hidden sm:flex items-center gap-1.5 h-8 px-4 rounded-lg bg-accent text-accent-foreground hover:opacity-90 active:scale-95 transition-all text-xs font-semibold shadow-sm"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                New Post
-              </button>
-            </div>
-          </div>
+      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 text-[13px] text-[hsl(var(--foreground-muted))] sm:px-6">
+          <Lozenge appearance="default">
+            {loading && collections.length === 0
+              ? "Loading drafts"
+              : totalElements === 0
+              ? "No drafts"
+              : `${totalElements} saved`}
+          </Lozenge>
         </div>
-      </header>
+      </div>
 
-      {/* Filter bar */}
-      <div className="border-b border-border/50 bg-background/60">
-        <div className="px-4 sm:px-6 py-3">
+      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
+        <div className="px-4 py-3 sm:px-6">
           <PostCollectionFilters onFiltersChange={handleFiltersChange} hidePeriod />
         </div>
       </div>
 
-      {/* Content */}
-      <div className="px-4 sm:px-6 py-5 sm:py-8 pb-24 sm:pb-10">
+      <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-10">
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-destructive/10 text-destructive border border-destructive/20 flex gap-3 items-start">
-            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm font-medium">{error}</p>
-              <button
-                onClick={() => loadCollections(currentPage)}
-                className="text-xs underline mt-1 hover:no-underline opacity-80"
-              >
-                Try again
-              </button>
-            </div>
+          <div className="mb-6">
+            <SectionMessage appearance="error" title={error}>
+              <div className="mt-3">
+                <AtlassianButton appearance="subtle" onClick={() => loadCollections(currentPage)}>
+                  Retry
+                </AtlassianButton>
+              </div>
+            </SectionMessage>
           </div>
         )}
 
         {loading && collections.length === 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-3">
+          <div className="grid grid-cols-1 gap-5 pt-1 md:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
         ) : !isEmpty ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-3 mb-8">
+            <div className="grid grid-cols-1 gap-5 pt-1 md:grid-cols-2 lg:grid-cols-3">
               {collections.map((collection) => (
                 <CollectionCard
                   key={collection.id}
@@ -214,7 +195,7 @@ export default function DraftsPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="pt-2">
+              <div className="mt-8 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -228,49 +209,53 @@ export default function DraftsPage() {
         )}
       </div>
 
-      {/* Mobile FAB */}
-      <button
-        onClick={() => router.push("/schedule-post")}
-        className="sm:hidden fixed bottom-6 right-5 z-40 h-14 w-14 rounded-full bg-accent text-accent-foreground shadow-lg hover:opacity-90 active:scale-95 transition-all flex items-center justify-center"
-        aria-label="New Post"
-      >
-        <Plus className="h-6 w-6" />
-      </button>
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[hsl(var(--border))] bg-[hsl(var(--surface))]/95 p-3 backdrop-blur-sm sm:hidden">
+        <AtlassianButton
+          appearance="primary"
+          onClick={() => router.push("/schedule-post")}
+          shouldFitContainer
+        >
+          <span className="inline-flex items-center gap-1.5">
+            <Plus className="h-4 w-4" />
+            <span>New Post</span>
+          </span>
+        </AtlassianButton>
+      </div>
     </main>
   );
 }
 
 function SkeletonCard() {
   return (
-    <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-      <div className="h-[3px] bg-gradient-to-r from-slate-400/40 via-slate-300/40 to-slate-200/40" />
-      <div className="flex items-center justify-between px-4 pt-3">
+    <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+      <div className="h-[3px] bg-[hsl(var(--foreground-subtle))]" />
+      <div className="flex items-center justify-between px-5 pt-4">
         <Skeleton className="h-5 w-16 rounded-lg" />
         <Skeleton className="h-5 w-20 rounded-full" />
       </div>
-      <div className="px-4 pt-2.5 pb-2 space-y-2">
+      <div className="space-y-2 px-5 pb-3 pt-3">
         <Skeleton className="h-5 w-4/5 rounded-md" />
         <Skeleton className="h-4 w-full rounded-md" />
         <Skeleton className="h-4 w-2/3 rounded-md" />
       </div>
-      <div className="px-4 pb-2">
-        <Skeleton className="h-7 w-36 rounded-xl" />
+      <div className="px-5 pb-3">
+        <Skeleton className="h-7 w-44 rounded-xl" />
       </div>
-      <div className="px-4 pb-3">
-        <Skeleton className="w-[150px] h-[150px] rounded-xl" />
+      <div className="px-5 pb-4">
+        <Skeleton className="h-[180px] w-[180px] rounded-xl" />
       </div>
-      <div className="px-4">
+      <div className="px-5">
         <div className="h-px bg-border/40" />
       </div>
-      <div className="px-4 pt-3 pb-2.5">
-        <Skeleton className="h-3 w-16 rounded mb-3" />
+      <div className="px-5 py-3.5">
+        <Skeleton className="mb-3 h-3 w-16 rounded" />
         <div className="flex gap-2">
           <Skeleton className="h-8 w-8 rounded-xl" />
           <Skeleton className="h-8 w-8 rounded-xl" />
           <Skeleton className="h-8 w-8 rounded-xl" />
         </div>
       </div>
-      <div className="px-4 py-2.5 border-t border-border/40 bg-muted/20 flex justify-between items-center">
+      <div className="flex items-center justify-between border-t border-border/40 bg-[hsl(var(--surface-raised))] px-5 py-3">
         <Skeleton className="h-3.5 w-32 rounded" />
         <Skeleton className="h-3.5 w-16 rounded" />
       </div>
@@ -280,34 +265,25 @@ function SkeletonCard() {
 
 function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="relative mb-7">
-        <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-slate-400/10 to-slate-400/[0.03] flex items-center justify-center border border-slate-400/10 shadow-sm">
-          <FileText className="w-8 h-8 text-slate-400/60" />
-        </div>
-        <div className="absolute -top-1 -right-1 h-6 w-6 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 flex items-center justify-center shadow-md">
-          <Sparkles className="h-3 w-3 text-white" />
-        </div>
-        <div className="absolute inset-0 rounded-3xl border border-border/20 scale-125 opacity-40" />
-        <div className="absolute inset-0 rounded-3xl border border-border/10 scale-150 opacity-20" />
+    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-16 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+        <FileText className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
       </div>
-
-      <h3 className="text-xl font-semibold text-foreground mb-2 tracking-tight">
+      <h3 className="mt-4 text-lg font-semibold text-[hsl(var(--foreground))]">
         No drafts yet
       </h3>
-
-      <p className="text-sm text-muted-foreground mb-8 leading-relaxed max-w-sm">
+      <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[hsl(var(--foreground-muted))]">
         Save work-in-progress posts as drafts. When you&apos;re ready,
         schedule them across all your platforms with a single click.
       </p>
-
-      <button
-        onClick={onCreatePost}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-accent text-accent-foreground hover:opacity-90 active:scale-95 transition-all shadow-sm font-semibold text-sm"
-      >
-        <Plus className="h-4 w-4" />
-        Create Your First Draft
-      </button>
+      <div className="mt-6 flex justify-center">
+        <AtlassianButton appearance="primary" onClick={onCreatePost}>
+          <span className="inline-flex items-center gap-1.5">
+            <Plus className="h-4 w-4" />
+            <span>Create Your First Draft</span>
+          </span>
+        </AtlassianButton>
+      </div>
     </div>
   );
 }

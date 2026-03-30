@@ -56,26 +56,26 @@ export default function MediaUploader({
         type="button"
         whileHover={{ scale: 1.005 }}
         whileTap={{ scale: 0.995 }}
-        className={`w-full group relative overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200
+        className={`group relative w-full overflow-hidden rounded-xl border border-dashed transition-[border-color,background-color,box-shadow] duration-150
           ${files.length === 0
-            ? "border-border hover:border-primary/50 bg-muted/30 hover:bg-primary/3 py-8"
-            : "border-border hover:border-primary/40 bg-card py-3"
+            ? "border-border-subtle bg-surface py-8 hover:border-[hsl(var(--accent))]/25 hover:bg-surface-raised"
+            : "border-border-subtle bg-surface py-3 hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised"
           }`}
       >
         <div className="flex items-center justify-center gap-3">
           <div className={`relative flex-shrink-0 ${files.length === 0 ? "w-10 h-10" : "w-8 h-8"}`}>
-            <div className="absolute inset-0 bg-primary/15 rounded-full blur-lg group-hover:blur-xl transition-all" />
-            <div className={`relative rounded-full bg-primary/10 group-hover:bg-primary/15 flex items-center justify-center transition-colors w-full h-full`}>
+            <div className="absolute inset-0 rounded-full bg-[hsl(var(--accent))]/10 blur-md transition-all group-hover:bg-[hsl(var(--accent))]/14" />
+            <div className="relative flex h-full w-full items-center justify-center rounded-full border border-[hsl(var(--accent))]/12 bg-[hsl(var(--accent))]/8 transition-colors">
               {files.length === 0
-                ? <Upload className="w-5 h-5 text-primary" />
-                : <Plus className="w-4 h-4 text-primary" />
+                ? <Upload className="h-5 w-5 text-[hsl(var(--accent))]" />
+                : <Plus className="h-4 w-4 text-[hsl(var(--accent))]" />
               }
             </div>
           </div>
           <div className="text-left">
             <p className="text-sm font-semibold text-foreground">{label}</p>
             {files.length === 0 && (
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="mt-0.5 text-xs text-foreground-muted">
                 Drag & drop or click to browse
                 {maxFiles === 1
                   ? " — 1 file only"
@@ -114,8 +114,8 @@ export default function MediaUploader({
                     whileTap={{ scale: 0.97 }}
                     className="relative group cursor-grab active:cursor-grabbing flex-shrink-0"
                   >
-                    <div className="relative overflow-hidden rounded-xl border border-border bg-card shadow-sm group-hover:shadow-md transition-shadow w-28 h-28">
-                      <div className="w-full h-full flex items-center justify-center bg-muted/30">
+                    <div className="relative h-28 w-28 overflow-hidden rounded-xl border border-border-subtle bg-surface shadow-sm transition-[border-color,box-shadow] group-hover:border-[hsl(var(--accent))]/15 group-hover:shadow-md">
+                      <div className="flex h-full w-full items-center justify-center bg-surface-raised">
                         {file.type.startsWith("video/") ? (
                           <video
                             src={URL.createObjectURL(file)}
@@ -132,18 +132,18 @@ export default function MediaUploader({
                         )}
                       </div>
 
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(23,43,77,0.42),rgba(23,43,77,0.08),transparent)] opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                         <motion.button
                           onClick={() => remove(file)}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/95 shadow-md flex items-center justify-center border border-black/10"
+                          className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-border-subtle bg-surface shadow-md"
                         >
-                          <X className="w-3 h-3 text-gray-700" strokeWidth={2.5} />
+                          <X className="h-3 w-3 text-foreground-muted" strokeWidth={2.5} />
                         </motion.button>
 
-                        <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-full bg-white/90 shadow-sm">
-                          <GripVertical className="w-3 h-3 text-gray-600" strokeWidth={2.5} />
+                        <div className="absolute bottom-1.5 left-1.5 rounded-full border border-border-subtle bg-surface px-1.5 py-0.5 shadow-sm">
+                          <GripVertical className="h-3 w-3 text-foreground-muted" strokeWidth={2.5} />
                         </div>
                       </div>
                     </div>
@@ -153,7 +153,7 @@ export default function MediaUploader({
             </div>
 
             {files.length >= 1 && (
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="mt-2 text-xs text-foreground-muted">
                 {files.length >= 2 ? "Drag to reorder · " : ""}
                 {files.length} / {maxFiles} file{maxFiles !== 1 ? "s" : ""} added
               </p>

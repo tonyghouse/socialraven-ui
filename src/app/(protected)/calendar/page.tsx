@@ -1,61 +1,55 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
+  AlertCircle,
+  Calendar,
+  CalendarDays,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Calendar,
   Clock,
-  Plus,
-  X,
-  Loader2,
-  AlertCircle,
-  CheckCircle2,
-  Globe,
-  Users,
   Filter,
-  CalendarDays,
+  Globe,
   LayoutGrid,
+  Loader2,
+  Plus,
+  Users,
+  X,
 } from "lucide-react";
 import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  startOfWeek,
-  endOfWeek,
-  addMonths,
-  subMonths,
-  addWeeks,
-  subWeeks,
-  isSameMonth,
-  isToday,
   addDays,
+  addMonths,
+  addWeeks,
+  eachDayOfInterval,
+  endOfMonth,
+  endOfWeek,
+  format,
   getHours,
   getMinutes,
-  eachDayOfInterval,
+  isSameMonth,
+  isToday,
+  startOfMonth,
+  startOfWeek,
+  subMonths,
+  subWeeks,
 } from "date-fns";
 import { cn } from "@/lib/utils";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { fetchCalendarPostsApi } from "@/service/calendarPosts";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import type { CalendarPostResponse } from "@/model/CalendarPostResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 
-// ── Constants ─────────────────────────────────────────────────────────────────
-
 type CalendarView = "month" | "week";
 
 const PLATFORM_COLORS: Record<string, string> = {
   instagram: "#e1306c",
-  x: "#18181b",
+  x: "#172B4D",
   linkedin: "#0077b5",
   facebook: "#1877f2",
   youtube: "#ff0000",
@@ -77,14 +71,38 @@ const STATUS_CONFIG: Record<
   string,
   { color: string; bg: string; text: string; border: string; label: string; Icon: React.ElementType }
 > = {
-  SCHEDULED: { color: "#3b82f6", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", label: "Scheduled", Icon: Clock },
-  PUBLISHED: { color: "#22c55e", bg: "bg-green-50", text: "text-green-700", border: "border-green-200", label: "Published", Icon: CheckCircle2 },
+  SCHEDULED: {
+    color: "#0C66E4",
+    bg: "bg-[hsl(var(--info)/0.12)]",
+    text: "text-[hsl(var(--info))]",
+    border: "border-[hsl(var(--info)/0.24)]",
+    label: "Scheduled",
+    Icon: Clock,
+  },
+  PUBLISHED: {
+    color: "#22a06b",
+    bg: "bg-[hsl(var(--success)/0.12)]",
+    text: "text-[hsl(var(--success))]",
+    border: "border-[hsl(var(--success)/0.24)]",
+    label: "Published",
+    Icon: CheckCircle2,
+  },
 };
 
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
-const HOUR_HEIGHT = 64; // px per hour in week view
+const HOUR_HEIGHT = 64;
 
-// ── Utilities ─────────────────────────────────────────────────────────────────
+const CONTROL_BUTTON_CLASS =
+  "inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-border bg-[hsl(var(--surface))] px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-[hsl(var(--surface-raised))] disabled:pointer-events-none disabled:opacity-50";
+
+const ICON_BUTTON_CLASS =
+  "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-foreground";
+
+const PRIMARY_BUTTON_CLASS =
+  "inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-[hsl(var(--accent))] px-3.5 text-[13px] font-medium text-[hsl(var(--accent-foreground))] transition-colors hover:bg-[hsl(var(--accent-hover))]";
+
+const SUBTLE_BADGE_CLASS =
+  "inline-flex items-center gap-1.5 rounded-full border border-border bg-[hsl(var(--surface-raised))] px-2.5 py-1 text-[12px] font-medium text-[hsl(var(--foreground-muted))]";
 
 function getUTCRangeForMonth(date: Date) {
   const start = startOfMonth(date);
@@ -95,14 +113,14 @@ function getUTCRangeForMonth(date: Date) {
 }
 
 function getUTCRangeForWeek(date: Date) {
-  const wStart = startOfWeek(date, { weekStartsOn: 1 });
-  const wEnd = endOfWeek(date, { weekStartsOn: 1 });
-  const paddedStart = addDays(wStart, -1);
-  const paddedEnd = addDays(wEnd, 2);
+  const weekStart = startOfWeek(date, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(date, { weekStartsOn: 1 });
+  const paddedStart = addDays(weekStart, -1);
+  const paddedEnd = addDays(weekEnd, 2);
   return { startDate: paddedStart.toISOString(), endDate: paddedEnd.toISOString() };
 }
 
-function groupPostsByDay(posts: CalendarPostResponse[]): Map<string, CalendarPostResponse[]> {
+function groupPostsByDay(posts: CalendarPostResponse[]) {
   const map = new Map<string, CalendarPostResponse[]>();
   for (const post of posts) {
     const key = format(new Date(post.scheduledTime), "yyyy-MM-dd");
@@ -112,22 +130,20 @@ function groupPostsByDay(posts: CalendarPostResponse[]): Map<string, CalendarPos
   return map;
 }
 
-function getDayKey(date: Date): string {
+function getDayKey(date: Date) {
   return format(date, "yyyy-MM-dd");
 }
 
-function formatHour(hour: number): string {
-  if (hour === 0)  return "12 AM";
-  if (hour < 12)   return `${hour} AM`;
+function formatHour(hour: number) {
+  if (hour === 0) return "12 AM";
+  if (hour < 12) return `${hour} AM`;
   if (hour === 12) return "12 PM";
   return `${hour - 12} PM`;
 }
 
-function formatTime(isoUtc: string): string {
+function formatTime(isoUtc: string) {
   return format(new Date(isoUtc), "h:mm a");
 }
-
-// ── PostChip (compact chip for month / week views) ────────────────────────────
 
 function PostChip({
   post,
@@ -139,9 +155,9 @@ function PostChip({
   onClick?: () => void;
 }) {
   const PlatformIcon = PLATFORM_ICONS[post.platform];
-  const color        = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
-  const account      = accountMap.get(post.providerUserId);
-  const statusColor  = STATUS_CONFIG[post.postStatus]?.color ?? "#94a3b8";
+  const color = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
+  const account = accountMap.get(post.providerUserId);
+  const statusColor = STATUS_CONFIG[post.postStatus]?.color ?? "#94a3b8";
 
   return (
     <button
@@ -150,27 +166,17 @@ function PostChip({
         onClick?.();
       }}
       title={`${account?.username ?? post.providerUserId} · ${PLATFORM_LABELS[post.platform] ?? post.platform} · ${formatTime(post.scheduledTime)}`}
-      className="group flex items-center gap-1 rounded-md border w-full px-1.5 py-1 transition-all duration-150 hover:shadow-sm active:scale-95 text-left overflow-hidden"
-      style={{ backgroundColor: color + "14", borderColor: color + "40" }}
+      className="group flex w-full items-center gap-1.5 overflow-hidden rounded-lg border px-2 py-1.5 text-left transition-colors hover:bg-[hsl(var(--surface-raised))]"
+      style={{ backgroundColor: color + "12", borderColor: color + "35" }}
     >
-      {PlatformIcon && (
-        <PlatformIcon
-          className="shrink-0"
-          style={{ width: 11, height: 11, color }}
-        />
-      )}
-      <span className="text-[10px] font-medium truncate flex-1 leading-none" style={{ color }}>
+      {PlatformIcon ? <PlatformIcon className="shrink-0" style={{ width: 11, height: 11, color }} /> : null}
+      <span className="flex-1 truncate text-[12px] font-medium leading-none text-foreground">
         {account?.username ?? post.platform}
       </span>
-      <span
-        className="shrink-0 rounded-full"
-        style={{ width: 5, height: 5, backgroundColor: statusColor }}
-      />
+      <span className="shrink-0 rounded-full" style={{ width: 5, height: 5, backgroundColor: statusColor }} />
     </button>
   );
 }
-
-// ── PostTimelineCard (used in day-detail sheet) ───────────────────────────────
 
 function PostTimelineCard({
   post,
@@ -182,46 +188,48 @@ function PostTimelineCard({
   onNavigate: () => void;
 }) {
   const PlatformIcon = PLATFORM_ICONS[post.platform];
-  const color        = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
-  const account      = accountMap.get(post.providerUserId);
-  const statusCfg    = STATUS_CONFIG[post.postStatus];
-  const StatusIcon   = statusCfg?.Icon ?? Clock;
+  const color = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
+  const account = accountMap.get(post.providerUserId);
+  const statusCfg = STATUS_CONFIG[post.postStatus];
+  const StatusIcon = statusCfg?.Icon ?? Clock;
 
   return (
     <button
       onClick={onNavigate}
-      className="w-full flex items-start gap-3 p-3 rounded-xl border border-border/60 bg-card hover:shadow-md hover:border-border transition-all duration-200 text-left group"
+      className="flex w-full items-start gap-3 rounded-xl border border-border bg-[hsl(var(--surface))] p-3 text-left transition-colors hover:bg-[hsl(var(--surface-raised))]"
     >
       <div
-        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-        style={{ backgroundColor: color + "1a" }}
+        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+        style={{ backgroundColor: color + "16" }}
       >
-        {PlatformIcon && <PlatformIcon style={{ width: 16, height: 16, color }} />}
+        {PlatformIcon ? <PlatformIcon style={{ width: 16, height: 16, color }} /> : null}
       </div>
 
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <span className="text-xs font-semibold text-foreground truncate">
+      <div className="min-w-0 flex-1">
+        <div className="mb-1 flex items-center gap-1.5">
+          <span className="truncate text-[13px] font-semibold text-foreground">
             {account?.username ?? post.providerUserId}
           </span>
-          <span className="text-[10px] text-muted-foreground shrink-0">
+          <span className="shrink-0 text-[12px] text-muted-foreground">
             {PLATFORM_LABELS[post.platform] ?? post.platform}
           </span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-medium text-muted-foreground">
-            {formatTime(post.scheduledTime)}
-          </span>
-          {statusCfg && (
-            <span className={cn("inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-semibold border", statusCfg.bg, statusCfg.text, statusCfg.border)}>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-[12px] font-medium text-muted-foreground">{formatTime(post.scheduledTime)}</span>
+          {statusCfg ? (
+            <span
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium",
+                statusCfg.bg,
+                statusCfg.text,
+                statusCfg.border
+              )}
+            >
               <StatusIcon style={{ width: 8, height: 8 }} />
               {statusCfg.label}
             </span>
-          )}
-          <span
-            className="text-[9px] px-1.5 py-0.5 rounded-full font-medium"
-            style={{ backgroundColor: color + "1a", color }}
-          >
+          ) : null}
+          <span className="rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: color + "16", color }}>
             {post.postCollectionType}
           </span>
         </div>
@@ -229,8 +237,6 @@ function PostTimelineCard({
     </button>
   );
 }
-
-// ── DayDetailSheet ────────────────────────────────────────────────────────────
 
 function DayDetailSheet({
   open,
@@ -245,24 +251,22 @@ function DayDetailSheet({
   posts: CalendarPostResponse[];
   accountMap: Map<string, ConnectedAccount>;
 }) {
-  const router   = useRouter();
+  const router = useRouter();
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const postsByHour = useMemo(() => {
     const map = new Map<number, CalendarPostResponse[]>();
-    for (const p of posts) {
-      const h = getHours(new Date(p.scheduledTime));
-      if (!map.has(h)) map.set(h, []);
-      map.get(h)!.push(p);
+    for (const post of posts) {
+      const hour = getHours(new Date(post.scheduledTime));
+      if (!map.has(hour)) map.set(hour, []);
+      map.get(hour)!.push(post);
     }
     return map;
   }, [posts]);
 
   function scheduleAt(hour: number) {
     if (!day) return;
-    router.push(
-      `/schedule-post?date=${format(day, "yyyy-MM-dd")}&time=${String(hour).padStart(2, "0")}:00`
-    );
+    router.push(`/schedule-post?date=${format(day, "yyyy-MM-dd")}&time=${String(hour).padStart(2, "0")}:00`);
     onClose();
   }
 
@@ -273,137 +277,121 @@ function DayDetailSheet({
 
   return (
     <AnimatePresence>
-      {open && (
+      {open ? (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/50"
+            className="fixed inset-0 z-40 bg-[hsl(var(--foreground)/0.28)]"
             onClick={onClose}
           />
 
-          {/* Modal */}
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 8 }}
-            transition={{ type: "spring", damping: 28, stiffness: 350 }}
-            className="pointer-events-auto w-full max-w-sm max-h-[85vh] bg-white border border-border shadow-2xl flex flex-col rounded-2xl overflow-hidden"
-          >
-            {/* Header */}
-            <div className="flex items-start justify-between px-5 py-4 border-b border-border/60 bg-white">
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-0.5">
-                  {day ? format(day, "EEEE") : ""}
-                </p>
-                <h2 className="text-xl font-bold text-foreground tracking-tight">
-                  {day ? format(day, "MMMM d, yyyy") : ""}
-                </h2>
-                <div className="flex items-center gap-1 mt-1.5">
-                  <Globe className="w-3 h-3 text-muted-foreground" />
-                  <span className="text-[10px] text-muted-foreground">{timezone}</span>
+          <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.97, y: 8 }}
+              transition={{ type: "spring", damping: 28, stiffness: 350 }}
+              className="pointer-events-auto flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-[hsl(var(--surface))] shadow-xl"
+            >
+              <div className="flex items-start justify-between border-b border-border px-5 py-4">
+                <div>
+                  <p className="mb-1 text-[12px] font-medium text-muted-foreground">{day ? format(day, "EEEE") : ""}</p>
+                  <h2 className="text-lg font-semibold tracking-[-0.005em] text-foreground">
+                    {day ? format(day, "MMMM d, yyyy") : ""}
+                  </h2>
+                  <div className="mt-2 flex items-center gap-1.5">
+                    <Globe className="h-3 w-3 text-muted-foreground" />
+                    <span className="text-[12px] text-muted-foreground">{timezone}</span>
+                  </div>
                 </div>
+                <button onClick={onClose} className={ICON_BUTTON_CLASS} aria-label="Close day details">
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors mt-0.5"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
 
-            {/* Summary bar */}
-            <div className="px-5 py-2.5 bg-muted/30 border-b border-border/40 flex items-center gap-2">
-              <CalendarDays className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-              <span className="text-xs text-muted-foreground">
-                {posts.length === 0
-                  ? "No posts — click an hour to schedule"
-                  : `${posts.length} post${posts.length !== 1 ? "s" : ""} scheduled`}
-              </span>
-              {posts.length > 0 && (
-                <div className="flex items-center gap-1 ml-auto">
-                  {[...new Set(posts.map((p) => p.platform))].map((pl) => {
-                    const PIcon = PLATFORM_ICONS[pl];
-                    const c = PLATFORM_COLORS[pl] ?? "#94a3b8";
-                    return PIcon ? <PIcon key={pl} style={{ width: 12, height: 12, color: c }} /> : null;
+              <div className="flex items-center gap-2 border-b border-border bg-[hsl(var(--surface-raised))] px-5 py-2.5">
+                <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <span className="text-[12px] text-muted-foreground">
+                  {posts.length === 0 ? "No posts for this day. Pick an hour to schedule." : `${posts.length} post${posts.length !== 1 ? "s" : ""} scheduled`}
+                </span>
+                {posts.length > 0 ? (
+                  <div className="ml-auto flex items-center gap-1">
+                    {[...new Set(posts.map((post) => post.platform))].map((platform) => {
+                      const PlatformIcon = PLATFORM_ICONS[platform];
+                      const color = PLATFORM_COLORS[platform] ?? "#94a3b8";
+                      return PlatformIcon ? (
+                        <PlatformIcon key={platform} style={{ width: 12, height: 12, color }} />
+                      ) : null;
+                    })}
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="flex-1 overflow-y-auto">
+                <div className="py-2">
+                  {HOURS.map((hour) => {
+                    const hourPosts = (postsByHour.get(hour) ?? []).sort(
+                      (a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime()
+                    );
+
+                    return (
+                      <div key={hour}>
+                        <div className="flex items-center gap-3 px-4 py-1">
+                          <span className="w-12 shrink-0 text-right text-[12px] font-medium text-muted-foreground">
+                            {formatHour(hour)}
+                          </span>
+                          <div className="h-px flex-1 bg-border" />
+                        </div>
+
+                        {hourPosts.length > 0 ? (
+                          <div className="space-y-1.5 px-4 pb-2 pl-[72px]">
+                            {hourPosts.map((post) => (
+                              <PostTimelineCard
+                                key={post.id}
+                                post={post}
+                                accountMap={accountMap}
+                                onNavigate={() => viewPost(post)}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => scheduleAt(hour)}
+                            className="group flex w-full items-center gap-1.5 pb-1 pl-[72px] pr-4 text-left text-[12px] text-[hsl(var(--foreground-subtle))] transition-colors hover:text-[hsl(var(--accent))]"
+                          >
+                            <Plus className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
+                            <span className="opacity-0 transition-opacity group-hover:opacity-100">Schedule a post here</span>
+                          </button>
+                        )}
+                      </div>
+                    );
                   })}
                 </div>
-              )}
-            </div>
-
-            {/* 24-hour timeline */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="py-2">
-                {HOURS.map((hour) => {
-                  const hourPosts = (postsByHour.get(hour) ?? []).sort(
-                    (a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime()
-                  );
-                  return (
-                    <div key={hour}>
-                      {/* Hour separator */}
-                      <div className="flex items-center gap-3 px-4 py-1">
-                        <span className="text-[10px] font-semibold text-muted-foreground w-12 text-right shrink-0">
-                          {formatHour(hour)}
-                        </span>
-                        <div className="flex-1 h-px bg-border/40" />
-                      </div>
-
-                      {/* Posts at this hour */}
-                      {hourPosts.length > 0 ? (
-                        <div className="px-4 pl-[72px] pb-2 space-y-1.5">
-                          {hourPosts.map((post) => (
-                            <PostTimelineCard
-                              key={post.id}
-                              post={post}
-                              accountMap={accountMap}
-                              onNavigate={() => viewPost(post)}
-                            />
-                          ))}
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => scheduleAt(hour)}
-                          className="w-full pl-[72px] pr-4 pb-1 flex items-center gap-1.5 text-[11px] text-muted-foreground/40 hover:text-blue-500 transition-colors group text-left"
-                        >
-                          <Plus className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
-                            Schedule a post here
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  );
-                })}
               </div>
-            </div>
 
-            {/* Footer */}
-            <div className="px-5 py-4 border-t border-border/60">
-              <button
-                onClick={() => {
-                  if (!day) return;
-                  router.push(`/schedule-post?date=${format(day, "yyyy-MM-dd")}&time=09:00`);
-                  onClose();
-                }}
-                className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors shadow-sm"
-              >
-                <Plus className="w-4 h-4" />
-                Schedule post for this day
-              </button>
-            </div>
-          </motion.div>
+              <div className="border-t border-border px-5 py-4">
+                <button
+                  onClick={() => {
+                    if (!day) return;
+                    router.push(`/schedule-post?date=${format(day, "yyyy-MM-dd")}&time=09:00`);
+                    onClose();
+                  }}
+                  className={cn(PRIMARY_BUTTON_CLASS, "w-full")}
+                >
+                  <Plus className="h-4 w-4" />
+                  Schedule post for this day
+                </button>
+              </div>
+            </motion.div>
           </div>
         </>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 }
-
-// ── MonthView ─────────────────────────────────────────────────────────────────
 
 function MonthView({
   currentDate,
@@ -419,93 +407,85 @@ function MonthView({
   onSchedule: (date: string, time: string) => void;
 }) {
   const monthStart = startOfMonth(currentDate);
-  const monthEnd   = endOfMonth(currentDate);
-  const gridStart  = startOfWeek(monthStart, { weekStartsOn: 1 });
-  const gridEnd    = endOfWeek(monthEnd, { weekStartsOn: 1 });
-  const days       = eachDayOfInterval({ start: gridStart, end: gridEnd });
-  // ensure 6 full rows
+  const monthEnd = endOfMonth(currentDate);
+  const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
+  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  const days = eachDayOfInterval({ start: gridStart, end: gridEnd });
+
   while (days.length < 42) days.push(addDays(days[days.length - 1], 1));
 
-  const DAY_HEADERS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const MAX_CHIPS   = 3;
+  const dayHeaders = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const maxChips = 3;
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col">
-      {/* Column headers */}
-      <div className="grid grid-cols-7 border-b border-border/50 bg-muted/20 shrink-0">
-        {DAY_HEADERS.map((d) => (
-          <div key={d} className="py-2.5 text-center text-[11px] font-bold text-muted-foreground uppercase tracking-wider">
-            {d}
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="grid shrink-0 grid-cols-7 border-b border-border bg-[hsl(var(--surface-sunken))]">
+        {dayHeaders.map((label) => (
+          <div key={label} className="py-3 text-center text-[12px] font-medium text-muted-foreground">
+            {label}
           </div>
         ))}
       </div>
 
-      {/* Date grid */}
-      <div className="flex-1 grid grid-cols-7 overflow-hidden" style={{ gridTemplateRows: "repeat(6, 1fr)" }}>
-        {days.map((day, idx) => {
-          const key        = getDayKey(day);
-          const dayPosts   = postsByDay.get(key) ?? [];
-          const inMonth    = isSameMonth(day, currentDate);
-          const todayFlag  = isToday(day);
-          const overflow   = dayPosts.length - MAX_CHIPS;
+      <div className="grid flex-1 grid-cols-7 overflow-hidden" style={{ gridTemplateRows: "repeat(6, 1fr)" }}>
+        {days.map((day, index) => {
+          const key = getDayKey(day);
+          const dayPosts = postsByDay.get(key) ?? [];
+          const inMonth = isSameMonth(day, currentDate);
+          const todayFlag = isToday(day);
+          const overflow = dayPosts.length - maxChips;
 
           return (
             <div
-              key={idx}
+              key={index}
               className={cn(
-                "relative border-b border-r border-border/30 p-1.5 cursor-pointer group",
-                "transition-colors duration-100 overflow-hidden",
-                !inMonth && "bg-muted/15",
-                todayFlag && "bg-blue-50/60",
-                "hover:bg-accent/5"
+                "group relative overflow-hidden border-b border-r border-[hsl(var(--border-subtle))] p-2 transition-colors",
+                !inMonth && "bg-[hsl(var(--surface-sunken)/0.55)]",
+                todayFlag && "bg-[hsl(var(--accent)/0.08)]",
+                "hover:bg-[hsl(var(--surface-raised))]"
               )}
               onClick={() => onDayClick(day)}
             >
-              {/* Day number */}
-              <div className="flex items-center justify-between mb-1">
+              <div className="mb-2 flex items-center justify-between">
                 <span
                   className={cn(
-                    "inline-flex items-center justify-center w-6 h-6 rounded-full text-[12px] font-bold transition-colors",
+                    "inline-flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-semibold transition-colors",
                     todayFlag
-                      ? "bg-blue-600 text-white shadow-sm"
+                      ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]"
                       : inMonth
-                      ? "text-foreground"
-                      : "text-muted-foreground/35"
+                        ? "text-foreground"
+                        : "text-[hsl(var(--foreground-subtle))]"
                   )}
                 >
                   {format(day, "d")}
                 </span>
-                {/* Quick-add button (hover reveal) */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onSchedule(format(day, "yyyy-MM-dd"), "09:00");
                   }}
-                  className="p-0.5 rounded text-transparent group-hover:text-muted-foreground/50 hover:!text-blue-500 hover:bg-blue-50 transition-all duration-150"
+                  className="rounded-md p-1 text-transparent transition-all group-hover:text-[hsl(var(--foreground-subtle))] hover:bg-[hsl(var(--accent)/0.08)] hover:!text-[hsl(var(--accent))]"
                   title="Schedule post"
                 >
-                  <Plus className="w-3 h-3" />
+                  <Plus className="h-3 w-3" />
                 </button>
               </div>
 
-              {/* Post chips */}
-              <div className="space-y-0.5">
-                {dayPosts.slice(0, MAX_CHIPS).map((post) => (
-                  <PostChip
-                    key={post.id}
-                    post={post}
-                    accountMap={accountMap}
-                    onClick={() => onDayClick(day)}
-                  />
+              <div className="space-y-1">
+                {dayPosts.slice(0, maxChips).map((post) => (
+                  <PostChip key={post.id} post={post} accountMap={accountMap} onClick={() => onDayClick(day)} />
                 ))}
-                {overflow > 0 && (
+                {overflow > 0 ? (
                   <button
-                    className="text-[10px] font-semibold text-blue-500 hover:text-blue-700 pl-1 transition-colors"
-                    onClick={(e) => { e.stopPropagation(); onDayClick(day); }}
+                    className="pl-1 text-[12px] font-medium text-[hsl(var(--accent))] transition-colors hover:text-[hsl(var(--accent-hover))]"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDayClick(day);
+                    }}
                   >
                     +{overflow} more
                   </button>
-                )}
+                ) : null}
               </div>
             </div>
           );
@@ -514,8 +494,6 @@ function MonthView({
     </div>
   );
 }
-
-// ── WeekView ──────────────────────────────────────────────────────────────────
 
 function WeekView({
   currentDate,
@@ -531,46 +509,44 @@ function WeekView({
   onSchedule: (date: string, time: string) => void;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
-
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
-  const weekDays  = eachDayOfInterval({ start: weekStart, end: addDays(weekStart, 6) });
+  const weekDays = eachDayOfInterval({ start: weekStart, end: addDays(weekStart, 6) });
+  const timeGutter = 56;
 
-  // Scroll to current hour on mount
   useEffect(() => {
-    if (scrollRef.current) {
-      const h = new Date().getHours();
-      scrollRef.current.scrollTop = Math.max(0, (h - 2) * HOUR_HEIGHT);
-    }
+    if (!scrollRef.current) return;
+    const hour = new Date().getHours();
+    scrollRef.current.scrollTop = Math.max(0, (hour - 2) * HOUR_HEIGHT);
   }, []);
 
-  const now           = new Date();
-  const nowTop        = (now.getHours() + now.getMinutes() / 60) * HOUR_HEIGHT;
-  const todayInView   = weekDays.some((d) => isToday(d));
-  const TIME_GUTTER   = 56; // px
+  const now = new Date();
+  const nowTop = (now.getHours() + now.getMinutes() / 60) * HOUR_HEIGHT;
+  const todayInView = weekDays.some((day) => isToday(day));
 
   return (
-    <div className="flex-1 overflow-hidden flex flex-col">
-      {/* Week header row */}
-      <div
-        className="grid shrink-0 border-b border-border/50 bg-muted/20"
-        style={{ gridTemplateColumns: `${TIME_GUTTER}px repeat(7, 1fr)` }}
-      >
-        <div className="border-r border-border/30" />
+    <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="grid shrink-0 border-b border-border bg-[hsl(var(--surface-sunken))]" style={{ gridTemplateColumns: `${timeGutter}px repeat(7, 1fr)` }}>
+        <div className="border-r border-[hsl(var(--border-subtle))]" />
         {weekDays.map((day) => {
           const todayFlag = isToday(day);
           return (
             <div
               key={day.toISOString()}
               className={cn(
-                "py-2.5 text-center border-l border-border/30 cursor-pointer hover:bg-muted/30 transition-colors",
-                todayFlag && "bg-blue-50/70"
+                "cursor-pointer border-l border-[hsl(var(--border-subtle))] py-2.5 text-center transition-colors hover:bg-[hsl(var(--surface-raised))]",
+                todayFlag && "bg-[hsl(var(--accent)/0.08)]"
               )}
               onClick={() => onDayClick(day)}
             >
-              <p className={cn("text-[11px] font-bold uppercase tracking-wider", todayFlag ? "text-blue-600" : "text-muted-foreground")}>
+              <p className={cn("text-[12px] font-medium", todayFlag ? "text-[hsl(var(--accent))]" : "text-muted-foreground")}>
                 {format(day, "EEE")}
               </p>
-              <div className={cn("mx-auto w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold mt-0.5", todayFlag ? "bg-blue-600 text-white" : "text-foreground")}>
+              <div
+                className={cn(
+                  "mx-auto mt-1 flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-semibold",
+                  todayFlag ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]" : "text-foreground"
+                )}
+              >
                 {format(day, "d")}
               </div>
             </div>
@@ -578,16 +554,13 @@ function WeekView({
         })}
       </div>
 
-      {/* Scrollable timeline */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto relative">
+      <div ref={scrollRef} className="relative flex-1 overflow-y-auto">
         <div className="relative" style={{ height: `${24 * HOUR_HEIGHT}px` }}>
-
-          {/* Time gutter */}
-          <div className="absolute top-0 left-0 bottom-0" style={{ width: TIME_GUTTER }}>
+          <div className="absolute bottom-0 left-0 top-0" style={{ width: timeGutter }}>
             {HOURS.map((hour) => (
               <div
                 key={hour}
-                className="absolute right-2 text-[10px] font-medium text-muted-foreground/60 text-right"
+                className="absolute right-2 text-right text-[12px] font-medium text-[hsl(var(--foreground-subtle))]"
                 style={{ top: hour * HOUR_HEIGHT + 4 }}
               >
                 {formatHour(hour)}
@@ -595,99 +568,84 @@ function WeekView({
             ))}
           </div>
 
-          {/* Hour grid lines (spans full width) */}
           {HOURS.map((hour) => (
             <div
               key={hour}
-              className="absolute left-0 right-0 border-t border-border/20"
+              className="absolute left-0 right-0 border-t border-[hsl(var(--border-subtle))]"
               style={{ top: hour * HOUR_HEIGHT }}
             />
           ))}
 
-          {/* Current time red indicator */}
-          {todayInView && (
-            <div
-              className="absolute z-20 pointer-events-none"
-              style={{ top: nowTop, left: TIME_GUTTER, right: 0 }}
-            >
+          {todayInView ? (
+            <div className="pointer-events-none absolute z-20" style={{ top: nowTop, left: timeGutter, right: 0 }}>
               <div className="relative flex items-center">
-                <div className="absolute -left-[5px] w-2.5 h-2.5 rounded-full bg-red-500" />
-                <div className="flex-1 h-[1.5px] bg-red-500 opacity-75 ml-1" />
+                <div className="absolute -left-[5px] h-2.5 w-2.5 rounded-full bg-red-500" />
+                <div className="ml-1 h-[1.5px] flex-1 bg-red-500 opacity-75" />
               </div>
             </div>
-          )}
+          ) : null}
 
-          {/* Day columns */}
-          {weekDays.map((day, di) => {
-            const colLeft  = TIME_GUTTER + di * ((100 - 0) / 7);  // % won't work here, need px
-            const key      = getDayKey(day);
+          {weekDays.map((day, dayIndex) => {
+            const key = getDayKey(day);
             const dayPosts = postsByDay.get(key) ?? [];
+            const postsByHour = new Map<number, CalendarPostResponse[]>();
 
-            // Group posts by hour for stacking
-            const byHour = new Map<number, CalendarPostResponse[]>();
-            for (const p of dayPosts) {
-              const h = getHours(new Date(p.scheduledTime));
-              if (!byHour.has(h)) byHour.set(h, []);
-              byHour.get(h)!.push(p);
+            for (const post of dayPosts) {
+              const hour = getHours(new Date(post.scheduledTime));
+              if (!postsByHour.has(hour)) postsByHour.set(hour, []);
+              postsByHour.get(hour)!.push(post);
             }
 
             return (
               <div
                 key={day.toISOString()}
-                className="absolute top-0 bottom-0 border-l border-border/25"
+                className="absolute bottom-0 top-0 border-l border-[hsl(var(--border-subtle))]"
                 style={{
-                  left:  `calc(${TIME_GUTTER}px + ${di} * (100% - ${TIME_GUTTER}px) / 7)`,
-                  width: `calc((100% - ${TIME_GUTTER}px) / 7)`,
+                  left: `calc(${timeGutter}px + ${dayIndex} * (100% - ${timeGutter}px) / 7)`,
+                  width: `calc((100% - ${timeGutter}px) / 7)`,
                 }}
               >
-                {/* Hour clickable slots */}
                 {HOURS.map((hour) => (
                   <div
                     key={hour}
-                    className="absolute left-0 right-0 hover:bg-blue-50/25 cursor-pointer group transition-colors"
+                    className="group absolute left-0 right-0 cursor-pointer transition-colors hover:bg-[hsl(var(--accent)/0.05)]"
                     style={{ top: hour * HOUR_HEIGHT, height: HOUR_HEIGHT }}
                     onClick={() => onSchedule(format(day, "yyyy-MM-dd"), `${String(hour).padStart(2, "0")}:00`)}
                   >
-                    <Plus className="absolute top-1 right-1 w-3 h-3 text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Plus className="absolute right-1 top-1 h-3 w-3 text-[hsl(var(--accent))] opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>
                 ))}
 
-                {/* Post chips, stacked within each hour */}
-                {Array.from(byHour.entries()).flatMap(([hour, hPosts]) =>
-                  hPosts.map((post, pi) => {
-                    const minute     = getMinutes(new Date(post.scheduledTime));
-                    const topOffset  = hour * HOUR_HEIGHT + (minute / 60) * HOUR_HEIGHT * 0.5 + pi * 20 + 2;
+                {Array.from(postsByHour.entries()).flatMap(([hour, hourPosts]) =>
+                  hourPosts.map((post, postIndex) => {
+                    const minute = getMinutes(new Date(post.scheduledTime));
+                    const topOffset = hour * HOUR_HEIGHT + (minute / 60) * HOUR_HEIGHT * 0.5 + postIndex * 22 + 2;
                     const PlatformIcon = PLATFORM_ICONS[post.platform];
-                    const color      = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
-                    const account    = accountMap.get(post.providerUserId);
+                    const color = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
+                    const account = accountMap.get(post.providerUserId);
                     const statusColor = STATUS_CONFIG[post.postStatus]?.color ?? "#94a3b8";
 
                     return (
                       <button
                         key={post.id}
-                        onClick={(e) => { e.stopPropagation(); onDayClick(day); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDayClick(day);
+                        }}
                         title={`${account?.username ?? ""} · ${PLATFORM_LABELS[post.platform] ?? post.platform} · ${formatTime(post.scheduledTime)}`}
-                        className="absolute z-10 flex items-center gap-1 rounded border text-[10px] font-medium transition-all hover:shadow-md active:scale-95"
+                        className="absolute z-10 flex items-center gap-1 rounded-lg border bg-[hsl(var(--surface))] text-[11px] font-medium text-foreground transition-colors hover:bg-[hsl(var(--surface-raised))]"
                         style={{
-                          left:           2,
-                          right:          2,
-                          top:            topOffset,
-                          height:         18,
-                          backgroundColor: color + "18",
-                          borderColor:     color + "55",
-                          color,
+                          left: 3,
+                          right: 3,
+                          top: topOffset,
+                          height: 22,
+                          backgroundColor: color + "12",
+                          borderColor: color + "42",
                         }}
                       >
-                        {PlatformIcon && (
-                          <PlatformIcon style={{ width: 9, height: 9, marginLeft: 3, flexShrink: 0 }} />
-                        )}
-                        <span className="truncate flex-1 px-0.5">
-                          {account?.username ?? post.platform}
-                        </span>
-                        <span
-                          className="w-1.5 h-1.5 rounded-full shrink-0 mr-1.5"
-                          style={{ backgroundColor: statusColor }}
-                        />
+                        {PlatformIcon ? <PlatformIcon style={{ width: 9, height: 9, marginLeft: 4, flexShrink: 0 }} /> : null}
+                        <span className="flex-1 truncate px-0.5">{account?.username ?? post.platform}</span>
+                        <span className="mr-1.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: statusColor }} />
                       </button>
                     );
                   })
@@ -700,8 +658,6 @@ function WeekView({
     </div>
   );
 }
-
-// ── FilterBar ─────────────────────────────────────────────────────────────────
 
 function FilterBar({
   accounts,
@@ -716,190 +672,204 @@ function FilterBar({
 }) {
   const [accountOpen, setAccountOpen] = useState(false);
   const accountRef = useRef<HTMLDivElement>(null);
-  const timezone   = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const hasFilters = selectedAccountIds.length > 0;
+  const accountLabel =
+    selectedAccountIds.length === 0
+      ? "All accounts"
+      : `${selectedAccountIds.length} account${selectedAccountIds.length !== 1 ? "s" : ""}`;
 
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (accountRef.current && !accountRef.current.contains(e.target as Node)) setAccountOpen(false);
+    function handleClick(event: MouseEvent) {
+      if (accountRef.current && !accountRef.current.contains(event.target as Node)) {
+        setAccountOpen(false);
+      }
     }
+
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const hasFilters    = selectedAccountIds.length > 0;
-  const accountLabel  = selectedAccountIds.length === 0 ? "All accounts" : `${selectedAccountIds.length} account${selectedAccountIds.length !== 1 ? "s" : ""}`;
-
   return (
-    <div className="flex items-center gap-2 px-4 py-2 border-b border-border/40 bg-background/80 backdrop-blur-sm flex-wrap">
-      <Filter className="w-3 h-3 text-muted-foreground/60 shrink-0" />
+    <div className="flex flex-wrap items-center gap-2 border-t border-border bg-[hsl(var(--surface))] px-4 py-3">
+      <div className={SUBTLE_BADGE_CLASS}>
+        <Filter className="h-3 w-3 shrink-0" />
+        Filters
+      </div>
 
-      {/* Account selector */}
       <div className="relative" ref={accountRef}>
         <button
-          onClick={() => { setAccountOpen((v) => !v); }}
+          onClick={() => setAccountOpen((current) => !current)}
           className={cn(
-            "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all",
-            selectedAccountIds.length > 0
-              ? "bg-blue-50 border-blue-200 text-blue-700"
-              : "bg-background border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
+            "inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition-colors",
+            hasFilters
+              ? "border-[hsl(var(--accent)/0.28)] bg-[hsl(var(--accent)/0.08)] text-[hsl(var(--accent))]"
+              : "border-border bg-[hsl(var(--surface))] text-muted-foreground hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
           )}
         >
-          <Users className="w-3 h-3 shrink-0" />
+          <Users className="h-3.5 w-3.5 shrink-0" />
           {accountLabel}
-          <ChevronRight className={cn("w-3 h-3 transition-transform duration-200", accountOpen && "rotate-90")} />
+          <ChevronRight className={cn("h-3 w-3 transition-transform", accountOpen && "rotate-90")} />
         </button>
 
         <AnimatePresence>
-          {accountOpen && (
+          {accountOpen ? (
             <motion.div
               initial={{ opacity: 0, y: -4, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.97 }}
               transition={{ duration: 0.12 }}
-              className="absolute top-full left-0 mt-1.5 w-64 bg-card border border-border rounded-xl shadow-xl z-30 overflow-hidden"
+              className="absolute left-0 top-full z-30 mt-1.5 w-72 overflow-hidden rounded-xl border border-border bg-[hsl(var(--surface))] shadow-lg"
             >
-              <div className="px-3 py-2 border-b border-border/40">
-                <p className="text-[11px] text-muted-foreground font-medium">
+              <div className="border-b border-border bg-[hsl(var(--surface-raised))] px-3 py-2">
+                <p className="text-[12px] font-medium text-muted-foreground">
                   {accounts.length} account{accounts.length !== 1 ? "s" : ""} in scope
                 </p>
               </div>
-              <div className="p-1 max-h-64 overflow-y-auto">
+              <div className="max-h-64 space-y-1 overflow-y-auto p-1">
                 {accounts.length === 0 ? (
-                  <p className="text-xs text-muted-foreground text-center py-3 px-2">No accounts in this group</p>
+                  <p className="px-2 py-3 text-center text-[13px] text-muted-foreground">No accounts in this group</p>
                 ) : (
-                  accounts.map((acc) => {
-                    const PIcon   = PLATFORM_ICONS[acc.platform];
-                    const color   = PLATFORM_COLORS[acc.platform] ?? "#94a3b8";
-                    const checked = selectedAccountIds.includes(acc.providerUserId);
+                  accounts.map((account) => {
+                    const PlatformIcon = PLATFORM_ICONS[account.platform];
+                    const color = PLATFORM_COLORS[account.platform] ?? "#94a3b8";
+                    const checked = selectedAccountIds.includes(account.providerUserId);
+
                     return (
                       <button
-                        key={acc.providerUserId}
-                        onClick={() => onAccountToggle(acc.providerUserId)}
+                        key={account.providerUserId}
+                        onClick={() => onAccountToggle(account.providerUserId)}
                         className={cn(
-                          "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs transition-colors",
-                          checked ? "bg-blue-50 text-blue-700" : "text-foreground/70 hover:bg-muted"
+                          "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                          checked
+                            ? "bg-[hsl(var(--accent)/0.08)] text-[hsl(var(--accent))]"
+                            : "text-foreground hover:bg-[hsl(var(--surface-raised))]"
                         )}
                       >
-                        <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: color + "1a" }}>
-                          {PIcon && <PIcon style={{ width: 12, height: 12, color }} />}
+                        <div
+                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+                          style={{ backgroundColor: color + "16" }}
+                        >
+                          {PlatformIcon ? <PlatformIcon style={{ width: 12, height: 12, color }} /> : null}
                         </div>
-                        <div className="flex-1 min-w-0 text-left">
-                          <p className="font-semibold truncate">{acc.username}</p>
-                          <p className="text-[10px] text-muted-foreground capitalize">{acc.platform}</p>
+                        <div className="min-w-0 flex-1 text-left">
+                          <p className="truncate font-medium">{account.username}</p>
+                          <p className="text-[12px] capitalize text-muted-foreground">{account.platform}</p>
                         </div>
-                        {checked && <CheckCircle2 className="w-3.5 h-3.5 text-blue-500 shrink-0" />}
+                        {checked ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--accent))]" /> : null}
                       </button>
                     );
                   })
                 )}
               </div>
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
 
-      {/* Clear filters */}
-      {hasFilters && (
+      {hasFilters ? (
         <button
           onClick={onClearFilters}
-          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+          className="inline-flex h-9 items-center gap-1 rounded-lg px-3 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
         >
-          <X className="w-3 h-3" />
+          <X className="h-3 w-3" />
           Clear
         </button>
-      )}
+      ) : null}
 
-      {/* Timezone pill — right-aligned */}
-      <div className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted/60 text-[10px] text-muted-foreground">
-        <Globe className="w-3 h-3 shrink-0" />
-        <span className="truncate max-w-[160px]">{timezone}</span>
+      <div className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-border bg-[hsl(var(--surface-raised))] px-2.5 py-1 text-[12px] text-muted-foreground">
+        <Globe className="h-3 w-3 shrink-0" />
+        <span className="max-w-[160px] truncate">{timezone}</span>
       </div>
     </div>
   );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
-
 export default function CalendarPage() {
   const { getToken } = useAuth();
   const router = useRouter();
-
-  const [view, setView]               = useState<CalendarView>("month");
+  const [view, setView] = useState<CalendarView>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [posts, setPosts]             = useState<CalendarPostResponse[]>([]);
-  const [accounts, setAccounts]       = useState<ConnectedAccount[]>([]);
+  const [posts, setPosts] = useState<CalendarPostResponse[]>([]);
+  const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [loadingPosts, setLoadingPosts] = useState(false);
-  const [error, setError]             = useState<string | null>(null);
-
+  const [error, setError] = useState<string | null>(null);
   const [selectedAccountIds, setSelectedAccountIds] = useState<string[]>([]);
-
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
-  const [sheetOpen,   setSheetOpen]   = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
-  const accountMap = useMemo(
-    () => new Map(accounts.map((a) => [a.providerUserId, a])),
-    [accounts]
-  );
+  const accountMap = useMemo(() => new Map(accounts.map((account) => [account.providerUserId, account])), [accounts]);
 
-  // Load accounts once
   useEffect(() => {
     let cancelled = false;
-    async function load() {
+
+    async function loadAccounts() {
       try {
         setLoadingData(true);
-        const accs = await fetchAllConnectedAccountsApi(getToken);
-        if (cancelled) return;
-        setAccounts(accs ?? []);
-      } catch (e: unknown) {
-        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load accounts");
+        const data = await fetchAllConnectedAccountsApi(getToken);
+        if (!cancelled) setAccounts(data ?? []);
+      } catch (err: unknown) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load accounts");
       } finally {
         if (!cancelled) setLoadingData(false);
       }
     }
-    load();
-    return () => { cancelled = true; };
+
+    loadAccounts();
+    return () => {
+      cancelled = true;
+    };
   }, [getToken]);
 
-  // Fetch ALL posts for the time period; filtering is done client-side
   useEffect(() => {
     if (loadingData) return;
     let cancelled = false;
-    async function fetchPosts() {
+
+    async function loadPosts() {
       try {
         setLoadingPosts(true);
-        const range = view === "month"
-          ? getUTCRangeForMonth(currentDate)
-          : getUTCRangeForWeek(currentDate);
-
-        const data = await fetchCalendarPostsApi(
-          getToken,
-          range.startDate,
-          range.endDate
-        );
-        if (!cancelled) setPosts((data ?? []).filter((p) => p.postStatus !== "FAILED"));
-      } catch (e: unknown) {
-        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load calendar posts");
+        const range = view === "month" ? getUTCRangeForMonth(currentDate) : getUTCRangeForWeek(currentDate);
+        const data = await fetchCalendarPostsApi(getToken, range.startDate, range.endDate);
+        if (!cancelled) setPosts((data ?? []).filter((post) => post.postStatus !== "FAILED"));
+      } catch (err: unknown) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load calendar posts");
       } finally {
         if (!cancelled) setLoadingPosts(false);
       }
     }
-    fetchPosts();
-    return () => { cancelled = true; };
+
+    loadPosts();
+    return () => {
+      cancelled = true;
+    };
   }, [view, currentDate, loadingData, getToken]);
 
-  // Client-side filtering — instant, no extra API call
   const filteredPosts = useMemo(() => {
     if (selectedAccountIds.length === 0) return posts;
     const allowedIds = new Set(selectedAccountIds);
-    return posts.filter((p) => allowedIds.has(p.providerUserId));
+    return posts.filter((post) => allowedIds.has(post.providerUserId));
   }, [posts, selectedAccountIds]);
 
   const postsByDay = useMemo(() => groupPostsByDay(filteredPosts), [filteredPosts]);
+  const selectedDayPosts = useMemo(
+    () => (selectedDay ? postsByDay.get(getDayKey(selectedDay)) ?? [] : []),
+    [selectedDay, postsByDay]
+  );
 
-  function goBack()    { view === "month" ? setCurrentDate(subMonths(currentDate, 1)) : setCurrentDate(subWeeks(currentDate, 1)); }
-  function goForward() { view === "month" ? setCurrentDate(addMonths(currentDate, 1)) : setCurrentDate(addWeeks(currentDate, 1)); }
-  function goToday()   { setCurrentDate(new Date()); }
+  function goBack() {
+    if (view === "month") setCurrentDate(subMonths(currentDate, 1));
+    else setCurrentDate(subWeeks(currentDate, 1));
+  }
+
+  function goForward() {
+    if (view === "month") setCurrentDate(addMonths(currentDate, 1));
+    else setCurrentDate(addWeeks(currentDate, 1));
+  }
+
+  function goToday() {
+    setCurrentDate(new Date());
+  }
 
   function handleDayClick(day: Date) {
     setSelectedDay(day);
@@ -911,26 +881,23 @@ export default function CalendarPage() {
   }
 
   function handleAccountToggle(id: string) {
-    setSelectedAccountIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
-    );
+    setSelectedAccountIds((current) => (current.includes(id) ? current.filter((item) => item !== id) : [...current, id]));
   }
 
-  const headerLabel = view === "month"
-    ? format(currentDate, "MMMM yyyy")
-    : `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), "MMM d")} – ${format(endOfWeek(currentDate, { weekStartsOn: 1 }), "MMM d, yyyy")}`;
-
-  const selectedDayPosts = useMemo(
-    () => (selectedDay ? postsByDay.get(getDayKey(selectedDay)) ?? [] : []),
-    [selectedDay, postsByDay]
-  );
+  const headerLabel =
+    view === "month"
+      ? format(currentDate, "MMMM yyyy")
+      : `${format(startOfWeek(currentDate, { weekStartsOn: 1 }), "MMM d")} - ${format(
+          endOfWeek(currentDate, { weekStartsOn: 1 }),
+          "MMM d, yyyy"
+        )}`;
 
   if (loadingData) {
     return (
-      <div className="h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-          <p className="text-sm text-muted-foreground">Loading calendar…</p>
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-[hsl(var(--surface))] px-6 py-8 shadow-sm">
+          <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--accent))]" />
+          <p className="text-sm text-muted-foreground">Loading calendar...</p>
         </div>
       </div>
     );
@@ -938,98 +905,117 @@ export default function CalendarPage() {
 
   if (error) {
     return (
-      <div className="h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3">
-          <AlertCircle className="w-6 h-6 text-destructive" />
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-[hsl(var(--surface))] px-6 py-8 shadow-sm">
+          <AlertCircle className="h-6 w-6 text-destructive" />
           <p className="text-sm text-muted-foreground">{error}</p>
-          <button onClick={() => { setError(null); setLoadingData(true); }} className="text-xs text-blue-500 hover:underline">Retry</button>
+          <button
+            onClick={() => {
+              setError(null);
+              setLoadingData(true);
+            }}
+            className="text-[13px] font-medium text-[hsl(var(--accent))] hover:underline"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen flex flex-col bg-background">
-
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
-      <div className="shrink-0 border-b border-border bg-card/95 backdrop-blur-xl shadow-sm">
-        <div className="px-4 sm:px-6 h-16 flex items-center">
-          <div className="flex items-center justify-between gap-4 flex-wrap w-full">
-
-            {/* Title */}
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/10 flex items-center justify-center shrink-0">
-                <Calendar className="w-[18px] h-[18px] text-blue-500" />
+    <div className="flex h-screen flex-col bg-app-canvas">
+      <div className="shrink-0">
+        <ProtectedPageHeader
+          title="Content Calendar"
+          description="Track scheduled publishing across connected accounts."
+          icon={<Calendar className="h-4 w-4" />}
+          actions={
+            <>
+              <div className={SUBTLE_BADGE_CLASS}>
+                <Clock className="h-3.5 w-3.5" />
+                {headerLabel}
+                {loadingPosts ? <Loader2 className="ml-1 h-3.5 w-3.5 animate-spin" /> : null}
               </div>
-              <div>
-                <h1 className="text-base font-bold text-foreground tracking-tight leading-tight">Content Calendar</h1>
-                <p className="text-xs text-muted-foreground leading-tight">
-                  {loadingPosts
-                    ? "Refreshing…"
-                    : filteredPosts.length > 0
-                    ? `${filteredPosts.length} post${filteredPosts.length !== 1 ? "s" : ""} in view`
-                    : "Visual overview of all your scheduled content"}
-                </p>
+
+              <div className="flex items-center gap-1">
+                <button onClick={goBack} className={ICON_BUTTON_CLASS} aria-label="Previous period">
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button onClick={goToday} className={CONTROL_BUTTON_CLASS}>
+                  Today
+                </button>
+                <button onClick={goForward} className={ICON_BUTTON_CLASS} aria-label="Next period">
+                  <ChevronRight className="h-4 w-4" />
+                </button>
               </div>
-            </div>
 
-            {/* Navigation */}
-            <div className="flex items-center gap-1.5">
-              <button onClick={goBack} className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button onClick={goToday} className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
-                Today
-              </button>
-              <button onClick={goForward} className="p-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-              <div className="mx-1.5 h-5 w-px bg-border" />
-              <h2 className="text-sm font-bold text-foreground min-w-[140px]">{headerLabel}</h2>
-              {loadingPosts && <Loader2 className="w-3.5 h-3.5 animate-spin text-muted-foreground/60 ml-0.5" />}
-            </div>
+              <div className="flex items-center rounded-lg border border-border bg-[hsl(var(--surface-raised))] p-1">
+                <button
+                  onClick={() => setView("month")}
+                  className={cn(
+                    "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors",
+                    view === "month"
+                      ? "bg-[hsl(var(--surface))] text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" />
+                  Month
+                </button>
+                <button
+                  onClick={() => setView("week")}
+                  className={cn(
+                    "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors",
+                    view === "week"
+                      ? "bg-[hsl(var(--surface))] text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <CalendarDays className="h-3.5 w-3.5" />
+                  Week
+                </button>
+              </div>
 
-            {/* View toggle */}
-            <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
               <button
-                onClick={() => setView("month")}
-                className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all", view === "month" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                onClick={() => handleSchedule(format(new Date(), "yyyy-MM-dd"), "09:00")}
+                className={PRIMARY_BUTTON_CLASS}
               >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                Month
+                <Plus className="h-4 w-4" />
+                Schedule post
               </button>
-              <button
-                onClick={() => setView("week")}
-                className={cn("flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all", view === "week" ? "bg-white text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
-              >
-                <CalendarDays className="w-3.5 h-3.5" />
-                Week
-              </button>
-            </div>
-          </div>
+            </>
+          }
+        />
+
+        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 text-[13px] text-[hsl(var(--foreground-muted))] sm:px-6">
+          {loadingPosts
+            ? "Refreshing calendar data"
+            : filteredPosts.length > 0
+              ? `${filteredPosts.length} post${filteredPosts.length !== 1 ? "s" : ""} in view`
+              : "No scheduled posts in the current view"}
         </div>
 
         <FilterBar
           accounts={accounts}
           selectedAccountIds={selectedAccountIds}
           onAccountToggle={handleAccountToggle}
-          onClearFilters={() => { setSelectedAccountIds([]); }}
+          onClearFilters={() => setSelectedAccountIds([])}
         />
       </div>
 
-      {/* ── Empty state ──────────────────────────────────────────────────────── */}
       {accounts.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center px-6">
-          <div className="text-center max-w-sm">
-            <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-muted-foreground/40" />
+        <div className="flex flex-1 items-center justify-center px-6">
+          <div className="max-w-sm rounded-xl border border-border bg-[hsl(var(--surface))] p-8 text-center shadow-sm">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-border bg-[hsl(var(--surface-raised))]">
+              <Users className="h-8 w-8 text-muted-foreground/40" />
             </div>
-            <h3 className="text-sm font-bold text-foreground mb-2">No connected accounts</h3>
-            <p className="text-xs text-muted-foreground mb-5 leading-relaxed">
-              Connect your social accounts to start scheduling posts and see everything visualised here.
+            <h3 className="mb-2 text-base font-semibold text-foreground">No connected accounts</h3>
+            <p className="mb-5 text-[13px] leading-relaxed text-muted-foreground">
+              Connect your social accounts to start scheduling posts and see everything visualized here.
             </p>
-            <a href="/connect-accounts" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors shadow-sm">
-              Connect Accounts
+            <a href="/connect-accounts" className={PRIMARY_BUTTON_CLASS}>
+              Connect accounts
             </a>
           </div>
         </div>
@@ -1041,30 +1027,31 @@ export default function CalendarPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.12 }}
-            className="flex-1 overflow-hidden flex flex-col"
+            className="flex flex-1 flex-col overflow-hidden"
           >
-            {view === "month" ? (
-              <MonthView
-                currentDate={currentDate}
-                postsByDay={postsByDay}
-                accountMap={accountMap}
-                onDayClick={handleDayClick}
-                onSchedule={handleSchedule}
-              />
-            ) : (
-              <WeekView
-                currentDate={currentDate}
-                postsByDay={postsByDay}
-                accountMap={accountMap}
-                onDayClick={handleDayClick}
-                onSchedule={handleSchedule}
-              />
-            )}
+            <div className="flex flex-1 flex-col overflow-hidden border-t border-border bg-[hsl(var(--surface))]">
+              {view === "month" ? (
+                <MonthView
+                  currentDate={currentDate}
+                  postsByDay={postsByDay}
+                  accountMap={accountMap}
+                  onDayClick={handleDayClick}
+                  onSchedule={handleSchedule}
+                />
+              ) : (
+                <WeekView
+                  currentDate={currentDate}
+                  postsByDay={postsByDay}
+                  accountMap={accountMap}
+                  onDayClick={handleDayClick}
+                  onSchedule={handleSchedule}
+                />
+              )}
+            </div>
           </motion.div>
         </AnimatePresence>
       )}
 
-      {/* ── Day Detail Sheet ──────────────────────────────────────────────────── */}
       <DayDetailSheet
         open={sheetOpen}
         onClose={() => setSheetOpen(false)}

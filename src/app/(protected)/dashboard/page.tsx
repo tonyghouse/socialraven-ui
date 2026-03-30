@@ -1,5 +1,7 @@
 "use client";
 
+import AtlassianButton, { LinkButton } from "@atlaskit/button/new";
+import ProgressBar from "@atlaskit/progress-bar";
 import { useEffect, useState } from "react";
 import { useAuth, useUser } from "@clerk/nextjs";
 import Link from "next/link";
@@ -9,14 +11,11 @@ import {
   Calendar,
   Link2,
   PlusCircle,
-  AlertTriangle,
   CheckCircle,
   ArrowRight,
   TrendingUp,
   Zap,
   BarChart2,
-  ChevronRight,
-  Sparkles,
   Activity,
   Globe,
   ImageIcon,
@@ -30,6 +29,7 @@ import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import { fetchPostCollectionsApi } from "@/service/fetchPostCollections";
 import { fetchUsageStatsApi, fetchUserPlanApi } from "@/service/plan";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { cn } from "@/lib/utils";
 
 import type { PostResponse } from "@/model/PostResponse";
@@ -71,30 +71,34 @@ function formatShort(iso: string): string {
 
 // ─── platform colours (gradient pair) ─────────────────────────────────────────
 
-const PLATFORM_GRAD: Record<string, string> = {
-  instagram: "from-pink-500 to-rose-500",
-  x: "from-slate-600 to-slate-800",
-  linkedin: "from-blue-600 to-blue-800",
-  facebook: "from-blue-500 to-blue-700",
-  youtube: "from-red-500 to-red-700",
-  threads: "from-slate-600 to-slate-900",
-  tiktok: "from-slate-800 to-zinc-900",
-};
-
 const PLATFORM_BG: Record<string, string> = {
-  instagram: "bg-pink-50 dark:bg-pink-900/20",
-  x: "bg-slate-100 dark:bg-slate-800/40",
-  linkedin: "bg-blue-50 dark:bg-blue-900/20",
-  facebook: "bg-blue-50 dark:bg-blue-900/20",
-  youtube: "bg-red-50 dark:bg-red-900/20",
-  threads: "bg-slate-100 dark:bg-slate-800/40",
-  tiktok: "bg-slate-100 dark:bg-slate-800/40",
+  instagram: "bg-[hsl(var(--surface-raised))] text-pink-600 dark:text-pink-300",
+  x: "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]",
+  linkedin: "bg-[hsl(var(--surface-raised))] text-blue-600 dark:text-blue-300",
+  facebook: "bg-[hsl(var(--surface-raised))] text-blue-600 dark:text-blue-300",
+  youtube: "bg-[hsl(var(--surface-raised))] text-red-600 dark:text-red-300",
+  threads: "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]",
+  tiktok: "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]",
 };
 
 const TYPE_META = {
-  IMAGE: { Icon: ImageIcon, label: "Image", cls: "text-violet-600 bg-violet-50 border-violet-100 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800/30" },
-  VIDEO: { Icon: Video,     label: "Video", cls: "text-rose-600 bg-rose-50 border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/30" },
-  TEXT:  { Icon: FileText,  label: "Text",  cls: "text-slate-600 bg-slate-50 border-slate-100 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700/30" },
+  IMAGE: { Icon: ImageIcon, label: "Image" },
+  VIDEO: { Icon: Video, label: "Video" },
+  TEXT: { Icon: FileText, label: "Text" },
+} as const;
+
+const sectionClassName =
+  "overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]";
+
+const rowHoverClassName =
+  "transition-colors duration-150 hover:bg-[hsl(var(--surface-raised))]/70";
+
+const badgeVariants = {
+  neutral: "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
+  subtle: "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]",
+  accent: "border-[hsl(var(--accent))]/15 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]",
+  success: "border-[hsl(var(--success))]/18 bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]",
+  warning: "border-[hsl(var(--warning))]/18 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]",
 } as const;
 
 // ─── page ─────────────────────────────────────────────────────────────────────
@@ -187,68 +191,59 @@ export default function DashboardPage() {
   // ── render ─────────────────────────────────────────────────────────────────
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[hsl(var(--background))]">
 
-      {/* ── Sticky header ────────────────────────────────────────── */}
-      <div className="sticky top-0 z-10 border-b border-border/60 bg-background/90 backdrop-blur-xl">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <div>
-            <h1 className="text-[17px] font-semibold text-foreground tracking-tight leading-tight">
-              {getGreeting()}{firstName ? `, ${firstName}` : ""}
-            </h1>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Your content hub — everything at a glance
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Refresh */}
-            <button
+      <ProtectedPageHeader
+        title={`${getGreeting()}${firstName ? `, ${firstName}` : ""}`}
+        description="Your content hub, everything at a glance."
+        actions={
+          <>
+            <AtlassianButton
+              appearance="subtle"
               onClick={() => setRefreshKey((k) => k + 1)}
-              className="p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
               title="Refresh"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-            </button>
+              <RefreshCw className="h-3.5 w-3.5" />
+            </AtlassianButton>
 
-            {/* New post CTA */}
-            <Link href="/schedule-post">
-              <button className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 active:scale-95 transition-all shadow-sm">
-                <PlusCircle className="w-3.5 h-3.5" />
+            <LinkButton appearance="primary" href="/schedule-post">
+              <span className="inline-flex items-center gap-1.5">
+                <PlusCircle className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">New Post</span>
-              </button>
-            </Link>
-          </div>
-        </div>
-      </div>
+                <span className="sm:hidden">New</span>
+              </span>
+            </LinkButton>
+          </>
+        }
+      />
 
       {/* ── Trial banner ─────────────────────────────────────────── */}
       {userPlan?.status === "TRIALING" && trialDaysLeft !== null && (
-        <div className="bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600">
-          <div className="px-4 sm:px-6 py-2.5 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-sm">
-              <Sparkles className="w-4 h-4 text-violet-200 flex-shrink-0" />
-              <span className="font-semibold text-white">Free trial active</span>
-              <span className="text-violet-200 hidden sm:inline">·</span>
-              <span className="text-violet-100 hidden sm:inline">
-                {trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} remaining
-              </span>
+        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-3 sm:px-6">
+          <div className="flex flex-col gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-4 py-3 dark:bg-[hsl(var(--surface-sunken))] sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <StatusBadge variant="accent">Trial</StatusBadge>
+                <p className="text-[13px] font-semibold text-[hsl(var(--foreground))]">
+                  Free trial active
+                </p>
+              </div>
+              <p className="text-[13px] text-[hsl(var(--foreground-muted))] dark:text-[hsl(var(--foreground-subtle))]">
+                {trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} remaining on your trial.
+              </p>
             </div>
-            <Link
-              href="/profile"
-              className="text-xs font-semibold text-white/90 hover:text-white bg-white/15 hover:bg-white/25 px-3 py-1.5 rounded-lg transition-colors whitespace-nowrap border border-white/20"
-            >
-              Upgrade plan →
-            </Link>
+            <LinkButton appearance="primary" href="/profile">
+              Upgrade plan
+            </LinkButton>
           </div>
         </div>
       )}
 
       {/* ── Page content ─────────────────────────────────────────── */}
-      <div className="px-4 sm:px-6 py-8 space-y-6">
+      <div className="space-y-6 px-4 py-6 sm:px-6">
 
         {/* Stats row — 4 cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4">
           <StatCard icon={Calendar}    label="Scheduled Today"  value={scheduledToday}      accent />
           <StatCard icon={Clock}       label="This Week"        value={scheduledThisWeek} />
           <StatCard icon={TrendingUp}  label="Published Total"  value={publishedCols.length} />
@@ -256,31 +251,28 @@ export default function DashboardPage() {
         </div>
 
         {/* ── Two-column layout ───────────────────────────────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
 
           {/* LEFT — 2/3 */}
-          <div className="lg:col-span-2 space-y-5">
+          <div className="space-y-5 lg:col-span-2">
 
             {/* Upcoming Posts */}
-            <section className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+            <section className={sectionClassName}>
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center">
-                    <Clock className="w-3.5 h-3.5 text-blue-500" />
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                    <Clock className="h-3.5 w-3.5" />
                   </div>
-                  <h2 className="text-[14px] font-semibold text-foreground">Upcoming Posts</h2>
+                  <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Upcoming Posts</h2>
                   {scheduledPosts.length > 0 && (
-                    <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800/40">
+                    <span className="inline-flex min-w-6 items-center justify-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-1.5 py-0.5 text-[11px] font-semibold text-[hsl(var(--foreground-muted))]">
                       {scheduledPosts.length}
                     </span>
                   )}
                 </div>
-                <Link
-                  href="/scheduled-posts"
-                  className="flex items-center gap-1 text-xs font-medium text-accent hover:opacity-75 transition-opacity"
-                >
-                  View all <ArrowRight className="w-3 h-3" />
-                </Link>
+                <LinkButton appearance="subtle" href="/scheduled-posts" spacing="compact">
+                  View all
+                </LinkButton>
               </div>
 
               {scheduledPosts.length === 0 ? (
@@ -292,48 +284,39 @@ export default function DashboardPage() {
                   href="/schedule-post"
                 />
               ) : (
-                <div className="divide-y divide-border/40">
+                <div className="divide-y divide-[hsl(var(--border-subtle))]">
                   {scheduledPosts.slice(0, 6).map((post) => {
                     const PlatformIcon = post.provider ? PLATFORM_ICONS[post.provider] : null;
                     const { label: timeLabel, urgent } = relativeTime(post.scheduledTime ?? "");
 
                     return (
                       <Link key={post.id} href="/scheduled-posts">
-                        <div className="flex items-center gap-3.5 px-5 py-3.5 hover:bg-muted/30 transition-colors group cursor-pointer">
-                          {/* Platform gradient icon */}
+                        <div className={cn("group flex cursor-pointer items-center gap-3.5 px-5 py-3.5", rowHoverClassName)}>
                           <div
                             className={cn(
-                              "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br shadow-sm",
+                              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))]",
                               post.provider
-                                ? PLATFORM_GRAD[post.provider] ?? "from-slate-500 to-slate-700"
-                                : "from-slate-400 to-slate-600"
+                                ? PLATFORM_BG[post.provider] ?? "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]"
+                                : "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]"
                             )}
                           >
-                            {PlatformIcon && <PlatformIcon className="w-4 h-4 text-white" />}
+                            {PlatformIcon && <PlatformIcon className="h-4 w-4" />}
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate leading-snug">
+                            <p className="truncate text-[13px] font-medium leading-5 text-[hsl(var(--foreground))]">
                               {post.description || "No content"}
                             </p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5 capitalize">
+                            <p className="mt-0.5 text-[12px] text-[hsl(var(--foreground-muted))] capitalize">
                               {post.provider}
                             </p>
                           </div>
 
-                          {/* Time chip */}
-                          <span
-                            className={cn(
-                              "text-[11px] font-semibold px-2 py-1 rounded-lg border flex-shrink-0",
-                              urgent
-                                ? "bg-orange-50 text-orange-700 border-orange-200 dark:bg-orange-900/20 dark:text-orange-400 dark:border-orange-800/30"
-                                : "bg-muted/40 text-muted-foreground border-border/40"
-                            )}
-                          >
+                          <StatusBadge variant={urgent ? "warning" : "neutral"}>
                             {timeLabel}
-                          </span>
+                          </StatusBadge>
 
-                          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/30 group-hover:text-accent group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+                          <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--foreground-subtle))] transition-all group-hover:translate-x-0.5 group-hover:text-[hsl(var(--accent))]" />
                         </div>
                       </Link>
                     );
@@ -344,18 +327,18 @@ export default function DashboardPage() {
 
             {/* Platform distribution */}
             {topPlatforms.length > 0 && (
-              <section className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+              <section className={sectionClassName}>
+                <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-violet-50 dark:bg-violet-900/30 flex items-center justify-center">
-                      <BarChart2 className="w-3.5 h-3.5 text-violet-500" />
+                    <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                      <BarChart2 className="h-3.5 w-3.5" />
                     </div>
-                    <h2 className="text-[14px] font-semibold text-foreground">Scheduled by Platform</h2>
+                    <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Scheduled by Platform</h2>
                   </div>
-                  <span className="text-xs text-muted-foreground">{scheduledPosts.length} post{scheduledPosts.length !== 1 ? "s" : ""} queued</span>
+                  <span className="text-[12px] text-[hsl(var(--foreground-muted))]">{scheduledPosts.length} post{scheduledPosts.length !== 1 ? "s" : ""} queued</span>
                 </div>
 
-                <div className="p-5 space-y-3.5">
+                <div className="space-y-4 p-5">
                   {topPlatforms.map(([platform, count]) => {
                     const Icon = PLATFORM_ICONS[platform];
                     const pct  = Math.round((count / scheduledPosts.length) * 100);
@@ -363,29 +346,24 @@ export default function DashboardPage() {
                       <div key={platform} className="flex items-center gap-3">
                         <div
                           className={cn(
-                            "w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br shadow-sm",
-                            PLATFORM_GRAD[platform] ?? "from-slate-500 to-slate-700"
+                            "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))]",
+                            PLATFORM_BG[platform] ?? "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]"
                           )}
                         >
-                          {Icon && <Icon className="w-4 h-4 text-white" />}
+                          {Icon && <Icon className="h-4 w-4" />}
                         </div>
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-xs font-semibold text-foreground capitalize">{platform}</span>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-[13px] font-medium text-[hsl(var(--foreground))] capitalize">{platform}</span>
+                            <span className="text-[12px] text-[hsl(var(--foreground-muted))]">
                               {count} post{count !== 1 ? "s" : ""}
                             </span>
                           </div>
-                          <div className="h-1.5 bg-muted rounded-full overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-accent/70 transition-all duration-700"
-                              style={{ width: `${pct}%` }}
-                            />
-                          </div>
+                          <ProgressBar ariaLabel={`${platform} scheduled posts`} value={pct / 100} appearance="default" />
                         </div>
 
-                        <span className="text-xs font-bold text-muted-foreground w-9 text-right tabular-nums">
+                        <span className="w-9 text-right text-[12px] font-semibold tabular-nums text-[hsl(var(--foreground-muted))]">
                           {pct}%
                         </span>
                       </div>
@@ -397,23 +375,20 @@ export default function DashboardPage() {
 
             {/* Recently Published */}
             {publishedCols.length > 0 && (
-              <section className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+              <section className={sectionClassName}>
+                <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
-                      <CheckCircle className="w-3.5 h-3.5 text-emerald-500" />
+                    <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                      <CheckCircle className="h-3.5 w-3.5" />
                     </div>
-                    <h2 className="text-[14px] font-semibold text-foreground">Recently Published</h2>
+                    <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Recently Published</h2>
                   </div>
-                  <Link
-                    href="/published-posts"
-                    className="flex items-center gap-1 text-xs font-medium text-accent hover:opacity-75 transition-opacity"
-                  >
-                    View all <ArrowRight className="w-3 h-3" />
-                  </Link>
+                  <LinkButton appearance="subtle" href="/published-posts" spacing="compact">
+                    View all
+                  </LinkButton>
                 </div>
 
-                <div className="divide-y divide-border/40">
+                <div className="divide-y divide-[hsl(var(--border-subtle))]">
                   {publishedCols.slice(0, 4).map((col) => {
                     const platforms = Array.from(new Set(col.posts.map((p) => p.provider)));
                     const typeMeta  = TYPE_META[col.postCollectionType as keyof typeof TYPE_META] ?? TYPE_META.TEXT;
@@ -421,8 +396,7 @@ export default function DashboardPage() {
 
                     return (
                       <Link key={col.id} href={`/published-posts/${col.id}`}>
-                        <div className="flex items-center gap-4 px-5 py-3.5 hover:bg-muted/30 transition-colors group cursor-pointer">
-                          {/* Stacked platform icons */}
+                        <div className={cn("group flex cursor-pointer items-center gap-4 px-5 py-3.5", rowHoverClassName)}>
                           <div className="flex items-center flex-shrink-0" style={{ width: Math.min(platforms.length, 3) * 18 + 10 }}>
                             {platforms.slice(0, 3).map((platform, i) => {
                               const Icon = PLATFORM_ICONS[platform];
@@ -430,30 +404,30 @@ export default function DashboardPage() {
                                 <div
                                   key={platform}
                                   className={cn(
-                                    "w-7 h-7 rounded-full flex items-center justify-center border-2 border-card bg-gradient-to-br shadow-sm",
-                                    PLATFORM_GRAD[platform] ?? "from-slate-500 to-slate-700"
+                                    "flex h-7 w-7 items-center justify-center rounded-full border-2 border-[hsl(var(--surface))]",
+                                    PLATFORM_BG[platform] ?? "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]"
                                   )}
                                   style={{ marginLeft: i === 0 ? 0 : -8, zIndex: 10 - i }}
                                 >
-                                  {Icon && <Icon className="w-3 h-3 text-white" />}
+                                  {Icon && <Icon className="h-3 w-3" />}
                                 </div>
                               );
                             })}
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{col.description}</p>
-                            <p className="text-[11px] text-muted-foreground mt-0.5">{col.scheduledTime ? formatShort(col.scheduledTime) : ""}</p>
+                            <p className="truncate text-[13px] font-medium text-[hsl(var(--foreground))]">{col.description}</p>
+                            <p className="mt-0.5 text-[12px] text-[hsl(var(--foreground-muted))]">{col.scheduledTime ? formatShort(col.scheduledTime) : ""}</p>
                           </div>
 
                           <div className="flex items-center gap-2 flex-shrink-0">
-                            <span className={cn("inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded-lg border", typeMeta.cls)}>
-                              <TypeIcon className="w-2.5 h-2.5" />
-                              {typeMeta.label}
-                            </span>
-                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800/30">
-                              Published
-                            </span>
+                            <StatusBadge variant="neutral">
+                              <span className="inline-flex items-center gap-1">
+                                <TypeIcon className="h-2.5 w-2.5" />
+                                <span>{typeMeta.label}</span>
+                              </span>
+                            </StatusBadge>
+                            <StatusBadge variant="success">Published</StatusBadge>
                           </div>
                         </div>
                       </Link>
@@ -470,51 +444,45 @@ export default function DashboardPage() {
 
             {/* Usage & Plan */}
             {usageStats && (
-              <section className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-                <div className="px-5 py-4 border-b border-border/40 flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center">
-                    <Activity className="w-3.5 h-3.5 text-amber-500" />
+              <section className={sectionClassName}>
+                <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                    <Activity className="h-3.5 w-3.5" />
                   </div>
-                  <h2 className="text-[14px] font-semibold text-foreground">Usage This Month</h2>
+                  <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Usage This Month</h2>
                 </div>
 
                 <div className="p-5 space-y-4">
-                  {/* Posts bar */}
                   <UsageBar
                     label="Posts published"
                     used={usageStats.postsUsedThisMonth}
                     limit={usageStats.postsLimit}
                     progress={postsProgress}
-                    colorClass={
-                      postsProgress > 85 ? "bg-red-400" :
-                      postsProgress > 60 ? "bg-amber-400" : "bg-accent"
-                    }
                   />
 
-                  {/* Accounts bar */}
                   <UsageBar
                     label="Connected accounts"
                     used={usageStats.connectedAccountsCount}
                     limit={usageStats.connectedAccountsLimit}
                     progress={accsProgress}
-                    colorClass="bg-violet-400"
                   />
 
-                  {/* Plan chip */}
                   {userPlan && (
-                    <div className="flex items-center justify-between pt-2 border-t border-border/40">
-                      <span className="text-xs text-muted-foreground">Current plan</span>
-                      <span
-                        className={cn(
-                          "text-[11px] font-bold px-2.5 py-1 rounded-full border",
-                          userPlan.currentPlan.endsWith("_TRIAL")   ? "bg-violet-50 text-violet-600 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800/40" :
-                          userPlan.currentPlan.endsWith("_PRO")     ? "bg-accent/10 text-accent border-accent/20" :
-                          userPlan.currentPlan.startsWith("AGENCY")  ? "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400" :
-                          "bg-muted text-muted-foreground border-border/50"
-                        )}
+                    <div className="flex items-center justify-between border-t border-[hsl(var(--border-subtle))] pt-2">
+                      <span className="text-[12px] text-[hsl(var(--foreground-muted))]">Current plan</span>
+                      <StatusBadge
+                        variant={
+                          userPlan.currentPlan.endsWith("_TRIAL")
+                            ? "accent"
+                            : userPlan.currentPlan.endsWith("_PRO")
+                              ? "accent"
+                              : userPlan.currentPlan.startsWith("AGENCY")
+                                ? "warning"
+                                : "neutral"
+                        }
                       >
                         {userPlan.currentPlan}
-                      </span>
+                      </StatusBadge>
                     </div>
                   )}
                 </div>
@@ -522,63 +490,70 @@ export default function DashboardPage() {
             )}
 
             {/* Connected Accounts */}
-            <section className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-border/40 flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-900/30 flex items-center justify-center">
-                  <Globe className="w-3.5 h-3.5 text-sky-500" />
+            <section className={sectionClassName}>
+              <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
+                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                  <Globe className="h-3.5 w-3.5" />
                 </div>
-                <h2 className="text-[14px] font-semibold text-foreground">Connected Accounts</h2>
+                <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Connected Accounts</h2>
               </div>
 
               <div className="p-5">
                 {accounts.length === 0 ? (
-                  <div className="text-center py-4">
-                    <AlertTriangle className="w-6 h-6 text-amber-500 mx-auto mb-2" />
-                    <p className="text-sm font-semibold text-foreground mb-1">No accounts connected</p>
-                    <p className="text-xs text-muted-foreground mb-3">Connect your social media accounts to start scheduling</p>
-                    <Link href="/connect-accounts">
-                      <button className="text-xs font-semibold text-accent hover:opacity-75 transition-opacity">
-                        Connect an account →
-                      </button>
-                    </Link>
+                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-4 py-4 dark:bg-[hsl(var(--surface-sunken))]">
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-center gap-2">
+                        <StatusBadge variant="warning">Attention</StatusBadge>
+                        <p className="text-[13px] font-semibold text-[hsl(var(--foreground))]">
+                          No accounts connected
+                        </p>
+                      </div>
+                      <p className="text-[13px] text-[hsl(var(--foreground-muted))] dark:text-[hsl(var(--foreground-subtle))]">
+                        Connect your social media accounts to start scheduling.
+                      </p>
+                      <div>
+                        <LinkButton appearance="primary" href="/connect-accounts">
+                          Connect an account
+                        </LinkButton>
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-2.5">
                     {accounts.slice(0, 5).map((acc) => {
                       const Icon = PLATFORM_ICONS[acc.platform];
                       return (
-                        <div key={acc.providerUserId} className="flex items-center gap-3">
+                        <div key={acc.providerUserId} className="flex items-center gap-3 rounded-lg px-1 py-1.5">
                           <div
                             className={cn(
-                              "w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br shadow-sm",
-                              PLATFORM_GRAD[acc.platform] ?? "from-slate-500 to-slate-700"
+                              "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))]",
+                              PLATFORM_BG[acc.platform] ?? "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]"
                             )}
                           >
-                            {Icon && <Icon className="w-4 h-4 text-white" />}
+                            {Icon && <Icon className="h-4 w-4" />}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-foreground capitalize">{acc.platform}</p>
-                            <p className="text-[11px] text-muted-foreground truncate">@{acc.username}</p>
+                            <p className="text-[13px] font-medium text-[hsl(var(--foreground))] capitalize">{acc.platform}</p>
+                            <p className="truncate text-[12px] text-[hsl(var(--foreground-muted))]">@{acc.username}</p>
                           </div>
-                          {/* Active indicator */}
-                          <div className="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0 shadow-sm" title="Active" />
+                          <StatusBadge variant="success">Active</StatusBadge>
                         </div>
                       );
                     })}
 
                     {accounts.length > 5 && (
-                      <p className="text-xs text-muted-foreground text-center">
+                      <p className="text-center text-[12px] text-[hsl(var(--foreground-muted))]">
                         +{accounts.length - 5} more
                       </p>
                     )}
 
-                    <div className="pt-2 border-t border-border/40">
-                      <Link href="/connect-accounts">
-                        <button className="w-full flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground py-2 rounded-lg hover:bg-muted/50 transition-colors">
-                          <Link2 className="w-3 h-3" />
-                          Manage accounts
-                        </button>
-                      </Link>
+                    <div className="border-t border-[hsl(var(--border-subtle))] pt-2">
+                      <TokenLink href="/connect-accounts" fullWidth>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Link2 className="h-3 w-3" />
+                          <span>Manage accounts</span>
+                        </span>
+                      </TokenLink>
                     </div>
                   </div>
                 )}
@@ -586,12 +561,12 @@ export default function DashboardPage() {
             </section>
 
             {/* Quick Actions */}
-            <section className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-border/40 flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center">
-                  <Zap className="w-3.5 h-3.5 text-emerald-500" />
+            <section className={sectionClassName}>
+              <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
+                <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                  <Zap className="h-3.5 w-3.5" />
                 </div>
-                <h2 className="text-[14px] font-semibold text-foreground">Quick Actions</h2>
+                <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Quick Actions</h2>
               </div>
 
               <div className="p-2">
@@ -627,21 +602,21 @@ function StatCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border p-4 sm:p-5 shadow-sm transition-all duration-200",
+        "rounded-xl border p-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)] transition-colors duration-150",
         danger
-          ? "bg-red-50 border-red-100 dark:bg-red-900/15 dark:border-red-800/30"
-          : "bg-card border-border/50 hover:shadow-md hover:border-border/80"
+          ? "border-red-200 bg-red-50/70 dark:border-red-900/40 dark:bg-red-950/20"
+          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] hover:bg-[hsl(var(--surface-raised))]/40"
       )}
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2 leading-none">
+          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.04em] leading-none text-[hsl(var(--foreground-subtle))]">
             {label}
           </p>
           <p
             className={cn(
-              "text-3xl font-bold tracking-tight tabular-nums mt-1",
-              danger ? "text-red-600 dark:text-red-400" : "text-foreground"
+              "mt-1 text-[24px] font-semibold tracking-[-0.01em] tabular-nums",
+              danger ? "text-red-600 dark:text-red-400" : "text-[hsl(var(--foreground))]"
             )}
           >
             {value}
@@ -649,21 +624,59 @@ function StatCard({
         </div>
         <div
           className={cn(
-            "p-2.5 rounded-xl flex-shrink-0",
-            danger ? "bg-red-100 dark:bg-red-900/30" :
-            accent ? "bg-accent/10" : "bg-muted/60"
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
+            danger
+              ? "border-red-200 bg-red-100 text-red-600 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400"
+              : accent
+                ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]"
+                : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
           )}
         >
-          <Icon
-            className={cn(
-              "w-4 h-4",
-              danger ? "text-red-500" :
-              accent ? "text-accent" : "text-muted-foreground"
-            )}
-          />
+          <Icon className="h-4 w-4" />
         </div>
       </div>
     </div>
+  );
+}
+
+function StatusBadge({
+  children,
+  variant = "neutral",
+}: {
+  children: React.ReactNode;
+  variant?: keyof typeof badgeVariants;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex min-h-6 items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold leading-none tracking-[-0.003em]",
+        badgeVariants[variant]
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+function TokenLink({
+  href,
+  children,
+  fullWidth,
+}: {
+  href: string;
+  children: React.ReactNode;
+  fullWidth?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "inline-flex items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--foreground))] transition-colors hover:bg-[hsl(var(--surface))] hover:text-[hsl(var(--foreground))]",
+        fullWidth && "flex w-full"
+      )}
+    >
+      {children}
+    </Link>
   );
 }
 
@@ -672,30 +685,23 @@ function UsageBar({
   used,
   limit,
   progress,
-  colorClass,
 }: {
   label: string;
   used: number;
   limit: number | "Unlimited";
   progress: number;
-  colorClass: string;
 }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-medium text-foreground">{label}</span>
-        <span className="text-xs text-muted-foreground tabular-nums">
+        <span className="text-[13px] font-medium text-[hsl(var(--foreground))]">{label}</span>
+        <span className="text-[12px] tabular-nums text-[hsl(var(--foreground-muted))]">
           {used} / {limit === "Unlimited" ? "∞" : limit}
         </span>
       </div>
-      <div className="h-2 bg-muted rounded-full overflow-hidden">
-        <div
-          className={cn("h-full rounded-full transition-all duration-700", colorClass)}
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      <ProgressBar ariaLabel={label} value={Math.max(0, Math.min(1, progress / 100))} appearance="default" />
       {limit !== "Unlimited" && (
-        <p className="text-[11px] text-muted-foreground mt-1">
+        <p className="mt-1 text-[12px] text-[hsl(var(--foreground-muted))]">
           {Math.round(progress)}% of limit used
         </p>
       )}
@@ -720,29 +726,31 @@ function QuickAction({
     <Link href={href}>
       <div
         className={cn(
-          "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors group cursor-pointer",
-          accent ? "hover:bg-accent/8" : "hover:bg-muted/50"
+          "group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 transition-colors",
+          accent ? "hover:bg-[hsl(var(--accent))]/6" : "hover:bg-[hsl(var(--surface-raised))]"
         )}
       >
         <div
           className={cn(
-            "w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0",
-            accent ? "bg-accent/10" : "bg-muted/70"
+            "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border",
+            accent
+              ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]"
+              : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
           )}
         >
-          <Icon className={cn("w-4 h-4", accent ? "text-accent" : "text-muted-foreground")} />
+          <Icon className="h-4 w-4" />
         </div>
 
         <div className="flex-1 min-w-0">
-          <span className={cn("text-sm font-medium block leading-snug", accent ? "text-accent" : "text-foreground")}>
+          <span className={cn("block text-[13px] font-medium leading-5", accent ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground))]")}>
             {label}
           </span>
           {desc && (
-            <span className="text-[11px] text-muted-foreground leading-none">{desc}</span>
+            <span className="text-[12px] leading-none text-[hsl(var(--foreground-muted))]">{desc}</span>
           )}
         </div>
 
-        <ArrowRight className="w-3 h-3 text-muted-foreground/30 group-hover:translate-x-0.5 group-hover:text-muted-foreground/60 transition-all flex-shrink-0" />
+        <ArrowRight className="h-3 w-3 shrink-0 text-[hsl(var(--foreground-subtle))] transition-all group-hover:translate-x-0.5 group-hover:text-[hsl(var(--foreground-muted))]" />
       </div>
     </Link>
   );
@@ -756,11 +764,10 @@ function Bone({ className }: { className?: string }) {
 
 function DashboardSkeleton() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[hsl(var(--background))]">
 
-      {/* Sticky header */}
-      <div className="sticky top-0 z-10 border-b border-border/60 bg-background/90 backdrop-blur-xl">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <div className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
+        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="space-y-2">
             <Bone className="h-4 w-44" />
             <Bone className="h-3 w-56" />
@@ -772,12 +779,12 @@ function DashboardSkeleton() {
         </div>
       </div>
 
-      <div className="px-4 sm:px-6 py-8 space-y-6">
+      <div className="space-y-6 px-4 py-6 sm:px-6">
 
         {/* Stats row */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-border/50 bg-card p-4 sm:p-5 shadow-sm space-y-3">
+            <div key={i} className="space-y-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
               <div className="flex items-start justify-between gap-2">
                 <div className="space-y-2 flex-1">
                   <Bone className="h-2.5 w-24" />
@@ -790,21 +797,21 @@ function DashboardSkeleton() {
         </div>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
 
           {/* LEFT — 2/3 */}
-          <div className="lg:col-span-2 space-y-5">
+          <div className="space-y-5 lg:col-span-2">
 
             {/* Upcoming posts section */}
-            <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+            <div className={sectionClassName}>
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                 <div className="flex items-center gap-2">
                   <Bone className="w-7 h-7 rounded-lg" />
                   <Bone className="h-4 w-32" />
                 </div>
                 <Bone className="h-3 w-14" />
               </div>
-              <div className="divide-y divide-border/40">
+              <div className="divide-y divide-[hsl(var(--border-subtle))]">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="flex items-center gap-3.5 px-5 py-3.5">
                     <Bone className="w-9 h-9 rounded-xl flex-shrink-0" />
@@ -820,15 +827,15 @@ function DashboardSkeleton() {
             </div>
 
             {/* Platform distribution section */}
-            <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+            <div className={sectionClassName}>
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                 <div className="flex items-center gap-2">
                   <Bone className="w-7 h-7 rounded-lg" />
                   <Bone className="h-4 w-44" />
                 </div>
                 <Bone className="h-3 w-20" />
               </div>
-              <div className="p-5 space-y-3.5">
+              <div className="space-y-3.5 p-5">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex items-center gap-3">
                     <Bone className="w-8 h-8 rounded-xl flex-shrink-0" />
@@ -846,15 +853,15 @@ function DashboardSkeleton() {
             </div>
 
             {/* Recently published section */}
-            <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+            <div className={sectionClassName}>
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                 <div className="flex items-center gap-2">
                   <Bone className="w-7 h-7 rounded-lg" />
                   <Bone className="h-4 w-36" />
                 </div>
                 <Bone className="h-3 w-14" />
               </div>
-              <div className="divide-y divide-border/40">
+              <div className="divide-y divide-[hsl(var(--border-subtle))]">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex items-center gap-4 px-5 py-3.5">
                     <Bone className="w-10 h-7 rounded-full flex-shrink-0" />
@@ -877,8 +884,8 @@ function DashboardSkeleton() {
           <div className="space-y-4">
 
             {/* Usage & Plan */}
-            <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-border/40 flex items-center gap-2">
+            <div className={sectionClassName}>
+              <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                 <Bone className="w-7 h-7 rounded-lg" />
                 <Bone className="h-4 w-36" />
               </div>
@@ -893,7 +900,7 @@ function DashboardSkeleton() {
                     <Bone className="h-2.5 w-24" />
                   </div>
                 ))}
-                <div className="flex items-center justify-between pt-2 border-t border-border/40">
+                <div className="flex items-center justify-between border-t border-[hsl(var(--border-subtle))] pt-2">
                   <Bone className="h-3 w-20" />
                   <Bone className="h-6 w-16 rounded-full" />
                 </div>
@@ -901,8 +908,8 @@ function DashboardSkeleton() {
             </div>
 
             {/* Connected Accounts */}
-            <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-border/40 flex items-center gap-2">
+            <div className={sectionClassName}>
+              <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                 <Bone className="w-7 h-7 rounded-lg" />
                 <Bone className="h-4 w-40" />
               </div>
@@ -917,15 +924,15 @@ function DashboardSkeleton() {
                     <Bone className="w-2 h-2 rounded-full flex-shrink-0" />
                   </div>
                 ))}
-                <div className="pt-2 border-t border-border/40">
+                <div className="border-t border-[hsl(var(--border-subtle))] pt-2">
                   <Bone className="h-8 w-full rounded-lg" />
                 </div>
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="rounded-2xl bg-card border border-border/50 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-border/40 flex items-center gap-2">
+            <div className={sectionClassName}>
+              <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
                 <Bone className="w-7 h-7 rounded-lg" />
                 <Bone className="h-4 w-28" />
               </div>
@@ -964,17 +971,15 @@ function EmptyState({
   href: string;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-14 px-6 text-center">
-      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/10 flex items-center justify-center mb-3">
-        <Icon className="w-6 h-6 text-accent/50" />
+    <div className="flex flex-col items-center justify-center px-6 py-14 text-center">
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
+        <Icon className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
       </div>
-      <p className="text-sm font-semibold text-foreground mb-1">{title}</p>
-      <p className="text-xs text-muted-foreground mb-4 max-w-[220px] leading-relaxed">{desc}</p>
-      <Link href={href}>
-        <button className="flex items-center gap-1.5 text-xs font-semibold text-accent hover:opacity-75 transition-opacity bg-accent/8 px-4 py-2 rounded-xl border border-accent/10">
-          {cta} <ArrowRight className="w-3 h-3" />
-        </button>
-      </Link>
+      <p className="mb-1 text-[14px] font-semibold text-[hsl(var(--foreground))]">{title}</p>
+      <p className="mb-4 max-w-[220px] text-[13px] leading-relaxed text-[hsl(var(--foreground-muted))]">{desc}</p>
+      <LinkButton appearance="subtle" href={href}>
+        {cta}
+      </LinkButton>
     </div>
   );
 }

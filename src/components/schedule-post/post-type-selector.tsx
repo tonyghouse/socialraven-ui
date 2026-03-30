@@ -26,7 +26,7 @@ const TYPES = [
 ];
 
 interface Props {
-  postType: PostType;
+  postType: PostType | null;
   setPostType: (v: PostType) => void;
 }
 
@@ -41,30 +41,30 @@ export default function PostTypeSelector({ postType, setPostType }: Props) {
             type="button"
             onClick={() => setPostType(value)}
             className={cn(
-              "relative flex flex-col items-center gap-2.5 p-4 rounded-xl border-2 transition-all duration-200 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
+              "group relative flex flex-col items-center gap-2.5 rounded-xl border p-4 text-left transition-[border-color,background-color,box-shadow] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35",
               selected
-                ? "border-primary bg-primary/5 shadow-sm"
-                : "border-border bg-card hover:border-primary/40 hover:bg-accent/30"
+                ? "border-[hsl(var(--accent))]/30 bg-surface shadow-sm"
+                : "border-border-subtle bg-surface hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised"
             )}
           >
             <div
               className={cn(
-                "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200",
+                "flex h-10 w-10 items-center justify-center rounded-lg border transition-colors duration-150",
                 selected
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                  ? "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                  : "border-border-subtle bg-surface-raised text-foreground-muted group-hover:text-[hsl(var(--accent))]"
               )}
             >
               <Icon className="w-5 h-5" />
             </div>
             <div className="text-center">
-              <div className={cn("text-sm font-semibold leading-tight", selected ? "text-primary" : "text-foreground")}>
+              <div className={cn("text-sm font-semibold leading-tight", selected ? "text-[hsl(var(--accent))]" : "text-foreground")}>
                 {label}
               </div>
-              <div className="text-xs text-muted-foreground mt-0.5 leading-tight">{description}</div>
+              <div className="mt-0.5 text-xs leading-tight text-foreground-muted">{description}</div>
             </div>
             {selected && (
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-primary" />
+              <span className="absolute right-3 top-3 h-2 w-2 rounded-full bg-[hsl(var(--accent))]" />
             )}
           </button>
         );

@@ -1,5 +1,7 @@
 "use client";
 
+import AtlassianButton from "@atlaskit/button/new";
+import Lozenge from "@atlaskit/lozenge";
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -13,7 +15,6 @@ import {
   Image as ImageIcon,
   Video,
   FileText,
-  Zap,
   ChevronDown,
   ChevronUp,
   X,
@@ -23,7 +24,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import { updatePostCollectionApi } from "@/service/updatePostCollectionApi";
@@ -59,7 +60,7 @@ const TYPE_CONFIG: Record<
     label: "Image",
     Icon: ImageIcon,
     className:
-      "text-violet-600 bg-violet-50 border-violet-200 dark:text-violet-400 dark:bg-violet-500/10 dark:border-violet-500/20",
+      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
     description:
       "Edit your caption, add or remove images, and configure platform-specific settings.",
   },
@@ -67,7 +68,7 @@ const TYPE_CONFIG: Record<
     label: "Video",
     Icon: Video,
     className:
-      "text-rose-600 bg-rose-50 border-rose-200 dark:text-rose-400 dark:bg-rose-500/10 dark:border-rose-500/20",
+      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
     description:
       "Edit your description, replace or add videos, and configure platform-specific settings.",
   },
@@ -75,7 +76,7 @@ const TYPE_CONFIG: Record<
     label: "Text",
     Icon: FileText,
     className:
-      "text-slate-600 bg-slate-50 border-slate-200 dark:text-slate-400 dark:bg-slate-500/10 dark:border-slate-500/20",
+      "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
     description: "Edit your content and configure platform-specific settings.",
   },
 };
@@ -137,60 +138,60 @@ function StepCard({
   return (
     <div
       className={cn(
-        "bg-card border rounded-2xl shadow-sm overflow-hidden transition-all duration-300",
-        locked      ? "border-border opacity-50"
-        : complete && isOpen ? "border-primary/40"
-        : complete  ? "border-primary/20"
-        :             "border-border",
+        "overflow-hidden rounded-xl border bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)] transition-[border-color,box-shadow,opacity] duration-200",
+        locked
+          ? "border-[hsl(var(--border-subtle))] opacity-55"
+          : complete && isOpen
+            ? "border-[hsl(var(--accent))]/30 shadow-md"
+            : complete
+              ? "border-[hsl(var(--border))]"
+              : "border-[hsl(var(--border-subtle))]",
       )}
     >
-      {/* ── Header ── */}
       <button
         type="button"
         disabled={!canToggle}
         onClick={canToggle ? onToggle : undefined}
         className={cn(
-          "w-full flex items-center gap-4 px-6 py-4 text-left transition-colors duration-200",
-          "border-b border-border/60 bg-muted/20",
+          "flex w-full items-center gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4 text-left transition-colors duration-150",
           canToggle
-            ? "cursor-pointer hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset"
+            ? "cursor-pointer hover:bg-[hsl(var(--background))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-inset"
             : "cursor-default",
         )}
       >
-        {/* Step indicator */}
         <div
           className={cn(
-            "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5 transition-all duration-300",
-            complete ? "bg-primary/15" : "bg-muted border border-border/60",
+            "mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold transition-colors duration-200",
+            complete
+              ? "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+              : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]",
           )}
         >
           {complete
-            ? <CheckCircle2 className="w-4 h-4 text-primary" />
-            : <span className="text-xs font-bold text-muted-foreground">{step}</span>
+            ? <CheckCircle2 className="h-4 w-4 text-[hsl(var(--accent))]" />
+            : <span>{step}</span>
           }
         </div>
 
-        {/* Title / summary */}
         <div className="flex-1 min-w-0">
           {!isOpen && complete && summary ? (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{title}</span>
-              <span className="text-muted-foreground/40">·</span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">{title}</span>
+              <span className="text-[hsl(var(--foreground-subtle))]">·</span>
               {summary}
             </div>
           ) : (
             <>
-              <h2 className="text-sm font-bold text-foreground">{title}</h2>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</p>
+              <h2 className="text-sm font-bold text-[hsl(var(--foreground))]">{title}</h2>
+              <p className="mt-0.5 text-xs leading-relaxed text-[hsl(var(--foreground-muted))]">{description}</p>
             </>
           )}
         </div>
 
-        {/* Edit hint + chevron */}
         {canToggle && (
-          <div className="flex-shrink-0 flex items-center gap-1.5 text-muted-foreground">
+          <div className="flex-shrink-0 flex items-center gap-1.5 text-[hsl(var(--foreground-muted))]">
             {!isOpen && (
-              <span className="hidden sm:flex items-center gap-1 text-[10px] font-medium text-primary/70 bg-primary/8 px-2 py-0.5 rounded-full border border-primary/15">
+              <span className="hidden items-center gap-1 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 py-0.5 text-[10px] font-medium text-[hsl(var(--foreground-muted))] sm:flex">
                 <Pencil className="w-2.5 h-2.5" />
                 Edit
               </span>
@@ -225,21 +226,16 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
 }) {
   return (
     <div className="mt-4 flex justify-end">
-      <button
-        type="button"
+      <AtlassianButton
+        appearance="primary"
         onClick={onClick}
-        disabled={disabled}
-        className={cn(
-          "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
-          disabled
-            ? "bg-muted text-muted-foreground cursor-not-allowed"
-            : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
-        )}
+        isDisabled={disabled}
       >
-        {label}
-        <ChevronDown className="w-3.5 h-3.5" />
-      </button>
+        <span className="inline-flex items-center gap-1.5">
+          <span>{label}</span>
+          <ChevronDown className="h-3.5 w-3.5" />
+        </span>
+      </AtlassianButton>
     </div>
   );
 }
@@ -493,86 +489,83 @@ export default function DraftEditPage() {
   if (loading) return <LoadingSkeleton />;
   if (error || !collection) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
-          <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-7 w-7 text-red-500" />
+      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
+        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+            <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
           </div>
-          <h3 className="font-semibold text-foreground mb-1">Draft not found</h3>
-          <p className="text-sm text-muted-foreground mb-6">
+          <h3 className="mb-1 font-semibold text-[hsl(var(--foreground))]">Draft not found</h3>
+          <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
             {error ?? "This draft couldn't be loaded. It may have been deleted."}
           </p>
-          <button
-            onClick={() => router.push(`/drafts/${id}`)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-opacity mx-auto"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Draft
-          </button>
+          <AtlassianButton appearance="primary" onClick={() => router.push(`/drafts/${id}`)}>
+            <span className="inline-flex items-center gap-1.5">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Draft</span>
+            </span>
+          </AtlassianButton>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-
-      {/* ── Sticky Header ── */}
-      <div className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur-xl">
-        <div className="px-4 sm:px-6">
-          <div className="flex items-center gap-3 h-16">
-            <button
-              onClick={() => router.push(`/drafts/${id}`)}
-              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-            >
+    <div className="min-h-screen bg-[hsl(var(--background))]">
+      <ProtectedPageHeader
+        title="Edit Draft"
+        description={collection.description || "Untitled Draft"}
+        icon={<Pencil className="h-4 w-4" />}
+        leading={
+          <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}`)}>
+            <span className="inline-flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" />
-              <span className="text-sm font-medium hidden sm:inline">Back</span>
-            </button>
-
-            <div className="h-9 w-9 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0">
-              <Pencil className="w-[18px] h-[18px] text-amber-600 dark:text-amber-400" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h1 className="text-base font-bold text-foreground tracking-tight leading-tight">
-                Edit Draft
-              </h1>
-              <p className="text-xs text-muted-foreground leading-tight truncate">
-                {collection.description || "Untitled Draft"}
-              </p>
-            </div>
-
-            {selectedIds.length > 0 && (
-              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-semibold text-primary flex-shrink-0 border border-primary/20">
-                <Zap className="w-3 h-3" />
-                {selectedIds.length}{" "}
-                {selectedIds.length === 1 ? "account" : "accounts"}
-              </div>
-            )}
+              <span className="hidden sm:inline">Back</span>
+            </span>
+          </AtlassianButton>
+        }
+        actions={
+          <div className="hidden sm:block">
+            <Lozenge appearance="inprogress">
+              {selectedIds.length} {selectedIds.length === 1 ? "account" : "accounts"}
+            </Lozenge>
           </div>
+        }
+      />
 
-          {/* Platform badges row */}
-          {selectedPlatformKeys.length > 0 && (
-            <div className="flex items-center gap-1.5 pb-2.5 flex-wrap">
-              <span className="text-xs text-muted-foreground">Posting to:</span>
-              {selectedPlatformKeys.map((p) => (
-                <span
-                  key={p}
-                  className={cn(
-                    "text-xs font-medium px-2 py-0.5 rounded-full border",
-                    PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border"
-                  )}
-                >
-                  {PLATFORM_LABELS[p] ?? p}
-                </span>
-              ))}
-            </div>
-          )}
+      {selectedPlatformKeys.length > 0 && (
+        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-xs text-[hsl(var(--foreground-muted))]">Posting to:</span>
+            {selectedPlatformKeys.map((p) => (
+              <span
+                key={p}
+                className={cn(
+                  "text-xs font-medium px-2 py-0.5 rounded-full border",
+                  PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border"
+                )}
+              >
+                {PLATFORM_LABELS[p] ?? p}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* ── Steps ── */}
-      <div className="px-4 sm:px-6 py-6 space-y-4">
+      <div className="px-4 py-6 sm:px-6">
+        <div className="mb-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{typeCfg.label} draft</p>
+              <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">{typeCfg.description}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Lozenge appearance="default">Draft</Lozenge>
+              <Lozenge appearance="new">{typeCfg.label}</Lozenge>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
 
         {/* ── Step 1: Content Type (locked, starts collapsed) ── */}
         <StepCard
@@ -804,27 +797,30 @@ export default function DraftEditPage() {
           <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
 
           <div className="mt-6">
-            <Button
+            <AtlassianButton
+              appearance="primary"
               onClick={save}
-              disabled={saving || selectedIds.length === 0 || hasAnyCharError || validatingMedia}
-              className="w-full h-11 font-semibold gap-2 text-sm"
-              size="lg"
+              isDisabled={saving || selectedIds.length === 0 || hasAnyCharError || validatingMedia}
+              shouldFitContainer
             >
-              {saving ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Saving Changes...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  Save Changes
-                </>
-              )}
-            </Button>
+              <span className="inline-flex items-center justify-center gap-2">
+                {saving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Saving Changes...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    <span>Save Changes</span>
+                  </>
+                )}
+              </span>
+            </AtlassianButton>
           </div>
         </StepCard>
 
+        </div>
       </div>
     </div>
   );
@@ -833,12 +829,12 @@ export default function DraftEditPage() {
 /* ── Loading Skeleton ── */
 function LoadingSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-      <div className="sticky top-0 z-10 border-b border-border bg-background/95 h-16" />
+    <div className="min-h-screen bg-[hsl(var(--background))]">
+      <div className="sticky top-0 z-10 h-[60px] border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95" />
       <div className="px-4 sm:px-6 py-6 space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-            <div className="flex items-start gap-4 px-6 py-4 border-b border-border/60 bg-muted/20">
+          <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="flex items-start gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-6 py-4">
               <Skeleton className="w-7 h-7 rounded-lg flex-shrink-0" />
               <div className="flex-1 space-y-1.5">
                 <Skeleton className="h-4 w-32 rounded" />

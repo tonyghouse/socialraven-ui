@@ -27,143 +27,77 @@ interface CollectionCardProps {
 const STATUS_CONFIG = {
   DRAFT: {
     label: "Draft",
-    dotColor: "bg-slate-400",
+    dotColor: "bg-[hsl(var(--foreground-subtle))]",
     pulse: false,
     className:
-      "bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700/30",
-    Icon: FileText,
+      "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
   },
   SCHEDULED: {
     label: "Scheduled",
-    dotColor: "bg-blue-500",
+    dotColor: "bg-[hsl(var(--accent))]",
     pulse: true,
     className:
-      "bg-blue-500/10 text-blue-700 border-blue-500/20 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30",
-    Icon: Clock,
+      "border-[hsl(var(--accent))]/15 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]",
   },
   PUBLISHED: {
     label: "Published",
-    dotColor: "bg-emerald-500",
+    dotColor: "bg-[hsl(var(--success))]",
     pulse: false,
     className:
-      "bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:bg-emerald-500/15 dark:text-emerald-400 dark:border-emerald-500/30",
-    Icon: CheckCircle2,
+      "border-[hsl(var(--success))]/18 bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]",
   },
   PARTIAL_SUCCESS: {
     label: "Partial",
-    dotColor: "bg-amber-500",
+    dotColor: "bg-[hsl(var(--warning))]",
     pulse: false,
     className:
-      "bg-amber-500/10 text-amber-700 border-amber-500/20 dark:bg-amber-500/15 dark:text-amber-400 dark:border-amber-500/30",
-    Icon: AlertTriangle,
+      "border-[hsl(var(--warning))]/18 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]",
   },
   FAILED: {
     label: "Failed",
-    dotColor: "bg-red-500",
+    dotColor: "bg-[hsl(var(--destructive))]",
     pulse: false,
     className:
-      "bg-red-500/10 text-red-700 border-red-500/20 dark:bg-red-500/15 dark:text-red-400 dark:border-red-500/30",
-    Icon: XCircle,
+      "border-[hsl(var(--destructive))]/18 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]",
   },
 } as const;
 
 const TYPE_CONFIG = {
-  IMAGE: {
-    label: "Image",
-    Icon: ImageIcon,
-    badge: "text-violet-600 bg-violet-50 border-violet-100 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800/30",
-  },
-  VIDEO: {
-    label: "Video",
-    Icon: Video,
-    badge: "text-rose-600 bg-rose-50 border-rose-100 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800/30",
-  },
-  TEXT: {
-    label: "Text",
-    Icon: FileText,
-    badge: "text-slate-600 bg-slate-50 border-slate-100 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700/30",
-  },
+  IMAGE: { label: "Image", Icon: ImageIcon },
+  VIDEO: { label: "Video", Icon: Video },
+  TEXT: { label: "Text", Icon: FileText },
 } as const;
 
-// Platform-specific colors for icons and accent
-const PLATFORM_STYLE: Record<
-  string,
-  { bg: string; icon: string; accent: string }
-> = {
-  instagram: {
-    bg: "bg-gradient-to-br from-pink-500/15 to-purple-500/15 border-pink-400/20",
-    icon: "text-pink-500",
-    accent: "#e1306c",
-  },
-  x: {
-    bg: "bg-neutral-900/8 border-neutral-400/20 dark:bg-neutral-100/8 dark:border-neutral-600/20",
-    icon: "text-neutral-800 dark:text-neutral-200",
-    accent: "#000000",
-  },
-  linkedin: {
-    bg: "bg-sky-500/10 border-sky-400/20",
-    icon: "text-sky-600",
-    accent: "#0077b5",
-  },
-  facebook: {
-    bg: "bg-blue-500/10 border-blue-400/20",
-    icon: "text-blue-600",
-    accent: "#1877f2",
-  },
-  youtube: {
-    bg: "bg-red-500/10 border-red-400/20",
-    icon: "text-red-600",
-    accent: "#ff0000",
-  },
-  tiktok: {
-    bg: "bg-neutral-900/8 border-neutral-400/20 dark:bg-neutral-100/8",
-    icon: "text-neutral-800 dark:text-neutral-200",
-    accent: "#010101",
-  },
-  threads: {
-    bg: "bg-neutral-900/8 border-neutral-400/20 dark:bg-neutral-100/8",
-    icon: "text-neutral-800 dark:text-neutral-200",
-    accent: "#000000",
-  },
+const PLATFORM_STYLE: Record<string, string> = {
+  instagram: "text-pink-500",
+  x: "text-[hsl(var(--foreground))]",
+  linkedin: "text-sky-600",
+  facebook: "text-blue-600",
+  youtube: "text-red-600",
+  tiktok: "text-[hsl(var(--foreground))]",
+  threads: "text-[hsl(var(--foreground))]",
 };
 
-// Accent bar gradient based on primary platform
-const ACCENT_GRADIENT: Record<string, string> = {
-  instagram: "from-pink-500 via-purple-500 to-orange-400",
-  x: "from-neutral-700 via-neutral-500 to-neutral-400",
-  linkedin: "from-sky-600 via-sky-500 to-blue-400",
-  facebook: "from-blue-600 via-blue-500 to-sky-400",
-  youtube: "from-red-600 via-red-500 to-orange-400",
-  tiktok: "from-neutral-800 via-neutral-600 to-neutral-400",
-  threads: "from-neutral-800 via-neutral-600 to-neutral-400",
-  default: "from-violet-500 via-blue-500 to-emerald-400",
-};
-
-const TAB_H = 10;
-
-interface ContentPreviewProps {
+interface PreviewProps {
   type: "IMAGE" | "VIDEO" | "TEXT";
   media: MediaResponse[];
   previewText?: string;
   hasVideo: boolean;
 }
 
-function ContentPreview({ type, media, previewText, hasVideo }: ContentPreviewProps) {
+function SquarePreview({ type, media, previewText, hasVideo }: PreviewProps) {
   const mediaCount = media.length;
+  const previewSizeClass = "w-[104px] h-[156px]";
 
   if (type === "TEXT") {
     return (
-      <div className="px-4 pb-3 flex justify-center sm:justify-start">
-        <div className="w-full max-w-[150px] aspect-square rounded-xl bg-gradient-to-br from-slate-50 to-slate-100/60 dark:from-slate-800/30 dark:to-slate-900/30 border border-border/40 p-4 flex flex-col overflow-hidden">
-          <p className="flex-1 text-[13px] leading-relaxed text-foreground/60 line-clamp-[8] overflow-hidden">
-            {previewText || "No preview — tap to view post content"}
-          </p>
-          <div className="flex items-center gap-1.5 pt-2 border-t border-border/30 mt-2">
-            <FileText className="h-3 w-3 text-muted-foreground/40" />
-            <span className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wider">
-              Text post
-            </span>
-          </div>
+      <div className={cn("flex flex-col rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] p-2.5", previewSizeClass)}>
+        <p className="flex-1 overflow-hidden text-[11px] leading-4 text-[hsl(var(--foreground-muted))] line-clamp-[8]">
+          {previewText || "No preview"}
+        </p>
+        <div className="mt-2 flex items-center gap-1 text-[10px] font-medium text-[hsl(var(--foreground-subtle))]">
+          <FileText className="h-3 w-3" />
+          Text
         </div>
       </div>
     );
@@ -171,79 +105,65 @@ function ContentPreview({ type, media, previewText, hasVideo }: ContentPreviewPr
 
   if (mediaCount === 0) {
     return (
-      <div className="px-4 pb-3 flex justify-center sm:justify-start">
-        <div className="w-full max-w-[150px] aspect-square rounded-xl bg-muted/20 border border-dashed border-border/30 flex flex-col items-center justify-center gap-1.5">
-          <ImageIcon className="h-5 w-5 text-muted-foreground/30" />
-          <span className="text-[11px] text-muted-foreground/40">No media attached</span>
-        </div>
+      <div className={cn("flex flex-col items-center justify-center rounded-md border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]", previewSizeClass)}>
+        <ImageIcon className="h-4 w-4 text-[hsl(var(--foreground-subtle))]" />
       </div>
     );
   }
 
-  // Square container, X-style tiled grid — every cell object-cover, no stretching
   return (
-    <div className="px-4 pb-3 flex justify-center sm:justify-start">
-      <div className="relative w-full max-w-[150px] aspect-square rounded-xl overflow-hidden border border-border/40 shadow-sm bg-muted">
-        {mediaCount === 1 && (
-          <div className="w-full h-full">
+    <div className={cn("relative overflow-hidden rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]", previewSizeClass)}>
+      {mediaCount === 1 && <MediaThumb media={media[0]} />}
+
+      {mediaCount === 2 && (
+        <div className="flex h-full gap-px">
+          <div className="h-full flex-1 overflow-hidden">
             <MediaThumb media={media[0]} />
           </div>
-        )}
+          <div className="h-full flex-1 overflow-hidden">
+            <MediaThumb media={media[1]} />
+          </div>
+        </div>
+      )}
 
-        {mediaCount === 2 && (
-          <div className="flex h-full gap-px">
-            <div className="flex-1 h-full overflow-hidden">
-              <MediaThumb media={media[0]} />
-            </div>
-            <div className="flex-1 h-full overflow-hidden">
+      {mediaCount === 3 && (
+        <div className="flex h-full gap-px">
+          <div className="h-full flex-1 overflow-hidden">
+            <MediaThumb media={media[0]} />
+          </div>
+          <div className="flex h-full flex-1 flex-col gap-px">
+            <div className="flex-1 overflow-hidden">
               <MediaThumb media={media[1]} />
             </div>
-          </div>
-        )}
-
-        {mediaCount === 3 && (
-          <div className="flex h-full gap-px">
-            <div className="flex-1 h-full overflow-hidden">
-              <MediaThumb media={media[0]} />
-            </div>
-            <div className="flex-1 flex flex-col gap-px h-full">
-              <div className="flex-1 overflow-hidden">
-                <MediaThumb media={media[1]} />
-              </div>
-              <div className="flex-1 overflow-hidden">
-                <MediaThumb media={media[2]} />
-              </div>
+            <div className="flex-1 overflow-hidden">
+              <MediaThumb media={media[2]} />
             </div>
           </div>
-        )}
-
-        {mediaCount >= 4 && (
-          <div className="grid grid-cols-2 grid-rows-2 h-full gap-px">
-            {media.slice(0, 4).map((m, i) => (
-              <div key={m.id ?? i} className="relative overflow-hidden">
-                <MediaThumb media={m} />
-                {i === 3 && mediaCount > 4 && (
-                  <div className="absolute inset-0 bg-black/55 flex flex-col items-center justify-center gap-0.5">
-                    <span className="text-white text-sm font-bold leading-none">
-                      +{mediaCount - 4}
-                    </span>
-                    <span className="text-white/70 text-[10px]">more</span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Type badge — bottom-right */}
-        <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-0.5 pointer-events-none">
-          {hasVideo ? (
-            <Play className="h-2.5 w-2.5 text-white fill-white" />
-          ) : (
-            <ImageIcon className="h-2.5 w-2.5 text-white" />
-          )}
-          <span className="text-white text-[10px] font-semibold">{mediaCount}</span>
         </div>
+      )}
+
+      {mediaCount >= 4 && (
+        <div className="grid h-full grid-cols-2 grid-rows-2 gap-px">
+          {media.slice(0, 4).map((m, i) => (
+            <div key={m.id ?? i} className="relative overflow-hidden">
+              <MediaThumb media={m} />
+              {i === 3 && mediaCount > 4 && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-[11px] font-semibold text-white">
+                  +{mediaCount - 4}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="pointer-events-none absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded-full bg-black/55 px-1.5 py-0.5 text-[9px] font-semibold text-white backdrop-blur-sm">
+        {hasVideo ? (
+          <Play className="h-2.5 w-2.5 fill-white text-white" />
+        ) : (
+          <ImageIcon className="h-2.5 w-2.5 text-white" />
+        )}
+        <span>{mediaCount}</span>
       </div>
     </div>
   );
@@ -257,11 +177,10 @@ function getTimeLabel(scheduledTime: string): { text: string; urgent: boolean } 
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffMs < 0) return { text: "Past due", urgent: true };
-  if (diffHours < 1) return { text: "< 1 hour", urgent: true };
-  if (diffHours < 6) return { text: `In ${diffHours}h`, urgent: true };
-  if (diffHours < 24) return { text: `In ${diffHours}h`, urgent: false };
+  if (diffHours < 1) return { text: "<1h", urgent: true };
+  if (diffHours < 24) return { text: `${diffHours}h`, urgent: diffHours < 6 };
   if (diffDays === 1) return { text: "Tomorrow", urgent: false };
-  return { text: `In ${diffDays}d`, urgent: false };
+  return { text: `${diffDays}d`, urgent: false };
 }
 
 function MediaThumb({ media }: { media: MediaResponse }) {
@@ -269,8 +188,8 @@ function MediaThumb({ media }: { media: MediaResponse }) {
 
   if (!src) {
     return (
-      <div className="w-full h-full bg-muted flex items-center justify-center">
-        <ImageIcon className="h-5 w-5 text-muted-foreground/40" />
+      <div className="flex h-full w-full items-center justify-center bg-[hsl(var(--surface-raised))]">
+        <ImageIcon className="h-4 w-4 text-[hsl(var(--foreground-subtle))]" />
       </div>
     );
   }
@@ -280,16 +199,17 @@ function MediaThumb({ media }: { media: MediaResponse }) {
 
   if (isVideo) {
     return (
-      <div className="relative w-full h-full bg-slate-900">
+      <div className="relative h-full w-full bg-slate-900">
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <video
           src={src}
           muted
           preload="metadata"
-          className="w-full h-full object-cover opacity-75"
+          className="h-full w-full object-cover opacity-80"
         />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-          <div className="h-7 w-7 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center">
-            <Play className="h-3 w-3 text-white fill-white ml-0.5" />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+            <Play className="ml-0.5 h-3 w-3 fill-white text-white" />
           </div>
         </div>
       </div>
@@ -301,7 +221,7 @@ function MediaThumb({ media }: { media: MediaResponse }) {
     <img
       src={src}
       alt={media.fileName ?? "media"}
-      className="block w-full h-full object-cover"
+      className="block h-full w-full object-cover"
       loading="lazy"
     />
   );
@@ -318,7 +238,6 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
     TYPE_CONFIG.TEXT;
   const TypeIcon = typeCfg.Icon;
 
-  const isDraft = collection.overallStatus === "DRAFT";
   const localDate = collection.scheduledTime
     ? new Date(collection.scheduledTime)
     : null;
@@ -326,16 +245,15 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
     ? new Intl.DateTimeFormat("en-US", {
         month: "short",
         day: "numeric",
-        year: "numeric",
       }).format(localDate)
-    : null;
+    : "Not scheduled";
   const formattedTime = localDate
     ? new Intl.DateTimeFormat("en-US", {
         hour: "numeric",
         minute: "2-digit",
         hour12: true,
       }).format(localDate)
-    : null;
+    : "";
 
   const timeLabel = collection.scheduledTime
     ? getTimeLabel(collection.scheduledTime)
@@ -344,12 +262,8 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
   const uniquePlatforms = Array.from(
     new Set(collection.posts.map((p) => p.provider))
   );
-  const visiblePlatforms = uniquePlatforms.slice(0, 6);
+  const visiblePlatforms = uniquePlatforms.slice(0, 5);
   const hiddenPlatformCount = uniquePlatforms.length - visiblePlatforms.length;
-
-  const primaryPlatform = uniquePlatforms[0]?.toLowerCase();
-  const accentGradient =
-    ACCENT_GRADIENT[primaryPlatform] ?? ACCENT_GRADIENT.default;
 
   const uniqueAccounts = Array.from(
     new Map(
@@ -360,7 +274,6 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
   );
 
   const media = collection.media ?? [];
-  const mediaCount = media.length;
   const hasVideo = media.some(
     (m) =>
       m.mimeType?.startsWith("video/") ||
@@ -371,241 +284,149 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
     router.push(href ?? `/scheduled-posts/${collection.id}`);
 
   return (
-    <div className="relative h-full flex flex-col">
-      {/* Folder tab */}
-      <div
-        className="absolute left-0 w-20 rounded-t-lg border border-b-0 border-border/50 bg-white dark:bg-card dark:border-border/40"
-        style={{ top: -TAB_H, height: TAB_H, zIndex: 20 }}
-        aria-hidden="true"
-      />
+    <article
+      onClick={handleNavigate}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleNavigate();
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-label="View collection"
+      className={cn(
+        "group flex h-full flex-col overflow-hidden rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))]",
+        "shadow-[0_1px_2px_rgba(9,30,66,0.08)] transition-[box-shadow,border-color] duration-150",
+        "hover:border-[hsl(var(--accent))]/30 hover:shadow-[0_6px_12px_rgba(9,30,66,0.12)]",
+        "focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))]/30 focus:ring-offset-2"
+      )}
+    >
+      <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-3 py-2.5">
+        <span className="inline-flex items-center gap-1 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-1 text-[10px] font-semibold text-[hsl(var(--foreground))]">
+          <TypeIcon className="h-3 w-3" />
+          {typeCfg.label}
+        </span>
 
-      {/* Main card */}
-      <article
-        onClick={handleNavigate}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            handleNavigate();
-          }
-        }}
-        tabIndex={0}
-        role="button"
-        aria-label={`View collection`}
-        className={cn(
-          "group relative flex-1 flex flex-col rounded-2xl rounded-tl-none bg-white border border-border/60 overflow-hidden cursor-pointer",
-          "shadow-sm hover:shadow-2xl hover:-translate-y-1 active:scale-[0.99]",
-          "transition-all duration-300 ease-out",
-          "dark:bg-card dark:border-border/50",
-          "focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-1"
-        )}
-        style={{
-          position: "relative",
-          zIndex: 10,
-          boxShadow:
-            "0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)",
-        }}
-      >
-        {/* Gradient accent bar */}
-        <div
+        <span
           className={cn(
-            "h-[3px] w-full bg-gradient-to-r opacity-80 group-hover:opacity-100 transition-opacity duration-300",
-            accentGradient
+            "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold",
+            statusCfg.className
           )}
-        />
-
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 pt-3">
-          <div className="flex items-center gap-1.5">
-            <span
-              className={cn(
-                "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg text-[11px] font-semibold border",
-                typeCfg.badge
-              )}
-            >
-              <TypeIcon className="h-3 w-3" />
-              {typeCfg.label}
-            </span>
-          </div>
-
+        >
           <span
             className={cn(
-              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border",
-              statusCfg.className
+              "h-1.5 w-1.5 rounded-full",
+              statusCfg.dotColor,
+              statusCfg.pulse && "animate-pulse"
             )}
-          >
-            <span
-              className={cn(
-                "h-1.5 w-1.5 rounded-full",
-                statusCfg.dotColor,
-                statusCfg.pulse && "animate-pulse"
-              )}
-            />
-            {statusCfg.label}
-          </span>
-        </div>
+          />
+          {statusCfg.label}
+        </span>
+      </div>
 
-        {/* Description */}
-        <div className="px-4 pt-2.5 pb-2">
-          <p className="text-[14px] font-medium text-card-foreground line-clamp-3 leading-snug group-hover:text-primary transition-colors duration-200">
-            {collection.description || <span className="text-muted-foreground/50 italic">No content</span>}
+      <div className="flex gap-3 px-3 py-3">
+        <div className="min-w-0 flex-1">
+          <p className="line-clamp-2 text-[14px] font-semibold leading-5 text-[hsl(var(--foreground))] transition-colors group-hover:text-[hsl(var(--accent))]">
+            {collection.description || "No content"}
           </p>
-        </div>
 
-        {/* Scheduled time pill — prominent */}
-        {localDate && formattedDate && formattedTime && (
-          <div className="px-4 pb-2">
-            <div className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 px-3 py-1.5 rounded-xl bg-muted/60 border border-border/40 max-w-full">
-              <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-              <span className="text-[12px] font-semibold text-foreground whitespace-nowrap">
-                {formattedDate}
-              </span>
-              <span className="hidden sm:block h-3 w-px bg-border/70" />
-              <span className="text-[12px] text-muted-foreground whitespace-nowrap">
-                {formattedTime}
-              </span>
-              {timeLabel && (
-                <span
-                  className={cn(
-                    "text-[11px] font-bold whitespace-nowrap",
-                    timeLabel.urgent ? "text-orange-600 dark:text-orange-400" : "text-muted-foreground"
-                  )}
-                >
-                  {timeLabel.urgent && (
-                    <Zap className="h-3 w-3 inline mr-0.5 -mt-0.5" />
-                  )}
-                  {timeLabel.text}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-        {!localDate && isDraft && (
-          <div className="px-4 pb-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-muted/40 border border-border/30">
-              <Calendar className="h-3.5 w-3.5 text-muted-foreground/60 flex-shrink-0" />
-              <span className="text-[12px] text-muted-foreground/70">
-                Not scheduled
-              </span>
-            </div>
-          </div>
-        )}
-
-        {/* Content preview — fixed height so all cards are equal */}
-        <ContentPreview
-          type={collection.postCollectionType}
-          media={media}
-          previewText={collection.posts[0]?.description || collection.description}
-          hasVideo={hasVideo}
-        />
-
-        {/* Divider */}
-        <div className="px-4">
-          <div className="h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-        </div>
-
-        {/* Platform icons with colored backgrounds */}
-        <div className="px-4 pt-3 pb-2.5">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-2.5">
-            Platforms
-          </p>
-          <div className="flex items-center flex-wrap gap-2">
-            {visiblePlatforms.map((platform) => {
-              const Icon = PLATFORM_ICONS[platform];
-              const pStyle = PLATFORM_STYLE[platform.toLowerCase()] ?? {
-                bg: "bg-muted/50 border-border/50",
-                icon: "text-muted-foreground",
-                accent: "#888",
-              };
-              if (!Icon) return null;
-              return (
-                <span
-                  key={platform}
-                  title={
-                    platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase()
-                  }
-                  className={cn(
-                    "h-8 w-8 rounded-xl border flex items-center justify-center shadow-sm",
-                    "transition-transform duration-150 hover:scale-110 hover:shadow-md",
-                    pStyle.bg
-                  )}
-                >
-                  <Icon className={cn("h-4 w-4", pStyle.icon)} />
-                </span>
-              );
-            })}
-            {hiddenPlatformCount > 0 && (
-              <span className="h-8 px-2.5 rounded-xl bg-muted/60 border border-border/40 flex items-center justify-center text-[10px] font-bold text-muted-foreground">
-                +{hiddenPlatformCount}
+          <div className="mt-3 flex items-center gap-1.5 text-[11px] text-[hsl(var(--foreground-muted))]">
+            <Calendar className="h-3.5 w-3.5 text-[hsl(var(--foreground-subtle))]" />
+            <span className="truncate">{formattedDate}</span>
+            {formattedTime && <span>{formattedTime}</span>}
+            {timeLabel && (
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1 font-semibold",
+                  timeLabel.urgent
+                    ? "text-orange-600 dark:text-orange-400"
+                    : "text-[hsl(var(--foreground-muted))]"
+                )}
+              >
+                {timeLabel.urgent && <Zap className="h-3 w-3" />}
+                {timeLabel.text}
               </span>
             )}
           </div>
-        </div>
 
-        {/* Account avatar stack */}
-        {uniqueAccounts.length > 0 && (
-          <div className="px-4 pb-3 flex items-center gap-2">
-            <div className="flex items-center flex-shrink-0">
-              {uniqueAccounts.slice(0, 5).map((account, i) => (
-                <div
-                  key={account.providerUserId}
-                  title={`@${account.username}`}
-                  className="relative h-6 w-6 rounded-full border-2 border-white dark:border-card overflow-hidden shadow-sm flex-shrink-0 bg-gradient-to-br from-violet-400 to-pink-400"
-                  style={{ marginLeft: i === 0 ? 0 : -6, zIndex: 10 - i }}
-                >
-                  {account.profilePicLink ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={account.profilePicLink}
-                      alt={account.username ?? ""}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        (
-                          e.currentTarget as HTMLImageElement
-                        ).style.display = "none";
-                      }}
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-1.5">
+              {visiblePlatforms.map((platform) => {
+                const Icon = PLATFORM_ICONS[platform];
+                if (!Icon) return null;
+
+                return (
+                  <span
+                    key={platform}
+                    title={platform}
+                    className="flex h-7 w-7 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]"
+                  >
+                    <Icon
+                      className={cn(
+                        "h-3.5 w-3.5",
+                        PLATFORM_STYLE[platform.toLowerCase()] ??
+                          "text-[hsl(var(--foreground-muted))]"
+                      )}
                     />
-                  ) : (
-                    <div className="h-full w-full flex items-center justify-center">
-                      <span className="text-white text-[8px] font-bold">
-                        {(account.username ?? "?")[0].toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
-              {uniqueAccounts.length > 5 && (
-                <div
-                  className="h-6 w-6 rounded-full border-2 border-white dark:border-card bg-muted flex items-center justify-center shadow-sm flex-shrink-0 relative"
-                  style={{ marginLeft: -6, zIndex: 5 }}
-                >
-                  <span className="text-[8px] font-bold text-muted-foreground">
-                    +{uniqueAccounts.length - 5}
                   </span>
-                </div>
+                );
+              })}
+              {hiddenPlatformCount > 0 && (
+                <span className="flex h-7 min-w-7 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-1.5 text-[10px] font-semibold text-[hsl(var(--foreground-muted))]">
+                  +{hiddenPlatformCount}
+                </span>
               )}
             </div>
-            <span className="text-[11px] text-muted-foreground font-medium truncate">
-              {uniqueAccounts.length} account
-              {uniqueAccounts.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-        )}
 
-        {/* Footer */}
-        <div className="mt-auto px-4 py-2.5 bg-gradient-to-b from-muted/10 to-muted/30 border-t border-border/40 flex items-center justify-between">
-          <p className="text-xs text-muted-foreground font-medium">
-            {collection.posts.length} post
-            {collection.posts.length !== 1 ? "s" : ""} ·{" "}
-            {uniquePlatforms.length} platform
-            {uniquePlatforms.length !== 1 ? "s" : ""}
-          </p>
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-primary sm:opacity-0 sm:group-hover:opacity-100 sm:translate-x-2 sm:group-hover:translate-x-0 transition-all duration-200">
-            <span>Open</span>
-            <ArrowRight className="h-3.5 w-3.5" />
+            {uniqueAccounts.length > 0 && (
+              <div className="flex flex-shrink-0 items-center">
+                {uniqueAccounts.slice(0, 3).map((account, i) => (
+                  <div
+                    key={account.providerUserId}
+                    className="relative h-7 w-7 overflow-hidden rounded-full border-2 border-[hsl(var(--surface))] bg-[hsl(var(--surface-sunken))]"
+                    style={{ marginLeft: i === 0 ? 0 : -6, zIndex: 10 - i }}
+                    title={`@${account.username}`}
+                  >
+                    {account.profilePicLink ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={account.profilePicLink}
+                        alt={account.username ?? ""}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-[9px] font-bold text-[hsl(var(--foreground-muted))]">
+                        {(account.username ?? "?")[0].toUpperCase()}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
-      </article>
-    </div>
+
+        <div className="flex-shrink-0">
+          <SquarePreview
+            type={collection.postCollectionType}
+            media={media}
+            previewText={collection.posts[0]?.description || collection.description}
+            hasVideo={hasVideo}
+          />
+        </div>
+      </div>
+
+      <div className="mt-auto flex items-center justify-between border-t border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 py-2.5">
+        <span className="text-[11px] text-[hsl(var(--foreground-muted))]">
+          {collection.posts.length} post{collection.posts.length !== 1 ? "s" : ""} · {uniquePlatforms.length} platform{uniquePlatforms.length !== 1 ? "s" : ""}
+        </span>
+        <span className="flex items-center gap-1 text-[11px] font-semibold text-[hsl(var(--accent))]">
+          <span>Open</span>
+          <ArrowRight className="h-3.5 w-3.5" />
+        </span>
+      </div>
+    </article>
   );
 }

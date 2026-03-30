@@ -15,9 +15,9 @@ export default function PlatformCharLimits({ platforms, charCount }: Props) {
   if (relevant.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-border/50 bg-muted/20 overflow-hidden">
-      <div className="px-3 py-2 border-b border-border/40 bg-muted/30">
-        <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">
+    <div className="overflow-hidden rounded-xl border border-border-subtle bg-surface">
+      <div className="border-b border-border-subtle bg-surface-raised px-3 py-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground-muted">
           Character limits by platform
         </p>
       </div>
@@ -38,20 +38,20 @@ export default function PlatformCharLimits({ platforms, charCount }: Props) {
                     <Icon
                       className={cn(
                         "w-3 h-3 flex-shrink-0",
-                        over ? "text-red-500" : near ? "text-amber-500" : "text-muted-foreground"
+                        over ? "text-destructive" : near ? "text-warning" : "text-foreground-muted"
                       )}
                     />
                   )}
                   <span
                     className={cn(
                       "text-xs font-medium truncate",
-                      over ? "text-red-600" : "text-foreground"
+                      over ? "text-destructive" : "text-foreground"
                     )}
                   >
                     {PLATFORM_DISPLAY_NAMES[platform] ?? platform}
                   </span>
                   {over && (
-                    <span className="flex-shrink-0 text-[9px] font-bold text-red-600 bg-red-50 border border-red-200 rounded px-1 py-px leading-none uppercase tracking-wide">
+                    <span className="flex-shrink-0 rounded border border-destructive/20 bg-destructive/10 px-1 py-px text-[9px] font-bold uppercase leading-none tracking-wide text-destructive">
                       Over limit
                     </span>
                   )}
@@ -59,7 +59,7 @@ export default function PlatformCharLimits({ platforms, charCount }: Props) {
                 <span
                   className={cn(
                     "text-[11px] tabular-nums font-mono flex-shrink-0",
-                    over ? "text-red-600 font-semibold" : near ? "text-amber-500" : "text-muted-foreground"
+                    over ? "font-semibold text-destructive" : near ? "text-warning" : "text-foreground-muted"
                   )}
                 >
                   {over
@@ -67,11 +67,11 @@ export default function PlatformCharLimits({ platforms, charCount }: Props) {
                     : `${remaining.toLocaleString()} left`}
                 </span>
               </div>
-              <div className="h-1 rounded-full bg-muted overflow-hidden">
+              <div className="h-1 overflow-hidden rounded-full bg-surface-raised">
                 <div
                   className={cn(
                     "h-full rounded-full transition-all duration-200",
-                    over ? "bg-red-500" : near ? "bg-amber-400" : "bg-primary/60"
+                    over ? "bg-destructive" : near ? "bg-warning" : "bg-[hsl(var(--accent))]"
                   )}
                   style={{ width: `${pct}%` }}
                 />

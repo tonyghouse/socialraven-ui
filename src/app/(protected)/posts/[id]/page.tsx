@@ -24,6 +24,7 @@ import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { MediaPreview } from "@/components/generic/media-preview";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { fetchPostByIdApi } from "@/service/getPost";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 
@@ -437,40 +438,11 @@ export default function PostDetailPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Sticky Top Bar */}
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <nav className="flex items-center gap-1.5 text-sm min-w-0">
-            <button
-              onClick={() => router.push("/scheduled-posts")}
-              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-            >
-              <Layers className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline font-medium">
-                Scheduled Posts
-              </span>
-            </button>
-
-            {post.postCollectionId && (
-              <>
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-                <button
-                  onClick={() =>
-                    router.push(`/scheduled-posts/${post.postCollectionId}`)
-                  }
-                  className="hidden sm:block text-muted-foreground hover:text-foreground transition-colors font-medium flex-shrink-0"
-                >
-                  Collection
-                </button>
-              </>
-            )}
-
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-            <span className="font-medium text-foreground truncate">
-              {post.description}
-            </span>
-          </nav>
-
+      <ProtectedPageHeader
+        title={post.description}
+        description="Post preview and platform-specific details."
+        icon={<Layers className="h-4 w-4" />}
+        actions={
           <span
             className={cn(
               "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border flex-shrink-0",
@@ -480,8 +452,41 @@ export default function PostDetailPage() {
             <StatusIcon className="h-3 w-3" />
             {status.label}
           </span>
-        </div>
-      </header>
+        }
+      />
+
+      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+        <nav className="flex items-center gap-1.5 text-sm min-w-0">
+          <button
+            onClick={() => router.push("/scheduled-posts")}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+          >
+            <Layers className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline font-medium">
+              Scheduled Posts
+            </span>
+          </button>
+
+          {post.postCollectionId && (
+            <>
+              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+              <button
+                onClick={() =>
+                  router.push(`/scheduled-posts/${post.postCollectionId}`)
+                }
+                className="hidden sm:block text-muted-foreground hover:text-foreground transition-colors font-medium flex-shrink-0"
+              >
+                Collection
+              </button>
+            </>
+          )}
+
+          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+          <span className="font-medium text-foreground truncate">
+            {post.description}
+          </span>
+        </nav>
+      </div>
 
       {/* Page Body */}
       <div className="px-4 sm:px-6 py-8">
@@ -756,9 +761,8 @@ export default function PostDetailPage() {
 function SkeletonPostPage() {
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
+        <div className="px-4 sm:px-6 h-[60px] flex items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Skeleton className="h-4 w-4 rounded" />
             <Skeleton className="h-4 w-28 rounded hidden sm:block" />

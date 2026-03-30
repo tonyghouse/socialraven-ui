@@ -1,5 +1,8 @@
 "use client";
 
+import AtlassianButton from "@atlaskit/button/new";
+import Lozenge from "@atlaskit/lozenge";
+import SectionMessage from "@atlaskit/section-message";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -16,8 +19,8 @@ import {
   Image as ImageIcon,
   Video,
   FileText,
-  LayoutGrid,
   Zap,
+  ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
@@ -26,18 +29,16 @@ import { scheduleDraftCollectionApi } from "@/service/scheduleDraftCollectionApi
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MediaPreview } from "@/components/generic/media-preview";
-import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker";
 import { localToUTC } from "@/lib/timeUtil";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 
 const TYPE_CONFIG = {
   IMAGE: { label: "Image", Icon: ImageIcon },
   VIDEO: { label: "Video", Icon: Video },
-  TEXT:  { label: "Text",  Icon: FileText },
+  TEXT: { label: "Text", Icon: FileText },
 } as const;
 
 export default function DraftDetailPage() {
@@ -50,11 +51,11 @@ export default function DraftDetailPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [showSchedulePanel, setShowSchedulePanel] = useState(false);
-  const [scheduleDate, setScheduleDate]             = useState("");
-  const [scheduleTime, setScheduleTime]             = useState("");
-  const [scheduling, setScheduling]                 = useState(false);
-  const [deleting, setDeleting]                     = useState(false);
-  const [confirmDeleteOpen, setConfirmDeleteOpen]   = useState(false);
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [scheduleTime, setScheduleTime] = useState("");
+  const [scheduling, setScheduling] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -77,9 +78,15 @@ export default function DraftDetailPage() {
   }, [id]);
 
   async function handleSchedule() {
-    if (!scheduleDate || !scheduleTime) { toast.error("Please select a date and time"); return; }
+    if (!scheduleDate || !scheduleTime) {
+      toast.error("Please select a date and time");
+      return;
+    }
     if (!collection) return;
-    if (collection.posts.length === 0) { toast.error("Add at least one account before scheduling"); return; }
+    if (collection.posts.length === 0) {
+      toast.error("Add at least one account before scheduling");
+      return;
+    }
     setScheduling(true);
     try {
       const scheduledTime = localToUTC(scheduleDate, scheduleTime);
@@ -116,378 +123,325 @@ export default function DraftDetailPage() {
   if (loading) return <LoadingSkeleton />;
   if (error || !collection) return <ErrorState error={error} onBack={() => router.push("/drafts")} />;
 
-  const typeCfg       = TYPE_CONFIG[collection.postCollectionType] ?? TYPE_CONFIG.TEXT;
-  const TypeIcon      = typeCfg.Icon;
+  const typeCfg = TYPE_CONFIG[collection.postCollectionType] ?? TYPE_CONFIG.TEXT;
   const uniquePlatforms = [...new Set(collection.posts.map((p) => p.provider))];
-  const hasAccounts   = collection.posts.length > 0;
-  const captionText   = collection.description?.trim() ?? "";
+  const hasAccounts = collection.posts.length > 0;
+  const captionText = collection.description?.trim() ?? "";
+  const scheduledLabel = collection.scheduledTime
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(new Date(collection.scheduledTime))
+    : null;
 
   return (
     <>
-    <ConfirmDialog
-      open={confirmDeleteOpen}
-      title="Delete draft?"
-      description="This cannot be undone."
-      confirmLabel="Delete"
-      destructive
-      onConfirm={doDelete}
-      onCancel={() => setConfirmDeleteOpen(false)}
-    />
-    <main className="min-h-screen bg-background">
-      {/* ── Sticky Header ── */}
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-1.5 text-sm min-w-0">
+      <ConfirmDialog
+        open={confirmDeleteOpen}
+        title="Delete draft?"
+        description="This cannot be undone."
+        confirmLabel="Delete"
+        destructive
+        onConfirm={doDelete}
+        onCancel={() => setConfirmDeleteOpen(false)}
+      />
+      <main className="min-h-screen bg-[hsl(var(--background))]">
+        <ProtectedPageHeader
+          title={collection.description || "Untitled Draft"}
+          description="Draft details and scheduling controls."
+          icon={<BookOpen className="h-4 w-4" />}
+          actions={
+            <>
+              <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}/edit`)}>
+                <span className="inline-flex items-center gap-1.5">
+                  <Pencil className="h-3.5 w-3.5" />
+                  <span>Edit</span>
+                </span>
+              </AtlassianButton>
+              <AtlassianButton appearance="subtle" isDisabled={deleting} onClick={handleDelete}>
+                <span className="inline-flex items-center gap-1.5">
+                  {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                  <span>Delete</span>
+                </span>
+              </AtlassianButton>
+              <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel((v) => !v)}>
+                <span className="inline-flex items-center gap-1.5">
+                  <Send className="h-3.5 w-3.5" />
+                  <span>{showSchedulePanel ? "Cancel" : "Schedule"}</span>
+                </span>
+              </AtlassianButton>
+            </>
+          }
+        />
+
+        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => router.push("/drafts")}
-              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+              className="inline-flex items-center gap-1.5 text-[13px] text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
             >
               <BookOpen className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline font-medium">Drafts</span>
+              <span>Drafts</span>
             </button>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-            <span className="font-medium text-foreground truncate">
-              {collection.description || "Untitled Draft"}
-            </span>
-          </nav>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button
-              onClick={() => router.push(`/drafts/${id}/edit`)}
-              className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-border/60 text-foreground hover:bg-muted/50 transition-all text-xs font-semibold"
-            >
-              <Pencil className="h-3.5 w-3.5" />
-              Edit
-            </button>
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg border border-red-200 dark:border-red-800/40 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all text-xs font-semibold"
-            >
-              {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-              Delete
-            </button>
-            <button
-              onClick={() => setShowSchedulePanel((v) => !v)}
-              className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
-            >
-              <Send className="h-3.5 w-3.5" />
-              Schedule
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="px-4 sm:px-6 py-6 space-y-5">
-        {/* ── Hero Card ── */}
-        <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-          <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400" />
-          <div className="px-6 pt-6 pb-5">
-            <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
-              <h1 className="text-2xl font-bold text-foreground tracking-tight flex-1 min-w-0">
-                {collection.description || "Untitled Draft"}
-              </h1>
-              <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30">
-                  <BookOpen className="h-3.5 w-3.5" />
-                  Draft
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-muted text-muted-foreground border border-border/50">
-                  <TypeIcon className="h-3.5 w-3.5" />
-                  {typeCfg.label}
-                </span>
-                {/* Mobile icon actions */}
-                <div className="flex items-center gap-1.5 sm:hidden">
-                  <button
-                    onClick={() => router.push(`/drafts/${id}/edit`)}
-                    className="h-7 w-7 rounded-lg border border-border/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    disabled={deleting}
-                    className="h-7 w-7 rounded-lg border border-red-200 dark:border-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
-                  >
-                    {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Platform chips or warning */}
-            {hasAccounts ? (
-              <div className="flex items-center gap-1.5 flex-wrap">
-                {uniquePlatforms.map((plat) => {
-                  const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
-                  return (
-                    <div
-                      key={plat}
-                      title={plat}
-                      className="h-7 w-7 rounded-lg border border-border/60 bg-muted/60 flex items-center justify-center text-muted-foreground"
-                    >
-                      {PlatIcon && <PlatIcon className="h-3.5 w-3.5" />}
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="inline-flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400">
-                <AlertCircle className="h-3.5 w-3.5" />
-                No accounts selected —{" "}
-                <button
-                  onClick={() => router.push(`/drafts/${id}/edit`)}
-                  className="underline underline-offset-2 hover:no-underline"
-                >
-                  edit to add accounts
-                </button>
-              </div>
-            )}
+            <ChevronRight className="h-3.5 w-3.5 text-[hsl(var(--foreground-subtle))]" />
+            <Lozenge appearance="default">Draft</Lozenge>
+            <Lozenge appearance="new">{typeCfg.label}</Lozenge>
+            {scheduledLabel && <Lozenge appearance="inprogress">{scheduledLabel}</Lozenge>}
           </div>
         </div>
 
-        {/* ── Main layout: sidebar + content ── */}
-        <div className="flex flex-col lg:flex-row gap-5 items-start">
+        <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8">
+          <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <aside className="space-y-5">
+              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
+                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Platforms</p>
+                </div>
+                <div className="space-y-3 px-5 py-4">
+                  {hasAccounts ? (
+                    uniquePlatforms.map((platform) => {
+                      const Icon = PLATFORM_ICONS[platform] ?? PLATFORM_ICONS[platform.toLowerCase()];
+                      const count = collection.posts.filter((p) => p.provider === platform).length;
+                      const label = platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase();
 
-          {/* ── Left Sidebar ── */}
-          <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
-
-            {/* Caption card */}
-            {captionText && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
-                  <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-sm font-semibold text-foreground flex-1">Caption</p>
-                </div>
-                <div className="p-5">
-                  <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap line-clamp-10">
-                    {captionText}
-                  </p>
-                  <p className="text-xs text-muted-foreground/40 tabular-nums mt-3">
-                    {captionText.length} characters
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Media card */}
-            {collection.media.length > 0 && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
-                  <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-sm font-semibold text-foreground flex-1">
-                    Media{" "}
-                    <span className="font-normal text-muted-foreground">
-                      · {collection.media.length}
-                    </span>
-                  </p>
-                </div>
-                <div className="p-4">
-                  <MediaCarousel media={collection.media} />
-                </div>
-              </div>
-            )}
-
-            {/* Platforms breakdown */}
-            {hasAccounts && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
-                  <LayoutGrid className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-sm font-semibold text-foreground flex-1">Platforms</p>
-                  <span className="text-xs text-muted-foreground">
-                    {collection.posts.length} acct{collection.posts.length !== 1 ? "s" : ""}
-                  </span>
-                </div>
-                <div className="p-5 space-y-3">
-                  {uniquePlatforms.map((platform) => {
-                    const Icon = PLATFORM_ICONS[platform] ?? PLATFORM_ICONS[platform.toLowerCase()];
-                    const count = collection.posts.filter((p) => p.provider === platform).length;
-                    const label = platform.charAt(0).toUpperCase() + platform.slice(1).toLowerCase();
-                    return (
-                      <div key={platform} className="flex items-center gap-2.5">
-                        <div className="h-6 w-6 rounded-lg border border-border/60 bg-muted/60 flex items-center justify-center text-muted-foreground flex-shrink-0">
-                          {Icon && <Icon className="h-3.5 w-3.5" />}
+                      return (
+                        <div key={platform} className="flex items-center gap-3">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
+                            {Icon && <Icon className="h-4 w-4" />}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-[hsl(var(--foreground))]">{label}</p>
+                            <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                              {count} acct{count !== 1 ? "s" : ""}
+                            </p>
+                          </div>
                         </div>
-                        <span className="text-sm font-medium text-foreground flex-1">{label}</span>
-                        <span className="text-xs text-muted-foreground tabular-nums">
-                          {count} acct{count !== 1 ? "s" : ""}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* ── Main Content ── */}
-          <div className="flex-1 min-w-0 space-y-4">
-
-            {/* Schedule Now card */}
-            <div className={cn(
-              "rounded-2xl border overflow-hidden shadow-sm transition-all",
-              showSchedulePanel
-                ? "border-primary/30 bg-primary/[0.02]"
-                : "border-border bg-card"
-            )}>
-              <div className="px-6 py-5">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
-                      <CalendarClock className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-base font-semibold text-foreground">Ready to publish?</p>
-                      <p className="text-sm text-muted-foreground">
-                        Pick a date and time to schedule this draft
+                      );
+                    })
+                  ) : (
+                    <SectionMessage appearance="warning" title="No accounts selected">
+                      <p className="text-sm">
+                        Edit this draft to add connected accounts before scheduling.
                       </p>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={() => setShowSchedulePanel((v) => !v)}
-                    size="sm"
-                    className="gap-1.5 text-xs font-semibold flex-shrink-0"
-                  >
-                    <Send className="h-3.5 w-3.5" />
-                    {showSchedulePanel ? "Cancel" : "Schedule Now"}
-                  </Button>
+                    </SectionMessage>
+                  )}
                 </div>
+              </section>
 
-                {showSchedulePanel && (
-                  <div className="mt-5 pt-5 border-t border-border/60 space-y-4">
-                    {!hasAccounts && (
-                      <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/30 text-amber-700 dark:text-amber-400">
-                        <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm font-medium">
-                          No accounts selected.{" "}
-                          <button
-                            onClick={() => router.push(`/drafts/${id}/edit`)}
-                            className="underline underline-offset-2 hover:no-underline"
-                          >
-                            Edit this draft
-                          </button>{" "}
-                          to add connected accounts before scheduling.
+              {captionText && (
+                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
+                    <FileText className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
+                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Caption</p>
+                  </div>
+                  <div className="px-5 py-4">
+                    <p className="whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                      {captionText}
+                    </p>
+                    <p className="mt-3 text-xs text-[hsl(var(--foreground-subtle))]">
+                      {captionText.length} characters
+                    </p>
+                  </div>
+                </section>
+              )}
+
+              {collection.media.length > 0 && (
+                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
+                    <ImageIcon className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
+                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                      Media
+                      <span className="ml-1 font-normal text-[hsl(var(--foreground-muted))]">
+                        · {collection.media.length}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="p-4">
+                    <MediaCarousel media={collection.media} />
+                  </div>
+                </section>
+              )}
+            </aside>
+
+            <div className="space-y-5">
+              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                        <CalendarClock className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <p className="text-base font-semibold text-[hsl(var(--foreground))]">Ready to publish?</p>
+                        <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                          Pick a date and time to schedule this draft
                         </p>
                       </div>
-                    )}
-                    <ScheduleDateTimePicker
-                      date={scheduleDate}
-                      setDate={setScheduleDate}
-                      time={scheduleTime}
-                      setTime={setScheduleTime}
-                    />
-                    <Button
-                      onClick={handleSchedule}
-                      disabled={scheduling || !scheduleDate || !scheduleTime || !hasAccounts}
-                      className="w-full h-11 font-semibold gap-2"
-                    >
-                      {scheduling ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          Scheduling…
-                        </>
-                      ) : (
-                        <>
-                          <Zap className="h-4 w-4" />
-                          Confirm Schedule
-                        </>
-                      )}
-                    </Button>
+                    </div>
+                    <AtlassianButton appearance={showSchedulePanel ? "subtle" : "primary"} onClick={() => setShowSchedulePanel((v) => !v)}>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Send className="h-3.5 w-3.5" />
+                        <span>{showSchedulePanel ? "Cancel" : "Schedule Now"}</span>
+                      </span>
+                    </AtlassianButton>
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
 
-            {/* Empty state when no accounts */}
-            {!hasAccounts && (
-              <div className="flex flex-col items-center justify-center py-14 text-center rounded-2xl border border-border/40 bg-muted/20">
-                <BookOpen className="h-9 w-9 text-muted-foreground/30 mb-3" />
-                <p className="text-sm font-semibold text-foreground mb-1">No accounts connected yet</p>
-                <p className="text-sm text-muted-foreground mb-5">
-                  Add connected accounts to this draft before scheduling
-                </p>
-                <button
-                  onClick={() => router.push(`/drafts/${id}/edit`)}
-                  className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                  Edit Draft
-                </button>
-              </div>
-            )}
+                <div className="px-5 py-5">
+                  {hasAccounts ? (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {uniquePlatforms.map((platform) => {
+                        const Icon = PLATFORM_ICONS[platform] ?? PLATFORM_ICONS[platform.toLowerCase()];
+                        return (
+                          <div
+                            key={platform}
+                            title={platform}
+                            className="flex h-8 w-8 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
+                          >
+                            {Icon && <Icon className="h-4 w-4" />}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <SectionMessage appearance="warning" title="No accounts selected">
+                      <p className="text-sm">
+                        Edit this draft to add connected accounts before scheduling.
+                      </p>
+                    </SectionMessage>
+                  )}
 
-            {/* Mobile bottom actions */}
-            <div className="sm:hidden flex gap-3 pt-1 pb-6">
-              <button
-                onClick={() => router.push(`/drafts/${id}/edit`)}
-                className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl border border-border/60 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors"
-              >
-                <Pencil className="h-4 w-4" />
-                Edit
-              </button>
-              <button
-                onClick={() => setShowSchedulePanel(true)}
-                className="flex-1 flex items-center justify-center gap-2 h-11 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-colors"
-              >
-                <Send className="h-4 w-4" />
-                Schedule
-              </button>
+                  {showSchedulePanel && (
+                    <div className="mt-5 space-y-4 border-t border-[hsl(var(--border-subtle))] pt-5">
+                      {!hasAccounts && (
+                        <SectionMessage appearance="warning" title="No accounts selected">
+                          <p className="text-sm">
+                            Edit this draft to add connected accounts before scheduling.
+                          </p>
+                        </SectionMessage>
+                      )}
+                      <ScheduleDateTimePicker
+                        date={scheduleDate}
+                        setDate={setScheduleDate}
+                        time={scheduleTime}
+                        setTime={setScheduleTime}
+                      />
+                      <AtlassianButton
+                        appearance="primary"
+                        onClick={handleSchedule}
+                        isDisabled={scheduling || !scheduleDate || !scheduleTime || !hasAccounts}
+                        shouldFitContainer
+                      >
+                        <span className="inline-flex items-center justify-center gap-2">
+                          {scheduling ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>Scheduling…</span>
+                            </>
+                          ) : (
+                            <>
+                              <Zap className="h-4 w-4" />
+                              <span>Confirm Schedule</span>
+                            </>
+                          )}
+                        </span>
+                      </AtlassianButton>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              {!hasAccounts && (
+                <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-10 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+                    <BookOpen className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
+                  </div>
+                  <p className="mt-4 text-sm font-semibold text-[hsl(var(--foreground))]">No accounts connected yet</p>
+                  <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                    Add connected accounts to this draft before scheduling
+                  </p>
+                  <div className="mt-5 flex justify-center">
+                    <AtlassianButton appearance="primary" onClick={() => router.push(`/drafts/${id}/edit`)}>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Pencil className="h-3.5 w-3.5" />
+                        <span>Edit Draft</span>
+                      </span>
+                    </AtlassianButton>
+                  </div>
+                </section>
+              )}
+
+              <div className="grid gap-3 sm:hidden">
+                <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}/edit`)}>
+                  <span className="inline-flex items-center gap-2">
+                    <Pencil className="h-4 w-4" />
+                    <span>Edit</span>
+                  </span>
+                </AtlassianButton>
+                <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel(true)}>
+                  <span className="inline-flex items-center gap-2">
+                    <Send className="h-4 w-4" />
+                    <span>Schedule</span>
+                  </span>
+                </AtlassianButton>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
     </>
   );
 }
 
-/* ── Media Carousel ── */
 function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
   const [idx, setIdx] = useState(0);
   if (media.length === 0) return null;
   const current = media[idx];
   const isVideo = current.mimeType?.startsWith("video/");
+
   return (
     <div>
-      <div className="relative aspect-video w-full max-h-40 rounded-xl overflow-hidden bg-neutral-950 border border-border/40">
+      <div className="relative aspect-video max-h-48 w-full overflow-hidden rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
         {isVideo ? (
           // eslint-disable-next-line jsx-a11y/media-has-caption
-          <video src={current.fileUrl} className="w-full h-full object-contain" />
+          <video src={current.fileUrl} className="h-full w-full object-contain" />
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={current.fileUrl} alt="Media" className="w-full h-full object-contain" />
+          <img src={current.fileUrl} alt="Media" className="h-full w-full object-contain" />
         )}
         {media.length > 1 && (
           <>
             <button
               onClick={() => setIdx((i) => (i - 1 + media.length) % media.length)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full bg-black/40 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/60 transition-all"
+              className="absolute left-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
               onClick={() => setIdx((i) => (i + 1) % media.length)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 h-7 w-7 rounded-full bg-black/40 text-white flex items-center justify-center backdrop-blur-sm hover:bg-black/60 transition-all"
+              className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-all hover:bg-black/60"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
-            <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
+            <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
               {idx + 1} / {media.length}
             </div>
           </>
         )}
       </div>
       {media.length > 1 && (
-        <div className="flex justify-center gap-1 mt-2.5">
+        <div className="mt-2.5 flex justify-center gap-1">
           {media.map((_, i) => (
             <button
               key={i}
               onClick={() => setIdx(i)}
               className={cn(
                 "rounded-full transition-all",
-                i === idx ? "w-4 h-1.5 bg-foreground" : "w-1.5 h-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+                i === idx
+                  ? "h-1.5 w-4 bg-[hsl(var(--accent))]"
+                  : "h-1.5 w-1.5 bg-[hsl(var(--foreground-subtle))] hover:bg-[hsl(var(--foreground-muted))]"
               )}
             />
           ))}
@@ -497,60 +451,56 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
   );
 }
 
-/* ── Loading Skeleton ── */
 function LoadingSkeleton() {
   return (
-    <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-24 rounded hidden sm:block" />
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-40 rounded" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-16 rounded-lg hidden sm:block" />
-            <Skeleton className="h-8 w-20 rounded-lg hidden sm:block" />
-            <Skeleton className="h-8 w-24 rounded-lg hidden sm:block" />
+    <main className="min-h-screen bg-[hsl(var(--background))]">
+      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
+        <div className="px-4 sm:px-6">
+          <div className="flex h-[60px] items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-10 w-10 rounded-lg" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-40 rounded" />
+                <Skeleton className="h-3 w-28 rounded" />
+              </div>
+            </div>
+            <div className="hidden gap-2 sm:flex">
+              <Skeleton className="h-8 w-16 rounded-lg" />
+              <Skeleton className="h-8 w-16 rounded-lg" />
+              <Skeleton className="h-8 w-24 rounded-lg" />
+            </div>
           </div>
         </div>
       </header>
-      <div className="px-4 sm:px-6 py-6 space-y-5">
-        <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
-          <Skeleton className="h-1 w-full rounded-none" />
-          <div className="px-6 pt-6 pb-5 space-y-3">
-            <div className="flex gap-2">
-              <Skeleton className="h-6 w-16 rounded-md" />
-              <Skeleton className="h-6 w-14 rounded-md" />
-            </div>
-            <Skeleton className="h-8 w-2/3 rounded-lg" />
-          </div>
-        </div>
-        <div className="flex flex-col lg:flex-row gap-5">
-          <div className="w-full lg:w-72 xl:w-80 space-y-4">
-            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
-              <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
-                <Skeleton className="h-4 w-4 rounded" />
-                <Skeleton className="h-4 w-20 rounded" />
+      <div className="px-4 py-6 sm:px-6">
+        <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <div className="space-y-5">
+            {[1, 2].map((i) => (
+              <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
+                  <Skeleton className="h-4 w-24 rounded" />
+                </div>
+                <div className="space-y-3 px-5 py-4">
+                  {[100, 88, 92].map((w, idx) => (
+                    <Skeleton key={idx} className="h-4 rounded" style={{ width: `${w}%` }} />
+                  ))}
+                </div>
               </div>
-              <div className="p-5 space-y-2.5">
-                {[100, 88, 94, 76].map((w, i) => (
-                  <Skeleton key={i} className="h-3.5 rounded" style={{ width: `${w}%` }} />
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
-          <div className="flex-1 space-y-4">
-            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm p-6">
-              <div className="flex items-center gap-3.5 mb-4">
-                <Skeleton className="h-11 w-11 rounded-xl" />
+          <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-10 w-10 rounded-lg" />
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-5 w-40 rounded" />
-                  <Skeleton className="h-4 w-60 rounded" />
+                  <Skeleton className="h-4 w-56 rounded" />
                 </div>
                 <Skeleton className="h-8 w-28 rounded-lg" />
               </div>
+            </div>
+            <div className="px-5 py-5">
+              <Skeleton className="h-8 w-48 rounded" />
             </div>
           </div>
         </div>
@@ -559,24 +509,23 @@ function LoadingSkeleton() {
   );
 }
 
-/* ── Error State ── */
 function ErrorState({ error, onBack }: { error: string | null; onBack: () => void }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-6">
-      <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
-        <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-          <AlertCircle className="h-7 w-7 text-red-500" />
+    <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
+      <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+          <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
         </div>
-        <h3 className="font-semibold text-foreground mb-1">Draft not found</h3>
-        <p className="text-sm text-muted-foreground mb-6">
+        <h3 className="mb-1 font-semibold text-[hsl(var(--foreground))]">Draft not found</h3>
+        <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
           {error ?? "This draft couldn't be loaded. It may have been deleted."}
         </p>
-        <button
-          onClick={onBack}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-opacity mx-auto"
-        >
-          Back to Drafts
-        </button>
+        <AtlassianButton appearance="primary" onClick={onBack}>
+          <span className="inline-flex items-center gap-1.5">
+            <ArrowLeft className="h-4 w-4" />
+            <span>Back to Drafts</span>
+          </span>
+        </AtlassianButton>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import AtlassianButton from "@atlaskit/button/new";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -34,6 +35,7 @@ import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { PostResponse } from "@/model/PostResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/service/getImageUrl";
 
@@ -47,25 +49,25 @@ const statusConfig: Record<
     label: "Scheduled",
     Icon: Clock,
     className:
-      "text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20",
+      "border-[hsl(var(--info))]/18 bg-[hsl(var(--info))]/10 text-[hsl(var(--info))]",
   },
   PUBLISHED: {
     label: "Published",
     Icon: CheckCircle2,
     className:
-      "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20",
+      "border-[hsl(var(--success))]/18 bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]",
   },
   PARTIAL_SUCCESS: {
     label: "Partially Completed",
     Icon: AlertTriangle,
     className:
-      "text-amber-700 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20",
+      "border-[hsl(var(--warning))]/18 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]",
   },
   FAILED: {
     label: "Failed",
     Icon: XCircle,
     className:
-      "text-red-700 bg-red-50 border-red-200 dark:text-red-400 dark:bg-red-500/10 dark:border-red-500/20",
+      "border-[hsl(var(--destructive))]/18 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]",
   },
 };
 
@@ -77,19 +79,19 @@ const typeConfig: Record<
     label: "Image",
     Icon: ImageIcon,
     className:
-      "text-violet-600 bg-violet-50 border-violet-200 dark:text-violet-400 dark:bg-violet-500/10 dark:border-violet-500/20",
+      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
   },
   VIDEO: {
     label: "Video",
     Icon: Video,
     className:
-      "text-rose-600 bg-rose-50 border-rose-200 dark:text-rose-400 dark:bg-rose-500/10 dark:border-rose-500/20",
+      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
   },
   TEXT: {
     label: "Text",
     Icon: FileText,
     className:
-      "text-slate-600 bg-slate-50 border-slate-200 dark:text-slate-400 dark:bg-slate-500/10 dark:border-slate-500/20",
+      "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
   },
 };
 
@@ -225,24 +227,23 @@ export default function PublishedCollectionDetailPage() {
 
   if (error || !collection) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
-          <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-7 w-7 text-red-500" />
+      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
+        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+            <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
           </div>
-          <h3 className="font-semibold text-foreground mb-1">
+          <h3 className="mb-1 font-semibold text-[hsl(var(--foreground))]">
             Collection not found
           </h3>
-          <p className="text-sm text-muted-foreground mb-6">
+          <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
             This collection couldn&apos;t be loaded. It may have been deleted.
           </p>
-          <button
-            onClick={() => router.push("/published-posts")}
-            className="flex items-center gap-2 px-5 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-opacity mx-auto"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Published Posts
-          </button>
+          <AtlassianButton appearance="primary" onClick={() => router.push("/published-posts")}>
+            <span className="inline-flex items-center gap-1.5">
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Published Posts</span>
+            </span>
+          </AtlassianButton>
         </div>
       </div>
     );
@@ -291,60 +292,62 @@ export default function PublishedCollectionDetailPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-background">
-      {/* Sticky Breadcrumb Header */}
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <nav className="flex items-center gap-1.5 text-sm min-w-0">
-            <button
-              onClick={() => router.push("/published-posts")}
-              className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline font-medium">
-                Published Posts
+    <main className="min-h-screen bg-[hsl(var(--background))]">
+      <ProtectedPageHeader
+        title={collection.description}
+        description="Published post details."
+        icon={<CheckCircle2 className="h-4 w-4" />}
+        actions={
+          <div className="hidden sm:block">
+            <AtlassianButton appearance="primary" onClick={() => router.push("/schedule-post")}>
+              <span className="inline-flex items-center gap-1.5">
+                <Plus className="h-3.5 w-3.5" />
+                <span>New Post</span>
               </span>
-            </button>
-            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-            <span className="font-medium text-foreground truncate">
-              {collection.description}
-            </span>
-          </nav>
-
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <button
-              onClick={() => router.push("/schedule-post")}
-              className="hidden sm:flex items-center gap-1.5 h-8 px-3.5 rounded-lg bg-accent text-accent-foreground hover:opacity-90 transition-all text-xs font-semibold shadow-sm"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              New Post
-            </button>
+            </AtlassianButton>
           </div>
-        </div>
-      </header>
+        }
+      />
 
-      <div className="px-4 sm:px-6 py-6 space-y-5">
-        {/* Hero card */}
-        <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-          <div className="h-1 w-full bg-gradient-to-r from-emerald-500 via-primary to-teal-500" />
+      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+        <nav className="flex min-w-0 items-center gap-1.5 text-sm">
+          <button
+            onClick={() => router.push("/published-posts")}
+            className="flex items-center gap-1.5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))] flex-shrink-0"
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline font-medium">
+              Published Posts
+            </span>
+          </button>
+          <ChevronRight className="h-3.5 w-3.5 text-[hsl(var(--foreground-subtle))] flex-shrink-0" />
+          <span className="font-medium text-[hsl(var(--foreground))] truncate">
+            {collection.description}
+          </span>
+        </nav>
+      </div>
+
+      <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8 space-y-5">
+        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="h-[3px] w-full bg-[hsl(var(--success))]" />
           <div className="px-6 pt-6 pb-5">
             <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
-              <h1 className="text-2xl font-bold text-foreground tracking-tight flex-1 min-w-0">
+              <h1 className="min-w-0 flex-1 text-2xl font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">
                 {collection.description}
               </h1>
               <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border", type.className)}>
+                <span className={cn("inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold", type.className)}>
                   <TypeIcon className="h-3.5 w-3.5" />
                   {type.label}
                 </span>
-                <span className={cn("inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border", status.className)}>
+                <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold", status.className)}>
                   <StatusIcon className="h-3.5 w-3.5" />
                   {status.label}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <div className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-muted-foreground bg-muted/40 border border-border/40">
+              <div className="inline-flex items-center gap-2 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-xs font-medium text-[hsl(var(--foreground-muted))]">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>{formattedDate} · {formattedTime}</span>
               </div>
@@ -371,14 +374,12 @@ export default function PublishedCollectionDetailPage() {
         </div>
 
         {/* Main layout: sidebar + platform sections */}
-        <div className="flex flex-col lg:flex-row gap-5 items-start">
-          {/* Left sidebar */}
-          <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
-            {/* Published date card */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+        <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)] items-start">
+          <div className="space-y-4">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                 <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <p className="text-sm font-semibold text-foreground flex-1">Published</p>
+                <p className="text-sm font-semibold text-[hsl(var(--foreground))] flex-1">Published</p>
               </div>
               <div className="p-5 space-y-2.5">
                 <div className="flex items-center gap-2.5 text-sm">
@@ -393,10 +394,10 @@ export default function PublishedCollectionDetailPage() {
             </div>
 
             {/* Caption card */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                 <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <p className="text-sm font-semibold text-foreground flex-1">Caption</p>
+                <p className="text-sm font-semibold text-[hsl(var(--foreground))] flex-1">Caption</p>
               </div>
               <div className="p-5">
                 {captionText ? (
@@ -412,10 +413,10 @@ export default function PublishedCollectionDetailPage() {
 
             {/* Media carousel */}
             {collection.media.length > 0 && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-border/40 bg-muted/20">
+              <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                   <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-sm font-semibold text-foreground flex-1">
+                  <p className="text-sm font-semibold text-[hsl(var(--foreground))] flex-1">
                     Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
                   </p>
                 </div>
@@ -426,7 +427,7 @@ export default function PublishedCollectionDetailPage() {
             )}
 
             {/* Stats card with platform breakdown */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
               <div className="px-5 py-4 flex items-center divide-x divide-border/40">
                 <div className="flex-1 text-center pr-4">
                   <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
@@ -456,9 +457,9 @@ export default function PublishedCollectionDetailPage() {
           </div>
 
           {/* Platform sections */}
-          <div className="flex-1 min-w-0 space-y-4">
+          <div className="min-w-0 space-y-4">
             {collection.posts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center rounded-xl border border-border/40 bg-muted/20">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] py-12 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                 <CheckCircle2 className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground">No posts in this collection</p>
               </div>
@@ -1017,40 +1018,39 @@ function PlatformSection({
 
 function SkeletonDetailPage() {
   return (
-    <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 bg-card/80 backdrop-blur-xl border-b border-border/60">
-        <div className="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-32 rounded hidden sm:block" />
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-44 rounded" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-24 rounded-lg hidden sm:block" />
+    <main className="min-h-screen bg-[hsl(var(--background))]">
+      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
+        <div className="px-4 sm:px-6">
+          <div className="flex h-[60px] items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-4 w-4 rounded" />
+              <Skeleton className="hidden h-4 w-32 rounded sm:block" />
+              <Skeleton className="h-4 w-4 rounded" />
+              <Skeleton className="h-4 w-44 rounded" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="hidden h-8 w-24 rounded-lg sm:block" />
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="px-4 sm:px-6 py-4 space-y-3">
-        {/* Hero strip skeleton */}
-        <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-          <div className="px-5 py-3 flex items-center gap-4">
+      <div className="space-y-5 px-4 py-6 sm:px-6">
+        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="px-5 py-4 flex items-center gap-4">
             <Skeleton className="h-6 rounded-lg flex-1" />
             <div className="flex gap-2">
               <Skeleton className="h-5 w-16 rounded-md" />
               <Skeleton className="h-5 w-20 rounded-full" />
-              <Skeleton className="h-5 w-40 rounded-lg hidden sm:block" />
+              <Skeleton className="hidden h-5 w-40 rounded-lg sm:block" />
             </div>
           </div>
         </div>
 
-        {/* Main layout skeleton */}
-        <div className="flex flex-col lg:flex-row gap-3 items-start">
-          {/* Sidebar skeleton */}
-          <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-3">
-            <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
+        <div className="grid gap-5 items-start lg:grid-cols-[280px_minmax(0,1fr)]">
+          <div className="space-y-3">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-2.5">
                 <Skeleton className="h-3.5 w-3.5 rounded flex-shrink-0" />
                 <Skeleton className="h-4 w-20 rounded flex-1" />
               </div>
@@ -1060,7 +1060,7 @@ function SkeletonDetailPage() {
                 ))}
               </div>
             </div>
-            <div className="rounded-xl bg-card border border-border/60 shadow-sm px-4 py-3 flex items-center divide-x divide-border/40">
+            <div className="flex items-center divide-x divide-border/40 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-3 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
               <div className="flex-1 text-center pr-3 space-y-1">
                 <Skeleton className="h-6 w-8 rounded mx-auto" />
                 <Skeleton className="h-2.5 w-10 rounded mx-auto" />
@@ -1072,8 +1072,7 @@ function SkeletonDetailPage() {
             </div>
           </div>
 
-          {/* Platform sections skeleton */}
-          <div className="flex-1 min-w-0 space-y-2.5">
+          <div className="min-w-0 space-y-2.5">
             {[0, 1, 2].map((i) => (
               <SkeletonPlatformSection key={i} />
             ))}
@@ -1086,7 +1085,7 @@ function SkeletonDetailPage() {
 
 function SkeletonPlatformSection() {
   return (
-    <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
       <Skeleton className="h-[3px] w-full rounded-none" />
       <div className="p-4">
         <div className="flex items-center gap-2.5 mb-3">
