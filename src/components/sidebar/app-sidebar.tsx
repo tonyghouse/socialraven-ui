@@ -1,20 +1,21 @@
 "use client";
 
 import {
-  Buildings,
+  BarChart3 as ChartBar,
+  Building2 as Buildings,
   Calendar,
   CalendarCheck,
-  CaretLeft,
-  ChartBar,
-  ClockCounterClockwise,
+  ChevronLeft as CaretLeft,
   CreditCard,
-  House,
-  NotePencil,
-  PaperPlaneTilt,
-  PlugsConnected,
-} from "@phosphor-icons/react";
-import type { Icon } from "@phosphor-icons/react";
+  FilePen as NotePencil,
+  Home,
+  Plug,
+  Send as PaperPlaneTilt,
+  History as ClockCounterClockwise,
+} from "lucide-react";
+import type { LucideIcon as Icon } from "lucide-react";
 
+import Image from "next/image";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -30,9 +31,10 @@ import {
 import { useRole } from "@/hooks/useRole";
 import { usePlan } from "@/hooks/usePlan";
 import { WorkspaceManageSheet } from "./WorkspaceManageSheet";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 export function AppSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
   const { canWrite, isOwner } = useRole();
   const { isInfluencer } = usePlan();
@@ -43,7 +45,7 @@ export function AppSidebar() {
     {
       label: null,
       items: [
-        { title: "Dashboard", url: "/dashboard", icon: House },
+        { title: "Dashboard", url: "/dashboard", icon: Home },
       ],
     },
     {
@@ -65,92 +67,124 @@ export function AppSidebar() {
     {
       label: "Accounts",
       items: [
-        { title: "Connect Accounts", url: "/connect-accounts", icon: PlugsConnected },
+        { title: "Connect Accounts", url: "/connect-accounts", icon: Plug },
         { title: "Workspace Settings", url: "/workspace/settings", icon: Buildings },
         ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
       ],
     },
   ];
 
+  const navItemBase =
+    "group relative flex items-center gap-2.5 rounded-lg border text-sm leading-none transition-[background-color,color,border-color,box-shadow] duration-150";
+  const navItemActive =
+    "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))] shadow-xs";
+  const navItemIdle =
+    "border-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]";
+
   return (
     <aside
       className={cn(
-        "relative flex flex-col shrink-0 z-30",
-        "h-[calc(100vh-1rem)] m-2",
-        "rounded-2xl bg-white/70 backdrop-blur-2xl",
-        "border border-foreground/[0.07]",
-        "shadow-[0_2px_24px_-8px_rgba(15,23,42,0.10),inset_0_1px_0_rgba(255,255,255,0.75)]",
-        "transition-[width] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
-        isCollapsed ? "w-[68px]" : "w-[240px]"
+        "relative z-30 flex h-screen shrink-0 flex-col border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-background))]",
+        "transition-[width] duration-200 ease-out",
+        isCollapsed ? "w-[68px]" : "w-[228px]"
       )}
     >
-      {/* ─── Header ──────────────────────────────────────── */}
       <div
         className={cn(
-          "flex items-center border-b border-foreground/[0.07]",
-          isCollapsed
-            ? "flex-col gap-2 px-0 pt-5 pb-4 items-center"
-            : "flex-row justify-between px-4 h-16"
+          "relative border-b border-[hsl(var(--border-subtle))]",
+          isCollapsed ? "px-2 py-2.5" : "px-2.5 py-2.5"
         )}
       >
-        <NextLink
-          href="/dashboard"
-          className="flex items-center gap-2.5 min-w-0"
-        >
-          <img
-            src="/SocialRavenLogo.svg"
-            alt="SocialRaven"
-            className="h-7 w-7 shrink-0"
-          />
-          {!isCollapsed && (
-            <span className="font-semibold text-[14.5px] text-foreground/80 tracking-tight whitespace-nowrap">
-              SocialRaven
-            </span>
+        <div
+          className={cn(
+            "flex items-center",
+            isCollapsed ? "flex-col gap-3" : "justify-between gap-3"
           )}
-        </NextLink>
-
-        <button
-          onClick={() => setIsCollapsed((v) => !v)}
-          className="p-1.5 rounded-lg text-foreground/30 hover:text-foreground/60 hover:bg-black/[0.05] transition-colors shrink-0"
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <CaretLeft
+          <NextLink
+            href="/dashboard"
             className={cn(
-              "h-4 w-4 transition-transform duration-300",
-              isCollapsed && "rotate-180"
+              "group flex min-w-0 items-center rounded-xl border border-transparent transition-colors",
+              isCollapsed
+                ? "justify-center p-1 hover:bg-[hsl(var(--surface-raised))]"
+                : "flex-1 gap-2 px-1 py-1 hover:bg-[hsl(var(--surface-raised))]"
             )}
-          />
-        </button>
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-xs">
+              <Image
+                src="/SocialRavenLogo.svg"
+                alt="SocialRaven"
+                width={24}
+                height={24}
+                className="h-4 w-4 shrink-0"
+              />
+            </div>
+
+            {!isCollapsed && (
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">
+                  SocialRaven
+                </p>
+              </div>
+            )}
+          </NextLink>
+
+          <button
+            onClick={() => setIsCollapsed((v) => !v)}
+            className={cn(
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-transparent text-[hsl(var(--foreground-subtle))] transition-colors",
+              "hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground-muted))]"
+            )}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            <CaretLeft
+              size={16}
+              className={cn(
+                "transition-transform duration-200",
+                isCollapsed && "rotate-180"
+              )}
+            />
+          </button>
+        </div>
       </div>
 
-      {/* ─── Workspace Switcher / Manage Panel ───────────────────────────── */}
       <div
         className={cn(
-          "px-2 pt-2 pb-1 border-b border-foreground/[0.07]",
-          isCollapsed && "flex justify-center"
+          "border-b border-[hsl(var(--border-subtle))]",
+          isCollapsed ? "px-2 py-2.5" : "px-2.5 py-2.5"
         )}
       >
-        {showManagePanel
-          ? <WorkspaceManageSheet collapsed={isCollapsed} />
-          : <WorkspaceSwitcher collapsed={isCollapsed} />
-        }
+        <div
+          className={cn(
+            "rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-sunken))]",
+            isCollapsed ? "flex justify-center px-2 py-2" : "p-2"
+          )}
+        >
+          {showManagePanel
+            ? <WorkspaceManageSheet collapsed={isCollapsed} />
+            : <WorkspaceSwitcher collapsed={isCollapsed} />
+          }
+        </div>
       </div>
 
-      {/* ─── Navigation ──────────────────────────────────── */}
-      <nav className="flex-1 overflow-y-auto px-2 py-3">
+      <nav
+        className={cn(
+          "flex-1 overflow-y-auto",
+          isCollapsed ? "px-2 py-3" : "px-2.5 py-3"
+        )}
+      >
         <TooltipProvider delayDuration={300}>
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             {navGroups.map(({ label, items }, groupIdx) => (
-              <div key={groupIdx} className="space-y-px">
-                {/* Section label (expanded) or divider (collapsed) */}
+              <div key={groupIdx} className="space-y-1">
                 {label && (
-                  <div className="pb-1">
+                  <div className="pb-0.5">
                     {!isCollapsed ? (
-                      <p className="px-3 text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 select-none">
+                      <p className="px-2.5 text-[10px] font-semibold tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
                         {label}
                       </p>
                     ) : (
-                      <div className="mx-3 border-t border-foreground/[0.07]" />
+                      <div className="mx-auto w-6 border-t border-[hsl(var(--border-subtle))]" />
                     )}
                   </div>
                 )}
@@ -163,33 +197,44 @@ export function AppSidebar() {
                       key={url}
                       href={url}
                       className={cn(
-                        "relative flex items-center gap-3 rounded-xl",
-                        "text-[13.5px] font-medium leading-none",
-                        "transition-colors duration-150 group",
+                        navItemBase,
                         isCollapsed
-                          ? "justify-center py-3 px-0"
-                          : "px-3 py-[11px]",
+                          ? "h-8 justify-center px-0"
+                          : "h-8 px-2",
                         isActive
-                          ? "bg-accent/[0.09] text-accent"
-                          : "text-foreground/55 hover:bg-black/[0.04] hover:text-foreground/80"
+                          ? navItemActive
+                          : navItemIdle
                       )}
                     >
-                      {/* Left active bar */}
                       {isActive && (
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 h-[18px] w-[3px] rounded-r-full bg-accent" />
+                        <span
+                          className={cn(
+                            "absolute rounded-full bg-[hsl(var(--accent))]",
+                            isCollapsed
+                              ? "top-1 h-1 w-3 left-1/2 -translate-x-1/2"
+                              : "left-1 top-1/2 h-4 w-1 -translate-y-1/2"
+                          )}
+                        />
                       )}
 
-                      <Icon
+                      <div
                         className={cn(
-                          "h-[17px] w-[17px] shrink-0 transition-colors duration-150",
+                          "flex shrink-0 items-center justify-center rounded-md transition-colors duration-150",
+                          isCollapsed ? "h-6 w-6" : "h-5 w-5",
                           isActive
-                            ? "text-accent"
-                            : "text-foreground/38 group-hover:text-foreground/60"
+                            ? "bg-white/70 text-[hsl(var(--accent))] dark:bg-[hsl(var(--surface))]"
+                            : "text-[hsl(var(--foreground-muted))] group-hover:text-[hsl(var(--foreground))]"
                         )}
-                      />
+                      >
+                        <Icon size={16} />
+                      </div>
 
                       {!isCollapsed && (
-                        <span className="truncate">{title}</span>
+                        <div className="min-w-0 flex-1">
+                          <span className="truncate text-[13px] font-medium tracking-[-0.005em]">
+                            {title}
+                          </span>
+                        </div>
                       )}
                     </NextLink>
                   );
@@ -211,14 +256,27 @@ export function AppSidebar() {
         </TooltipProvider>
       </nav>
 
-      {/* ─── User ────────────────────────────────────────── */}
       <div
         className={cn(
-          "px-2 py-3 border-t border-foreground/[0.07]",
-          isCollapsed && "flex justify-center"
+          "border-t border-[hsl(var(--border-subtle))]",
+          isCollapsed ? "px-2 py-2.5" : "px-2.5 py-2.5"
         )}
       >
-        <UserAvatar size="md" collapsed={isCollapsed} />
+        <div
+          className={cn(
+            "rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-sunken))]",
+            isCollapsed
+              ? "flex flex-col items-center gap-1.5 p-1.5"
+              : "space-y-1.5 p-1.5"
+          )}
+        >
+          <ThemeSwitcher
+            compact={isCollapsed}
+            align={isCollapsed ? "end" : "start"}
+            className={cn("w-full", isCollapsed ? "w-10" : "justify-between")}
+          />
+          <UserAvatar size="md" collapsed={isCollapsed} />
+        </div>
       </div>
     </aside>
   );

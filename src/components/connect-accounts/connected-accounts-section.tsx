@@ -1,23 +1,29 @@
 "use client";
 
-import { RefreshCw, ShieldCheck } from "lucide-react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import AppleSkeleton from "../generic/AppleSkelton";
-
-import { useEffect, useState, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import ConnectedAccountsGrid from "./connect-accounts-grid";
 import { deleteConnectedAccountApi } from "@/service/deleteConnectedAccountApi";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 interface PendingConfirm {
   description: string;
   onConfirm: () => void;
 }
 
-export default function ConnectedAccountsSection({ canWrite = true }: { canWrite?: boolean }) {
+export default function ConnectedAccountsSection({
+  canWrite = true,
+  header,
+}: {
+  canWrite?: boolean;
+  header?: ReactNode;
+}) {
   const { getToken, isLoaded } = useAuth();
 
   const [connectedAccounts, setConnectedAccounts] = useState<
@@ -80,7 +86,7 @@ export default function ConnectedAccountsSection({ canWrite = true }: { canWrite
 
   const handleReconnect = async (acc: ConnectedAccount) => {
     toast("Opening reconnect flow...", {
-      icon: <RefreshCw className="w-4 h-4" />,
+      icon: <RefreshCw size={16} />,
     });
     const workspaceId = localStorage.getItem("activeWorkspaceId");
     const url = workspaceId
@@ -91,63 +97,56 @@ export default function ConnectedAccountsSection({ canWrite = true }: { canWrite
 
   return (
     <>
-    <ConfirmDialog
-      open={!!pendingConfirm}
-      description={pendingConfirm?.description ?? ""}
-      confirmLabel="Remove"
-      destructive
-      onConfirm={() => pendingConfirm?.onConfirm()}
-      onCancel={() => setPendingConfirm(null)}
-    />
-    <div className="px-4 sm:px-6 pb-12 space-y-5">
-      {/* Section header */}
-      <div className="flex items-center justify-between gap-4 px-5 py-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-foreground/8 shadow-[0_2px_16px_rgba(0,0,0,0.05)]">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <ShieldCheck className="w-4 h-4 text-accent" />
+      <ConfirmDialog
+        open={!!pendingConfirm}
+        description={pendingConfirm?.description ?? ""}
+        confirmLabel="Remove"
+        destructive
+        onConfirm={() => pendingConfirm?.onConfirm()}
+        onCancel={() => setPendingConfirm(null)}
+      />
+      <section className="overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+        <div className="flex flex-col gap-3 border-b border-[hsl(var(--border-subtle))] px-4 py-3 sm:px-5 sm:py-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            {header ? <div className="min-w-0 flex-1">{header}</div> : <div />}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleRefresh}
+              className="h-9 shrink-0 rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-3 text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+              title="Refresh accounts"
+              aria-label="Refresh accounts"
+              disabled={refreshing}
+            >
+              <RefreshCw
+                size={14}
+                className={refreshing ? "animate-spin" : ""}
+              />
+              <span>Refresh</span>
+            </Button>
           </div>
-          <div>
-            <p className="text-sm font-medium text-foreground leading-snug">
-              Connect multiple accounts to schedule posts across all platforms at once.
-            </p>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Your tokens are securely encrypted and stored at rest.
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={handleRefresh}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white border border-foreground/10 text-sm hover:bg-foreground/4 transition-all flex-shrink-0 shadow-sm disabled:opacity-50"
-          title="Refresh accounts"
-          aria-label="Refresh accounts"
-          disabled={refreshing}
-        >
-          <RefreshCw
-            className={`h-3.5 w-3.5 text-foreground/50 ${refreshing ? "animate-spin" : ""}`}
-          />
-          <span className="hidden sm:inline text-xs font-medium text-foreground/60">
-            Refresh
-          </span>
-        </button>
-      </div>
 
-      {/* Content */}
-      {loading ? (
-        <div className="grid grid-cols-2 gap-3">
-          <AppleSkeleton className="h-[10rem] w-full" />
-          <AppleSkeleton className="h-[10rem] w-full" />
-          <AppleSkeleton className="h-[10rem] w-full" />
-          <AppleSkeleton className="h-[10rem] w-full" />
         </div>
-      ) : (
-        <ConnectedAccountsGrid
-          accounts={connectedAccounts}
-          onRemove={canWrite ? handleRemove : undefined}
-          onReconnect={canWrite ? handleReconnect : undefined}
-          canWrite={canWrite}
-        />
-      )}
-    </div>
+
+        {loading ? (
+          <div className="grid gap-3 p-3 sm:p-4 xl:grid-cols-2">
+            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
+            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
+            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
+            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
+          </div>
+        ) : (
+          <div className="p-3 sm:p-4">
+            <ConnectedAccountsGrid
+              accounts={connectedAccounts}
+              onRemove={canWrite ? handleRemove : undefined}
+              onReconnect={canWrite ? handleReconnect : undefined}
+              canWrite={canWrite}
+            />
+          </div>
+        )}
+      </section>
     </>
   );
 }

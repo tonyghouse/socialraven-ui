@@ -3,28 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  ArrowsLeftRight,
-  Buildings,
+  ArrowLeftRight as ArrowsLeftRight,
+  BarChart3 as ChartBar,
+  Building2 as Buildings,
   Calendar,
   CalendarCheck,
-  ClockCounterClockwise,
-  CreditCard,
-  ChartBar,
   Check,
-  DotsThreeOutline,
-  House,
-  NotePencil,
-  PaperPlaneTilt,
-  PlugsConnected,
-  SignOut,
+  CreditCard,
+  Ellipsis as DotsThreeOutline,
+  FilePen as NotePencil,
+  History as ClockCounterClockwise,
+  Home,
+  LogOut as SignOut,
+  Plug,
+  Send as PaperPlaneTilt,
   User,
-} from "@phosphor-icons/react";
-import type { Icon } from "@phosphor-icons/react";
+} from "lucide-react";
+import type { LucideIcon as Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useRole } from "@/hooks/useRole";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -40,7 +41,7 @@ export function MobileBottomBar() {
     { title: "Analytics",        url: "/analytics",         icon: ChartBar },
     { title: "Drafts",           url: "/drafts",            icon: NotePencil },
     { title: "Published Posts",  url: "/published-posts",   icon: CalendarCheck },
-    { title: "Connect Accounts", url: "/connect-accounts",  icon: PlugsConnected },
+    { title: "Connect Accounts", url: "/connect-accounts",  icon: Plug },
     { title: "Workspace Settings", url: "/workspace/settings", icon: Buildings },
     ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
   ];
@@ -51,39 +52,31 @@ export function MobileBottomBar() {
 
   return (
     <>
-      {/* ─── Backdrop ──────────────────────────────────────────────────────── */}
       <div
         onClick={() => setDrawerOpen(false)}
         className={cn(
-          "fixed inset-0 z-[195] transition-all duration-300",
+          "fixed inset-0 z-[195] transition-all duration-200",
           drawerOpen
-            ? "bg-black/20 backdrop-blur-[2px] pointer-events-auto"
-            : "bg-transparent backdrop-blur-none pointer-events-none"
+            ? "pointer-events-auto bg-black/40"
+            : "pointer-events-none bg-transparent"
         )}
         aria-hidden="true"
       />
 
-      {/* ─── More Drawer ───────────────────────────────────────────────────── */}
       <div
         className={cn(
-          "fixed left-3 right-3 z-[210]",
-          "rounded-2xl overflow-hidden",
-          "bg-white/92 backdrop-blur-2xl",
-          "border border-foreground/[0.07]",
-          "shadow-[0_-4px_32px_-8px_rgba(15,23,42,0.15),0_2px_8px_-2px_rgba(15,23,42,0.08)]",
-          "transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]",
+          "fixed inset-x-2.5 z-[210] overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-lg",
+          "transition-all duration-200 ease-out",
           drawerOpen
-            ? "bottom-[72px] opacity-100 translate-y-0 pointer-events-auto"
-            : "bottom-[64px] opacity-0 translate-y-3 pointer-events-none"
+            ? "pointer-events-auto bottom-[72px] translate-y-0 opacity-100"
+            : "pointer-events-none bottom-[64px] translate-y-2 opacity-0"
         )}
       >
-        {/* Drag handle */}
-        <div className="flex justify-center py-2.5">
-          <div className="w-9 h-[3.5px] rounded-full bg-foreground/12" />
+        <div className="flex justify-center border-b border-[hsl(var(--border-subtle))] py-2">
+          <div className="h-1 w-7 rounded-full bg-[hsl(var(--foreground-subtle))]/30" />
         </div>
 
-        {/* Nav items */}
-        <div className="px-2 pb-1 space-y-px">
+        <div className="space-y-1 px-2 py-2">
           {drawerItems.map(({ title, url, icon: Icon }) => {
             const isActive = pathname.startsWith(url);
             return (
@@ -92,32 +85,31 @@ export function MobileBottomBar() {
                 href={url}
                 onClick={() => setDrawerOpen(false)}
                 className={cn(
-                  "flex items-center gap-3.5 px-3.5 py-3 rounded-xl",
-                  "text-[14px] font-medium transition-colors duration-150",
+                  "flex h-9 items-center gap-2.5 rounded-lg border px-3 text-[13px] font-medium transition-[background-color,color,border-color] duration-150",
                   isActive
-                    ? "bg-accent/[0.09] text-accent"
-                    : "text-foreground/60 hover:bg-black/[0.04] hover:text-foreground/85"
+                    ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))]"
+                    : "border-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
                 )}
               >
-                <Icon
+                <div
                   className={cn(
-                    "h-[18px] w-[18px] shrink-0",
-                    isActive ? "text-accent" : "text-foreground/38"
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
+                    isActive ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground-muted))]"
                   )}
-                />
+                >
+                  <Icon size={16} />
+                </div>
                 {title}
               </Link>
             );
           })}
         </div>
 
-        {/* Divider */}
-        <div className="mx-4 my-1 border-t border-foreground/[0.07]" />
+        <div className="mx-4 border-t border-[hsl(var(--border-subtle))]" />
 
-        {/* Workspace switcher */}
         {workspaces.length > 0 && (
-          <div className="px-2 pb-1">
-            <p className="px-3.5 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 select-none">
+          <div className="px-2 py-2">
+            <p className="px-3 pb-1 text-[10px] font-semibold tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
               Workspace
             </p>
             {workspaces.map((w) => (
@@ -128,46 +120,55 @@ export function MobileBottomBar() {
                   if (activeWorkspace?.id !== w.id) switchWorkspace(w);
                 }}
                 className={cn(
-                  "flex items-center gap-3.5 px-3.5 py-2.5 w-full rounded-xl",
-                  "text-[14px] font-medium transition-colors duration-150",
+                  "flex h-9 w-full items-center gap-2.5 rounded-lg border px-3 text-[13px] font-medium transition-[background-color,color,border-color] duration-150",
                   activeWorkspace?.id === w.id
-                    ? "bg-accent/[0.09] text-accent"
-                    : "text-foreground/60 hover:bg-black/[0.04] hover:text-foreground/85"
+                    ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))]"
+                    : "border-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
                 )}
               >
-                <ArrowsLeftRight
+                <div
                   className={cn(
-                    "h-[18px] w-[18px] shrink-0",
-                    activeWorkspace?.id === w.id ? "text-accent" : "text-foreground/38"
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
+                    activeWorkspace?.id === w.id ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground-muted))]"
                   )}
-                />
+                >
+                  <ArrowsLeftRight size={16} />
+                </div>
                 <span className="flex-1 truncate text-left">{w.name}</span>
                 {activeWorkspace?.id === w.id && (
-                  <Check className="h-3.5 w-3.5 shrink-0 text-accent" />
+                  <Check size={14} className="shrink-0 text-accent" />
                 )}
               </button>
             ))}
           </div>
         )}
 
-        {/* Divider */}
-        <div className="mx-4 my-1 border-t border-foreground/[0.07]" />
+        <div className="mx-4 border-t border-[hsl(var(--border-subtle))]" />
 
-        {/* Profile & Sign Out */}
-        <div className="px-2 pb-3 space-y-px">
+        <div className="px-2 py-2">
+          <p className="px-3 pb-1 text-[10px] font-semibold tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
+            Appearance
+          </p>
+          <ThemeSwitcher align="start" className="w-full justify-between" />
+        </div>
+
+        <div className="mx-4 border-t border-[hsl(var(--border-subtle))]" />
+
+        <div className="px-2 py-2">
           <Link
             href="/profile"
             onClick={() => setDrawerOpen(false)}
-            className="flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-[14px] font-medium text-foreground/60 hover:bg-black/[0.04] hover:text-foreground/85 transition-colors duration-150"
+            className="flex h-9 items-center gap-2.5 rounded-lg border border-transparent px-3 text-[13px] font-medium text-[hsl(var(--foreground-muted))] transition-[background-color,color,border-color] duration-150 hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
           >
             {user?.imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={user.imageUrl}
                 alt=""
-                className="h-5 w-5 rounded-lg object-cover shrink-0"
+                className="h-5 w-5 shrink-0 rounded-md object-cover"
               />
             ) : (
-              <User className="h-[18px] w-[18px] shrink-0 text-foreground/38" />
+              <User size={16} className="shrink-0" />
             )}
             <span className="flex-1 truncate">
               {user?.firstName} {user?.lastName}
@@ -179,36 +180,30 @@ export function MobileBottomBar() {
               setDrawerOpen(false);
               signOut();
             }}
-            className="w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-[14px] font-medium text-red-500 hover:bg-red-50 transition-colors duration-150"
+            className="flex h-9 w-full items-center gap-2.5 rounded-lg border border-transparent px-3 text-[13px] font-medium text-[hsl(var(--foreground-muted))] transition-[background-color,color,border-color] duration-150 hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
           >
-            <SignOut className="h-[18px] w-[18px] shrink-0" />
+            <SignOut size={16} className="shrink-0" />
             Sign out
           </button>
         </div>
       </div>
 
-      {/* ─── Bottom Nav Bar ────────────────────────────────────────────────── */}
       <nav
         className={cn(
-          "fixed bottom-0 left-0 right-0 z-[200]",
-          "h-16",
-          "bg-white/80 backdrop-blur-2xl",
-          "border-t border-foreground/[0.08]",
-          "shadow-[0_-1px_0_rgba(15,23,42,0.04)]"
+          "fixed bottom-0 left-0 right-0 z-[200] border-t border-[hsl(var(--border))] bg-[hsl(var(--surface))]",
+          "pb-[max(env(safe-area-inset-bottom),0px)]"
         )}
       >
-        <div className="flex items-stretch h-full max-w-lg mx-auto px-1">
-          {/* Dashboard */}
+        <div className="mx-auto flex h-14 max-w-lg items-stretch px-1.5">
           <NavTab
             url="/dashboard"
             title="Dashboard"
-            icon={House}
+            icon={Home}
             isActive={
               pathname === "/dashboard" || pathname.startsWith("/dashboard/")
             }
           />
 
-          {/* Scheduled Posts */}
           <NavTab
             url="/scheduled-posts"
             title="Scheduled"
@@ -216,46 +211,31 @@ export function MobileBottomBar() {
             isActive={pathname.startsWith("/scheduled-posts")}
           />
 
-          {/* ── FAB ── */}
-          <div className="flex-1 flex items-center justify-center">
+          <div className="flex flex-1 items-center justify-center">
             {canWrite ? (
               <Link
                 href="/schedule-post"
                 aria-label="Schedule Post"
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1",
-                  "w-[52px] h-[52px] rounded-[16px]",
-                  "bg-accent",
-                  "shadow-[0_4px_16px_-2px_rgba(59,130,246,0.45)]",
-                  "transition-all duration-150 active:scale-90 active:shadow-none",
-                  pathname.startsWith("/schedule-post") && "opacity-85"
+                  "flex h-10 w-10 items-center justify-center rounded-xl border border-accent/20 bg-accent text-white transition-transform duration-150 active:scale-95",
+                  pathname.startsWith("/schedule-post") && "shadow-[0_0_0_1px_rgba(94,106,210,0.18)]"
                 )}
               >
-                <PaperPlaneTilt className="h-[19px] w-[19px] text-white" />
-                <span className="text-[9.5px] font-semibold text-white/80 leading-none -mt-0.5">
-                  Post
-                </span>
+                <PaperPlaneTilt size={16} className="text-white" />
               </Link>
             ) : (
               <div
                 aria-label="Schedule Post (view only)"
                 title="Viewers cannot create posts"
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1",
-                  "w-[52px] h-[52px] rounded-[16px]",
-                  "bg-foreground/15",
-                  "cursor-not-allowed opacity-50"
+                  "flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] opacity-60"
                 )}
               >
-                <PaperPlaneTilt className="h-[19px] w-[19px] text-foreground/50" />
-                <span className="text-[9.5px] font-semibold text-foreground/40 leading-none -mt-0.5">
-                  Post
-                </span>
+                <PaperPlaneTilt size={16} className="text-[hsl(var(--foreground-subtle))]" />
               </div>
             )}
           </div>
 
-          {/* Calendar */}
           <NavTab
             url="/calendar"
             title="Calendar"
@@ -263,25 +243,29 @@ export function MobileBottomBar() {
             isActive={pathname.startsWith("/calendar")}
           />
 
-          {/* More */}
           <button
             onClick={() => setDrawerOpen((v) => !v)}
             aria-label="More navigation"
             className={cn(
-              "relative flex-1 flex flex-col items-center justify-center gap-1 h-full",
-              "transition-all duration-150 active:scale-90",
+              "relative flex h-full flex-1 flex-col items-center justify-center gap-1 transition-all duration-150 active:scale-95",
               isMoreActive || drawerOpen
                 ? "text-accent"
-                : "text-foreground/38"
+                : "text-[hsl(var(--foreground-muted))]"
             )}
           >
-            <DotsThreeOutline className="h-[22px] w-[22px]" />
+            <span
+              className={cn(
+                "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-accent transition-all duration-200",
+                isMoreActive || drawerOpen ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
+              )}
+            />
+            <DotsThreeOutline size={18} />
             <span
               className={cn(
                 "text-[10px] font-medium leading-none",
                 isMoreActive || drawerOpen
                   ? "text-accent"
-                  : "text-foreground/35"
+                  : "text-[hsl(var(--foreground-muted))]"
               )}
             >
               More
@@ -310,25 +294,23 @@ function NavTab({
     <Link
       href={url}
       className={cn(
-        "relative flex-1 flex flex-col items-center justify-center gap-1 h-full",
-        "transition-all duration-150 active:scale-90",
-        isActive ? "text-accent" : "text-foreground/38"
+        "relative flex h-full flex-1 flex-col items-center justify-center gap-0.5 transition-all duration-150 active:scale-95",
+        isActive ? "text-accent" : "text-[hsl(var(--foreground-muted))]"
       )}
     >
-      {/* Top active pill */}
       <span
         className={cn(
-          "absolute top-0 left-1/2 -translate-x-1/2 h-[2.5px] w-5 rounded-b-full bg-accent",
+          "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-accent",
           "transition-all duration-200",
           isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
         )}
       />
 
-      <Icon className="h-[22px] w-[22px]" />
+      <Icon size={18} />
       <span
         className={cn(
           "text-[10px] font-medium leading-none",
-          isActive ? "text-accent" : "text-foreground/35"
+          isActive ? "text-accent" : "text-[hsl(var(--foreground-muted))]"
         )}
       >
         {title}

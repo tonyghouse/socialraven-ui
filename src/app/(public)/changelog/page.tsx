@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Navbar from "@/components/navbar/navbar";
+
+import { PublicLozenge } from "@/components/public/public-atlassian";
+import {
+  PublicCard,
+  PublicHero,
+  PublicPageShell,
+  PublicSection,
+} from "@/components/public/public-layout";
 
 export const metadata: Metadata = {
   title: "Changelog | Social Raven",
@@ -25,63 +32,47 @@ const ENTRIES = [
 
 export default function ChangelogPage() {
   return (
-    <>
-      <Navbar />
-      <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="">
+    <PublicPageShell>
+      <PublicHero
+        topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
+            className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
           >
             ← Back
           </Link>
+        }
+        eyebrow="Changelog"
+        title="What&apos;s new"
+        description="Every improvement, fix, and new feature — documented."
+      />
+
+      <PublicSection>
+        <div className="space-y-8">
+          {ENTRIES.map(({ version, date, badge, items }) => (
+            <PublicCard key={version} className="p-8">
+              <div className="mb-1 flex flex-wrap items-center gap-3">
+                <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">{version}</h2>
+                <PublicLozenge appearance="new" isBold>
+                  {badge}
+                </PublicLozenge>
+              </div>
+              <p className="mb-6 text-xs text-[hsl(var(--foreground-muted))]">{date}</p>
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {items.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-2.5 text-sm leading-6 text-[hsl(var(--foreground-muted))]"
+                  >
+                    <span className="mt-0.5 text-[hsl(var(--accent))]">✓</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </PublicCard>
+          ))}
         </div>
-      </div>
-      <main className="min-h-screen bg-[#f9fafb]">
-
-        {/* Hero */}
-        <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-16">
-          <div className="">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">Changelog</p>
-            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-[hsl(var(--foreground))] mb-4">
-              What&apos;s new
-            </h1>
-            <p className="text-lg text-[hsl(var(--muted-foreground))] leading-relaxed max-w-2xl">
-              Every improvement, fix, and new feature — documented.
-            </p>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="px-6 md:px-10 py-14">
-          <div className="">
-
-            <div className="space-y-8">
-              {ENTRIES.map(({ version, date, badge, items }) => (
-                <div key={version} className="rounded-2xl bg-white border border-[hsl(var(--border))] p-8">
-                  <div className="flex flex-wrap items-center gap-3 mb-1">
-                    <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">{version}</h2>
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))] text-xs font-semibold">
-                      {badge}
-                    </span>
-                  </div>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))] mb-6">{date}</p>
-                  <ul className="grid sm:grid-cols-2 gap-3">
-                    {items.map((item) => (
-                      <li key={item} className="flex items-start gap-2.5 text-sm text-[hsl(var(--muted-foreground))]">
-                        <span className="text-[hsl(var(--accent))] mt-0.5 flex-shrink-0">✓</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </div>
-
-      </main>
-    </>
+      </PublicSection>
+    </PublicPageShell>
   );
 }

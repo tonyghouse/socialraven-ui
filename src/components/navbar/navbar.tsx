@@ -1,60 +1,67 @@
 "use client";
-import Link from "next/link";
-import React from "react";
+
+import AtlassianButton, { LinkButton } from "@atlaskit/button/new";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { Button } from "../ui/button";
-import { MessageSquareCode } from "lucide-react";
-import { Badge } from "../ui/badge";
+import Image from "next/image";
+import Link from "next/link";
+
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 
 export default function Navbar() {
   const { isSignedIn } = useUser();
 
   return (
-    <header className="w-full flex justify-center">
-      <div
-        className="
-          mt-2 mx-2 lg:mx-5 
-          w-full max-w-7xl
-          rounded-[24px] 
-          border border-foreground/10
-          bg-white/60 backdrop-blur-xl 
-          shadow-[0_4px_24px_-8px_rgba(15,23,42,0.15)]
-          transition-all
-        "
-      >
-        <nav className="h-16 px-6 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <img
-              src="/SocialRavenLogo.svg"
-              alt="SocialRaven logo"
-              className="h-6 w-6"
-            />
-
-            <span className="text-lg font-semibold text-foreground/70 group-hover:text-accent transition">
-              SocialRaven
-            </span>
+    <header className="fixed inset-x-0 top-0 z-50 flex justify-center border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background)/0.92)] backdrop-blur-xl">
+      <div className="w-full max-w-7xl px-4 sm:px-6">
+        <nav className="flex h-16 items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+              <Image
+                src="/SocialRavenLogo.svg"
+                alt="SocialRaven logo"
+                width={22}
+                height={22}
+                className="h-[22px] w-[22px]"
+              />
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-sm font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">SocialRaven</p>
+            </div>
           </Link>
 
-          {/* RIGHT SIDE */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <ThemeSwitcher compact className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]" />
+
             {isSignedIn ? (
-              <UserButton appearance={{ elements: { avatarBox: "w-9 h-9 rounded-xl" } }} />
+              <>
+                <LinkButton appearance="subtle" href="/dashboard">
+                  Dashboard
+                </LinkButton>
+                <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
+                  <UserButton appearance={{ elements: { avatarBox: "h-9 w-9 rounded-lg" } }} />
+                </div>
+              </>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link href="/sign-in">
-                  <Button
-                    variant="ghost"
-                    className="rounded-full text-foreground/70 hover:bg-foreground/5 hover:text-primary"
+              <>
+                <LinkButton appearance="subtle" href="/sign-in">
+                  Sign in
+                </LinkButton>
+                <div className="hidden sm:block">
+                  <LinkButton appearance="primary" href="/sign-up">
+                   Signup
+                  </LinkButton>
+                </div>
+                <div className="sm:hidden">
+                  <AtlassianButton
+                    appearance="primary"
+                    onClick={() => {
+                      window.location.href = "/sign-up";
+                    }}
                   >
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/sign-up">
-                  <Button className="rounded-full bg-accent text-white hover:bg-accent/50 shadow-md">
-                    Sign Up
-                  </Button>
-                </Link>
-              </div>
+                    Start
+                  </AtlassianButton>
+                </div>
+              </>
             )}
           </div>
         </nav>

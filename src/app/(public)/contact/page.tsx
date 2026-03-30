@@ -1,18 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Navbar from "@/components/navbar/navbar";
 import {
   MessageCircle,
   Lock,
   Handshake,
   Clock,
   CheckCircle2,
-  ArrowRight,
   Building2,
   Shield,
   Globe,
   Zap,
 } from "lucide-react";
+
+import {
+  PublicLozenge,
+  PublicPrimaryLinkButton,
+  PublicTag,
+} from "@/components/public/public-atlassian";
+import {
+  PublicCard,
+  PublicHero,
+  PublicInsetCard,
+  PublicPageShell,
+  PublicSection,
+} from "@/components/public/public-layout";
 
 export const metadata: Metadata = {
   title: "Contact | Social Raven",
@@ -108,148 +119,102 @@ const AGENCY_FEATURES = [
 
 export default function ContactPage() {
   return (
-    <>
-      <Navbar />
-      <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="">
+    <PublicPageShell>
+      <PublicHero
+        topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
+            className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
           >
             ← Back
           </Link>
-        </div>
-      </div>
-      <main className="min-h-screen bg-[#f9fafb]">
-
-        {/* Hero */}
-        <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-20">
-          <div className="">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-4">Contact</p>
-            <h1 className="text-4xl md:text-5xl lg:text-[60px] font-semibold tracking-tight text-[hsl(var(--foreground))] mb-5 max-w-2xl leading-[1.08]">
-              We&apos;re here when you need us.
-            </h1>
-            <p className="text-lg text-[hsl(var(--muted-foreground))] leading-relaxed max-w-xl mb-12">
-              Reach the right team directly — whether it&apos;s a support question, an agency enquiry, or a legal matter.
-            </p>
-            <div className="flex flex-wrap gap-8">
-              {TRUST.map(({ icon: Icon, label, sub }) => (
-                <div key={label} className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-4 h-4 text-[hsl(var(--accent))]" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))]">{sub}</p>
-                  </div>
+        }
+        eyebrow="Contact"
+        title="We&apos;re here when you need us."
+        description="Reach the right team directly — whether it&apos;s a support question, an agency enquiry, or a legal matter."
+        aside={
+          <PublicCard className="grid gap-4 p-6 sm:grid-cols-2">
+            {TRUST.map(({ icon: Icon, label, sub }) => (
+              <div key={label} className="flex items-start gap-3">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                  <Icon className="h-4 w-4" />
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Contact channels */}
-        <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="">
-            <div className="mb-8">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">
-                Get in touch
-              </p>
-              <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]">Contact the right team</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 gap-5">
-              {CONTACTS.map(({ label, description, detail, email, icon: Icon, response }) => (
-                <div
-                  key={label}
-                  className="group rounded-2xl bg-white border border-[hsl(var(--border))] p-7 space-y-4 hover:border-[hsl(var(--accent))]/30 hover:shadow-md transition-all"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="w-11 h-11 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[hsl(var(--accent))]/15 transition-colors">
-                      <Icon className="w-5 h-5 text-[hsl(var(--accent))]" />
-                    </div>
-                    <div className="flex items-center gap-1.5 text-xs text-[hsl(var(--muted-foreground))] bg-[hsl(var(--muted))]/60 rounded-full px-3 py-1 whitespace-nowrap border border-[hsl(var(--border))]">
-                      <Clock className="w-3 h-3" />
-                      {response}
-                    </div>
-                  </div>
-                  <div>
-                    <h2 className="font-semibold text-[hsl(var(--foreground))] mb-1.5">{label}</h2>
-                    <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{description}</p>
-                  </div>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))]/80 leading-relaxed border-t border-[hsl(var(--border))] pt-3.5">
-                    {detail}
-                  </p>
-                  <a
-                    href={`mailto:${email}`}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-[hsl(var(--accent))] hover:underline"
-                  >
-                    {email} <ArrowRight className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Quick answers */}
-        <div className="px-6 md:px-10 py-14 bg-white border-y border-[hsl(var(--border))]">
-          <div className="">
-            <div className="mb-10">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">
-                Quick answers
-              </p>
-              <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]">
-                Before you write
-              </h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {FAQS.map(({ q, a }) => (
-                <div
-                  key={q}
-                  className="rounded-xl bg-[#f9fafb] border border-[hsl(var(--border))] p-5 space-y-2"
-                >
-                  <p className="font-semibold text-sm text-[hsl(var(--foreground))]">{q}</p>
-                  <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{a}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Agency CTA */}
-        <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="">
-            <div className="rounded-2xl bg-[hsl(var(--foreground))] p-10 md:p-14">
-              <div className="grid md:grid-cols-2 gap-10 items-center">
-                <div className="space-y-4">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Agency</p>
-                  <h2 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
-                    Need something built for scale?
-                  </h2>
-                  <p className="text-sm text-white/60 leading-relaxed">
-                    Custom seat limits, dedicated onboarding, white-label options, and SLA guarantees. We partner with agencies and businesses that need more than an off-the-shelf plan.
-                  </p>
-                  <a
-                    href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry"
-                    className="inline-flex items-center gap-2 h-11 px-7 rounded-full bg-white text-[hsl(var(--foreground))] text-sm font-medium hover:bg-gray-100 transition-colors"
-                  >
-                    Talk to sales <ArrowRight className="w-4 h-4" />
-                  </a>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {AGENCY_FEATURES.map((f) => (
-                    <div key={f} className="flex items-center gap-2.5 text-sm text-white/70">
-                      <CheckCircle2 className="w-4 h-4 text-white/40 flex-shrink-0" />
-                      {f}
-                    </div>
-                  ))}
+                <div>
+                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</p>
+                  <p className="text-xs leading-5 text-[hsl(var(--foreground-muted))]">{sub}</p>
                 </div>
               </div>
+            ))}
+          </PublicCard>
+        }
+      />
+
+      <PublicSection eyebrow="Get in touch" title="Contact the right team">
+        <div className="grid gap-5 sm:grid-cols-2">
+          {CONTACTS.map(({ label, description, detail, email, icon: Icon, response }) => (
+            <PublicCard key={label} className="space-y-4 p-7">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div className="flex items-center gap-1 text-xs text-[hsl(var(--foreground-muted))]">
+                  <Clock className="h-3 w-3" />
+                  {response}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-base font-semibold text-[hsl(var(--foreground))]">{label}</h2>
+                <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{description}</p>
+              </div>
+              <p className="border-t border-[hsl(var(--border-subtle))] pt-4 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                {detail}
+              </p>
+              <PublicPrimaryLinkButton href={`mailto:${email}`}>{email}</PublicPrimaryLinkButton>
+            </PublicCard>
+          ))}
+        </div>
+      </PublicSection>
+
+      <PublicSection eyebrow="Quick answers" title="Before you write" surface="surface">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FAQS.map(({ q, a }) => (
+            <PublicInsetCard key={q} className="space-y-2 p-5">
+              <PublicTag text={q} />
+              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{a}</p>
+            </PublicInsetCard>
+          ))}
+        </div>
+      </PublicSection>
+
+      <PublicSection>
+        <PublicCard className="p-10 md:p-14">
+          <div className="grid items-center gap-10 md:grid-cols-2">
+            <div className="space-y-4">
+              <PublicLozenge appearance="inprogress">Agency</PublicLozenge>
+              <h2 className="text-2xl font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))] md:text-3xl">
+                Need something built for scale?
+              </h2>
+              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                Custom seat limits, dedicated onboarding, white-label options, and SLA guarantees. We partner with agencies and businesses that need more than an off-the-shelf plan.
+              </p>
+              <PublicPrimaryLinkButton href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry">
+                Talk to sales
+              </PublicPrimaryLinkButton>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {AGENCY_FEATURES.map((feature) => (
+                <PublicInsetCard
+                  key={feature}
+                  className="flex items-center gap-2.5 p-4 text-sm text-[hsl(var(--foreground-muted))]"
+                >
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--accent))]" />
+                  {feature}
+                </PublicInsetCard>
+              ))}
             </div>
           </div>
-        </div>
-
-      </main>
-    </>
+        </PublicCard>
+      </PublicSection>
+    </PublicPageShell>
   );
 }

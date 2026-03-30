@@ -1,40 +1,28 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import Navbar from "@/components/navbar/navbar";
-import {
-  Calendar,
-  Clock,
-  Feather,
-  BarChart,
-  ArrowRight,
-  Instagram,
-  Twitter,
-  Linkedin,
-  Youtube,
-  Facebook,
-  TrendingUp,
-  Zap,
-  Globe,
-  Lock,
-  Users,
-  CheckCircle2,
-  Star,
-  Shield,
-  Sparkles,
-  Play,
-  Plus,
-  Minus,
-} from "lucide-react";
-import Link from "next/link";
+import Avatar from "@atlaskit/avatar";
+import AtlassianButton, { LinkButton } from "@atlaskit/button/new";
+import ProgressBar from "@atlaskit/progress-bar";
+import SectionMessage from "@atlaskit/section-message";
 import { useUser } from "@clerk/nextjs";
+import {
+  Facebook,
+  Instagram,
+  Linkedin,
+  Lock,
+  Minus,
+  Plus,
+  Twitter,
+  Youtube,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PLANS } from "@/constants/plans";
 
-/* ─────────────────────────────────────────────────────────
-   Data
-───────────────────────────────────────────────────────── */
+import Navbar from "@/components/navbar/navbar";
+import { PLANS } from "@/constants/plans";
+import { Separator } from "@/components/ui/separator";
 
 function TikTokIcon({ className }: { className?: string }) {
   return (
@@ -53,52 +41,58 @@ function ThreadsIcon({ className }: { className?: string }) {
 }
 
 const INTEGRATIONS = [
-  { name: "Instagram", icon: Instagram, gradient: "from-purple-500 to-pink-500" },
-  { name: "Twitter / X", icon: Twitter, gradient: "from-gray-800 to-gray-900" },
-  { name: "LinkedIn", icon: Linkedin, gradient: "from-blue-600 to-blue-700" },
-  { name: "YouTube", icon: Youtube, gradient: "from-red-500 to-red-600" },
-  { name: "Facebook", icon: Facebook, gradient: "from-blue-500 to-blue-600" },
-  { name: "TikTok", icon: TikTokIcon, gradient: "from-slate-800 to-slate-900" },
-  { name: "Threads", icon: ThreadsIcon, gradient: "from-slate-700 to-slate-800" },
+  { name: "Instagram", icon: Instagram, tint: "text-pink-600", surface: "bg-pink-50 dark:bg-pink-500/10" },
+  { name: "X / Twitter", icon: Twitter, tint: "text-slate-700 dark:text-slate-200", surface: "bg-slate-100 dark:bg-slate-500/10" },
+  { name: "LinkedIn", icon: Linkedin, tint: "text-blue-700", surface: "bg-blue-50 dark:bg-blue-500/10" },
+  { name: "YouTube", icon: Youtube, tint: "text-red-600", surface: "bg-red-50 dark:bg-red-500/10" },
+  { name: "Facebook", icon: Facebook, tint: "text-blue-600", surface: "bg-blue-50 dark:bg-blue-500/10" },
+  { name: "TikTok", icon: TikTokIcon, tint: "text-slate-900 dark:text-white", surface: "bg-slate-100 dark:bg-slate-500/10" },
+  { name: "Threads", icon: ThreadsIcon, tint: "text-slate-800 dark:text-slate-100", surface: "bg-slate-100 dark:bg-slate-500/10" },
 ];
 
 const STATS = [
-  { value: "10K+", label: "Active creators" },
-  { value: "2M+", label: "Posts scheduled" },
-  { value: "98%", label: "Delivery rate" },
-  { value: "5", label: "Platforms" },
+  { value: "10K+", label: "Active creators", detail: "Trusted by teams worldwide" },
+  { value: "2M+", label: "Posts scheduled", detail: "Published across channels" },
+  { value: "98%", label: "Delivery rate", detail: "Reliable publishing performance" },
+  { value: "5", label: "Platforms", detail: "Managed from one workspace" },
 ];
 
 const FEATURES = [
   {
     title: "Smart Scheduling",
-    description: "AI analyses your audience's activity patterns and recommends the best posting windows to maximise reach.",
-    icon: Calendar,
+    description:
+      "AI analyses your audience's activity patterns and recommends the best posting windows to maximise reach.",
+    meta: "Planning",
   },
   {
     title: "Auto Posting",
-    description: "Create once, publish everywhere — automatically, at exactly the right time.",
-    icon: Zap,
+    description:
+      "Create once, publish everywhere automatically, at exactly the right time.",
+    meta: "Automation",
   },
   {
     title: "AI-Powered Content",
-    description: "Generate captions, hashtags, and content briefs in seconds using built-in AI tools.",
-    icon: Feather,
+    description:
+      "Generate captions, hashtags, and content briefs in seconds using built-in AI tools.",
+    meta: "Content",
   },
   {
     title: "Unified Analytics",
-    description: "Track performance across all platforms in a single dashboard. Know what works, do more of it.",
-    icon: BarChart,
+    description:
+      "Track performance across all platforms in a single dashboard. Know what works, do more of it.",
+    meta: "Reporting",
   },
   {
     title: "Multi-Account Management",
-    description: "Add unlimited social profiles and switch between them instantly — ideal for agencies and teams.",
-    icon: Users,
+    description:
+      "Add unlimited social profiles and switch between them instantly, ideal for agencies and teams.",
+    meta: "Scale",
   },
   {
     title: "Security & Compliance",
-    description: "GDPR-compliant by design. Enterprise-grade encryption protects every credential and connection.",
-    icon: Shield,
+    description:
+      "GDPR-compliant by design. Enterprise-grade encryption protects every credential and connection.",
+    meta: "Trust",
   },
 ];
 
@@ -106,59 +100,54 @@ const STEPS = [
   {
     step: "01",
     title: "Connect your accounts",
-    description: "Link Instagram, LinkedIn, X, YouTube, and Facebook in seconds. OAuth-secured — no passwords stored.",
-    icon: Globe,
+    description: "Link Instagram, LinkedIn, X, YouTube, and Facebook in seconds. OAuth-secured and simple to manage.",
   },
   {
     step: "02",
     title: "Create your content",
     description: "Upload media, write captions, or let AI help. Schedule to multiple platforms in one go.",
-    icon: Feather,
   },
   {
     step: "03",
     title: "Let it run",
     description: "Posts go live at optimal times automatically. Monitor everything from your analytics dashboard.",
-    icon: Zap,
   },
 ];
 
 const TESTIMONIALS = [
   {
-    quote: "Social Raven transformed how we manage content. The AI scheduling is genuinely impressive — it just works.",
+    quote: "Social Raven transformed how we manage content. The AI scheduling is genuinely impressive and it just works.",
     author: "Sarah Chen",
     role: "Content Manager, Bloom Agency",
-    rating: 5,
     initials: "SC",
+    tone: "information" as const,
   },
   {
     quote: "Managing 15 client accounts used to be chaos. Now it's seamless. Best tool investment we've made this year.",
     author: "Marcus Rodriguez",
     role: "Founder, Rodriguez Media",
-    rating: 5,
     initials: "MR",
+    tone: "success" as const,
   },
   {
     quote: "The analytics dashboard alone is worth it. We doubled engagement in three months.",
     author: "Emily Watson",
     role: "Social Media Director, Luxe Brand",
-    rating: 5,
     initials: "EW",
+    tone: "discovery" as const,
   },
 ];
-
-const PAID_PLANS = PLANS.filter((p) => !p.type.endsWith("_TRIAL"));
 
 const FAQ = [
   {
     question: "Is Social Raven GDPR compliant?",
     answer:
-      "Yes. Social Raven is built in Europe with GDPR compliance by design. All data is stored in US & EU data centres and we never sell your data to third parties.",
+      "Yes. Social Raven is built in Europe with GDPR compliance by design. All data is stored in US and EU data centres and we never sell your data to third parties.",
   },
   {
     question: "How does the free trial work?",
     answer:
-      "Start with the Trial plan — no credit card required. Upgrade to Pro anytime. Your data and scheduled posts are always yours.",
+      "Start with the trial plan with no credit card required. Upgrade to Pro anytime. Your data and scheduled posts are always yours.",
   },
   {
     question: "Which social platforms are supported?",
@@ -168,28 +157,67 @@ const FAQ = [
   {
     question: "Can I manage multiple clients from one account?",
     answer:
-      "Absolutely. Our Pro and Agency plans are designed for agencies — manage all your clients from a single, clean dashboard.",
+      "Absolutely. Our Pro and Agency plans are designed for agencies, manage all your clients from a single dashboard.",
   },
   {
     question: "Can I cancel anytime?",
     answer:
-      "Yes, cancel anytime with no questions asked. We believe in earning your business every month — no lock-in, no exit fees.",
+      "Yes, cancel anytime with no questions asked. No lock-in and no exit fees.",
   },
 ];
 
-/* ─────────────────────────────────────────────────────────
-   Page
-───────────────────────────────────────────────────────── */
+const PAID_PLANS = PLANS.filter((plan) => !plan.type.endsWith("_TRIAL"));
+
+function SurfaceCard({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      className={`rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function StatusPill({
+  children,
+  tone = "neutral",
+}: {
+  children: React.ReactNode;
+  tone?: "accent" | "success" | "neutral";
+}) {
+  const toneClass = {
+    accent:
+      "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
+    success:
+      "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+    neutral:
+      "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
+  }[tone];
+
+  return (
+    <span
+      className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${toneClass}`}
+    >
+      {children}
+    </span>
+  );
+}
 
 export default function LandingPage() {
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
     if (!isLoaded) return;
     if (isSignedIn) router.replace("/dashboard");
-  }, [isSignedIn, isLoaded, router]);
+  }, [isLoaded, isSignedIn, router]);
 
   if (!isLoaded || isSignedIn) return null;
 
@@ -197,501 +225,503 @@ export default function LandingPage() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-[#f9fafb]">
-        {/* Ambient background */}
-        <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-          <div className="absolute top-[-5%] left-[20%] w-[700px] h-[700px] bg-[hsl(214,65%,52%)]/[0.05] rounded-full blur-[160px]" />
-          <div className="absolute bottom-[10%] right-[-5%] w-[500px] h-[500px] bg-[hsl(214,65%,52%)]/[0.04] rounded-full blur-[140px]" />
-        </div>
-
+      <div className="min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
         <main>
-          {/* ── HERO ─────────────────────────────────────────── */}
-          <section className="pt-28 pb-20">
-            <div className="container max-w-7xl px-6 mx-auto">
-              <div className="grid lg:grid-cols-[1.1fr_1fr] gap-14 items-center">
-
-                {/* Copy */}
-                <div className="space-y-7 text-center lg:text-left">
-                  <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-white px-3.5 py-1.5 text-xs font-medium text-[hsl(var(--muted-foreground))]">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--accent))]" />
-                    Trusted by 10,000+ creators
+          <section className="border-b border-[hsl(var(--border-subtle))] bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)] pt-24 pb-16 lg:pb-20">
+            <div className="container mx-auto max-w-7xl px-6">
+              <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:items-stretch">
+                <div className="flex h-full flex-col justify-center space-y-7 text-center lg:pr-4 lg:text-left">
+                  <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+                    <StatusPill tone="accent">Trusted by 10,000+ creators</StatusPill>
+                    <StatusPill tone="neutral">14-day Pro trial</StatusPill>
                   </div>
 
-                  <h1 className="text-5xl md:text-6xl lg:text-[72px] font-semibold tracking-[-0.04em] leading-[1.05] text-[hsl(var(--foreground))]">
-                    Your social media,
-                    <br />
-                    <span className="text-[hsl(var(--accent))]">on autopilot.</span>
-                  </h1>
-
-                  <p className="text-lg leading-relaxed text-[hsl(var(--muted-foreground))] max-w-[500px] mx-auto lg:mx-0">
-                    Schedule, publish, and analyse across every platform from one beautifully simple workspace.
-                    Built for creators, agencies, and growth-focused teams.
-                  </p>
-
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                    <Link href="/sign-up">
-                      <Button className="h-12 px-8 rounded-full bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent))]/90 font-medium text-sm shadow-md">
-                        Start free — no card needed
-                      </Button>
-                    </Link>
-                    <Link href="#how-it-works">
-                      <Button
-                        variant="outline"
-                        className="h-12 px-8 rounded-full border-[hsl(var(--border))] bg-white hover:bg-[hsl(var(--muted))] font-medium text-sm text-[hsl(var(--foreground))]"
-                      >
-                        <Play className="w-3.5 h-3.5 mr-2 fill-current" />
-                        See how it works
-                      </Button>
-                    </Link>
+                  <div className="space-y-4">
+                    <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.03em] text-[hsl(var(--foreground))] md:text-6xl lg:text-[68px] lg:leading-[1.02]">
+                      Your social media,
+                      <br />
+                      <span className="text-[hsl(var(--accent))]">on autopilot.</span>
+                    </h1>
+                    <p className="max-w-2xl text-base leading-7 text-[hsl(var(--foreground-muted))] md:text-lg">
+                      Schedule, publish, and analyse across every platform from one beautifully simple workspace.
+                      Built for creators, agencies, and growth-focused teams.
+                    </p>
                   </div>
 
-                  <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                    14-day Pro trial · No credit card · GDPR compliant 🇪🇺
+                  <div className="flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
+                    <LinkButton appearance="primary" href="/sign-up">
+                      Start free, no card needed
+                    </LinkButton>
+                    <AtlassianButton
+                      appearance="subtle"
+                      onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
+                    >
+                      See how it works
+                    </AtlassianButton>
+                  </div>
+
+                  <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                    14-day Pro trial · No credit card · GDPR compliant
                   </p>
                 </div>
 
-                {/* Dashboard mock */}
-                <div className="flex justify-center lg:justify-end">
-                  <div className="frosted-border depth-soft w-full max-w-[420px] rounded-2xl bg-white/80 backdrop-blur-xl p-6 space-y-4">
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center">
-                          <TrendingUp className="w-4 h-4 text-[hsl(var(--accent))]" />
-                        </div>
+                <div className="flex h-full lg:pl-4">
+                  <SurfaceCard className="flex h-full w-full flex-col overflow-hidden shadow-sm">
+                    <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
+                      <div className="flex items-start justify-between gap-4">
                         <div>
-                          <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Performance</p>
-                          <p className="text-xs text-[hsl(var(--muted-foreground))]">Last 7 days</p>
+                          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                            Campaign overview
+                          </p>
+                          <h2 className="mt-1 text-lg font-semibold tracking-[-0.01em]">Q2 content operations</h2>
                         </div>
+                        <StatusPill tone="success">Live publishing</StatusPill>
                       </div>
-                      <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        Live
-                      </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        { label: "Posts", value: "247", growth: "+18%" },
-                        { label: "Reach", value: "8.4K", growth: "+32%" },
-                        { label: "Engagement", value: "6.2%", growth: "+11%" },
-                        { label: "Saves", value: "1.1K", growth: "+44%" },
-                      ].map((m) => (
-                        <div key={m.label} className="rounded-xl bg-[hsl(var(--muted))] border border-[hsl(var(--border))] p-3.5">
-                          <p className="text-xs text-[hsl(var(--muted-foreground))] mb-1">{m.label}</p>
-                          <p className="text-xl font-semibold text-[hsl(var(--foreground))] leading-none mb-1.5">{m.value}</p>
-                          <div className="flex items-center gap-1 text-xs font-medium text-emerald-600">
-                            <ArrowRight className="w-3 h-3 rotate-[-45deg]" />
-                            {m.growth}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="rounded-xl bg-[hsl(var(--muted))] border border-[hsl(var(--border))] p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div>
-                          <p className="text-xs text-[hsl(var(--muted-foreground))] mb-0.5">Next scheduled</p>
-                          <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Today at 7:30 PM</p>
-                        </div>
-                        <div className="w-8 h-8 rounded-lg bg-white border border-[hsl(var(--border))] flex items-center justify-center">
-                          <Clock className="w-3.5 h-3.5 text-[hsl(var(--muted-foreground))]" />
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
+                    <div className="flex flex-1 flex-col space-y-4 p-4">
+                      <div className="grid gap-3 sm:grid-cols-3">
                         {[
-                          { icon: Instagram, gradient: "from-purple-500 to-pink-500" },
-                          { icon: Twitter, gradient: "from-gray-800 to-gray-900" },
-                          { icon: Linkedin, gradient: "from-blue-600 to-blue-700" },
-                        ].map(({ icon: Icon, gradient }, i) => (
-                          <div key={i} className={`w-8 h-8 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-                            <Icon className="w-3.5 h-3.5 text-white" />
+                          { label: "Scheduled this week", value: "48" },
+                          { label: "Pending approval", value: "07" },
+                          { label: "Accounts connected", value: "12" },
+                        ].map((item) => (
+                          <div
+                            key={item.label}
+                            className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-3.5"
+                          >
+                            <p className="text-xs text-[hsl(var(--foreground-muted))]">{item.label}</p>
+                            <p className="mt-1.5 text-xl font-semibold tracking-[-0.02em]">{item.value}</p>
                           </div>
                         ))}
-                        <div className="w-8 h-8 rounded-lg bg-[hsl(var(--secondary))] border border-[hsl(var(--border))] flex items-center justify-center">
-                          <span className="text-xs font-medium text-[hsl(var(--muted-foreground))]">+2</span>
+                      </div>
+
+                      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                        <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-semibold">Performance</p>
+                              <p className="text-xs text-[hsl(var(--foreground-muted))]">Last 7 days</p>
+                            </div>
+                            <StatusPill tone="success">Stable</StatusPill>
+                          </div>
+                          <div className="mt-4 space-y-3">
+                            {[
+                              { label: "Delivery rate", value: 98 },
+                              { label: "Engagement target", value: 76 },
+                              { label: "Approval throughput", value: 84 },
+                            ].map((metric) => (
+                              <div key={metric.label}>
+                                <div className="mb-2 flex items-center justify-between text-sm">
+                                  <span className="text-[hsl(var(--foreground-muted))]">{metric.label}</span>
+                                  <span className="font-semibold text-[hsl(var(--foreground))]">{metric.value}%</span>
+                                </div>
+                                <ProgressBar ariaLabel={metric.label} value={metric.value} appearance="default" />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
+                          <p className="text-sm font-semibold">Next scheduled publish</p>
+                          <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                            Today, 7:30 PM IST
+                          </p>
+
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {INTEGRATIONS.slice(0, 4).map(({ name, icon: Icon, tint, surface }) => (
+                              <div
+                                key={name}
+                                className={`flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] ${surface}`}
+                                title={name}
+                              >
+                                <Icon className={`h-4 w-4 ${tint}`} />
+                              </div>
+                            ))}
+                          </div>
+
+                          <Separator className="my-3.5 bg-[hsl(var(--border-subtle))]" />
+
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-3">
+                              <Avatar name="Sarah Chen" size="small" appearance="square" />
+                              <div>
+                                <p className="text-sm font-semibold">Reviewed by Sarah Chen</p>
+                                <p className="text-xs text-[hsl(var(--foreground-muted))]">Content Operations</p>
+                              </div>
+                            </div>
+                            <div className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-3">
+                              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                                Campaign note
+                              </p>
+                              <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                                Your next campaign is lined up and ready to publish across connected platforms.
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-
-                  </div>
+                  </SurfaceCard>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* ── STATS ────────────────────────────────────────── */}
-          <section className="py-12 border-y border-[hsl(var(--border))] bg-white">
-            <div className="container max-w-6xl px-6 mx-auto">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                {STATS.map(({ value, label }) => (
-                  <div key={label} className="text-center">
-                    <p className="text-3xl md:text-4xl font-semibold text-[hsl(var(--foreground))] mb-1 tracking-tight">{value}</p>
-                    <p className="text-sm text-[hsl(var(--muted-foreground))]">{label}</p>
-                  </div>
+          <section className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-12">
+            <div className="container mx-auto max-w-7xl px-6">
+              <div className="grid gap-4 md:grid-cols-4">
+                {STATS.map((item) => (
+                  <SurfaceCard key={item.label} className="p-5">
+                    <p className="text-3xl font-semibold tracking-[-0.03em] text-[hsl(var(--foreground))]">{item.value}</p>
+                    <p className="mt-2 text-sm font-medium text-[hsl(var(--foreground))]">{item.label}</p>
+                    <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">{item.detail}</p>
+                  </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* ── PLATFORMS ────────────────────────────────────── */}
-          <section id="integrations" className="py-16 bg-[#f9fafb]">
-            <div className="container max-w-7xl px-6 mx-auto text-center">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--muted-foreground))] mb-6">
-                Works with your platforms
-              </p>
-              <div className="flex flex-wrap justify-center gap-3">
-                {INTEGRATIONS.map(({ name, icon: Icon, gradient }) => (
-                  <div
+          <section id="integrations" className="bg-[hsl(var(--background))] py-16">
+            <div className="container mx-auto max-w-7xl px-6">
+              <div className="mx-auto max-w-3xl text-center">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                  Works with your platforms
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                  Connect the channels your team already uses.
+                </h2>
+              </div>
+
+              <div className="mt-10 flex flex-wrap justify-center gap-3">
+                {INTEGRATIONS.map(({ name, icon: Icon, tint, surface }) => (
+                  <SurfaceCard
                     key={name}
-                    className="flex items-center gap-2.5 px-5 py-3 rounded-full bg-white border border-[hsl(var(--border))] hover:border-[hsl(var(--accent))]/40 hover:shadow-sm transition-all depth-soft"
+                    className="flex items-center gap-3 rounded-full px-4 py-3 shadow-sm"
                   >
-                    <div className={`w-5 h-5 rounded-md bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-                      <Icon className="w-3 h-3 text-white" />
+                    <div
+                      className={`flex h-8 w-8 items-center justify-center rounded-full border border-[hsl(var(--border-subtle))] ${surface}`}
+                    >
+                      <Icon className={`h-4 w-4 ${tint}`} />
                     </div>
                     <span className="text-sm font-medium text-[hsl(var(--foreground))]">{name}</span>
-                  </div>
+                  </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* ── FEATURES ─────────────────────────────────────── */}
-          <section id="features" className="py-20 bg-white">
-            <div className="container max-w-7xl px-6 mx-auto">
-              <div className="text-center mb-14">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">Features</p>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-[hsl(var(--foreground))] mb-4">
+          <section id="features" className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
+            <div className="container mx-auto max-w-7xl px-6">
+              <div className="mb-12 max-w-2xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                  Features
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
                   Built for speed.
                   <br />
                   Designed for growth.
                 </h2>
-                <p className="text-base text-[hsl(var(--muted-foreground))] max-w-xl mx-auto">
-                  Every tool you need to build a consistent, high-performing social presence — without the complexity.
-                </p>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {FEATURES.map(({ title, description, icon: Icon }) => (
-                  <div
-                    key={title}
-                    className="group rounded-2xl bg-[#f9fafb] border border-[hsl(var(--border))] p-6 hover:border-[hsl(var(--accent))]/30 hover:bg-white hover:shadow-md transition-all"
-                  >
-                    <div className="w-11 h-11 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center mb-4 group-hover:bg-[hsl(var(--accent))]/15 transition-colors">
-                      <Icon className="w-5 h-5 text-[hsl(var(--accent))]" />
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                {FEATURES.map((feature, index) => (
+                  <SurfaceCard key={feature.title} className="p-6 shadow-sm">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                          {String(index + 1).padStart(2, "0")}
+                        </p>
+                        <h3 className="mt-3 text-lg font-semibold tracking-[-0.01em]">{feature.title}</h3>
+                      </div>
+                      <StatusPill tone="accent">{feature.meta}</StatusPill>
                     </div>
-                    <h3 className="font-semibold text-base text-[hsl(var(--foreground))] mb-2">{title}</h3>
-                    <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{description}</p>
-                  </div>
+                    <p className="mt-4 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                      {feature.description}
+                    </p>
+                  </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* ── HOW IT WORKS ─────────────────────────────────── */}
-          <section id="how-it-works" className="py-20 bg-[#f9fafb]">
-            <div className="container max-w-6xl px-6 mx-auto">
-              <div className="text-center mb-14">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">How it works</p>
-                <h2 className="text-3xl md:text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
+          <section id="how-it-works" className="bg-[hsl(var(--background))] py-20">
+            <div className="container mx-auto max-w-7xl px-6">
+              <div className="mb-12 max-w-2xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                  How it works
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
                   Up and running in minutes
                 </h2>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6 relative">
-                <div className="hidden md:block absolute top-8 left-[calc(16.7%+2rem)] right-[calc(16.7%+2rem)] h-px bg-[hsl(var(--border))] z-0" />
-                {STEPS.map(({ step, title, description, icon: Icon }) => (
-                  <div key={step} className="relative z-10 text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-white border border-[hsl(var(--border))] depth-soft flex items-center justify-center mx-auto mb-5">
-                      <Icon className="w-6 h-6 text-[hsl(var(--accent))]" />
+              <div className="grid gap-4 md:grid-cols-3">
+                {STEPS.map((step) => (
+                  <SurfaceCard key={step.step} className="p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-semibold tracking-[-0.03em] text-[hsl(var(--accent))]">{step.step}</span>
+                      <StatusPill tone="accent">Guided flow</StatusPill>
                     </div>
-                    <div className="text-xs font-bold text-[hsl(var(--accent))] mb-2 tracking-widest">{step}</div>
-                    <h3 className="text-lg font-semibold text-[hsl(var(--foreground))] mb-2">{title}</h3>
-                    <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{description}</p>
-                  </div>
+                    <h3 className="mt-6 text-lg font-semibold tracking-[-0.01em]">{step.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-[hsl(var(--foreground-muted))]">{step.description}</p>
+                  </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* ── TESTIMONIALS ─────────────────────────────────── */}
-          <section className="py-20 bg-white">
-            <div className="container max-w-7xl px-6 mx-auto">
-              <div className="text-center mb-14">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">Testimonials</p>
-                <h2 className="text-3xl md:text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
+          <section className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
+            <div className="container mx-auto max-w-7xl px-6">
+              <div className="mb-12 max-w-2xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                  Testimonials
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
                   Loved by creators worldwide
                 </h2>
               </div>
 
               <div className="grid gap-4 md:grid-cols-3">
-                {TESTIMONIALS.map(({ quote, author, role, rating, initials }) => (
-                  <div
-                    key={author}
-                    className="frosted-border rounded-2xl bg-[#f9fafb] border border-[hsl(var(--border))] p-6 hover:border-[hsl(var(--accent))]/30 hover:shadow-md transition-all"
-                  >
-                    <div className="flex gap-0.5 mb-4">
-                      {[...Array(rating)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-[hsl(var(--accent))] text-[hsl(var(--accent))]" />
-                      ))}
-                    </div>
-                    <p className="text-sm text-[hsl(var(--foreground))]/80 mb-5 leading-relaxed">&quot;{quote}&quot;</p>
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-[hsl(var(--accent))]/10 flex items-center justify-center">
-                        <span className="text-xs font-semibold text-[hsl(var(--accent))]">{initials}</span>
-                      </div>
+                {TESTIMONIALS.map((item) => (
+                  <SurfaceCard key={item.author} className="p-6 shadow-sm">
+                    <StatusPill tone={item.tone === "success" ? "success" : "accent"}>Verified customer</StatusPill>
+                    <p className="mt-5 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                      &quot;{item.quote}&quot;
+                    </p>
+                    <div className="mt-6 flex items-center gap-3">
+                      <Avatar name={item.author} size="small" appearance="square" />
                       <div>
-                        <p className="font-semibold text-sm text-[hsl(var(--foreground))]">{author}</p>
-                        <p className="text-xs text-[hsl(var(--muted-foreground))]">{role}</p>
+                        <p className="text-sm font-semibold">{item.author}</p>
+                        <p className="text-xs text-[hsl(var(--foreground-muted))]">{item.role}</p>
                       </div>
                     </div>
-                  </div>
+                  </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* ── PRICING ──────────────────────────────────────── */}
-          <section id="pricing" className="py-20 bg-[#f9fafb]">
-            <div className="container max-w-6xl px-6 mx-auto">
-              <div className="text-center mb-14">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">Pricing</p>
-                <h2 className="text-3xl md:text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight mb-3">
+          <section id="pricing" className="bg-[hsl(var(--background))] py-20">
+            <div className="container mx-auto max-w-7xl px-6">
+              <div className="mb-6 max-w-2xl">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                  Pricing
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
                   Simple, transparent pricing
                 </h2>
-                <p className="text-base text-[hsl(var(--muted-foreground))]">Start free. Scale when you&apos;re ready.</p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-4 items-start">
-                {PAID_PLANS.map((plan) => {
+              <SectionMessage appearance="information" title="All plans include a 14-day free trial">
+                Start free and upgrade when you are ready.
+              </SectionMessage>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+                {PAID_PLANS.map((plan, index) => {
                   const isAgencyCustom = plan.type === "AGENCY_CUSTOM";
-                  const cta     = isAgencyCustom ? "Contact sales" : "Start 14-day free trial";
                   const ctaHref = isAgencyCustom
                     ? "mailto:sales@socialraven.io?subject=Agency%20Plan%20Enquiry"
                     : "/sign-up";
+                  const centeredLastRowClass =
+                    PAID_PLANS.length === 5 && index === 3
+                      ? "lg:col-span-2 lg:col-start-2"
+                      : PAID_PLANS.length === 5 && index === 4
+                        ? "lg:col-span-2 lg:col-start-4"
+                        : "lg:col-span-2";
 
                   return (
-                    <div
+                    <SurfaceCard
                       key={plan.type}
-                      className={`rounded-2xl border p-7 transition-all ${plan.popular
-                          ? "border-[hsl(var(--accent))] bg-white shadow-xl shadow-[hsl(var(--accent))]/10 md:scale-[1.03]"
-                          : "border-[hsl(var(--border))] bg-white hover:shadow-md"
-                        }`}
+                      className={`p-6 shadow-sm ${centeredLastRowClass} ${plan.popular ? "border-[hsl(var(--accent))]" : ""}`}
                     >
-                      {plan.popular && (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))] text-xs font-semibold mb-4">
-                          <Sparkles className="w-3 h-3" />
-                          Most Popular
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <h3 className="text-xl font-semibold tracking-[-0.01em]">{plan.name}</h3>
+                          <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                            {plan.description}
+                          </p>
                         </div>
-                      )}
+                        <StatusPill tone={plan.popular ? "accent" : "neutral"}>
+                          {plan.popular ? "Recommended" : "Standard"}
+                        </StatusPill>
+                      </div>
 
-                      <h3 className="text-xl font-semibold text-[hsl(var(--foreground))] mb-1">{plan.name}</h3>
-                      <p className="text-sm text-[hsl(var(--muted-foreground))] mb-5">{plan.description}</p>
-
-                      <div className="mb-6">
+                      <div className="mt-6">
                         {plan.customPricing ? (
-                          <span className="text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
-                            Custom pricing
-                          </span>
+                          <p className="text-4xl font-semibold tracking-[-0.03em]">Custom pricing</p>
                         ) : (
-                          <>
-                            <span className="text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
-                              ${plan.price}
-                            </span>
-                            <span className="text-sm text-[hsl(var(--muted-foreground))] ml-1">/ month</span>
-                          </>
+                          <div className="flex items-end gap-2">
+                            <span className="text-4xl font-semibold tracking-[-0.03em]">${plan.price}</span>
+                            <span className="pb-1 text-sm text-[hsl(var(--foreground-muted))]">per month</span>
+                          </div>
                         )}
                       </div>
 
-                      <ul className="space-y-3 mb-7">
+                      <ul className="mt-6 space-y-3">
                         {plan.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-2.5 text-sm text-[hsl(var(--foreground))]/80">
-                            <CheckCircle2 className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0 mt-0.5" />
-                            {feature}
+                          <li key={feature} className="flex items-start gap-3 text-sm text-[hsl(var(--foreground-muted))]">
+                            <span className="mt-1 h-2 w-2 rounded-full bg-[hsl(var(--accent))]" />
+                            <span>{feature}</span>
                           </li>
                         ))}
                       </ul>
 
-                      <Link href={ctaHref}>
-                        <Button
-                          className={`w-full h-11 rounded-full font-medium text-sm ${plan.popular
-                              ? "bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent))]/90 shadow-md"
-                              : "bg-[hsl(var(--foreground))] text-white hover:bg-[hsl(var(--foreground))]/90"
-                            }`}
-                        >
-                          {cta}
-                        </Button>
-                      </Link>
-                    </div>
+                      <div className="mt-8">
+                        <LinkButton appearance={plan.popular ? "primary" : "default"} href={ctaHref}>
+                          {isAgencyCustom ? "Contact sales" : "Start free trial"}
+                        </LinkButton>
+                      </div>
+                    </SurfaceCard>
                   );
                 })}
               </div>
-
-              <p className="text-center text-xs text-[hsl(var(--muted-foreground))] mt-8">
-                All plans include a 14-day free trial. EU VAT applied where applicable.
-              </p>
             </div>
           </section>
 
-          {/* ── FAQ ──────────────────────────────────────────── */}
-          <section className="py-20 bg-white">
-            <div className="container max-w-3xl px-6 mx-auto">
-              <div className="text-center mb-14">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">FAQ</p>
-                <h2 className="text-3xl md:text-4xl font-semibold text-[hsl(var(--foreground))] tracking-tight">
-                  Common questions
+          <section className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
+            <div className="container mx-auto max-w-3xl px-6">
+              <div className="text-center">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                  FAQ
+                </p>
+                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                  Common questions from teams evaluating the platform.
                 </h2>
               </div>
 
-              <div className="space-y-2">
-                {FAQ.map(({ question, answer }, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl border border-[hsl(var(--border))] bg-[#f9fafb] overflow-hidden"
-                  >
-                    <button
-                      onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full flex items-center justify-between px-5 py-4 text-left gap-4"
-                    >
-                      <span className="font-medium text-sm text-[hsl(var(--foreground))]">{question}</span>
-                      {openFaq === i
-                        ? <Minus className="w-4 h-4 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
-                        : <Plus className="w-4 h-4 text-[hsl(var(--muted-foreground))] flex-shrink-0" />
-                      }
-                    </button>
-                    {openFaq === i && (
-                      <div className="px-5 pb-5 text-sm text-[hsl(var(--muted-foreground))] leading-relaxed border-t border-[hsl(var(--border))] pt-4">
-                        {answer}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+              <div className="mt-10 space-y-3">
+                {FAQ.map((item, index) => {
+                  const isOpen = openFaq === index;
 
-              <p className="text-center text-sm text-[hsl(var(--muted-foreground))] mt-10">
-                Still have questions?{" "}
-                <Link href="/contact" className="text-[hsl(var(--accent))] hover:underline font-medium">
-                  Contact us
-                </Link>
-              </p>
+                  return (
+                    <SurfaceCard key={item.question} className="overflow-hidden shadow-sm">
+                      <button
+                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                        onClick={() => setOpenFaq(isOpen ? null : index)}
+                      >
+                        <span className="text-sm font-medium text-[hsl(var(--foreground))]">{item.question}</span>
+                        {isOpen ? (
+                          <Minus className="h-4 w-4 shrink-0 text-[hsl(var(--foreground-muted))]" />
+                        ) : (
+                          <Plus className="h-4 w-4 shrink-0 text-[hsl(var(--foreground-muted))]" />
+                        )}
+                      </button>
+                      {isOpen && (
+                        <div className="border-t border-[hsl(var(--border-subtle))] px-5 py-4 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                          {item.answer}
+                        </div>
+                      )}
+                    </SurfaceCard>
+                  );
+                })}
+              </div>
             </div>
           </section>
 
-          {/* ── CTA ──────────────────────────────────────────── */}
-          <section className="py-24 bg-[hsl(var(--foreground))]">
-            <div className="container max-w-4xl px-6 mx-auto text-center space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-medium text-white/70">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                Trusted by teams across 40+ countries
-              </div>
-              <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight">
-                Start growing today.
-              </h2>
-              <p className="text-base text-white/60 max-w-md mx-auto">
-                Join thousands of creators and agencies who&apos;ve simplified their workflow with Social Raven.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-                <Link href="/sign-up">
-                  <Button className="h-12 px-8 rounded-full bg-white text-[hsl(var(--foreground))] hover:bg-gray-100 font-medium text-sm">
-                    Get started for free
-                  </Button>
-                </Link>
-                <Link href="/contact">
-                  <Button
-                    variant="outline"
-                    className="h-12 px-8 rounded-full border-white/20 bg-transparent text-white hover:bg-white/10 font-medium text-sm"
-                  >
-                    Talk to sales
-                  </Button>
-                </Link>
+          <section className="bg-[#172B4D] py-24 text-white">
+            <div className="container mx-auto max-w-5xl px-6">
+              <div className="rounded-xl border border-white/15 bg-white/5 p-8 backdrop-blur-sm md:p-10">
+                <div className="grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
+                  <div>
+                    <span className="inline-flex items-center rounded-md border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-semibold text-white/80">
+                      Trusted by teams across 40+ countries
+                    </span>
+                    <h2 className="mt-5 text-4xl font-semibold tracking-[-0.03em] md:text-5xl">
+                      Start growing today.
+                    </h2>
+                    <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 md:text-base">
+                      Join thousands of creators and agencies who&apos;ve simplified their workflow with SocialRaven.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 md:items-end">
+                    <Link
+                      href="/sign-up"
+                      className="inline-flex min-h-10 items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-[#172B4D] transition-colors hover:bg-white/90"
+                    >
+                      Get started for free
+                    </Link>
+                    <Link
+                      href="/contact"
+                      className="inline-flex min-h-10 items-center justify-center rounded-md border border-white/20 bg-transparent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+                    >
+                      Talk to sales
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
         </main>
 
-        {/* ── FOOTER ───────────────────────────────────────── */}
-        <footer className="bg-[#f9fafb] border-t border-[hsl(var(--border))]">
-          <div className="container max-w-7xl px-6 mx-auto py-14">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-10">
-
-              {/* Brand */}
-              <div className="col-span-2">
-                <div className="flex items-center gap-2 mb-4">
-                  <img src="/SocialRavenLogo.svg" alt="SocialRaven" className="h-6 w-6" />
-                  <span className="font-semibold text-[hsl(var(--foreground))]">SocialRaven</span>
+        <footer className="bg-[hsl(var(--background))]">
+          <div className="container mx-auto max-w-7xl px-6 py-14">
+            <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
+              <div className="max-w-sm">
+                <div className="flex items-center gap-3">
+                  <Image src="/SocialRavenLogo.svg" alt="SocialRaven logo" width={28} height={28} className="h-7 w-7" />
+                  <span className="text-lg font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">SocialRaven</span>
                 </div>
-                <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed max-w-xs">
-                  Schedule, publish, and analyse your social media from one clean, powerful workspace.
+                <p className="mt-4 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                  Structured social media scheduling and publishing for creators, agencies, and operations-focused teams.
                 </p>
-                <div className="mt-4 flex items-center gap-1.5 text-xs text-[hsl(var(--muted-foreground))]">
-                  <Lock className="w-3 h-3" />
-                  GDPR Compliant · Data stored in  US 🇺🇸 & EU 🇪🇺
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-1.5 text-xs text-[hsl(var(--foreground-muted))]">
+                  <Lock className="h-3.5 w-3.5" />
+                  GDPR-conscious · US and EU ready
                 </div>
               </div>
 
-              {/* Product */}
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--foreground))] mb-4">Product</p>
-                <ul className="space-y-2.5">
-                  {[
+              {[
+                {
+                  title: "Product",
+                  links: [
                     { label: "Features", href: "#features" },
                     { label: "Pricing", href: "#pricing" },
                     { label: "Integrations", href: "#integrations" },
                     { label: "Changelog", href: "/changelog" },
-                  ].map(({ label, href }) => (
-                    <li key={label}>
-                      <Link href={href} className="text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Company */}
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--foreground))] mb-4">Company</p>
-                <ul className="space-y-2.5">
-                  {[
+                  ],
+                },
+                {
+                  title: "Company",
+                  links: [
                     { label: "About", href: "/about" },
                     { label: "Blog", href: "/blog" },
                     { label: "Contact", href: "/contact" },
-                  ].map(({ label, href }) => (
-                    <li key={label}>
-                      <Link href={href} className="text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Legal */}
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--foreground))] mb-4">Legal</p>
-                <ul className="space-y-2.5">
-                  {[
-                    { label: "Privacy Policy", href: "/privacy-policy" },
-                    { label: "Terms of Service", href: "/terms-of-service" },
-                  ].map(({ label, href }) => (
-                    <li key={label}>
-                      <Link href={href} className="text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors">
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
+                  ],
+                },
+                {
+                  title: "Legal",
+                  links: [
+                    { label: "Privacy policy", href: "/privacy-policy" },
+                    { label: "Terms of service", href: "/terms-of-service" },
+                  ],
+                },
+              ].map((group) => (
+                <div key={group.title}>
+                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                    {group.title}
+                  </p>
+                  <ul className="mt-4 space-y-3">
+                    {group.links.map((item) => (
+                      <li key={item.label}>
+                        <Link
+                          href={item.href}
+                          className="text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+                        >
+                          {item.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
 
-            <div className="border-t border-[hsl(var(--border))] mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                © 2026 Social Raven. All rights reserved.
-              </p>
-              <p className="text-xs text-[hsl(var(--muted-foreground))]">
-                Built for global businesses — empowering teams across the US, Europe, and beyond.
-              </p>
+            <Separator className="my-8 bg-[hsl(var(--border-subtle))]" />
+
+            <div className="flex flex-col gap-2 text-xs text-[hsl(var(--foreground-muted))] md:flex-row md:items-center md:justify-between">
+              <p>© 2026 SocialRaven. All rights reserved.</p>
+              <p>Built for calm execution across global publishing teams.</p>
             </div>
           </div>
         </footer>

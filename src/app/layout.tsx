@@ -1,30 +1,15 @@
-
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google"
-import localfont from "next/font/local"
 import { cn } from "@/lib/utils"
 import { ClerkProvider } from "@clerk/nextjs";
-
-import { Toaster } from "@/components/ui/sonner"
-import Navbar from "@/components/navbar/navbar";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import ClientToaster from "@/components/generic/ClientToaster";
-
-
+import { ThemeProvider } from "@/components/theme/theme-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-})
-
-const heming = localfont({
-  src:[
-    {
-      path: "../../public/fonts/Heming_Variable.ttf"
-    }
-  ],
-   variable: "--font-heming"
+  display: "swap",
 })
 
 export const metadata: Metadata = {
@@ -39,19 +24,17 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-   
-    <html lang="en">
-      <body  className={cn(
+      <html lang="en" suppressHydrationWarning>
+        <body className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable
         )}>
-          <ClientToaster />
-          {children}
-          </body>
-    </html>
-    
+          <ThemeProvider>
+            <ClientToaster />
+            {children}
+          </ThemeProvider>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
-
-

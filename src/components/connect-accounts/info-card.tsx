@@ -2,15 +2,15 @@ import { ShieldCheck } from "lucide-react";
 
 export default function InfoCard() {
   return (
-    <div className="flex items-start gap-3 my-6 px-5 py-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-foreground/8 shadow-[0_2px_16px_rgba(0,0,0,0.05)]">
-      <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-        <ShieldCheck className="w-4 h-4 text-accent" />
+    <div className="my-6 flex items-start gap-3 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-4">
+      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-accent/10 text-accent">
+        <ShieldCheck size={16} />
       </div>
       <div>
-        <p className="text-sm font-medium text-foreground leading-snug">
+        <p className="text-sm font-medium leading-snug text-[hsl(var(--foreground))]">
           Connect multiple accounts to schedule posts across all platforms at once.
         </p>
-        <p className="text-xs text-muted-foreground mt-0.5">
+        <p className="mt-0.5 text-xs text-[hsl(var(--foreground-muted))]">
           Your accounts are securely encrypted and stored at rest.
         </p>
       </div>

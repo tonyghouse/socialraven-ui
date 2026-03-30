@@ -1,21 +1,22 @@
 "use client";
 
-import { Instagram, Twitter, Linkedin, Youtube, Facebook } from "lucide-react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState } from "react";
+import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 
 const PLATFORM_META: Record<
   string,
   { label: string; icon: any; accent: string }
 > = {
-  x: { label: "X / Twitter", icon: Twitter, accent: "text-foreground/80" },
-  linkedin: { label: "LinkedIn", icon: Linkedin, accent: "text-accent" },
-  youtube: { label: "YouTube", icon: Youtube, accent: "text-red-500" },
-  // instagram: { label: "Instagram", icon: Instagram, accent: "text-pink-500" },
+  x: { label: "X / Twitter", icon: PLATFORM_ICONS.x, accent: "text-[hsl(var(--foreground))]" },
+  linkedin: { label: "LinkedIn", icon: PLATFORM_ICONS.linkedin, accent: "text-[#0A66C2]" },
+  youtube: { label: "YouTube", icon: PLATFORM_ICONS.youtube, accent: "text-red-500" },
+  instagram: { label: "Instagram", icon: PLATFORM_ICONS.instagram, accent: "text-[#E1306C]" },
+  facebook: { label: "Facebook", icon: PLATFORM_ICONS.facebook, accent: "text-[#1877F2]" },
 };
 
-const ORDER = ["x", "linkedin", "youtube"];
+const ORDER = ["x", "linkedin", "youtube", "instagram", "facebook"];
 
 // Helper function to get initials from username
 const getInitials = (username: string) => {
@@ -58,15 +59,7 @@ function AccountItem({ acc }: { acc: ConnectedAccount }) {
 
   return (
     <div
-      className="
-        frosted-border depth-soft
-        flex items-center gap-3 
-        p-3 rounded-2xl
-        bg-white/70 backdrop-blur-xl 
-        border border-foreground/10
-        hover:bg-foreground/5 transition-all
-        w-full
-      "
+      className="flex w-full items-center gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-3 transition-colors hover:bg-[hsl(var(--surface))]"
     >
       <Avatar className="h-10 w-10">
         {imageUrl && !imageError ? (
@@ -79,14 +72,14 @@ function AccountItem({ acc }: { acc: ConnectedAccount }) {
             }}
           />
         ) : null}
-        <AvatarFallback className="text-xs bg-gradient-to-br from-blue-500 to-purple-500 text-white flex items-center justify-center">
+        <AvatarFallback className="flex items-center justify-center bg-accent/10 text-xs font-medium text-accent">
           {initials}
         </AvatarFallback>
       </Avatar>
 
       <div className="min-w-0 flex-1">
-        <p className="font-medium truncate">{acc.username}</p>
-        <p className="text-xs text-muted-foreground truncate capitalize">
+        <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">{acc.username}</p>
+        <p className="truncate text-xs capitalize text-[hsl(var(--foreground-muted))]">
           {acc.platform}
         </p>
       </div>
@@ -105,7 +98,7 @@ export default function ConnectedAccountsList({
   }, {} as Record<string, ConnectedAccount[]>);
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="grid gap-4 xl:grid-cols-2">
       {ORDER.map((platformKey) => {
         const { label, icon: Icon, accent } = PLATFORM_META[platformKey];
         const items = grouped[platformKey];
@@ -113,48 +106,27 @@ export default function ConnectedAccountsList({
         return (
           <div
             key={platformKey}
-            className="
-              frosted-border depth-soft
-              rounded-[24px]
-              bg-white/70 backdrop-blur-xl
-              p-5
-            "
+            className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 sm:p-5"
           >
-            {/* HEADER */}
-            <div className="flex items-center gap-2 mb-4">
-              <Icon className={`h-5 w-5 ${accent}`} />
-              <p className="font-semibold text-foreground">{label}</p>
+            <div className="mb-4 flex items-center gap-2">
+              <Icon size={18} className={accent} />
+              <p className="text-sm font-medium text-[hsl(var(--foreground))]">{label}</p>
             </div>
 
-            {/* EMPTY BLOCK */}
             {items.length === 0 ? (
-              <div
-                className="
-                  frosted-border depth-soft
-                  h-40 rounded-2xl bg-white/60 backdrop-blur-xl 
-                  border border-foreground/10
-                  flex items-center justify-center
-                "
-              >
-                <p className="text-sm text-muted-foreground italic">
+              <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+                <p className="text-sm text-[hsl(var(--foreground-muted))]">
                   No accounts connected
                 </p>
               </div>
             ) : (
-              <div
-                className="
-                  space-y-3 
-                  max-h-48 overflow-y-auto 
-                  pr-2 scrollbar-thin
-                "
-              >
+              <div className="space-y-2">
                 {items.slice(0, 2).map((acc) => (
                   <AccountItem key={acc.providerUserId} acc={acc} />
                 ))}
 
-                {/* Show count if more */}
                 {items.length > 2 && (
-                  <div className="text-xs text-muted-foreground/80 pt-1 text-center">
+                  <div className="pt-1 text-center text-xs text-[hsl(var(--foreground-muted))]">
                     + {items.length - 2} more account{items.length - 2 > 1 ? "s" : ""}
                   </div>
                 )}

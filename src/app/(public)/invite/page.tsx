@@ -1,11 +1,17 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth, SignIn } from "@clerk/nextjs";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
+
+import {
+  PublicPrimaryButton,
+  PublicSectionMessage,
+  PublicSubtleButton,
+} from "@/components/public/public-atlassian";
 import { acceptInvitationApi } from "@/service/invitation";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 
 type State =
   | { status: "idle" }
@@ -18,8 +24,8 @@ export default function InvitePage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)]">
+          <Loader2 className="h-8 w-8 animate-spin text-[hsl(var(--foreground-muted))]" />
         </div>
       }
     >
@@ -43,15 +49,12 @@ function InvitePageContent() {
       return;
     }
     if (!isSignedIn) {
-      // Persist token so WorkspaceGate can redirect back here after sign-up
       localStorage.setItem("pendingInviteToken", token);
       setState({ status: "needs-auth" });
       return;
     }
-    // Clear any stored pending token — we're about to accept it now
     localStorage.removeItem("pendingInviteToken");
-    // Auto-accept once signed in
-    accept();
+    void accept();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, isSignedIn, token]);
 
@@ -73,25 +76,25 @@ function InvitePageContent() {
   }
 
   function enterWorkspace(workspaceId: string) {
-    // Store as active workspace — WorkspaceGate in the protected layout will validate it
     localStorage.setItem("activeWorkspaceId", workspaceId);
     router.replace("/dashboard");
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/30 p-4">
-      <div className="w-full max-w-sm text-center">
-        <img
+    <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)] p-4">
+      <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[var(--shadow-sm)]">
+        <Image
           src="/SocialRavenLogo.svg"
           alt="SocialRaven"
-          className="h-10 w-10 mx-auto mb-6"
+          width={40}
+          height={40}
+          className="mx-auto mb-6 h-10 w-10"
         />
 
-        {/* Not signed in — show Clerk sign-in/sign-up, return URL preserves token */}
         {state.status === "needs-auth" && (
           <div>
-            <h2 className="text-xl font-semibold mb-2">Sign in to accept</h2>
-            <p className="text-sm text-muted-foreground mb-6">
+            <h2 className="mb-2 text-xl font-semibold text-[hsl(var(--foreground))]">Sign in to accept</h2>
+            <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
               Sign in or create an account to accept this workspace invitation.
             </p>
             <SignIn
@@ -103,33 +106,37 @@ function InvitePageContent() {
         )}
 
         {(state.status === "idle" || state.status === "loading") && (
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Accepting invitation…</p>
+          <div className="flex flex-col items-center gap-3 text-[hsl(var(--foreground-muted))]">
+            <Loader2 className="h-8 w-8 animate-spin" />
+            <p className="text-sm">Accepting invitation…</p>
           </div>
         )}
 
         {state.status === "success" && (
           <div className="flex flex-col items-center gap-4">
-            <CheckCircle className="h-12 w-12 text-green-500" />
-            <h2 className="text-xl font-semibold">You&apos;re in!</h2>
-            <p className="text-sm text-muted-foreground">
+            <CheckCircle className="h-12 w-12 text-[hsl(var(--success))]" />
+            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">You&apos;re in!</h2>
+            <p className="text-sm text-[hsl(var(--foreground-muted))]">
               You&apos;ve successfully joined the workspace.
             </p>
-            <Button onClick={() => enterWorkspace(state.workspaceId)} className="w-full">
+            <PublicPrimaryButton onClick={() => enterWorkspace(state.workspaceId)}>
               Go to dashboard
-            </Button>
+            </PublicPrimaryButton>
           </div>
         )}
 
         {state.status === "error" && (
-          <div className="flex flex-col items-center gap-4">
-            <XCircle className="h-12 w-12 text-destructive" />
-            <h2 className="text-xl font-semibold">Invitation error</h2>
-            <p className="text-sm text-muted-foreground">{state.message}</p>
-            <Button variant="outline" onClick={() => router.replace("/dashboard")} className="w-full">
+          <div className="space-y-4">
+            <div className="flex justify-center">
+              <XCircle className="h-12 w-12 text-[hsl(var(--destructive))]" />
+            </div>
+            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Invitation error</h2>
+            <PublicSectionMessage appearance="error" title={state.message}>
+              <p>This invitation could not be accepted.</p>
+            </PublicSectionMessage>
+            <PublicSubtleButton onClick={() => router.replace("/dashboard")}>
               Go to dashboard
-            </Button>
+            </PublicSubtleButton>
           </div>
         )}
       </div>

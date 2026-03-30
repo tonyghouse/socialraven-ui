@@ -1,7 +1,11 @@
 "use client";
 
-import { ArrowLeftRight, Check, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import {
+  ArrowLeftRight as ArrowsLeftRight,
+  Check,
+  ChevronDown as CaretDown,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { WorkspaceResponse } from "@/model/Workspace";
@@ -22,6 +26,27 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
   const { isInfluencer } = usePlan();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const displayName = activeWorkspace?.name ?? "Main workspace";
+
+  const triggerClassName = cn(
+    "group flex h-8 w-full items-center gap-2 rounded-lg border border-transparent px-2 text-left transition-[background-color,border-color,color,box-shadow] duration-150",
+    "text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface))] hover:text-[hsl(var(--foreground))]",
+    open && "border-[hsl(var(--accent))]/20 bg-[hsl(var(--surface))] text-[hsl(var(--foreground))] shadow-xs"
+  );
+
+  const iconClassName =
+    "flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]";
+
+  const renderStaticContent = (name: string) => (
+    <>
+      <div className={iconClassName}>
+        <ArrowsLeftRight size={14} />
+      </div>
+      <span className="min-w-0 flex-1 truncate text-[13px] font-medium tracking-[-0.005em] text-[hsl(var(--foreground))]">
+        {name}
+      </span>
+    </>
+  );
 
   function openDropdown() {
     if (!open) refresh(); // fetch fresh list whenever dropdown is opened
@@ -46,8 +71,8 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10">
-                <ArrowLeftRight className="h-4 w-4 text-accent" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                <ArrowsLeftRight size={16} />
               </div>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={8}>
@@ -58,18 +83,8 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
       );
     }
     return (
-      <div className="flex items-center gap-2 w-full rounded-xl px-2 py-2">
-        <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
-          <ArrowLeftRight className="h-3.5 w-3.5 text-accent" />
-        </div>
-        <div className="flex flex-col min-w-0">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 leading-none mb-0.5">
-            Workspace
-          </span>
-          <span className="text-[13px] font-medium text-foreground/70 truncate leading-none">
-            main
-          </span>
-        </div>
+      <div className={triggerClassName}>
+        {renderStaticContent("main")}
       </div>
     );
   }
@@ -81,8 +96,8 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
         <TooltipProvider delayDuration={300}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10">
-                <ArrowLeftRight className="h-4 w-4 text-accent" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                <ArrowsLeftRight size={16} />
               </div>
             </TooltipTrigger>
             <TooltipContent side="right" sideOffset={8}>
@@ -93,18 +108,8 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
       );
     }
     return (
-      <div className="flex items-center gap-2 w-full rounded-xl px-2 py-2">
-        <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
-          <ArrowLeftRight className="h-3.5 w-3.5 text-accent" />
-        </div>
-        <div className="flex flex-col min-w-0">
-          <span className="text-[10px] font-semibold uppercase tracking-[0.09em] text-foreground/30 leading-none mb-0.5">
-            Workspace
-          </span>
-          <span className="text-[13px] font-medium text-foreground/70 truncate leading-none">
-            {activeWorkspace?.name ?? "—"}
-          </span>
-        </div>
+      <div className={triggerClassName}>
+        {renderStaticContent(activeWorkspace?.name ?? "Workspace")}
       </div>
     );
   }
@@ -120,25 +125,48 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
         <button
           onClick={openDropdown}
           title={activeWorkspace?.name ?? "Switch workspace"}
-          className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent/10 hover:bg-accent/20 transition-colors"
+          className={cn(
+            "flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))] transition-[background-color,border-color,box-shadow] duration-150",
+            "hover:border-[hsl(var(--accent))]/20 hover:bg-[hsl(var(--surface-raised))]",
+            open && "border-[hsl(var(--accent))]/20 bg-[hsl(var(--surface-raised))] shadow-xs"
+          )}
         >
-          <ArrowLeftRight className="h-4 w-4 text-accent" />
+          <ArrowsLeftRight size={16} />
         </button>
 
         {open && (
           <div
-            className="absolute left-full top-0 ml-3 w-52 rounded-xl border border-border/60 bg-white shadow-lg py-1 z-50"
+            className="absolute left-full top-0 z-50 ml-3 w-60 overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-1.5 shadow-lg"
           >
+            <div className="px-2.5 pb-1.5 pt-1">
+              <p className="text-[11px] font-semibold tracking-[0.01em] text-[hsl(var(--foreground-subtle))]">
+                Switch workspace
+              </p>
+            </div>
             {workspaces.map((w) => (
               <button
                 key={w.id}
                 onClick={() => handleSelect(w)}
-                className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors"
+                className={cn(
+                  "flex h-8 w-full items-center gap-2 rounded-lg border border-transparent px-2.5 text-[13px] transition-[background-color,border-color,color] duration-150",
+                  activeWorkspace?.id === w.id
+                    ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))]"
+                    : "text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+                )}
               >
-                <ArrowLeftRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                <div
+                  className={cn(
+                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border",
+                    activeWorkspace?.id === w.id
+                      ? "border-[hsl(var(--accent))]/15 bg-white/70 text-[hsl(var(--accent))] dark:bg-[hsl(var(--surface))]"
+                      : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-subtle))]"
+                  )}
+                >
+                  <ArrowsLeftRight size={12} className="shrink-0" />
+                </div>
                 <span className="flex-1 truncate text-left">{w.name}</span>
                 {activeWorkspace?.id === w.id && (
-                  <Check className="h-3.5 w-3.5 text-accent shrink-0" />
+                  <Check size={14} className="shrink-0 text-accent" />
                 )}
               </button>
             ))}
@@ -152,38 +180,49 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
     <div ref={ref} className="relative">
       <button
         onClick={openDropdown}
-        className={cn(
-          "flex items-center gap-2 w-full rounded-xl px-2 py-2",
-          "text-sm font-medium text-foreground/70 hover:bg-black/[0.04]",
-          "transition-colors"
-        )}
+        className={triggerClassName}
       >
-        <div className="h-6 w-6 rounded-md bg-accent/10 flex items-center justify-center shrink-0">
-          <ArrowLeftRight className="h-3.5 w-3.5 text-accent" />
-        </div>
-        <span className="flex-1 truncate text-left text-[13px]">
-          {activeWorkspace?.name ?? "Select workspace"}
-        </span>
-        <ChevronDown
+        {renderStaticContent(displayName)}
+        <CaretDown
+          size={14}
           className={cn(
-            "h-3.5 w-3.5 shrink-0 transition-transform duration-150 text-foreground/30",
+            "shrink-0 text-[hsl(var(--foreground-subtle))] transition-transform duration-150",
             open && "rotate-180"
           )}
         />
       </button>
 
       {open && (
-        <div className="absolute left-0 right-0 top-full mt-1 rounded-xl border border-border/60 bg-white shadow-lg py-1 z-50">
+        <div className="absolute left-0 right-0 top-full z-50 mt-2 overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-1.5 shadow-lg">
+          <div className="px-2.5 pb-1.5 pt-1">
+            <p className="text-[11px] font-semibold tracking-[0.01em] text-[hsl(var(--foreground-subtle))]">
+              Switch workspace
+            </p>
+          </div>
           {workspaces.map((w) => (
             <button
               key={w.id}
               onClick={() => handleSelect(w)}
-              className="flex items-center gap-2 w-full px-3 py-2 text-sm hover:bg-muted/50 transition-colors"
+              className={cn(
+                "flex h-8 w-full items-center gap-2 rounded-lg border border-transparent px-2.5 text-[13px] transition-[background-color,border-color,color] duration-150",
+                activeWorkspace?.id === w.id
+                  ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))]"
+                  : "text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+              )}
             >
-              <ArrowLeftRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <div
+                className={cn(
+                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border",
+                  activeWorkspace?.id === w.id
+                    ? "border-[hsl(var(--accent))]/15 bg-white/70 text-[hsl(var(--accent))] dark:bg-[hsl(var(--surface))]"
+                    : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-subtle))]"
+                )}
+              >
+                <ArrowsLeftRight size={12} className="shrink-0" />
+              </div>
               <span className="flex-1 truncate text-left">{w.name}</span>
               {activeWorkspace?.id === w.id && (
-                <Check className="h-3.5 w-3.5 text-accent shrink-0" />
+                <Check size={14} className="shrink-0 text-accent" />
               )}
             </button>
           ))}

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Navbar from "@/components/navbar/navbar";
 import {
   Target,
   Shield,
@@ -8,11 +7,23 @@ import {
   Users,
   Zap,
   CheckCircle2,
-  ArrowRight,
   BarChart,
   Lock,
   Calendar,
 } from "lucide-react";
+
+import {
+  PublicPrimaryLinkButton,
+  PublicSubtleLinkButton,
+  PublicTag,
+} from "@/components/public/public-atlassian";
+import {
+  PublicCard,
+  PublicHero,
+  PublicInsetCard,
+  PublicPageShell,
+  PublicSection,
+} from "@/components/public/public-layout";
 
 export const metadata: Metadata = {
   title: "About | Social Raven",
@@ -89,177 +100,128 @@ const PERSONAS = [
 
 export default function AboutPage() {
   return (
-    <>
-      <Navbar />
-      <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
-          >
-            ← Back
-          </Link>
-        </div>
+    <PublicPageShell>
+      <div className="mx-auto w-full max-w-7xl px-6 pt-4 md:px-10">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+        >
+          ← Back
+        </Link>
       </div>
-      <main className="min-h-screen bg-[#f9fafb]">
+      <PublicHero
+        eyebrow="Our story"
+        title="Built for teams who take social media seriously."
+        description="Social Raven is a professional social media management platform — built by a small, focused team who believed the category was overcomplicated and overpriced. We set out to fix that."
+        aside={
+          <PublicCard className="grid gap-5 p-6 sm:grid-cols-2">
+            {STATS.map(({ value, label }) => (
+              <div key={label}>
+                <p className="text-3xl font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                  {value}
+                </p>
+                <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">{label}</p>
+              </div>
+            ))}
+          </PublicCard>
+        }
+      />
 
-        {/* Hero */}
-        <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-20">
-          <div className="">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-4">Our story</p>
-            <h1 className="text-4xl md:text-5xl lg:text-[60px] font-semibold tracking-tight text-[hsl(var(--foreground))] mb-6 max-w-3xl leading-[1.08]">
-              Built for teams who take social media seriously.
-            </h1>
-            <p className="text-lg text-[hsl(var(--muted-foreground))] leading-relaxed max-w-2xl mb-10">
-              Social Raven is a professional social media management platform — built by a small, focused team who believed the category was overcomplicated and overpriced. We set out to fix that.
+      <PublicSection>
+        <div className="grid items-center gap-14 lg:grid-cols-2">
+          <div className="space-y-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+              Our mission
             </p>
-            <div className="flex flex-wrap gap-10">
-              {STATS.map(({ value, label }) => (
-                <div key={label}>
-                  <p className="text-3xl font-semibold text-[hsl(var(--foreground))] tracking-tight leading-none mb-1">
-                    {value}
-                  </p>
-                  <p className="text-sm text-[hsl(var(--muted-foreground))]">{label}</p>
-                </div>
-              ))}
+            <h2 className="text-3xl font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))] md:text-4xl">
+              Give every team the tools that used to cost a fortune.
+            </h2>
+            <p className="leading-7 text-[hsl(var(--foreground-muted))]">
+              Enterprise social media tools charge thousands per month and take weeks to set up. Meanwhile, creators and small businesses are duct-taping together spreadsheets, free trials, and manual posting.
+            </p>
+            <p className="leading-7 text-[hsl(var(--foreground-muted))]">
+              Social Raven exists to close that gap. We believe powerful, professional-grade scheduling and analytics should be accessible to every creator, agency, and business — not just the ones with six-figure software budgets.
+            </p>
+            <div>
+              <PublicPrimaryLinkButton href="/sign-up">Start for free</PublicPrimaryLinkButton>
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { icon: Calendar, label: "Smart scheduling", value: "Post at peak times, automatically" },
+              { icon: BarChart, label: "Unified analytics", value: "All platforms in one view" },
+              { icon: Users, label: "Multi-account", value: "Unlimited social profiles" },
+              { icon: Lock, label: "Secure & compliant", value: "GDPR · CCPA · TLS 1.2+" },
+            ].map(({ icon: Icon, label, value }) => (
+              <PublicInsetCard key={label} className="space-y-3 p-5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                  <Icon className="h-4 w-4" />
+                </div>
+                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</p>
+                <p className="text-xs leading-6 text-[hsl(var(--foreground-muted))]">{value}</p>
+              </PublicInsetCard>
+            ))}
+          </div>
         </div>
+      </PublicSection>
 
-        {/* Mission */}
-        <div className="px-6 md:px-10 py-16 bg-[#f9fafb]">
-          <div className="">
-            <div className="grid lg:grid-cols-2 gap-14 items-center">
-              <div className="space-y-5">
-                <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))]">Our mission</p>
-                <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-[hsl(var(--foreground))] leading-snug">
-                  Give every team the tools that used to cost a fortune.
-                </h2>
-                <p className="text-[hsl(var(--muted-foreground))] leading-relaxed">
-                  Enterprise social media tools charge thousands per month and take weeks to set up. Meanwhile, creators and small businesses are duct-taping together spreadsheets, free trials, and manual posting.
-                </p>
-                <p className="text-[hsl(var(--muted-foreground))] leading-relaxed">
-                  Social Raven exists to close that gap. We believe powerful, professional-grade scheduling and analytics should be accessible to every creator, agency, and business — not just the ones with six-figure software budgets.
-                </p>
-                <Link
-                  href="/sign-up"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-[hsl(var(--accent))] hover:underline"
-                >
-                  Start for free <ArrowRight className="w-4 h-4" />
-                </Link>
+      <PublicSection eyebrow="What we stand for" title="The principles we build by" surface="surface">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {VALUES.map(({ icon: Icon, title, description }) => (
+            <PublicInsetCard key={title} className="space-y-4 p-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                <Icon className="h-5 w-5" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { icon: Calendar, label: "Smart scheduling", value: "Post at peak times, automatically" },
-                  { icon: BarChart, label: "Unified analytics", value: "All platforms in one view" },
-                  { icon: Users, label: "Multi-account", value: "Unlimited social profiles" },
-                  { icon: Lock, label: "Secure & compliant", value: "GDPR · CCPA · TLS 1.2+" },
-                ].map(({ icon: Icon, label, value }) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl bg-white border border-[hsl(var(--border))] p-5 space-y-3"
+              <h3 className="font-semibold text-[hsl(var(--foreground))]">{title}</h3>
+              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{description}</p>
+            </PublicInsetCard>
+          ))}
+        </div>
+      </PublicSection>
+
+      <PublicSection eyebrow="Who we build for" title="One platform. Every team.">
+        <div className="grid gap-5 md:grid-cols-3">
+          {PERSONAS.map(({ title, description, bullets }) => (
+            <PublicCard key={title} className="space-y-4 p-7">
+              <div className="space-y-3">
+                <PublicTag text={title} />
+                <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{description}</p>
+              </div>
+              <ul className="space-y-2.5 pt-1">
+                {bullets.map((bullet) => (
+                  <li
+                    key={bullet}
+                    className="flex items-center gap-2.5 text-sm text-[hsl(var(--foreground-muted))]"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center">
-                      <Icon className="w-4 h-4 text-[hsl(var(--accent))]" />
-                    </div>
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</p>
-                    <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">{value}</p>
-                  </div>
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--accent))]" />
+                    {bullet}
+                  </li>
                 ))}
-              </div>
-            </div>
-          </div>
+              </ul>
+            </PublicCard>
+          ))}
         </div>
+      </PublicSection>
 
-        {/* Values */}
-        <div className="px-6 md:px-10 py-16 bg-white border-y border-[hsl(var(--border))]">
-          <div className="">
-            <div className="text-center mb-12">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">
-                What we stand for
-              </p>
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
-                The principles we build by
-              </h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {VALUES.map(({ icon: Icon, title, description }) => (
-                <div
-                  key={title}
-                  className="group rounded-2xl bg-[#f9fafb] border border-[hsl(var(--border))] p-6 hover:bg-white hover:border-[hsl(var(--accent))]/30 hover:shadow-md transition-all space-y-4"
-                >
-                  <div className="w-11 h-11 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center group-hover:bg-[hsl(var(--accent))]/15 transition-colors">
-                    <Icon className="w-5 h-5 text-[hsl(var(--accent))]" />
-                  </div>
-                  <h3 className="font-semibold text-[hsl(var(--foreground))]">{title}</h3>
-                  <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Who we build for */}
-        <div className="px-6 md:px-10 py-16 bg-[#f9fafb]">
-          <div className="">
-            <div className="text-center mb-12">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-3">
-                Who we build for
-              </p>
-              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
-                One platform. Every team.
-              </h2>
-            </div>
-            <div className="grid md:grid-cols-3 gap-5">
-              {PERSONAS.map(({ title, description, bullets }) => (
-                <div
-                  key={title}
-                  className="rounded-2xl bg-white border border-[hsl(var(--border))] p-7 space-y-4"
-                >
-                  <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">{title}</h3>
-                  <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{description}</p>
-                  <ul className="space-y-2.5 pt-1">
-                    {bullets.map((b) => (
-                      <li key={b} className="flex items-center gap-2.5 text-sm text-[hsl(var(--foreground))]/80">
-                        <CheckCircle2 className="w-4 h-4 text-[hsl(var(--accent))] flex-shrink-0" />
-                        {b}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="px-6 md:px-10 py-20 bg-[hsl(var(--foreground))]">
-          <div className="mx-auto max-w-3xl text-center space-y-5">
-            <p className="text-xs font-semibold uppercase tracking-widest text-white/50">Get started</p>
-            <h2 className="text-3xl md:text-4xl font-semibold text-white tracking-tight">
+      <PublicSection>
+        <PublicCard className="px-8 py-10 text-center md:px-14 md:py-16">
+          <div className="mx-auto max-w-3xl space-y-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+              Get started
+            </p>
+            <h2 className="text-3xl font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))] md:text-4xl">
               Ready to take back your time?
             </h2>
-            <p className="text-base text-white/60 max-w-md mx-auto">
+            <p className="mx-auto max-w-md text-base leading-7 text-[hsl(var(--foreground-muted))]">
               Join thousands of creators and agencies managing their social media with Social Raven. Start free — no credit card required.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-              <Link
-                href="/sign-up"
-                className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-full bg-white text-[hsl(var(--foreground))] hover:bg-gray-100 font-medium text-sm transition-colors"
-              >
-                Start free trial
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 h-12 px-8 rounded-full border border-white/20 bg-transparent text-white hover:bg-white/10 font-medium text-sm transition-colors"
-              >
-                Talk to us
-              </Link>
+            <div className="flex flex-wrap justify-center gap-3 pt-2">
+              <PublicPrimaryLinkButton href="/sign-up">Start free trial</PublicPrimaryLinkButton>
+              <PublicSubtleLinkButton href="/contact">Talk to us</PublicSubtleLinkButton>
             </div>
           </div>
-        </div>
-
-      </main>
-    </>
+        </PublicCard>
+      </PublicSection>
+    </PublicPageShell>
   );
 }

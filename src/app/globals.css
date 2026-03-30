@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-/* ============================
-   Apple Frosted Border Gradient
-   ============================ */
-
 .frosted-border {
   position: relative;
   overflow: hidden;
@@ -19,9 +14,9 @@
   border-radius: inherit;
   padding: 1px;
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.65),
-    rgba(255, 255, 255, 0.25)
+    180deg,
+    hsl(var(--border-subtle) / 0.96),
+    hsl(var(--border) / 0.82)
   );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
@@ -31,168 +26,189 @@
   pointer-events: none;
 }
 
-
 .depth-soft {
   box-shadow:
-    0px 1px 3px rgba(0,0,0,0.06),
-    0px 6px 16px rgba(0,0,0,0.05);
+    0 1px 1px hsl(218 54% 20% / 0.04),
+    0 4px 10px hsl(218 54% 20% / 0.08);
 }
 
-/* Page background with subtle dot grid */
 .page-bg {
-  background-color: var(--background);
+  background-color: hsl(var(--background));
   background-image: radial-gradient(
     circle,
-    hsl(220 12% 18% / 0.045) 1px,
+    hsl(var(--border) / 0.9) 1px,
     transparent 1px
   );
-  background-size: 24px 24px;
+  background-size: 22px 22px;
 }
 
-/* Card hover lift */
-.card-hover {
-  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+.dark .page-bg {
+  background-image:
+    linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-sunken))),
+    radial-gradient(circle, hsl(var(--border) / 0.45) 1px, transparent 1px);
+  background-size: auto, 24px 24px;
 }
+
+.card-hover {
+  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+}
+
 .card-hover:hover {
-  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.10);
+  border-color: hsl(var(--border));
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
-
-
-
 :root {
-  /* Core Surface + Typography */
-  --background: 220 27% 98%;
-  --foreground: 220 12% 18%;
-  --card: 0 0% 100%;
-  --card-foreground: 220 12% 18%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 12% 18%;
+  --background: 220 16% 96%;
+  --surface: 0 0% 100%;
+  --surface-raised: 220 14% 93%;
+  --surface-sunken: 228 14% 93%;
+  --foreground: 218 54% 20%;
+  --foreground-muted: 218 25% 35%;
+  --foreground-subtle: 218 13% 48%;
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
 
-  /* Primary — brand blue (buttons, badges, active states) */
-  --primary: 214 65% 52%;
+  --primary: 216 100% 40%;
   --primary-foreground: 0 0% 100%;
-
-  /* Accent — same blue, kept for backward-compat */
-  --accent: 214 65% 52%;
+  --accent: 216 100% 40%;
+  --accent-hover: 215 90% 47%;
+  --accent-active: 216 100% 34%;
   --accent-foreground: 0 0% 100%;
 
-  /* Secondary + Muted neutrals */
-  --secondary: 220 6% 92%;
-  --secondary-foreground: 220 12% 18%;
-  --muted: 220 5.5% 95%;
-  --muted-foreground: 220 10% 40%;
+  --secondary: var(--surface-raised);
+  --secondary-foreground: var(--foreground);
+  --muted: 220 14% 93%;
+  --muted-foreground: var(--foreground-muted);
 
-  /* Destructive */
-  --destructive: 0 75% 55%;
+  --destructive: 12 91% 46%;
   --destructive-foreground: 0 0% 100%;
+  --success: 155 54% 46%;
+  --warning: 40 100% 50%;
+  --info: 216 100% 40%;
 
-  /* Borders + Inputs */
-  --border: 220 7% 88%;
-  --input: 220 7% 90%;
+  --border: 223 12% 89%;
+  --border-subtle: 228 14% 93%;
+  --input: 223 12% 89%;
   --ring: var(--accent);
 
-  /* Charts */
-  --chart-1: var(--accent);
-  --chart-2: 150 55% 42%;
-  --chart-3: 30 78% 50%;
-  --chart-4: 280 55% 58%;
-  --chart-5: 350 58% 48%;
+  --chart-1: 216 100% 40%;
+  --chart-2: 155 54% 46%;
+  --chart-3: 40 100% 50%;
+  --chart-4: 215 100% 76%;
+  --chart-5: 218 25% 35%;
 
-  /* Sidebar */
-  --sidebar: 220 7% 97%;
-  --sidebar-foreground: 220 12% 18%;
+  --sidebar-background: var(--surface);
+  --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--accent);
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: var(--secondary);
-  --sidebar-accent-foreground: 220 12% 18%;
-  --sidebar-border: 220 7% 88%;
+  --sidebar-accent: 216 100% 97%;
+  --sidebar-accent-foreground: 216 100% 40%;
+  --sidebar-border: var(--border);
   --sidebar-ring: var(--accent);
 
-  /* Fonts */
-  --font-sans: "SF Pro Display", sans-serif;
-  --font-serif: "SF Pro Text", serif;
-  --font-mono: "SF Mono", monospace;
+  --font-serif: "Inter", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
-  /* Radius + Shadows */
-  --radius: 0.6rem;
-  --shadow-xs: 0 2px 6px hsl(220 10% 20% / 0.03);
-  --shadow-sm: 0 3px 10px hsl(220 10% 20% / 0.05);
-  --shadow-md: 0 6px 18px hsl(220 10% 20% / 0.07);
-  --shadow-lg: 0 12px 28px hsl(220 10% 20% / 0.08);
-  --shadow-xl: 0 18px 42px hsl(220 10% 20% / 0.10);
-  --shadow-2xl: 0 30px 70px hsl(220 10% 20% / 0.14);
+  --radius: 0.75rem;
+  --shadow-xs: 0 1px 2px hsl(218 54% 20% / 0.04);
+  --shadow-sm: 0 1px 3px hsl(218 54% 20% / 0.06), 0 2px 6px hsl(218 54% 20% / 0.04);
+  --shadow-md: 0 4px 12px hsl(218 54% 20% / 0.08), 0 1px 2px hsl(218 54% 20% / 0.05);
+  --shadow-lg: 0 10px 24px hsl(218 54% 20% / 0.10), 0 2px 6px hsl(218 54% 20% / 0.06);
+  --shadow-xl: 0 18px 38px hsl(218 54% 20% / 0.14);
+  --shadow-2xl: 0 24px 54px hsl(218 54% 20% / 0.18);
 
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
 
-
-
 .dark {
-  /* Core Surface + Typography */
-  --background: 0 0% 100%;
-  --foreground: 220 12% 18%;
-  --card: 0 0% 100%;
-  --card-foreground: 220 12% 18%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 220 12% 18%;
+  --background: 218 47% 12%;
+  --surface: 218 45% 15%;
+  --surface-raised: 218 38% 18%;
+  --surface-sunken: 218 52% 10%;
+  --foreground: 0 0% 100%;
+  --foreground-muted: 215 18% 72%;
+  --foreground-subtle: 216 14% 79%;
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
 
-  /* Primary — brand blue */
-  --primary: 214 65% 52%;
+  --primary: 215 90% 47%;
   --primary-foreground: 0 0% 100%;
-
-  /* Accent — same blue, kept for backward-compat */
-  --accent: 214 65% 52%;
+  --accent: 215 90% 47%;
+  --accent-hover: 215 100% 76%;
+  --accent-active: 216 100% 40%;
   --accent-foreground: 0 0% 100%;
 
-  /* Secondary + Muted neutrals */
-  --secondary: 220 6% 92%;
-  --secondary-foreground: 220 12% 18%;
-  --muted: 220 5.5% 95%;
-  --muted-foreground: 220 10% 40%;
+  --secondary: var(--surface-raised);
+  --secondary-foreground: var(--foreground);
+  --muted: 218 38% 18%;
+  --muted-foreground: var(--foreground-muted);
 
-  /* Destructive */
-  --destructive: 0 75% 55%;
+  --destructive: 12 91% 56%;
   --destructive-foreground: 0 0% 100%;
+  --success: 155 54% 46%;
+  --warning: 40 100% 50%;
+  --info: 215 90% 47%;
 
-  /* Borders + Inputs */
-  --border: 220 7% 88%;
-  --input: 220 7% 90%;
+  --border: 218 25% 35%;
+  --border-subtle: 218 32% 24%;
+  --input: 218 25% 35%;
   --ring: var(--accent);
 
-  /* Charts */
-  --chart-1: var(--accent);
-  --chart-2: 150 55% 42%;
-  --chart-3: 30 78% 50%;
-  --chart-4: 280 55% 58%;
-  --chart-5: 350 58% 48%;
+  --chart-1: 215 90% 47%;
+  --chart-2: 155 54% 46%;
+  --chart-3: 40 100% 50%;
+  --chart-4: 215 100% 76%;
+  --chart-5: 216 14% 79%;
 
-  /* Sidebar */
-  --sidebar: 220 7% 97%;
-  --sidebar-foreground: 220 12% 18%;
+  --sidebar-background: var(--surface);
+  --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--accent);
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: var(--secondary);
-  --sidebar-accent-foreground: 220 12% 18%;
-  --sidebar-border: 220 7% 88%;
+  --sidebar-accent: 216 100% 20%;
+  --sidebar-accent-foreground: 215 100% 76%;
+  --sidebar-border: var(--border);
   --sidebar-ring: var(--accent);
+}
 
-  /* Fonts */
-  --font-sans: "SF Pro Display", sans-serif;
-  --font-serif: "SF Pro Text", serif;
-  --font-mono: "SF Mono", monospace;
+@layer base {
+  * {
+    @apply border-border;
+  }
 
-  /* Radius + Shadows */
-  --radius: 0.6rem;
-  --shadow-xs: 0 2px 6px hsl(220 10% 20% / 0.03);
-  --shadow-sm: 0 3px 10px hsl(220 10% 20% / 0.05);
-  --shadow-md: 0 6px 18px hsl(220 10% 20% / 0.07);
-  --shadow-lg: 0 12px 28px hsl(220 10% 20% / 0.08);
-  --shadow-xl: 0 18px 42px hsl(220 10% 20% / 0.10);
-  --shadow-2xl: 0 30px 70px hsl(220 10% 20% / 0.14);
+  html {
+    color-scheme: light;
+  }
 
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.22);
+    color: hsl(var(--foreground));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring) / 0.9);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .bg-app-canvas {
+    background:
+      linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-sunken)));
+  }
 }

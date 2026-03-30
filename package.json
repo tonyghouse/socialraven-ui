@@ -10,8 +10,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@atlaskit/avatar": "^25.11.0",
+    "@atlaskit/button": "^23.10.5",
+    "@atlaskit/icon": "^33.1.0",
+    "@atlaskit/lozenge": "^13.5.2",
+    "@atlaskit/progress-bar": "^4.1.6",
+    "@atlaskit/section-message": "^8.12.8",
+    "@atlaskit/tag": "^14.6.0",
     "@clerk/nextjs": "^6.39.1",
-    "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-checkbox": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.15",

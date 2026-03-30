@@ -2,10 +2,46 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
+import {
+  AlertTriangle,
+  ArchiveRestore,
+  BadgeCheck,
+  BriefcaseBusiness,
+  Check,
+  ChevronDown,
+  Eye,
+  FolderKanban,
+  History,
+  Info,
+  LayoutPanelTop,
+  Mail,
+  PencilLine,
+  Plus,
+  RefreshCw,
+  Shield,
+  ShieldCheck,
+  Trash2 as Trash,
+  UserPlus,
+  Users,
+  X,
+} from "lucide-react";
 import { useWorkspace } from "@/context/WorkspaceContext";
-import { WorkspaceInvitation, WorkspaceMember, WorkspaceResponse, WorkspaceRole } from "@/model/Workspace";
-import { getMembersApi, removeMemberApi, updateMemberRoleApi } from "@/service/member";
-import { getInvitationsApi, revokeInvitationApi, sendInviteApi } from "@/service/invitation";
+import {
+  WorkspaceInvitation,
+  WorkspaceMember,
+  WorkspaceResponse,
+  WorkspaceRole,
+} from "@/model/Workspace";
+import {
+  getMembersApi,
+  removeMemberApi,
+  updateMemberRoleApi,
+} from "@/service/member";
+import {
+  getInvitationsApi,
+  revokeInvitationApi,
+  sendInviteApi,
+} from "@/service/invitation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,10 +51,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Trash2, UserPlus, Mail, Users, Clock, Info, ChevronDown, Check, Building2, Plus, X, ShieldCheck, Eye, Shield, RefreshCw, ArchiveRestore, AlertTriangle, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePlan } from "@/hooks/usePlan";
-import { createWorkspaceApi, deleteWorkspaceApi, getDeletedWorkspacesApi, restoreWorkspaceApi, updateWorkspaceApi } from "@/service/workspace";
+import {
+  createWorkspaceApi,
+  deleteWorkspaceApi,
+  getDeletedWorkspacesApi,
+  restoreWorkspaceApi,
+  updateWorkspaceApi,
+} from "@/service/workspace";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -38,109 +79,84 @@ const ROLE_ORDER: Record<WorkspaceRole, number> = {
   VIEWER: 3,
 };
 
-function roleBadgeClass(role: WorkspaceRole) {
-  switch (role) {
-    case "OWNER":
-      return "bg-amber-100 text-amber-800 border border-amber-200";
-    case "ADMIN":
-      return "bg-blue-100 text-blue-800 border border-blue-200";
-    case "MEMBER":
-      return "bg-emerald-100 text-emerald-800 border border-emerald-200";
-    case "VIEWER":
-      return "bg-slate-100 text-slate-600 border border-slate-200";
-  }
-}
-
-function avatarBgClass(role: WorkspaceRole) {
-  switch (role) {
-    case "OWNER":
-      return "bg-amber-100 text-amber-700";
-    case "ADMIN":
-      return "bg-blue-100 text-blue-700";
-    case "MEMBER":
-      return "bg-emerald-100 text-emerald-700";
-    case "VIEWER":
-      return "bg-slate-100 text-slate-500";
-  }
-}
+const surfaceClass =
+  "rounded-xl border border-slate-200/80 bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08),0_0_0_1px_rgba(9,30,66,0.02)] dark:border-white/10 dark:bg-[hsl(var(--surface))] dark:shadow-none";
+const raisedSurfaceClass =
+  "rounded-xl border border-slate-200/80 bg-[hsl(var(--surface-raised))] shadow-[0_1px_1px_rgba(9,30,66,0.04)] dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:shadow-none";
+const subtleTextClass = "text-slate-600 dark:text-[#9fadbc]";
+const dividerClass = "border-slate-200/80 dark:border-white/10";
+const atlBlueTextClass = "text-[#0c66e4] dark:text-[#85b8ff]";
+const sectionIconBadgeClass =
+  "border border-slate-200/80 bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))] dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:text-[#85b8ff]";
+const neutralIconBadgeClass =
+  "border border-slate-200/80 bg-[hsl(var(--surface-raised))] text-slate-700 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:text-[#c7d1db]";
+const dangerIconBadgeClass =
+  "border border-[#f5c2c7] bg-[#fff1f2] text-[#ae2e24] dark:border-[#5d1f1a] dark:bg-[#2b1917] dark:text-[#fd9891]";
+const pillClass =
+  "inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db]";
 
 function roleLabel(role: WorkspaceRole) {
   return role.charAt(0) + role.slice(1).toLowerCase();
 }
 
-function RoleGroupHeading({ role, count }: { role: WorkspaceRole; count: number }) {
-  const colors: Record<WorkspaceRole, string> = {
-    OWNER: "text-amber-700",
-    ADMIN: "text-blue-700",
-    MEMBER: "text-emerald-700",
-    VIEWER: "text-slate-500",
-  };
-  return (
-    <div className="mb-3 flex items-center gap-2 px-1">
-      <span className={cn("text-sm font-medium tracking-tight", colors[role])}>
-        {role === "VIEWER" ? "Viewers" : `${roleLabel(role)}s`}
-      </span>
-      <span className="text-xs text-muted-foreground">·</span>
-      <span className="text-xs text-muted-foreground">{count}</span>
-    </div>
-  );
+function roleBadgeClass(role: WorkspaceRole) {
+  switch (role) {
+    case "OWNER":
+      return "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]";
+    case "ADMIN":
+      return "border-[#b3d4ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]";
+    case "MEMBER":
+      return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
+    case "VIEWER":
+      return "border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]";
+  }
 }
 
-const ROLE_CONTEXT: Record<WorkspaceRole, { icon: React.ElementType; bg: string; border: string; iconColor: string; textColor: string; label: string; description: string }> = {
+function avatarToneClass(role: WorkspaceRole) {
+  switch (role) {
+    case "OWNER":
+      return "bg-[hsl(var(--accent))]/12 text-[hsl(var(--accent))]";
+    case "ADMIN":
+      return "bg-[#deebff] text-[#0c66e4] dark:bg-[#1b2638] dark:text-[#85b8ff]";
+    case "MEMBER":
+      return "bg-[#dcfff1] text-[#216e4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
+    case "VIEWER":
+      return "bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-[#9fadbc]";
+  }
+}
+
+const ROLE_CONTEXT: Record<
+  WorkspaceRole,
+  {
+    icon: React.ElementType;
+    title: string;
+    description: string;
+  }
+> = {
   OWNER: {
     icon: ShieldCheck,
-    bg: "bg-amber-50",
-    border: "border-amber-200",
-    iconColor: "text-amber-500",
-    textColor: "text-amber-900",
-    label: "You are the Owner",
-    description: "You have full control over this workspace — invite members, manage roles, rename the workspace, and create new workspaces.",
+    title: "Owner",
+    description: "Owns workspace administration, access, and lifecycle controls.",
   },
   ADMIN: {
-    icon: Shield,
-    bg: "bg-blue-50",
-    border: "border-blue-200",
-    iconColor: "text-blue-500",
-    textColor: "text-blue-900",
-    label: "You are an Admin",
-    description: "You can rename this workspace, invite members, and remove non-owner members. Role assignment is restricted to the Owner.",
+    icon: BadgeCheck,
+    title: "Admin",
+    description: "Manages teammates, invitations, and workspace updates.",
   },
   MEMBER: {
-    icon: Eye,
-    bg: "bg-muted/60",
-    border: "border-border",
-    iconColor: "text-muted-foreground",
-    textColor: "text-foreground",
-    label: "You are a Member",
-    description: "You can view the team list but cannot invite, remove, or change roles. Contact an Admin or Owner to make changes.",
+    icon: Users,
+    title: "Member",
+    description: "Collaborates in the workspace without admin privileges.",
   },
   VIEWER: {
     icon: Eye,
-    bg: "bg-muted/60",
-    border: "border-border",
-    iconColor: "text-muted-foreground",
-    textColor: "text-foreground",
-    label: "You are a Viewer",
-    description: "You have read-only access to this workspace. Contact an Admin or Owner to request elevated permissions.",
+    title: "Viewer",
+    description: "Has read-only visibility into workspace activity.",
   },
 };
 
-function RoleContextBanner({ role }: { role: WorkspaceRole }) {
-  const ctx = ROLE_CONTEXT[role];
-  const Icon = ctx.icon;
-  return (
-    <div className={cn("flex items-start gap-3 rounded-[22px] border px-4 py-3.5", ctx.bg, ctx.border)}>
-      <Icon className={cn("h-4 w-4 mt-0.5 shrink-0", ctx.iconColor)} />
-      <div className="text-sm">
-        <p className={cn("font-medium", ctx.textColor)}>{ctx.label}</p>
-        <p className={cn("text-[13px] leading-relaxed", ctx.textColor, "opacity-80")}>{ctx.description}</p>
-      </div>
-    </div>
-  );
-}
-
 function formatDisplayDate(date: string | undefined) {
-  if (!date) return "recently";
+  if (!date) return "Recently";
   return new Date(date).toLocaleString("en-US", {
     month: "short",
     day: "numeric",
@@ -200,6 +216,119 @@ function workspacesEqual(a: WorkspaceResponse[], b: WorkspaceResponse[]) {
   });
 }
 
+function SectionHeader({
+  title,
+  description,
+  action,
+  icon: Icon = LayoutPanelTop,
+  iconBadgeClass = sectionIconBadgeClass,
+}: {
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+  icon?: React.ElementType;
+  iconBadgeClass?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-start sm:justify-between",
+        dividerClass
+      )}
+    >
+      <div className="flex items-start gap-3">
+        <div
+          className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
+            iconBadgeClass
+          )}
+        >
+          <Icon size={17} />
+        </div>
+        <div className="space-y-1">
+          <h2 className="text-base font-semibold tracking-[-0.005em] text-slate-900 dark:text-[#f1f5f9]">
+            {title}
+          </h2>
+          <p className={cn("text-sm leading-5", subtleTextClass)}>{description}</p>
+        </div>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+function EmptyState({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-8 text-center dark:border-white/10 dark:bg-white/5",
+        dividerClass
+      )}
+    >
+      <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">{title}</p>
+      <p className={cn("mt-1 text-sm", subtleTextClass)}>{description}</p>
+    </div>
+  );
+}
+
+function roleHeadingClass(role: WorkspaceRole) {
+  switch (role) {
+    case "OWNER":
+      return "text-[hsl(var(--accent))]";
+    case "ADMIN":
+      return "text-[#0c66e4] dark:text-[#85b8ff]";
+    case "MEMBER":
+      return "text-[#216e4e] dark:text-[#7ee2b8]";
+    case "VIEWER":
+      return "text-slate-600 dark:text-[#9fadbc]";
+  }
+}
+
+function roleContextAccentClass(role: WorkspaceRole) {
+  switch (role) {
+    case "OWNER":
+      return "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]";
+    case "ADMIN":
+      return "border-[#b3d4ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]";
+    case "MEMBER":
+      return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
+    case "VIEWER":
+      return "border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]";
+  }
+}
+
+function RoleContextPanel({ role }: { role: WorkspaceRole }) {
+  const context = ROLE_CONTEXT[role];
+  const Icon = context.icon;
+
+  return (
+    <div className={cn(raisedSurfaceClass, "p-4")}>
+      <div className="flex items-start gap-3">
+        <div
+          className={cn(
+            "mt-0.5 flex h-8 w-8 items-center justify-center rounded-lg border",
+            roleContextAccentClass(role)
+          )}
+        >
+          <Icon size={16} />
+        </div>
+        <div className="space-y-1">
+          <p className={cn("text-sm font-medium", roleHeadingClass(role))}>
+            {context.title}
+          </p>
+          <p className={cn("text-sm leading-5", subtleTextClass)}>{context.description}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function WorkspaceSettingsPage() {
   const { getToken } = useAuth();
   const { activeWorkspace, workspaces, switchWorkspace, refresh } = useWorkspace();
@@ -214,10 +343,7 @@ export default function WorkspaceSettingsPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null);
 
-  // Workspace switcher
   const [switcherOpen, setSwitcherOpen] = useState(false);
-
-  // Create workspace
   const [showCreateWorkspace, setShowCreateWorkspace] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState("");
   const [createWorkspaceBusy, setCreateWorkspaceBusy] = useState(false);
@@ -226,14 +352,16 @@ export default function WorkspaceSettingsPage() {
   const [workspaceNameInput, setWorkspaceNameInput] = useState("");
   const [renameWorkspaceBusy, setRenameWorkspaceBusy] = useState(false);
 
-  // Confirm dialog
-  const [pendingConfirm, setPendingConfirm] = useState<{ title: string; description: string; onConfirm: () => void } | null>(null);
+  const [pendingConfirm, setPendingConfirm] = useState<{
+    title: string;
+    description: string;
+    onConfirm: () => void;
+  } | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteConfirmValue, setDeleteConfirmValue] = useState("");
   const [deleteBusy, setDeleteBusy] = useState(false);
   const [restoreBusyId, setRestoreBusyId] = useState<string | null>(null);
 
-  // Invite form state
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<WorkspaceRole>("MEMBER");
@@ -245,67 +373,75 @@ export default function WorkspaceSettingsPage() {
   const myRole = activeWorkspace?.role;
   const isAdminOrOwner = myRole === "OWNER" || myRole === "ADMIN";
   const isOwner = myRole === "OWNER";
-  const canDeleteWorkspace = isAdminOrOwner && !isInfluencer && !activeWorkspace?.id.startsWith("personal_");
+  const canDeleteWorkspace =
+    isAdminOrOwner && !isInfluencer && !activeWorkspace?.id.startsWith("personal_");
 
-  const loadData = useCallback(async ({ silent = false, syncWorkspaceList = false }: LoadDataOptions = {}) => {
-    if (silent) setRefreshing(true);
-    else {
-      setLoading(true);
-      setError(null);
-    }
-
-    try {
-      const requests: [
-        Promise<WorkspaceMember[]>,
-        Promise<WorkspaceInvitation[]>,
-        Promise<WorkspaceResponse[]>,
-        Promise<void> | null,
-      ] = [
-        workspaceId ? getMembersApi(getToken, workspaceId) : Promise.resolve([]),
-        workspaceId && isAdminOrOwner ? getInvitationsApi(getToken, workspaceId) : Promise.resolve([]),
-        getDeletedWorkspacesApi(getToken).catch(() => []),
-        syncWorkspaceList ? refresh() : null,
-      ];
-
-      const [m, inv, deleted] = await Promise.all(requests);
-
-      setMembers((current) => (membersEqual(current, m as WorkspaceMember[]) ? current : (m as WorkspaceMember[])));
-      setInvitations((current) =>
-        invitationsEqual(current, inv as WorkspaceInvitation[]) ? current : (inv as WorkspaceInvitation[])
-      );
-      setDeletedWorkspaces((current) =>
-        workspacesEqual(current, deleted) ? current : deleted
-      );
-      setLastRefreshedAt(new Date());
-    } catch (e: any) {
-      if (!silent) {
-        setError(e.message ?? "Failed to load");
+  const loadData = useCallback(
+    async ({ silent = false, syncWorkspaceList = false }: LoadDataOptions = {}) => {
+      if (silent) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+        setError(null);
       }
-    } finally {
-      if (silent) setRefreshing(false);
-      else setLoading(false);
-    }
-  }, [getToken, isAdminOrOwner, refresh, workspaceId]);
+
+      try {
+        const requests: [
+          Promise<WorkspaceMember[]>,
+          Promise<WorkspaceInvitation[]>,
+          Promise<WorkspaceResponse[]>,
+          Promise<void> | null,
+        ] = [
+          workspaceId ? getMembersApi(getToken, workspaceId) : Promise.resolve([]),
+          workspaceId && isAdminOrOwner
+            ? getInvitationsApi(getToken, workspaceId)
+            : Promise.resolve([]),
+          getDeletedWorkspacesApi(getToken).catch(() => []),
+          syncWorkspaceList ? refresh() : null,
+        ];
+
+        const [m, inv, deleted] = await Promise.all(requests);
+
+        setMembers((current) =>
+          membersEqual(current, m as WorkspaceMember[]) ? current : (m as WorkspaceMember[])
+        );
+        setInvitations((current) =>
+          invitationsEqual(current, inv as WorkspaceInvitation[])
+            ? current
+            : (inv as WorkspaceInvitation[])
+        );
+        setDeletedWorkspaces((current) =>
+          workspacesEqual(current, deleted) ? current : deleted
+        );
+        setLastRefreshedAt(new Date());
+      } catch (e: any) {
+        if (!silent) {
+          setError(e.message ?? "Failed to load");
+        }
+      } finally {
+        if (silent) setRefreshing(false);
+        else setLoading(false);
+      }
+    },
+    [getToken, isAdminOrOwner, refresh, workspaceId]
+  );
 
   useEffect(() => {
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceId]);
+  }, [loadData, workspaceId]);
 
   useEffect(() => {
     setWorkspaceNameInput(activeWorkspace?.name ?? "");
     setIsEditingWorkspaceName(false);
   }, [activeWorkspace?.id, activeWorkspace?.name]);
 
-  // Auto-refresh every 15s while the page is visible
   useEffect(() => {
     if (!workspaceId) return;
     const interval = setInterval(() => {
       if (!document.hidden) loadData({ silent: true, syncWorkspaceList: true });
     }, 15000);
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceId]);
+  }, [loadData, workspaceId]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -319,9 +455,24 @@ export default function WorkspaceSettingsPage() {
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [loadData, workspaceId]);
 
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target?.closest("[data-workspace-switcher]")) {
+        setSwitcherOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, []);
+
   const refreshLabel = useMemo(() => {
     if (!lastRefreshedAt) return "Waiting for first sync";
-    const secondsAgo = Math.max(0, Math.floor((Date.now() - lastRefreshedAt.getTime()) / 1000));
+    const secondsAgo = Math.max(
+      0,
+      Math.floor((Date.now() - lastRefreshedAt.getTime()) / 1000)
+    );
     if (secondsAgo < 5) return "Updated just now";
     if (secondsAgo < 60) return `Updated ${secondsAgo}s ago`;
     const minutesAgo = Math.floor(secondsAgo / 60);
@@ -403,7 +554,7 @@ export default function WorkspaceSettingsPage() {
     if (!workspaceId) return;
     setPendingConfirm({
       title: "Remove member?",
-      description: "This will remove the member from the workspace.",
+      description: "This removes the member from the workspace immediately.",
       onConfirm: async () => {
         setPendingConfirm(null);
         try {
@@ -419,7 +570,7 @@ export default function WorkspaceSettingsPage() {
   function handleRevokeInvitation(token: string) {
     setPendingConfirm({
       title: "Revoke invitation?",
-      description: "The invited user will no longer be able to join using this link.",
+      description: "The recipient will no longer be able to join with this invite.",
       onConfirm: async () => {
         setPendingConfirm(null);
         try {
@@ -472,56 +623,79 @@ export default function WorkspaceSettingsPage() {
     }
   }
 
+  const workspaceName = activeWorkspace
+    ? isInfluencer
+      ? "main"
+      : activeWorkspace.name
+    : "";
+
+  const sortedMembers = [...members].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role]);
+  const groupedMembers = sortedMembers.reduce<Record<WorkspaceRole, WorkspaceMember[]>>(
+    (acc, member) => {
+      if (!acc[member.role]) acc[member.role] = [];
+      acc[member.role].push(member);
+      return acc;
+    },
+    {} as Record<WorkspaceRole, WorkspaceMember[]>
+  );
+  const roleGroups: WorkspaceRole[] = ["OWNER", "ADMIN", "MEMBER", "VIEWER"];
+
   if (!activeWorkspace && !loading) {
     return (
-      <div className="w-full px-4 py-6 md:px-8 md:py-8">
-        <div className="w-full space-y-6">
-          <div className="rounded-[28px] border border-white/70 bg-gradient-to-br from-white via-white to-slate-50/90 p-6 shadow-[0_18px_60px_-28px_rgba(15,23,42,0.22)]">
-            <h1 className="text-[28px] font-medium tracking-[-0.03em] text-slate-900">Workspace Settings</h1>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              No active workspace is selected. You can still review and restore deleted workspaces below.
+      <div className="w-full px-6 py-6 md:px-8 md:py-8">
+          <div className="space-y-6">
+            <div className="space-y-2">
+            <p className={cn("text-xs", subtleTextClass)}>Workspace settings</p>
+            <h1 className="text-xl font-semibold tracking-[-0.01em] text-slate-900 dark:text-[#f1f5f9]">
+              No active workspace selected
+            </h1>
+            <p className={cn("max-w-2xl text-sm leading-6", subtleTextClass)}>
+              You can still restore deleted workspaces below. Once a workspace is active,
+              team access and naming controls will appear here.
             </p>
           </div>
 
-          <section className="rounded-[28px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_8px_30px_-20px_rgba(15,23,42,0.16)] backdrop-blur-xl">
-            <div className="mb-4">
-              <h2 className="text-lg font-medium tracking-[-0.02em] text-slate-900">Deleted workspaces</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Restore archived workspaces if your team needs access again.
-              </p>
-            </div>
-
-            {deletedWorkspaces.length === 0 ? (
-              <div className="rounded-[22px] border border-dashed border-slate-200 bg-slate-50/70 px-5 py-8 text-sm text-slate-500">
-                No deleted workspaces are available to restore.
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {deletedWorkspaces.map((workspace) => (
-                  <div
-                    key={workspace.id}
-                    className="flex items-start justify-between gap-4 rounded-[22px] border border-slate-200/80 bg-slate-50/60 p-4"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate text-[15px] font-medium text-slate-900">{workspace.name}</p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        Deleted {formatDisplayDate(workspace.deletedAt ?? undefined)}
-                      </p>
+          <section className={surfaceClass}>
+            <SectionHeader
+              title="Deleted workspaces"
+              description="Restore archived workspaces if your team needs access again."
+              icon={ArchiveRestore}
+            />
+            <div className="p-4">
+              {deletedWorkspaces.length === 0 ? (
+                <EmptyState
+                  title="No deleted workspaces"
+                  description="Archived workspaces will appear here when they can be restored."
+                />
+              ) : (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {deletedWorkspaces.map((workspace) => (
+                    <div key={workspace.id} className={cn(raisedSurfaceClass, "p-4")}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium text-foreground dark:text-[#f3f4f6]">
+                            {workspace.name}
+                          </p>
+                          <p className={cn("mt-1 text-sm", subtleTextClass)}>
+                            Deleted {formatDisplayDate(workspace.deletedAt ?? undefined)}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRestoreWorkspace(workspace)}
+                          disabled={restoreBusyId === workspace.id}
+                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                        >
+                          <ArchiveRestore size={16} />
+                          {restoreBusyId === workspace.id ? "Restoring..." : "Restore"}
+                        </Button>
+                      </div>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleRestoreWorkspace(workspace)}
-                      disabled={restoreBusyId === workspace.id}
-                      className="h-8 rounded-full px-3"
-                    >
-                      <ArchiveRestore className="mr-1.5 h-3.5 w-3.5" />
-                      {restoreBusyId === workspace.id ? "Restoring…" : "Restore"}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </section>
         </div>
       </div>
@@ -529,183 +703,208 @@ export default function WorkspaceSettingsPage() {
   }
 
   if (!activeWorkspace) {
-    return <div className="p-8 text-muted-foreground">Loading workspace settings…</div>;
+    return <div className="p-8 text-sm text-[hsl(var(--foreground-muted))]">Loading workspace settings...</div>;
   }
-
-  const workspaceName = isInfluencer ? "main" : activeWorkspace.name;
-
-  // Group members by role, sorted
-  const sortedMembers = [...members].sort(
-    (a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role]
-  );
-  const groupedMembers = sortedMembers.reduce<Record<WorkspaceRole, WorkspaceMember[]>>(
-    (acc, m) => {
-      if (!acc[m.role]) acc[m.role] = [];
-      acc[m.role].push(m);
-      return acc;
-    },
-    {} as Record<WorkspaceRole, WorkspaceMember[]>
-  );
-  const roleGroups: WorkspaceRole[] = ["OWNER", "ADMIN", "MEMBER", "VIEWER"];
 
   return (
     <>
-    <ConfirmDialog
-      open={!!pendingConfirm}
-      title={pendingConfirm?.title}
-      description={pendingConfirm?.description ?? ""}
-      confirmLabel="Confirm"
-      destructive
-      onConfirm={() => pendingConfirm?.onConfirm()}
-      onCancel={() => setPendingConfirm(null)}
-    />
-    {deleteDialogOpen && activeWorkspace && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-        <div className="w-full max-w-md rounded-2xl border bg-background p-6 shadow-xl">
-          <div className="flex items-start gap-3 mb-4">
-            <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
-              <AlertTriangle className="h-5 w-5 text-destructive" />
-            </div>
-            <div>
-              <h2 className="text-base font-semibold">Delete workspace?</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                This removes access immediately for the whole team. To confirm, type <strong>{activeWorkspace.name}</strong>.
-              </p>
-            </div>
-          </div>
-          <Input
-            value={deleteConfirmValue}
-            onChange={(e) => setDeleteConfirmValue(e.target.value)}
-            placeholder={activeWorkspace.name}
-            autoFocus
-          />
-          <p className="text-xs text-muted-foreground mt-2">
-            The workspace will move to deleted workspaces and can be restored later by an admin or owner.
-          </p>
-          <div className="flex justify-end gap-2 mt-5">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setDeleteDialogOpen(false);
-                setDeleteConfirmValue("");
-              }}
-              disabled={deleteBusy}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleDeleteWorkspace}
-              disabled={deleteBusy || deleteConfirmValue.trim() !== activeWorkspace.name}
-            >
-              {deleteBusy ? "Deleting…" : "Delete workspace"}
-            </Button>
-          </div>
-        </div>
-      </div>
-    )}
-    <div className="w-full px-4 py-6 md:px-8 md:py-8">
-      <div className="w-full">
-        <div className="relative overflow-hidden rounded-[32px] border border-white/70 bg-[radial-gradient(circle_at_top_left,_rgba(191,219,254,0.4),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(226,232,240,0.9),_transparent_34%),linear-gradient(180deg,_rgba(255,255,255,0.98),_rgba(248,250,252,0.94))] p-6 shadow-[0_24px_80px_-32px_rgba(15,23,42,0.28)] md:p-8">
-          <div className="absolute inset-x-0 top-0 h-px bg-white/90" />
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/80 px-3 py-1 text-[11px] font-medium tracking-[0.08em] text-slate-500 backdrop-blur-xl">
-                <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
-                SETTINGS
+      <ConfirmDialog
+        open={!!pendingConfirm}
+        title={pendingConfirm?.title}
+        description={pendingConfirm?.description ?? ""}
+        confirmLabel="Confirm"
+        destructive
+        onConfirm={() => pendingConfirm?.onConfirm()}
+        onCancel={() => setPendingConfirm(null)}
+      />
+
+      {deleteDialogOpen && activeWorkspace && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-lg">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-destructive/10 text-destructive">
+                <AlertTriangle size={18} />
               </div>
-              <h1 className="mt-4 text-[32px] font-medium leading-none tracking-[-0.05em] text-slate-950 md:text-[40px]">
-                {workspaceName}
-              </h1>
-              <p className="mt-3 text-[12px] font-medium uppercase tracking-[0.12em] text-slate-500">
-                Active workspace
-              </p>
-              <p className="mt-2 max-w-xl text-[15px] leading-7 text-slate-600">
-                Manage workspace name, members, roles, invites, and access.
+              <div className="space-y-1">
+                <h2 className="text-base font-semibold text-slate-900 dark:text-[#f1f5f9]">
+                  Delete workspace?
+                </h2>
+                <p className={cn("text-sm leading-6", subtleTextClass)}>
+                  This removes access for the whole team immediately. Type{" "}
+                  <span className="font-medium text-slate-900 dark:text-[#f1f5f9]">
+                    {activeWorkspace.name}
+                  </span>{" "}
+                  to confirm.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-3">
+              <Input
+                value={deleteConfirmValue}
+                onChange={(e) => setDeleteConfirmValue(e.target.value)}
+                placeholder={activeWorkspace.name}
+                autoFocus
+                className="h-9"
+              />
+              <p className={cn("text-xs", subtleTextClass)}>
+                The workspace moves to deleted workspaces and can be restored later by an
+                admin or owner.
               </p>
             </div>
 
-            <div className="grid w-full gap-3 sm:grid-cols-2 lg:w-[420px]">
-              <div className="rounded-[24px] border border-white/80 bg-white/78 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_10px_30px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl">
-                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400">Active workspace</p>
-                <div className="mt-3 flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-900/[0.04] text-slate-700">
-                    <Building2 className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-[15px] font-medium text-slate-900">{workspaceName}</p>
-                    <p className="text-xs text-slate-500">{roleLabel(myRole ?? "VIEWER")} access</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-[24px] border border-white/80 bg-white/78 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.7),0_10px_30px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-400">Sync status</p>
-                    <div className="mt-3 flex items-center gap-2 text-sm text-slate-700">
-                      <span className={cn("h-2 w-2 rounded-full bg-emerald-500 transition-opacity", refreshing && "animate-pulse")} />
-                      <span>{refreshing ? "Syncing changes…" : refreshLabel}</span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => loadData({ silent: true, syncWorkspaceList: true })}
-                    disabled={loading || refreshing}
-                    title="Refresh"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-500 transition-colors hover:border-slate-300 hover:text-slate-900 disabled:opacity-40"
-                  >
-                    <RefreshCw className={cn("h-4 w-4", (loading || refreshing) && "animate-spin")} />
-                  </button>
-                </div>
-              </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setDeleteDialogOpen(false);
+                  setDeleteConfirmValue("");
+                }}
+                disabled={deleteBusy}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDeleteWorkspace}
+                disabled={deleteBusy || deleteConfirmValue.trim() !== activeWorkspace.name}
+              >
+                {deleteBusy ? "Deleting..." : "Delete workspace"}
+              </Button>
             </div>
           </div>
         </div>
+      )}
 
-        <div className="mt-5 space-y-5">
-          <section className="rounded-[28px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_12px_36px_-24px_rgba(15,23,42,0.22)] backdrop-blur-xl md:p-6">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <p className="text-sm font-medium tracking-[-0.02em] text-slate-900">Workspace</p>
-                    <p className="mt-1 text-sm leading-6 text-slate-500">
-                      Switch workspaces, rename the current workspace, and manage access.
-                    </p>
-                  </div>
+      <div className="w-full px-6 py-6 md:px-8 md:py-8">
+        <div className="space-y-6">
+          <div className={cn(surfaceClass, "overflow-hidden")}>
+            <div className="flex flex-col gap-4 bg-[linear-gradient(135deg,#f7fbff_0%,#ffffff_38%,#eef4ff_100%)] px-4 py-4 md:px-5 md:py-5 dark:bg-[linear-gradient(135deg,#1a2230_0%,#161a22_40%,#1b2638_100%)] xl:flex-row xl:items-start xl:justify-between">
+              <div className="space-y-2">
+                <div className={pillClass}>
+                  <FolderKanban size={14} className={atlBlueTextClass} />
+                  Workspace settings
+                </div>
+                <div className="space-y-1">
+                  <h1 className="text-xl font-semibold tracking-[-0.01em] text-slate-900 dark:text-[#f1f5f9]">
+                    Manage {workspaceName}
+                  </h1>
+                  <p className={cn("max-w-2xl text-sm leading-5", subtleTextClass)}>
+                    Atlassian-style administration for members, invitations, and workspace controls.
+                  </p>
+                </div>
+              </div>
 
+              <div className="flex flex-wrap items-center gap-2">
+                <div
+                  className={cn(
+                    "inline-flex items-center gap-2 rounded-md border bg-white/80 px-3 py-2 text-sm shadow-sm backdrop-blur-sm dark:bg-white/5",
+                    dividerClass
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "h-2 w-2 rounded-full bg-[#1f845a]",
+                      refreshing && "animate-pulse"
+                    )}
+                  />
+                  <span className={subtleTextClass}>
+                    {refreshing ? "Syncing workspace..." : refreshLabel}
+                  </span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => loadData({ silent: true, syncWorkspaceList: true })}
+                  disabled={loading || refreshing}
+                  className="h-8 rounded-md border-slate-300 bg-white/80 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                >
+                  <RefreshCw
+                    size={16}
+                    className={cn((loading || refreshing) && "animate-spin")}
+                  />
+                  Refresh
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-xl border border-[#f5c2c7] bg-[#fff4f5] px-4 py-3 text-sm text-[#ae2e24] dark:border-[#5d1f1a] dark:bg-[#2b1917] dark:text-[#fd9891]">
+              {error}
+            </div>
+          )}
+
+          <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
+            <div className="space-y-4">
+              <section className={surfaceClass}>
+                <SectionHeader
+                  title="Workspace profile"
+                  description="Switch, create, and rename workspaces."
+                  icon={BriefcaseBusiness}
+                />
+                <div className="space-y-3 p-4">
                   {isInfluencer ? (
-                    <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-2 text-sm text-slate-700">
-                      <Building2 className="h-4 w-4 text-slate-500" />
-                      <span>main</span>
+                    <div className={cn(raisedSurfaceClass, "flex items-center gap-3 p-4")}>
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#cce0ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]">
+                        <BriefcaseBusiness size={18} />
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                          main
+                        </p>
+                        <p className={cn("text-sm", subtleTextClass)}>
+                          One workspace on the Influencer plan.
+                        </p>
+                      </div>
                     </div>
                   ) : (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <div className="relative">
+                    <div className="space-y-3">
+                      <div className="relative" data-workspace-switcher>
                         <button
-                          onClick={() => setSwitcherOpen((o) => !o)}
-                          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50"
+                          type="button"
+                          onClick={() => setSwitcherOpen((open) => !open)}
+                          className={cn(
+                            "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 text-sm transition-colors hover:bg-slate-50 dark:bg-[#161a22] dark:hover:bg-white/5",
+                            dividerClass,
+                          )}
                         >
-                          <Building2 className="h-4 w-4 text-slate-500" />
-                          <span className="max-w-48 truncate">{workspaceName}</span>
-                          <ChevronDown className={cn("h-3.5 w-3.5 text-slate-400 transition-transform", switcherOpen && "rotate-180")} />
+                          <span className="flex min-w-0 items-center gap-2">
+                            <BriefcaseBusiness size={16} className={atlBlueTextClass} />
+                            <span className="truncate font-medium text-slate-900 dark:text-[#f1f5f9]">
+                              {workspaceName}
+                            </span>
+                          </span>
+                          <ChevronDown
+                            size={16}
+                            className={cn(
+                              subtleTextClass,
+                              "transition-transform",
+                              switcherOpen && "rotate-180"
+                            )}
+                          />
                         </button>
+
                         {switcherOpen && (
-                          <div className="absolute left-0 top-full z-50 mt-2 min-w-56 overflow-hidden rounded-[20px] border border-slate-200/80 bg-white/95 py-1 shadow-[0_18px_48px_-18px_rgba(15,23,42,0.28)] backdrop-blur-xl">
-                            {workspaces.map((ws: WorkspaceResponse) => (
+                          <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-xl border border-slate-200 bg-white p-1 shadow-[0_12px_32px_rgba(9,30,66,0.18)] dark:border-white/10 dark:bg-[#161a22] dark:shadow-none">
+                            {workspaces.map((ws) => (
                               <button
                                 key={ws.id}
+                                type="button"
                                 onClick={() => {
                                   switchWorkspace(ws);
                                   setSwitcherOpen(false);
                                 }}
-                                className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-slate-700 transition-colors hover:bg-slate-50"
+                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
                               >
-                                <Building2 className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                                <span className="flex-1 truncate">{ws.name}</span>
+                                <BriefcaseBusiness size={16} className={atlBlueTextClass} />
+                                <span className="flex-1 truncate text-slate-900 dark:text-[#f1f5f9]">
+                                  {ws.name}
+                                </span>
                                 {ws.id === activeWorkspace.id && (
-                                  <Check className="h-3.5 w-3.5 shrink-0 text-sky-600" />
+                                  <Check size={14} className="text-[hsl(var(--accent))]" />
                                 )}
                               </button>
                             ))}
@@ -718,54 +917,61 @@ export default function WorkspaceSettingsPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            setShowCreateWorkspace(true);
+                            setShowCreateWorkspace((current) => !current);
                             setCreateWorkspaceError(null);
                           }}
-                          className="h-9 rounded-full px-4"
+                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
                         >
-                          <Plus className="mr-1.5 h-3.5 w-3.5" />
+                          <Plus size={16} />
                           New workspace
                         </Button>
                       )}
                     </div>
                   )}
-                </div>
 
-                {showCreateWorkspace && (
-                  <div className="max-w-md rounded-[24px] border border-slate-200/80 bg-slate-50/80 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-medium text-slate-900">Create workspace</p>
-                        <p className="mt-1 text-xs text-slate-500">Keep names short and client-friendly.</p>
+                  {showCreateWorkspace && (
+                    <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                            Create workspace
+                          </p>
+                          <p className={cn("text-sm", subtleTextClass)}>
+                            Add another workspace.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setShowCreateWorkspace(false);
+                            setNewWorkspaceName("");
+                          }}
+                          className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-white/10 dark:hover:text-white"
+                        >
+                          <X size={16} />
+                        </button>
                       </div>
-                      <button
-                        onClick={() => {
-                          setShowCreateWorkspace(false);
-                          setNewWorkspaceName("");
-                        }}
-                        className="rounded-full p-1 text-slate-400 transition-colors hover:bg-white hover:text-slate-700"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                    <div className="mt-3 space-y-3">
+
                       <Input
                         placeholder="Workspace name"
                         value={newWorkspaceName}
                         onChange={(e) => setNewWorkspaceName(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleCreateWorkspace()}
                         autoFocus
-                        className="h-10 rounded-2xl border-slate-200 bg-white"
+                        className="h-9"
                       />
-                      {createWorkspaceError && <p className="text-xs text-destructive">{createWorkspaceError}</p>}
+
+                      {createWorkspaceError && (
+                        <p className="text-sm text-destructive">{createWorkspaceError}</p>
+                      )}
+
                       <div className="flex gap-2">
                         <Button
                           size="sm"
                           onClick={handleCreateWorkspace}
                           disabled={!newWorkspaceName.trim() || createWorkspaceBusy}
-                          className="h-9 rounded-full px-4"
                         >
-                          {createWorkspaceBusy ? "Creating…" : "Create"}
+                          {createWorkspaceBusy ? "Creating..." : "Create"}
                         </Button>
                         <Button
                           size="sm"
@@ -774,38 +980,37 @@ export default function WorkspaceSettingsPage() {
                             setShowCreateWorkspace(false);
                             setNewWorkspaceName("");
                           }}
-                          className="h-9 rounded-full px-4"
                         >
                           Cancel
                         </Button>
                       </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {isAdminOrOwner && (
-                  <div className="rounded-[24px] border border-slate-200/80 bg-slate-50/70 p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="text-sm font-medium text-slate-900">Display name</p>
-                        <p className="mt-1 text-sm text-slate-500">
-                          The workspace name appears across navigation, team views, and invitations.
-                        </p>
+                  {isAdminOrOwner && (
+                    <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                            Display name
+                          </p>
+                          <p className={cn("text-sm", subtleTextClass)}>
+                            Update the name shown across the app.
+                          </p>
+                        </div>
+                        {!isEditingWorkspaceName && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsEditingWorkspaceName(true)}
+                            className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                          >
+                            <PencilLine size={16} />
+                            Rename
+                          </Button>
+                        )}
                       </div>
-                      {!isEditingWorkspaceName && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setIsEditingWorkspaceName(true)}
-                          className="h-8 rounded-full px-3.5"
-                        >
-                          <Pencil className="mr-1.5 h-3.5 w-3.5" />
-                          Rename
-                        </Button>
-                      )}
-                    </div>
 
-                    <div className="mt-4">
                       {isEditingWorkspaceName ? (
                         <div className="space-y-3">
                           <Input
@@ -819,16 +1024,19 @@ export default function WorkspaceSettingsPage() {
                               }
                             }}
                             autoFocus
-                            className="h-10 rounded-2xl border-slate-200 bg-white text-sm"
+                            className="h-9"
                           />
-                          <div className="flex items-center gap-2">
+                          <div className="flex gap-2">
                             <Button
                               size="sm"
                               onClick={handleRenameWorkspace}
-                              disabled={!workspaceNameInput.trim() || renameWorkspaceBusy || workspaceNameInput.trim() === activeWorkspace.name}
-                              className="h-9 rounded-full px-4"
+                              disabled={
+                                !workspaceNameInput.trim() ||
+                                renameWorkspaceBusy ||
+                                workspaceNameInput.trim() === activeWorkspace.name
+                              }
                             >
-                              {renameWorkspaceBusy ? "Saving…" : "Save changes"}
+                              {renameWorkspaceBusy ? "Saving..." : "Save changes"}
                             </Button>
                             <Button
                               size="sm"
@@ -838,227 +1046,285 @@ export default function WorkspaceSettingsPage() {
                                 setIsEditingWorkspaceName(false);
                               }}
                               disabled={renameWorkspaceBusy}
-                              className="h-9 rounded-full px-4"
                             >
                               Cancel
                             </Button>
                           </div>
                         </div>
                       ) : (
-                        <div className="rounded-[20px] border border-white/80 bg-white/90 px-4 py-3">
-                          <p className="text-[13px] text-slate-500">Current name</p>
-                          <p className="mt-1 truncate text-[17px] font-medium tracking-[-0.02em] text-slate-900">
+                        <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                          <p className={cn("text-xs", subtleTextClass)}>Current name</p>
+                          <p className="mt-1 text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
                             {activeWorkspace.name}
                           </p>
                         </div>
                       )}
                     </div>
+                  )}
+
+                  {myRole && <RoleContextPanel role={myRole} />}
+
+                  {isInfluencer && (
+                    <div className="rounded-xl px-4 py-3 [border:1px_solid_#cce0ff] [background:linear-gradient(180deg,#f7fbff_0%,#edf4ff_100%)] dark:[border-color:#2c4f7c] dark:[background:#1b2638]">
+                      <div className="flex items-start gap-3">
+                        <Info size={16} className={cn("mt-0.5", atlBlueTextClass)} />
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                            Influencer plan
+                          </p>
+                          <p className={cn("text-sm leading-6", subtleTextClass)}>
+                            Team invites and multiple workspaces require Agency.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
+
+            </div>
+
+            <section className={surfaceClass}>
+              <SectionHeader
+                title="Access control"
+                description="Members and invitations."
+                icon={Users}
+                action={
+                  <div className="inline-flex rounded-lg border border-slate-200 bg-[hsl(var(--surface-raised))] p-1 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                    {(["team", ...(!isInfluencer ? ["invitations"] : [])] as Tab[]).map((item) => (
+                      <button
+                        key={item}
+                        type="button"
+                        onClick={() => setTab(item)}
+                        className={cn(
+                          "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                          tab === item
+                            ? "bg-[hsl(var(--surface))] text-slate-900 shadow-sm dark:bg-[hsl(var(--surface))] dark:text-white"
+                            : cn(subtleTextClass, "hover:text-slate-900 dark:hover:text-white")
+                        )}
+                      >
+                        {item === "team" ? "Team" : "Invitations"}
+                      </button>
+                    ))}
                   </div>
-                )}
-              </div>
-          </section>
+                }
+              />
 
-          <section className="rounded-[28px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_12px_36px_-24px_rgba(15,23,42,0.22)] backdrop-blur-xl md:p-6">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-sm font-medium tracking-[-0.02em] text-slate-900">People</p>
-                  <p className="mt-1 text-sm leading-6 text-slate-500">
-                    Manage who can access the workspace and what level of control they get.
-                  </p>
-                </div>
-                <div className="inline-flex w-fit rounded-full border border-slate-200 bg-slate-100/80 p-1">
-                  {(["team", ...(!isInfluencer ? ["invitations"] : [])] as Tab[]).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setTab(t)}
-                      className={cn(
-                        "inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-sm transition-all",
-                        tab === t
-                          ? "bg-white text-slate-900 shadow-sm"
-                          : "text-slate-500 hover:text-slate-900"
-                      )}
-                    >
-                      {t === "team" ? <Users className="h-3.5 w-3.5" /> : <Mail className="h-3.5 w-3.5" />}
-                      <span>{t === "team" ? "Team" : "Invitations"}</span>
-                      <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500">
-                        {t === "team" ? members.length : invitations.length}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {myRole && <div className="mt-5"><RoleContextBanner role={myRole} /></div>}
-
-              {isInfluencer && (
-                <div className="mt-4 flex items-start gap-3 rounded-[22px] border border-blue-200/80 bg-blue-50/90 px-4 py-3.5">
-                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-                  <div className="text-sm text-blue-900">
-                    <p className="font-medium">Influencer plan</p>
-                    <p className="mt-1 leading-6 text-blue-800/85">
-                      Your account uses one workspace named <strong>main</strong>. Team invitations and multi-workspace controls are available on Agency plans.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {loading && (
-                <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2">
-                  {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-24 animate-pulse rounded-[22px] border border-slate-200/80 bg-slate-100/70" />
-                  ))}
-                </div>
-              )}
-              {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
-
-              {!loading && tab === "team" && (
-                <div className="mt-5">
-                  {isAdminOrOwner && !isInfluencer && (
-                    <div className="mb-5">
-                      {!showInviteForm ? (
+              <div className="space-y-3 p-4">
+                {!isInfluencer && isAdminOrOwner && (
+                  <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="space-y-1">
+                        <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                          Invite teammate
+                        </p>
+                        <p className={cn("text-sm", subtleTextClass)}>
+                          Send a role-based invite.
+                        </p>
+                      </div>
+                      {!showInviteForm && (
                         <Button
-                          variant="outline"
                           size="sm"
+                          variant="outline"
                           onClick={() => {
                             setShowInviteForm(true);
                             setInviteSuccess(false);
                           }}
-                          className="h-9 rounded-full px-4"
+                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
                         >
-                          <UserPlus className="mr-1.5 h-3.5 w-3.5" />
+                          <UserPlus size={16} />
                           Add teammate
                         </Button>
-                      ) : (
-                        <div className="rounded-[24px] border border-slate-200/80 bg-slate-50/80 p-4">
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="text-sm font-medium text-slate-900">Invite by email</p>
-                              <p className="mt-1 text-xs text-slate-500">Use a work email and assign the lightest role that fits.</p>
-                            </div>
-                            <button
-                              onClick={() => setShowInviteForm(false)}
-                              className="rounded-full p-1 text-slate-400 transition-colors hover:bg-white hover:text-slate-700"
-                            >
-                              <X className="h-4 w-4" />
-                            </button>
-                          </div>
-                          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                            <Input
-                              placeholder="colleague@example.com"
-                              value={inviteEmail}
-                              onChange={(e) => setInviteEmail(e.target.value)}
-                              onKeyDown={(e) => e.key === "Enter" && handleInvite()}
-                              autoFocus
-                              className="h-10 flex-1 rounded-2xl border-slate-200 bg-white"
-                            />
-                            <Select
-                              value={inviteRole}
-                              onValueChange={(v) => setInviteRole(v as WorkspaceRole)}
-                            >
-                              <SelectTrigger className="h-10 w-full rounded-2xl border-slate-200 bg-white sm:w-36">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {ROLE_OPTIONS.map((r) => (
-                                  <SelectItem key={r} value={r}>{roleLabel(r)}</SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          {inviteError && <p className="mt-2 text-xs text-destructive">{inviteError}</p>}
-                          <div className="mt-3 flex gap-2">
-                            <Button size="sm" onClick={handleInvite} disabled={!inviteEmail.trim() || inviteBusy} className="h-9 rounded-full px-4">
-                              {inviteBusy ? "Sending…" : "Send invite"}
-                            </Button>
-                            <Button size="sm" variant="ghost" onClick={() => setShowInviteForm(false)} className="h-9 rounded-full px-4">
-                              Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-                      {inviteSuccess && (
-                        <p className="mt-2 text-xs text-emerald-600">Invitation sent.</p>
                       )}
                     </div>
-                  )}
 
-                  {members.length === 0 ? (
-                    <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50/70 px-5 py-10 text-center text-sm text-slate-500">
-                      No members yet.
-                    </div>
+                    {showInviteForm && (
+                      <div className="space-y-3">
+                        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_160px]">
+                          <Input
+                            placeholder="colleague@company.com"
+                            value={inviteEmail}
+                            onChange={(e) => setInviteEmail(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && handleInvite()}
+                            autoFocus
+                            className="h-9"
+                          />
+                          <Select
+                            value={inviteRole}
+                            onValueChange={(value) => setInviteRole(value as WorkspaceRole)}
+                          >
+                            <SelectTrigger className="h-9">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {ROLE_OPTIONS.map((role) => (
+                                <SelectItem key={role} value={role}>
+                                  {roleLabel(role)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {inviteError && <p className="text-sm text-destructive">{inviteError}</p>}
+
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={handleInvite}
+                            disabled={!inviteEmail.trim() || inviteBusy}
+                          >
+                            {inviteBusy ? "Sending..." : "Send invite"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setShowInviteForm(false)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    {inviteSuccess && (
+                      <p className="text-sm text-[#216e4e] dark:text-[#7ee2b8]">
+                        Invitation sent.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {loading ? (
+                  <div className="grid gap-3 lg:grid-cols-2">
+                    {[1, 2, 3, 4].map((item) => (
+                      <div
+                        key={item}
+                        className={cn(
+                          "h-28 animate-pulse rounded-lg border bg-muted/50",
+                          dividerClass
+                        )}
+                      />
+                    ))}
+                  </div>
+                ) : tab === "team" ? (
+                  members.length === 0 ? (
+                    <EmptyState
+                      title="No team members yet"
+                      description="Invite teammates to centralize approvals and keep workspace ownership clear."
+                    />
                   ) : (
-                    <div className="space-y-5">
+                    <div className="space-y-4">
                       {roleGroups.map((role) => {
                         const group = groupedMembers[role];
-                        if (!group || group.length === 0) return null;
+                        if (!group?.length) return null;
+
                         return (
-                          <div key={role}>
-                            <RoleGroupHeading role={role} count={group.length} />
-                            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-                              {group.map((m) => {
-                                const fullName = [m.firstName, m.lastName].filter(Boolean).join(" ");
-                                const initials = (
-                                  (m.firstName?.[0] ?? "") + (m.lastName?.[0] ?? "")
-                                ).toUpperCase() || (m.email?.[0]?.toUpperCase() ?? "?");
+                          <div key={role} className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <p className={cn("text-sm font-semibold", roleHeadingClass(role))}>
+                                {role === "VIEWER" ? "Viewers" : `${roleLabel(role)}s`}
+                              </p>
+                              <span className={cn("text-xs", subtleTextClass)}>
+                                {group.length}
+                              </span>
+                            </div>
+
+                            <div className="space-y-3">
+                              {group.map((member) => {
+                                const fullName = [member.firstName, member.lastName]
+                                  .filter(Boolean)
+                                  .join(" ");
+                                const initials =
+                                  (
+                                    (member.firstName?.[0] ?? "") +
+                                    (member.lastName?.[0] ?? "")
+                                  ).toUpperCase() ||
+                                  (member.email?.[0]?.toUpperCase() ?? "?");
 
                                 return (
                                   <div
-                                    key={m.userId}
-                                    className="flex items-center gap-3 rounded-[22px] border border-slate-200/80 bg-slate-50/60 p-3.5 transition-colors hover:bg-slate-50"
+                                    key={member.userId}
+                                    className={cn(
+                                      raisedSurfaceClass,
+                                      "flex flex-col gap-3 p-4 lg:flex-row lg:items-center"
+                                    )}
                                   >
-                                    <div className={cn(
-                                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-medium",
-                                      avatarBgClass(m.role)
-                                    )}>
-                                      {initials}
+                                    <div className="flex min-w-0 flex-1 items-center gap-3">
+                                      <div
+                                        className={cn(
+                                          "flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-medium",
+                                          avatarToneClass(member.role)
+                                        )}
+                                      >
+                                        {initials}
+                                      </div>
+
+                                      <div className="min-w-0 space-y-1">
+                                        <p
+                                          className={cn(
+                                            "truncate text-sm",
+                                            fullName
+                                              ? "font-medium text-slate-900 dark:text-[#f1f5f9]"
+                                              : subtleTextClass
+                                          )}
+                                        >
+                                          {fullName || "Unknown user"}
+                                        </p>
+                                        {member.email && (
+                                          <p className={cn("truncate text-sm", subtleTextClass)}>
+                                            {member.email}
+                                          </p>
+                                        )}
+                                        <p className={cn("text-xs", subtleTextClass)}>
+                                          Joined {formatDisplayDate(member.joinedAt)}
+                                        </p>
+                                      </div>
                                     </div>
 
-                                    <div className="min-w-0 flex-1">
-                                      <p className={cn("truncate text-[15px] text-slate-900", fullName ? "font-medium" : "italic text-slate-500")}>
-                                        {fullName || "Unknown"}
-                                      </p>
-                                      {m.email && (
-                                        <p className="truncate text-[13px] text-slate-500">{m.email}</p>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      {isOwner && member.role !== "OWNER" ? (
+                                        <Select
+                                          value={member.role}
+                                          onValueChange={(value) =>
+                                            handleRoleChange(member.userId, value as WorkspaceRole)
+                                          }
+                                        >
+                                          <SelectTrigger className="h-8 w-[132px] rounded-md border-slate-300 bg-white dark:border-white/10 dark:bg-[#161a22]">
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {ROLE_OPTIONS.map((roleOption) => (
+                                              <SelectItem key={roleOption} value={roleOption}>
+                                                {roleLabel(roleOption)}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      ) : (
+                                        <span
+                                          className={cn(
+                                            "inline-flex h-8 items-center rounded-full border px-2.5 text-xs font-medium",
+                                            roleBadgeClass(member.role)
+                                          )}
+                                        >
+                                          {roleLabel(member.role)}
+                                        </span>
                                       )}
-                                      <p className="mt-0.5 truncate font-mono text-[10px] text-slate-400">
-                                        {m.userId}
-                                      </p>
+
+                                      {isAdminOrOwner && member.role !== "OWNER" && (
+                                        <Button
+                                          type="button"
+                                          variant="ghost"
+                                          size="sm"
+                                          onClick={() => handleRemove(member.userId)}
+                                          className="h-8 rounded-md px-2.5 text-muted-foreground hover:bg-[#ffeceb] hover:text-[#ae2e24] dark:hover:bg-[#2b1917] dark:hover:text-[#fd9891]"
+                                        >
+                                          <Trash size={16} />
+                                          Remove
+                                        </Button>
+                                      )}
                                     </div>
-
-                                    {isOwner && m.role !== "OWNER" ? (
-                                      <Select
-                                        value={m.role}
-                                        onValueChange={(v) => handleRoleChange(m.userId, v as WorkspaceRole)}
-                                      >
-                                        <SelectTrigger className="h-8 w-28 rounded-full border-slate-200 bg-white text-xs">
-                                          <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                          {ROLE_OPTIONS.map((r) => (
-                                            <SelectItem key={r} value={r} className="text-xs">
-                                              {roleLabel(r)}
-                                            </SelectItem>
-                                          ))}
-                                        </SelectContent>
-                                      </Select>
-                                    ) : (
-                                      <span className={cn(
-                                        "shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium",
-                                        roleBadgeClass(m.role)
-                                      )}>
-                                        {roleLabel(m.role)}
-                                      </span>
-                                    )}
-
-                                    {isAdminOrOwner && m.role !== "OWNER" && (
-                                      <button
-                                        onClick={() => handleRemove(m.userId)}
-                                        className="ml-1 rounded-full p-2 text-slate-400 transition-colors hover:bg-white hover:text-destructive"
-                                        title="Remove member"
-                                      >
-                                        <Trash2 className="h-3.5 w-3.5" />
-                                      </button>
-                                    )}
                                   </div>
                                 );
                               })}
@@ -1067,123 +1333,153 @@ export default function WorkspaceSettingsPage() {
                         );
                       })}
                     </div>
-                  )}
-                </div>
-              )}
-
-              {!loading && tab === "invitations" && (
-                <div className="mt-5">
-                  {invitations.length === 0 ? (
-                    <div className="rounded-[24px] border border-dashed border-slate-200 bg-slate-50/70 px-5 py-10 text-center text-sm text-slate-500">
-                      No pending invitations.
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-                      {invitations.map((inv) => (
-                        <div
-                          key={inv.token}
-                          className="flex items-center gap-3 rounded-[22px] border border-slate-200/80 bg-slate-50/60 p-3.5 transition-colors hover:bg-slate-50"
-                        >
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-200/70 text-slate-500">
-                            <Mail className="h-4 w-4" />
+                  )
+                ) : invitations.length === 0 ? (
+                  <EmptyState
+                    title="No pending invitations"
+                    description="New invitations will appear here until they are accepted or revoked."
+                  />
+                ) : (
+                  <div className="space-y-3">
+                    {invitations.map((invitation) => (
+                      <div
+                        key={invitation.token}
+                        className={cn(
+                          raisedSurfaceClass,
+                          "flex flex-col gap-3 p-4 lg:flex-row lg:items-center"
+                        )}
+                      >
+                        <div className="flex min-w-0 flex-1 items-center gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#cce0ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]">
+                            <Mail size={18} />
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-[15px] font-medium text-slate-900">{inv.invitedEmail}</p>
-                            <p className="mt-0.5 flex items-center gap-1 text-[13px] text-slate-500">
-                              <Clock className="h-3 w-3" />
-                              Expires {new Date(inv.expiresAt).toLocaleDateString("en-US", {
+                          <div className="min-w-0 space-y-1">
+                            <p className="truncate text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                              {invitation.invitedEmail}
+                            </p>
+                            <p className={cn("flex items-center gap-1 text-sm", subtleTextClass)}>
+                              <History size={14} />
+                              Expires{" "}
+                              {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
                                 month: "short",
                                 day: "numeric",
                                 year: "numeric",
                               })}
                             </p>
                           </div>
-                          <span className={cn("shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium", roleBadgeClass(inv.role))}>
-                            {roleLabel(inv.role)}
-                          </span>
-                          {isAdminOrOwner && (
-                            <button
-                              onClick={() => handleRevokeInvitation(inv.token)}
-                              className="ml-1 rounded-full p-2 text-slate-400 transition-colors hover:bg-white hover:text-destructive"
-                              title="Revoke invitation"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                            </button>
-                          )}
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-          </section>
 
-          {!loading && isAdminOrOwner && !isInfluencer && (
-            <div className="space-y-5">
-              <section className="rounded-[28px] border border-slate-200/80 bg-white/90 p-5 shadow-[0_12px_36px_-24px_rgba(15,23,42,0.22)] backdrop-blur-xl">
-                <div>
-                  <h2 className="text-lg font-medium tracking-[-0.02em] text-slate-900">Deleted workspaces</h2>
-                  <p className="mt-1 text-sm leading-6 text-slate-500">
-                    Restore archived workspaces without leaving this page.
-                  </p>
-                </div>
-
-                {deletedWorkspaces.length === 0 ? (
-                  <div className="mt-4 rounded-[22px] border border-dashed border-slate-200 bg-slate-50/70 px-4 py-8 text-sm text-slate-500">
-                    No deleted workspaces.
-                  </div>
-                ) : (
-                  <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2">
-                    {deletedWorkspaces.map((workspace) => (
-                      <div key={workspace.id} className="rounded-[22px] border border-slate-200/80 bg-slate-50/70 p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="truncate text-[15px] font-medium text-slate-900">{workspace.name}</p>
-                            <p className="mt-1 text-xs text-slate-500">
-                              Deleted {formatDisplayDate(workspace.deletedAt ?? undefined)}
-                            </p>
-                            <p className="mt-1 text-[11px] capitalize text-slate-400">
-                              Your access: {workspace.role.toLowerCase()}
-                            </p>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleRestoreWorkspace(workspace)}
-                            disabled={restoreBusyId === workspace.id}
-                            className="h-8 rounded-full px-3"
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span
+                            className={cn(
+                              "inline-flex h-8 items-center rounded-full border px-2.5 text-xs font-medium",
+                              roleBadgeClass(invitation.role)
+                            )}
                           >
-                            <ArchiveRestore className="mr-1.5 h-3.5 w-3.5" />
-                            {restoreBusyId === workspace.id ? "Restoring…" : "Restore"}
-                          </Button>
+                            {roleLabel(invitation.role)}
+                          </span>
+
+                          {isAdminOrOwner && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRevokeInvitation(invitation.token)}
+                              className="h-8 rounded-md px-2.5 text-muted-foreground hover:bg-[#ffeceb] hover:text-[#ae2e24] dark:hover:bg-[#2b1917] dark:hover:text-[#fd9891]"
+                            >
+                              <Trash size={16} />
+                              Revoke
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
+
+
+              </div>
+            </section>
+          </div>
+
+          {!loading && isAdminOrOwner && !isInfluencer && (
+            <div className="space-y-4">
+              <section className={surfaceClass}>
+                <SectionHeader
+                  title="Deleted workspaces"
+                  description="Restore removed workspaces."
+                  icon={ArchiveRestore}
+                  iconBadgeClass={neutralIconBadgeClass}
+                />
+                <div className="p-4">
+                  {deletedWorkspaces.length === 0 ? (
+                    <EmptyState
+                      title="No deleted workspaces"
+                      description="Restorable workspaces will appear here."
+                    />
+                  ) : (
+                    <div className="grid gap-3 lg:grid-cols-2">
+                      {deletedWorkspaces.map((workspace) => (
+                        <div key={workspace.id} className={cn(raisedSurfaceClass, "p-4")}>
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                {workspace.name}
+                              </p>
+                              <p className={cn("mt-1 text-sm", subtleTextClass)}>
+                                Deleted {formatDisplayDate(workspace.deletedAt ?? undefined)}
+                              </p>
+                              <p className={cn("mt-1 text-xs", subtleTextClass)}>
+                                Access retained as {roleLabel(workspace.role)}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleRestoreWorkspace(workspace)}
+                              disabled={restoreBusyId === workspace.id}
+                              className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                            >
+                              <ArchiveRestore size={16} />
+                              {restoreBusyId === workspace.id ? "Restoring..." : "Restore"}
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </section>
 
               {canDeleteWorkspace && (
-                <section className="rounded-[28px] border border-red-200/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(254,242,242,0.92))] p-5 shadow-[0_12px_36px_-24px_rgba(127,29,29,0.18)]">
-                  <h2 className="text-lg font-medium tracking-[-0.02em] text-slate-900">Danger zone</h2>
-                  <p className="mt-1 text-sm leading-6 text-slate-500">
-                    Delete this workspace for everyone. Access is removed immediately, and the workspace can still be restored later.
-                  </p>
-                  <Button
-                    variant="destructive"
-                    onClick={() => setDeleteDialogOpen(true)}
-                    className="mt-4 h-10 rounded-full px-4"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete workspace
-                  </Button>
+                <section className="rounded-xl border border-[#f5c2c7] bg-[#fff7f7] dark:border-[#5d1f1a] dark:bg-[#241716]">
+                  <SectionHeader
+                    title="Danger zone"
+                    description="Delete this workspace."
+                    icon={AlertTriangle}
+                    iconBadgeClass={dangerIconBadgeClass}
+                    action={
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => setDeleteDialogOpen(true)}
+                      >
+                        <Trash size={16} />
+                        Delete workspace
+                      </Button>
+                    }
+                  />
+                  <div className="p-4">
+                    <p className={cn("text-sm leading-5", subtleTextClass)}>
+                      Deleting removes team access immediately. Restore it later from deleted workspaces.
+                    </p>
+                  </div>
                 </section>
               )}
             </div>
           )}
         </div>
       </div>
-    </div>
     </>
   );
 }

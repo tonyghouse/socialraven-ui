@@ -93,47 +93,47 @@ export default function WorkspaceSelectPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background to-muted/30 p-4">
-      <div className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/30 p-4">
+      <div className="w-full max-w-md rounded-2xl border border-border/70 bg-[hsl(var(--surface))] p-5 shadow-lg sm:p-6">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="mb-6 text-center">
           <img
             src="/SocialRavenLogo.svg"
             alt="SocialRaven"
-            className="h-10 w-10 mx-auto mb-4"
+            className="mx-auto mb-3 h-10 w-10"
           />
           <h1 className="text-2xl font-semibold tracking-tight">
             Select a workspace
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             Choose where you&apos;d like to work
           </p>
         </div>
 
         {/* Workspace list */}
-        <div className="space-y-2 mb-4">
+        <div className="mb-3 space-y-2">
           {workspaces.map((w) => (
             <button
               key={w.id}
               onClick={() => handleSelect(w)}
               className={cn(
-                "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
                 selected?.id === w.id
-                  ? "border-accent bg-accent/5 shadow-sm"
-                  : "border-border/60 hover:border-accent/40 hover:bg-muted/40"
+                  ? "border-accent/60 bg-[hsl(var(--surface-raised))] shadow-sm"
+                  : "border-border/60 bg-[hsl(var(--surface))] hover:border-accent/30 hover:bg-[hsl(var(--surface-raised))]"
               )}
             >
-              <div className="h-9 w-9 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10">
                 <Building2 className="h-4 w-4 text-accent" />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{w.name}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium">{w.name}</p>
                 <p className="text-xs text-muted-foreground capitalize">
                   {w.role.toLowerCase()}
                 </p>
               </div>
               {selected?.id === w.id && (
-                <Check className="h-4 w-4 text-accent shrink-0" />
+                <Check className="h-4 w-4 shrink-0 text-accent" />
               )}
             </button>
           ))}
@@ -145,13 +145,13 @@ export default function WorkspaceSelectPage() {
                 setSelected(null);
               }}
               className={cn(
-                "w-full flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
                 creating
-                  ? "border-accent bg-accent/5 shadow-sm"
-                  : "border-dashed border-border/60 hover:border-accent/40 hover:bg-muted/40"
+                  ? "border-accent/60 bg-[hsl(var(--surface-raised))] shadow-sm"
+                  : "border-dashed border-border/60 bg-[hsl(var(--surface))] hover:border-accent/30 hover:bg-[hsl(var(--surface-raised))]"
               )}
             >
-              <div className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
                 <Plus className="h-4 w-4 text-muted-foreground" />
               </div>
               <p className="text-sm font-medium text-muted-foreground">
@@ -163,7 +163,7 @@ export default function WorkspaceSelectPage() {
 
         {/* Create form */}
         {creating && canCreateWorkspaces && (
-          <div className="rounded-xl border border-accent/20 bg-accent/5 p-4 mb-4 space-y-3">
+          <div className="mb-3 space-y-3 rounded-xl border border-accent/20 bg-[hsl(var(--surface-raised))] p-4">
             <div className="space-y-1.5">
               <Label htmlFor="ws-name" className="text-sm">
                 Workspace name
@@ -175,6 +175,7 @@ export default function WorkspaceSelectPage() {
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                 autoFocus
+                className="bg-[hsl(var(--surface))]"
               />
             </div>
             {error && <p className="text-xs text-destructive">{error}</p>}
@@ -194,7 +195,7 @@ export default function WorkspaceSelectPage() {
           <Button
             onClick={handleEnter}
             disabled={!selected}
-            className="w-full"
+            className="mt-1 w-full"
           >
             Enter workspace
           </Button>

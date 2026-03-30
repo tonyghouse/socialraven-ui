@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Navbar from "@/components/navbar/navbar";
 import {
   TrendingUp,
   Zap,
@@ -8,9 +7,20 @@ import {
   Shield,
   PenTool,
   BarChart,
-  ArrowRight,
   Clock,
 } from "lucide-react";
+
+import {
+  PublicLozenge,
+  PublicPrimaryLinkButton,
+} from "@/components/public/public-atlassian";
+import {
+  PublicCard,
+  PublicHero,
+  PublicInsetCard,
+  PublicPageShell,
+  PublicSection,
+} from "@/components/public/public-layout";
 
 export const metadata: Metadata = {
   title: "Blog | Social Raven",
@@ -83,125 +93,79 @@ const COMING_SOON = [
 
 export default function BlogPage() {
   return (
-    <>
-      <Navbar />
-      <div className="bg-[#f9fafb] px-2 lg:px-5 pt-5">
-        <div className="">
+    <PublicPageShell>
+      <PublicHero
+        topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors"
+            className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
           >
             ← Back
           </Link>
-        </div>
-      </div>
-      <main className="min-h-screen bg-[#f9fafb]">
+        }
+        eyebrow="Blog"
+        title="Insights for modern social media teams."
+        description="Strategy, tools, and tactics for creators, agencies, and brands who take social seriously. First articles dropping soon — get notified when we publish."
+        actions={
+          <PublicPrimaryLinkButton href="mailto:team+blog@socialraven.io?subject=Blog%20Notifications">
+            Notify me when we publish
+          </PublicPrimaryLinkButton>
+        }
+      />
 
-        {/* Hero */}
-        <div className="bg-white border-b border-[hsl(var(--border))] px-6 md:px-10 py-20">
-          <div className="">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-4">Blog</p>
-            <h1 className="text-4xl md:text-5xl lg:text-[60px] font-semibold tracking-tight text-[hsl(var(--foreground))] mb-5 max-w-2xl leading-[1.08]">
-              Insights for modern social media teams.
-            </h1>
-            <p className="text-lg text-[hsl(var(--muted-foreground))] leading-relaxed max-w-xl mb-8">
-              Strategy, tools, and tactics for creators, agencies, and brands who take social seriously. First articles dropping soon — get notified when we publish.
+      <PublicSection eyebrow="Coming soon" title="First articles in the works">
+        <div className="grid gap-5 md:grid-cols-3">
+          {COMING_SOON.map(({ category, title, excerpt, readTime }) => (
+            <PublicCard key={title} className="space-y-4 p-6">
+              <div className="flex items-center justify-between gap-3">
+                <PublicLozenge appearance="inprogress">{category}</PublicLozenge>
+                <div className="flex items-center gap-1 text-xs text-[hsl(var(--foreground-muted))]">
+                  <Clock className="h-3 w-3" />
+                  {readTime}
+                </div>
+              </div>
+              <h3 className="text-base font-semibold leading-6 text-[hsl(var(--foreground))]">{title}</h3>
+              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{excerpt}</p>
+              <PublicLozenge appearance="default">Publishing soon</PublicLozenge>
+            </PublicCard>
+          ))}
+        </div>
+      </PublicSection>
+
+      <PublicSection eyebrow="Topics" title="What we&apos;ll cover" surface="surface">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {CATEGORIES.map(({ icon: Icon, title, description }) => (
+            <PublicInsetCard key={title} className="space-y-3 p-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                <Icon className="h-5 w-5" />
+              </div>
+              <h3 className="text-sm font-semibold text-[hsl(var(--foreground))]">{title}</h3>
+              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{description}</p>
+            </PublicInsetCard>
+          ))}
+        </div>
+      </PublicSection>
+
+      <PublicSection>
+        <PublicCard className="px-8 py-10 text-center md:px-14 md:py-14">
+          <div className="mx-auto max-w-2xl space-y-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+              Stay in the loop
             </p>
-            <a
-              href="mailto:team+blog@socialraven.io?subject=Blog%20Notifications"
-              className="inline-flex items-center gap-2 h-11 px-6 rounded-full bg-[hsl(var(--accent))] text-white text-sm font-medium hover:bg-[hsl(var(--accent))]/90 transition-colors"
-            >
-              Notify me when we publish <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
-
-        {/* Coming soon articles */}
-        <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="space-y-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">
-                Coming soon
-              </p>
-              <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]">
-                First articles in the works
-              </h2>
-            </div>
-            <div className="grid md:grid-cols-3 gap-5">
-              {COMING_SOON.map(({ category, title, excerpt, readTime }) => (
-                <div
-                  key={title}
-                  className="rounded-2xl bg-white border border-[hsl(var(--border))] p-6 space-y-4"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))] text-xs font-semibold">
-                      {category}
-                    </span>
-                    <div className="flex items-center gap-1 text-xs text-[hsl(var(--muted-foreground))] whitespace-nowrap">
-                      <Clock className="w-3 h-3" />
-                      {readTime}
-                    </div>
-                  </div>
-                  <h3 className="font-semibold text-[hsl(var(--foreground))] leading-snug">{title}</h3>
-                  <p className="text-sm text-[hsl(var(--muted-foreground))] leading-relaxed">{excerpt}</p>
-                  <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[hsl(var(--muted-foreground))] rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/40 px-3 py-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--muted-foreground))]/30" />
-                    Publishing soon
-                  </div>
-                </div>
-              ))}
+            <h2 className="text-2xl font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))] md:text-3xl">
+              Be the first to read our articles.
+            </h2>
+            <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              Drop us an email and we&apos;ll notify you as soon as the first posts go live. No spam, unsubscribe any time.
+            </p>
+            <div className="flex justify-center">
+              <PublicPrimaryLinkButton href="mailto:team+blog@socialraven.io?subject=Blog%20Notifications">
+                Get notified
+              </PublicPrimaryLinkButton>
             </div>
           </div>
-        </div>
-
-        {/* Topic categories */}
-        <div className="px-6 md:px-10 py-14 bg-white border-y border-[hsl(var(--border))]">
-          <div className="">
-            <div className="mb-10">
-              <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--accent))] mb-1">Topics</p>
-              <h2 className="text-2xl font-semibold text-[hsl(var(--foreground))]">What we&apos;ll cover</h2>
-            </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {CATEGORIES.map(({ icon: Icon, title, description }) => (
-                <div
-                  key={title}
-                  className="group rounded-2xl bg-[#f9fafb] border border-[hsl(var(--border))] p-6 hover:bg-white hover:border-[hsl(var(--accent))]/30 hover:shadow-md transition-all space-y-3"
-                >
-                  <div className="w-10 h-10 rounded-xl bg-[hsl(var(--accent))]/10 flex items-center justify-center group-hover:bg-[hsl(var(--accent))]/15 transition-colors">
-                    <Icon className="w-5 h-5 text-[hsl(var(--accent))]" />
-                  </div>
-                  <h3 className="font-semibold text-sm text-[hsl(var(--foreground))]">{title}</h3>
-                  <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">{description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Notify CTA */}
-        <div className="px-6 md:px-10 py-14 bg-[#f9fafb]">
-          <div className="">
-            <div className="rounded-2xl bg-[hsl(var(--foreground))] p-10 md:p-14 text-center space-y-5">
-              <p className="text-xs font-semibold uppercase tracking-widest text-white/50">
-                Stay in the loop
-              </p>
-              <h2 className="text-2xl md:text-3xl font-semibold text-white tracking-tight">
-                Be the first to read our articles.
-              </h2>
-              <p className="text-sm text-white/60 max-w-sm mx-auto">
-                Drop us an email and we&apos;ll notify you as soon as the first posts go live. No spam, unsubscribe any time.
-              </p>
-              <a
-                href="mailto:team+blog@socialraven.io?subject=Blog%20Notifications"
-                className="inline-flex items-center gap-2 h-11 px-7 rounded-full bg-white text-[hsl(var(--foreground))] text-sm font-medium hover:bg-gray-100 transition-colors"
-              >
-                Get notified <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-          </div>
-        </div>
-
-      </main>
-    </>
+        </PublicCard>
+      </PublicSection>
+    </PublicPageShell>
   );
 }

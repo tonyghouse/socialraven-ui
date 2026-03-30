@@ -3,7 +3,9 @@
 import React, { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import { Trash2, RefreshCw, Plus, ArrowRight } from "lucide-react";
+import { ArrowRight, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 function oauthUrl(base: string) {
   if (typeof window === "undefined") return base;
@@ -50,18 +52,7 @@ const getInitials = (username?: string) =>
         .slice(0, 2)
         .toUpperCase();
 
-const PLATFORM_ICON_STYLE: Record<string, { bg: string; ring: string }> = {
-  x:         { bg: "bg-slate-100",  ring: "ring-slate-200/80" },
-  linkedin:  { bg: "bg-blue-50",    ring: "ring-blue-100" },
-  youtube:   { bg: "bg-red-50",     ring: "ring-red-100" },
-  instagram: { bg: "bg-pink-50",    ring: "ring-pink-100" },
-  facebook:  { bg: "bg-blue-50",    ring: "ring-blue-100" },
-  tiktok:    { bg: "bg-slate-100",  ring: "ring-slate-200/80" },
-  threads:   { bg: "bg-slate-100",  ring: "ring-slate-200/80" },
-};
-
 export default function ConnectedAccountsColumn({
-  platformKey,
   label,
   Icon,
   accent,
@@ -72,23 +63,18 @@ export default function ConnectedAccountsColumn({
   onReconnect,
   canWrite = true,
 }: Props) {
-  const iconStyle = PLATFORM_ICON_STYLE[platformKey] ?? {
-    bg: "bg-foreground/5",
-    ring: "ring-foreground/10",
-  };
-
   return (
-    <div className="rounded-2xl bg-white/85 backdrop-blur-xl border border-foreground/8 shadow-[0_4px_24px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col">
-      {/* Platform header */}
-      <div className="flex items-center gap-3 px-5 pt-5 pb-4 border-b border-foreground/6">
-        <div
-          className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${iconStyle.bg} ring-1 ${iconStyle.ring}`}
-        >
-          <Icon className={`h-[18px] w-[18px] ${accent ?? "text-foreground/80"}`} />
+    <section className="flex flex-col overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] shadow-sm">
+      <div className="flex items-center gap-3 border-b border-[hsl(var(--border-subtle))] px-4 py-4 sm:px-5">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+          <Icon
+            size={18}
+            className={accent ?? "text-[hsl(var(--foreground))]"}
+          />
         </div>
-        <div className="flex-1 min-w-0">
-          <div className="text-sm font-semibold text-foreground">{label}</div>
-          <div className="text-xs text-muted-foreground mt-0.5">
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</div>
+          <div className="mt-0.5 text-xs text-[hsl(var(--foreground-muted))]">
             {comingSoon
               ? "Coming soon"
               : accounts.length === 0
@@ -97,57 +83,60 @@ export default function ConnectedAccountsColumn({
           </div>
         </div>
         {comingSoon ? (
-          <span className="px-1.5 py-0.5 text-[9px] font-bold bg-foreground/8 text-foreground/45 rounded-md tracking-widest uppercase flex-shrink-0">
+          <Badge
+            variant="outline"
+            className="shrink-0 rounded-md border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-[hsl(var(--foreground-muted))]"
+          >
             Soon
-          </span>
+          </Badge>
         ) : accounts.length > 0 ? (
-          <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-foreground/6 text-foreground/50 text-[11px] font-semibold flex-shrink-0">
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 text-[11px] font-semibold text-[hsl(var(--foreground-muted))]">
             {accounts.length}
           </span>
         ) : null}
       </div>
 
-      {/* Account list / empty state */}
-      <div className="px-4 py-3 flex-1">
+      <div className="flex-1 px-4 py-4 sm:px-5">
         {comingSoon ? (
-          <div className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/8 bg-foreground/[0.015]">
-            <div className="flex-1 min-w-0 text-center">
-              <p className="text-sm font-medium text-foreground/35">
-                Coming soon
-              </p>
-              <p className="text-xs text-muted-foreground/60 mt-0.5">
-                {label} support is on the way
-              </p>
-            </div>
+          <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-5 text-center">
+            <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+              Coming soon
+            </p>
+            <p className="mt-1 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              {label} support is on the roadmap.
+            </p>
           </div>
         ) : accounts.length === 0 ? (
           canWrite ? (
             <button
               onClick={() => { window.location.href = oauthUrl(connectHref); }}
-              className="flex items-center gap-3 px-4 py-3.5 rounded-xl border border-dashed border-foreground/15 hover:border-accent/35 hover:bg-accent/3 transition-all duration-200 group w-full text-left"
+              className="group flex w-full items-center gap-3 rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-4 text-left transition-[border-color,background-color,transform] hover:-translate-y-0.5 hover:border-[hsl(var(--accent))]/35 hover:bg-[hsl(var(--background))]"
             >
-              <div
-                className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${iconStyle.bg} transition-all`}
-              >
-                <Plus className="w-4 h-4 text-foreground/40 group-hover:text-accent transition-colors" />
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] text-[hsl(var(--foreground-muted))] transition-colors group-hover:text-accent">
+                <Plus size={16} />
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-foreground/65 group-hover:text-foreground transition-colors">
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
                   Connect {label}
                 </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Click to authorize your account
+                <p className="mt-1 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                  Authorize a new account for this channel.
                 </p>
               </div>
-              <ArrowRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-accent group-hover:translate-x-0.5 transition-all flex-shrink-0" />
+              <ArrowRight
+                size={16}
+                className="shrink-0 text-[hsl(var(--foreground-subtle))] transition-colors group-hover:text-accent"
+              />
             </button>
           ) : (
-            <div className="flex items-center justify-center px-4 py-3.5 rounded-xl border border-dashed border-foreground/8">
-              <p className="text-sm text-muted-foreground/60">No accounts connected</p>
+            <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-5 text-center">
+              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                No accounts connected
+              </p>
             </div>
           )
         ) : (
-          <div className="space-y-1.5 overflow-y-auto max-h-[200px] pr-0.5 scrollbar-thin">
+          <div className="space-y-2.5">
             {accounts.map((acc) => (
               <AccountRow
                 key={acc.providerUserId}
@@ -160,19 +149,21 @@ export default function ConnectedAccountsColumn({
         )}
       </div>
 
-      {/* Footer: add more — hidden for VIEWERs */}
       {!comingSoon && accounts.length > 0 && canWrite && (
-        <div className="px-4 pb-4">
-          <button
+        <div className="border-t border-[hsl(var(--border-subtle))] px-4 py-3.5 sm:px-5">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={() => { window.location.href = oauthUrl(connectHref); }}
-            className="flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium text-muted-foreground hover:text-accent hover:bg-accent/5 border border-dashed border-foreground/10 hover:border-accent/20 transition-all duration-200 w-full"
+            className="h-9 rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--background))] hover:text-accent"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus size={14} />
             Add another account
-          </button>
+          </Button>
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
@@ -189,8 +180,8 @@ function AccountRow({
   const src = getImageUrl(acc.profilePicLink);
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-foreground/[0.03] hover:bg-foreground/[0.06] transition-colors group">
-      <Avatar className="h-8 w-8 flex-shrink-0">
+    <div className="group flex items-center gap-3 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3.5 py-3 transition-[border-color,background-color] hover:border-[hsl(var(--accent))]/20 hover:bg-[hsl(var(--background))]">
+      <Avatar className="h-9 w-9 shrink-0">
         {!imgError && src ? (
           <AvatarImage
             src={src}
@@ -198,41 +189,46 @@ function AccountRow({
             onError={() => setImgError(true)}
           />
         ) : (
-          <AvatarFallback className="bg-gradient-to-br from-accent/25 to-accent/10 text-accent text-[11px] font-semibold">
+          <AvatarFallback className="bg-accent/10 text-[11px] font-medium text-accent">
             {getInitials(acc.username)}
           </AvatarFallback>
         )}
       </Avatar>
 
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium text-foreground truncate leading-tight">
+        <div className="truncate text-sm font-medium leading-tight text-[hsl(var(--foreground))]">
           {acc.username}
         </div>
-        <div className="text-[11px] text-muted-foreground capitalize truncate mt-0.5">
+        <div className="mt-0.5 truncate text-xs capitalize text-[hsl(var(--foreground-muted))]">
           {acc.platform}
         </div>
       </div>
 
-      {/* Actions revealed on hover — hidden for VIEWERs (no handlers passed) */}
       {(onReconnect || onRemove) && (
-        <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity ml-auto">
+        <div className="ml-auto flex items-center gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
           {onReconnect && (
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => onReconnect(acc)}
               aria-label="Reconnect account"
-              className="p-1.5 rounded-lg hover:bg-white text-foreground/40 hover:text-foreground/70 transition-all"
+              className="h-8 w-8 rounded-lg text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--background))] hover:text-[hsl(var(--foreground))]"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-            </button>
+              <RefreshCw size={14} />
+            </Button>
           )}
           {onRemove && (
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => onRemove(acc)}
               aria-label="Remove account"
-              className="p-1.5 rounded-lg hover:bg-red-50 text-foreground/40 hover:text-red-500 transition-all"
+              className="h-8 w-8 rounded-lg text-[hsl(var(--foreground-muted))] hover:bg-red-500/10 hover:text-red-500"
             >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
+              <Trash2 size={14} />
+            </Button>
           )}
         </div>
       )}
