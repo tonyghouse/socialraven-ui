@@ -10,6 +10,15 @@ export interface PostCollectionResponse {
   posts: PostResponse[];
   media: MediaResponse[];
   platformConfigs?: Record<string, any>;
+  failureState?: "NONE" | "RECOVERY_REQUIRED" | "RECOVERED" | "ESCALATED_TO_ADMIN";
+  failureReasonSummary?: string | null;
+  recoveryNotificationAttemptCount?: number;
+  recoveryCollectionId?: number | null;
+  recoverySourceCollectionId?: number | null;
+  recoveryRequired?: boolean;
+  recoveryHandled?: boolean;
+  publishedChannelCount?: number;
+  failedChannelCount?: number;
 }
 
 export interface PostCollectionResponsePage {

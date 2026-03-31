@@ -45,6 +45,7 @@ import { PlatformConfigs } from "@/model/PostCollection";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
 import MediaUploader from "@/components/schedule-post/media-uploader";
+import { SchedulePostPageSkeleton } from "@/components/schedule-post/schedule-post-page-skeleton";
 import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker";
 import PlatformCharLimits from "@/components/schedule-post/platform-char-limits";
 import MediaValidationPanel from "@/components/schedule-post/media-validation-panel";
@@ -486,7 +487,7 @@ export default function DraftEditPage() {
   }
 
   /* ── Render states ── */
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <SchedulePostPageSkeleton />;
   if (error || !collection) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">

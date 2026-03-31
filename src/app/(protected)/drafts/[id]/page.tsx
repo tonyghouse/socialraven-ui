@@ -30,6 +30,7 @@ import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker";
+import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
 import { localToUTC } from "@/lib/timeUtil";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -120,7 +121,7 @@ export default function DraftDetailPage() {
     }
   }
 
-  if (loading) return <LoadingSkeleton />;
+  if (loading) return <CollectionDetailPageSkeleton />;
   if (error || !collection) return <ErrorState error={error} onBack={() => router.push("/drafts")} />;
 
   const typeCfg = TYPE_CONFIG[collection.postCollectionType] ?? TYPE_CONFIG.TEXT;

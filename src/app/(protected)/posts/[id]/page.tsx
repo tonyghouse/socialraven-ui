@@ -22,6 +22,7 @@ import Image from "next/image";
 import type { PostResponse } from "@/model/PostResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { MediaPreview } from "@/components/generic/media-preview";
+import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
@@ -355,7 +356,7 @@ export default function PostDetailPage() {
   }, [postId, getToken]);
 
   if (loading) {
-    return <SkeletonPostPage />;
+    return <CollectionDetailPageSkeleton />;
   }
 
   if (!post || error) {

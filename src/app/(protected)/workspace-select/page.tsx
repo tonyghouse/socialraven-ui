@@ -102,10 +102,10 @@ export default function WorkspaceSelectPage() {
             alt="SocialRaven"
             className="mx-auto mb-3 h-10 w-10"
           />
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="text-lg font-semibold leading-6 text-[hsl(var(--foreground))]">
             Select a workspace
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm leading-5 text-muted-foreground">
             Choose where you&apos;d like to work
           </p>
         </div>
@@ -127,8 +127,10 @@ export default function WorkspaceSelectPage() {
                 <Building2 className="h-4 w-4 text-accent" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{w.name}</p>
-                <p className="text-xs text-muted-foreground capitalize">
+                <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                  {w.name}
+                </p>
+                <p className="text-xs font-medium leading-4 text-muted-foreground capitalize">
                   {w.role.toLowerCase()}
                 </p>
               </div>
@@ -154,7 +156,7 @@ export default function WorkspaceSelectPage() {
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
                 <Plus className="h-4 w-4 text-muted-foreground" />
               </div>
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-sm font-medium leading-5 text-muted-foreground">
                 Create new workspace
               </p>
             </button>
@@ -165,7 +167,7 @@ export default function WorkspaceSelectPage() {
         {creating && canCreateWorkspaces && (
           <div className="mb-3 space-y-3 rounded-xl border border-accent/20 bg-[hsl(var(--surface-raised))] p-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ws-name" className="text-sm">
+              <Label htmlFor="ws-name" className="text-sm font-medium leading-5">
                 Workspace name
               </Label>
               <Input

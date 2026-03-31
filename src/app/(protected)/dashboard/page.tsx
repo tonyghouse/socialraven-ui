@@ -30,6 +30,7 @@ import { fetchPostCollectionsApi } from "@/service/fetchPostCollections";
 import { fetchUsageStatsApi, fetchUserPlanApi } from "@/service/plan";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
 import { cn } from "@/lib/utils";
 
 import type { PostResponse } from "@/model/PostResponse";
@@ -185,7 +186,7 @@ export default function DashboardPage() {
   // ── loading ────────────────────────────────────────────────────────────────
 
   if (loading) {
-    return <DashboardSkeleton />;
+    return <DashboardPageSkeleton />;
   }
 
   // ── render ─────────────────────────────────────────────────────────────────

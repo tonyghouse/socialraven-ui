@@ -24,10 +24,10 @@ export default function NoWorkspacePage() {
           </div>
         </div>
 
-        <h1 className="text-2xl font-semibold tracking-tight mb-2">
+        <h1 className="mb-2 text-lg font-semibold leading-6 text-[hsl(var(--foreground))]">
           No active workspace
         </h1>
-        <p className="text-sm text-muted-foreground mb-8 max-w-xs mx-auto">
+        <p className="mb-8 max-w-xs mx-auto text-sm leading-5 text-muted-foreground">
           You&apos;ve been removed from all workspaces. Ask your team admin to
           re-invite you and check your email for an invitation.
         </p>
@@ -55,7 +55,7 @@ export default function NoWorkspacePage() {
           </Button>
 
           <button
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors mt-2"
+            className="mt-2 text-xs font-medium leading-4 text-muted-foreground transition-colors hover:text-foreground"
             onClick={() => signOut({ redirectUrl: "/sign-in" })}
           >
             Sign out

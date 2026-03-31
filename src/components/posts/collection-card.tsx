@@ -68,6 +68,14 @@ const TYPE_CONFIG = {
   TEXT: { label: "Text", Icon: FileText },
 } as const;
 
+const RECOVERY_BADGE_CONFIG = {
+  RECOVERED: {
+    label: "Recovered",
+    className:
+      "border-[hsl(var(--success))]/18 bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]",
+  },
+} as const;
+
 const PLATFORM_STYLE: Record<string, string> = {
   instagram: "text-pink-500",
   x: "text-[hsl(var(--foreground))]",
@@ -237,6 +245,10 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
     TYPE_CONFIG[collection.postCollectionType as keyof typeof TYPE_CONFIG] ??
     TYPE_CONFIG.TEXT;
   const TypeIcon = typeCfg.Icon;
+  const recoveryBadge =
+    collection.failureState === "RECOVERED"
+      ? RECOVERY_BADGE_CONFIG[collection.failureState as keyof typeof RECOVERY_BADGE_CONFIG]
+      : null;
 
   const localDate = collection.scheduledTime
     ? new Date(collection.scheduledTime)
@@ -303,10 +315,22 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
       )}
     >
       <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-3 py-2.5">
-        <span className="inline-flex items-center gap-1 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-1 text-[10px] font-semibold text-[hsl(var(--foreground))]">
-          <TypeIcon className="h-3 w-3" />
-          {typeCfg.label}
-        </span>
+        <div className="flex min-w-0 items-center gap-1.5 flex-wrap">
+          <span className="inline-flex items-center gap-1 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-1 text-[10px] font-semibold text-[hsl(var(--foreground))]">
+            <TypeIcon className="h-3 w-3" />
+            {typeCfg.label}
+          </span>
+          {recoveryBadge && (
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full border px-2 py-1 text-[10px] font-semibold",
+                recoveryBadge.className
+              )}
+            >
+              {recoveryBadge.label}
+            </span>
+          )}
+        </div>
 
         <span
           className={cn(

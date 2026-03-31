@@ -10,6 +10,7 @@ import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { useAuth } from "@clerk/nextjs";
 import { RefreshCw, BookOpen, Plus, FileText } from "lucide-react";
 import { CollectionCard } from "@/components/posts/collection-card";
+import { CollectionListPageSkeleton } from "@/components/posts/collection-page-skeletons";
 import { PostCollectionFilters, type SortDir } from "@/components/posts/post-collection-filters";
 import { Pagination } from "@/components/generic/pagination";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
@@ -177,11 +178,7 @@ export default function DraftsPage() {
         )}
 
         {loading && collections.length === 0 ? (
-          <div className="grid grid-cols-1 gap-5 pt-1 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
-          </div>
+          <CollectionListPageSkeleton titleWidth="w-20" descriptionWidth="w-64" tone="neutral" />
         ) : !isEmpty ? (
           <>
             <div className="grid grid-cols-1 gap-5 pt-1 md:grid-cols-2 lg:grid-cols-3">

@@ -27,6 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { ProfilePageSkeleton } from "@/components/profile/profile-page-skeleton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { useRole } from "@/hooks/useRole";
@@ -263,6 +264,10 @@ export default function ProfilePage() {
     }
   }
 
+  if (profileLoading && planLoading) {
+    return <ProfilePageSkeleton />;
+  }
+
   async function handleDeleteImage() {
     if (!user) {
       toast.error("User session is not available");
@@ -293,10 +298,10 @@ export default function ProfilePage() {
 
         <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
           <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-4 py-3 dark:bg-[hsl(var(--surface-sunken))] sm:px-5">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+            <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
               Account
             </h2>
-            <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+            <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
               Manage your profile details, email addresses, and avatar.
             </p>
           </div>
@@ -321,16 +326,16 @@ export default function ProfilePage() {
                       className="h-20 w-20 rounded-xl border border-[hsl(var(--border-subtle))] object-cover"
                     />
                   ) : (
-                    <div className="flex h-20 w-20 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-xl font-semibold text-[hsl(var(--foreground-muted))]">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-lg font-semibold text-[hsl(var(--foreground-muted))]">
                       {getInitials(profile)}
                     </div>
                   )}
 
                   <div className="space-y-1">
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-semibold leading-5 text-foreground">
                       {[profile?.firstName, profile?.lastName].filter(Boolean).join(" ") || "Your profile"}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs leading-4 text-muted-foreground">
                       {profile?.emailAddresses.find((email) => email.primary)?.emailAddress ?? "No primary email"}
                     </p>
                   </div>
@@ -371,19 +376,19 @@ export default function ProfilePage() {
                 <Card className="rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-none">
                   <CardContent className="grid gap-3 p-4">
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-foreground">Profile details</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm font-semibold leading-5 text-foreground">Profile details</p>
+                      <p className="text-xs leading-4 text-muted-foreground">
                         Keep your name up to date across the app.
                       </p>
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">First name</label>
+                        <label className="text-sm font-medium leading-5 text-foreground">First name</label>
                         <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">Last name</label>
+                        <label className="text-sm font-medium leading-5 text-foreground">Last name</label>
                         <Input value={lastName} onChange={(e) => setLastName(e.target.value)} />
                       </div>
                     </div>
@@ -400,8 +405,8 @@ export default function ProfilePage() {
                 <Card className="rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-none">
                   <CardContent className="grid gap-3 p-4">
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-foreground">Email addresses</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm font-semibold leading-5 text-foreground">Email addresses</p>
+                      <p className="text-xs leading-4 text-muted-foreground">
                         Add new email addresses and choose which verified email is primary.
                       </p>
                     </div>
@@ -415,14 +420,14 @@ export default function ProfilePage() {
                           <div className="min-w-0 space-y-1">
                             <div className="flex flex-wrap items-center gap-2">
                               <Mail className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-                              <span className="truncate text-sm font-medium text-foreground">
+                              <span className="truncate text-sm font-medium leading-5 text-foreground">
                                 {email.emailAddress}
                               </span>
                             </div>
                             <div className="flex flex-wrap items-center gap-2">
                               <span
                                 className={cn(
-                                  "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold",
+                                  "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium leading-4",
                                   email.primary
                                     ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.08)] text-[hsl(var(--accent))]"
                                     : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
@@ -432,7 +437,7 @@ export default function ProfilePage() {
                               </span>
                               <span
                                 className={cn(
-                                  "inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold",
+                                  "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium leading-4",
                                   email.verified
                                     ? "border-emerald-200 bg-emerald-50 text-emerald-700"
                                     : "border-amber-200 bg-amber-50 text-amber-700"
@@ -483,14 +488,14 @@ export default function ProfilePage() {
 
                     <div className="grid gap-3 rounded-lg border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]/35 p-3.5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
                       <div className="space-y-2">
-                        <label className="text-sm font-medium text-foreground">Add email address</label>
+                        <label className="text-sm font-medium leading-5 text-foreground">Add email address</label>
                         <Input
                           type="email"
                           value={newEmail}
                           placeholder="name@company.com"
                           onChange={(e) => setNewEmail(e.target.value)}
                         />
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs leading-4 text-muted-foreground">
                           Added email addresses remain pending until verified.
                         </p>
                       </div>
@@ -508,10 +513,10 @@ export default function ProfilePage() {
 
         <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
           <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-4 py-3 dark:bg-[hsl(var(--surface-sunken))] sm:px-5">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+            <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
               Membership &amp; Role
             </h2>
-            <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+            <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
               Your current plan and workspace access level.
             </p>
           </div>
@@ -527,13 +532,13 @@ export default function ProfilePage() {
                         <PlanIcon className={cn("h-5 w-5", planIconClr)} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[15px] font-semibold leading-tight text-foreground/85">
+                        <p className="text-sm font-semibold leading-5 text-foreground">
                           {plan ? PLAN_NAMES[plan] : "—"}
                         </p>
                         {statusCfg && (
                           <span
                             className={cn(
-                              "mt-1.5 inline-flex items-center gap-1.5 rounded-full border px-2 py-[3px] text-[11px] font-medium",
+                              "mt-1.5 inline-flex items-center gap-1.5 rounded-full border px-2 py-[3px] text-xs font-medium leading-4",
                               statusCfg.bg,
                               statusCfg.text,
                               statusCfg.border
@@ -548,13 +553,13 @@ export default function ProfilePage() {
 
                     <div className="flex-1 space-y-1">
                       {userPlan?.status === "TRIALING" && userPlan.trialEndsAt && (
-                        <div className="flex items-center gap-1.5 text-[12.5px] text-amber-600">
+                        <div className="flex items-center gap-1.5 text-xs leading-4 text-amber-600">
                           <CalendarClock className="h-3.5 w-3.5 shrink-0" />
                           Trial ends {formatDate(userPlan.trialEndsAt)}
                         </div>
                       )}
                       {userPlan?.renewalDate && userPlan.status !== "TRIALING" && (
-                        <div className="flex items-center gap-1.5 text-[12.5px] text-foreground/45">
+                        <div className="flex items-center gap-1.5 text-xs leading-4 text-foreground/45">
                           <CalendarClock className="h-3.5 w-3.5 shrink-0" />
                           {userPlan.cancelAtPeriodEnd ? "Cancels" : "Renews"} {formatDate(userPlan.renewalDate)}
                         </div>
@@ -562,7 +567,7 @@ export default function ProfilePage() {
                       {userPlan?.cancelAtPeriodEnd && (
                         <div className="mt-1 flex items-start gap-1.5">
                           <AlertCircle className="mt-px h-3.5 w-3.5 shrink-0 text-red-400" />
-                          <p className="text-[11.5px] leading-relaxed text-red-500">
+                          <p className="text-xs leading-4 text-red-500">
                             Your plan will not renew. Access continues until the end of the period.
                           </p>
                         </div>
@@ -573,7 +578,7 @@ export default function ProfilePage() {
                       <div className="border-t border-foreground/[0.06] pt-2.5">
                         <Link
                           href="/billing"
-                          className="group inline-flex items-center gap-1.5 text-[12.5px] font-medium text-accent transition-colors hover:text-accent/75"
+                          className="group inline-flex items-center gap-1.5 text-xs font-medium leading-4 text-accent transition-colors hover:text-accent/75"
                         >
                           Manage plan
                           <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
@@ -592,13 +597,13 @@ export default function ProfilePage() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-[15px] font-semibold leading-tight text-foreground/85">
+                        <p className="text-sm font-semibold leading-5 text-foreground">
                           {isInfluencer ? "Solo Creator" : roleCfg.label}
                         </p>
                         {!isInfluencer && (
                           <span
                             className={cn(
-                              "inline-flex items-center rounded-full border px-2 py-[3px] text-[10.5px] font-semibold",
+                              "inline-flex items-center rounded-full border px-2 py-[3px] text-xs font-medium leading-4",
                               roleCfg.pillBg,
                               roleCfg.pillText,
                               roleCfg.pillBorder
@@ -608,14 +613,14 @@ export default function ProfilePage() {
                           </span>
                         )}
                       </div>
-                      <p className="mt-0.5 truncate text-[12px] text-foreground/40">
+                      <p className="mt-0.5 truncate text-xs leading-4 text-foreground/40">
                         {isInfluencer ? "Personal workspace" : activeWorkspace?.name ?? "—"}
                       </p>
                     </div>
                   </div>
 
                   <div>
-                    <p className="mb-2.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-foreground/30">
+                    <p className="mb-2.5 text-xs font-medium leading-4 text-foreground/45">
                       Permissions
                     </p>
 
@@ -624,7 +629,7 @@ export default function ProfilePage() {
                         {INFLUENCER_PERMISSIONS.map((label) => (
                           <div key={label} className="flex items-center gap-2">
                             <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-500" />
-                            <span className="text-[12.5px] text-foreground/65">{label}</span>
+                            <span className="text-xs leading-4 text-foreground/65">{label}</span>
                           </div>
                         ))}
                       </div>
@@ -639,7 +644,7 @@ export default function ProfilePage() {
                               ) : (
                                 <Circle className="h-3.5 w-3.5 shrink-0 text-foreground/15" />
                               )}
-                              <span className={cn("text-[12.5px]", granted ? "text-foreground/65" : "text-foreground/25")}>
+                              <span className={cn("text-xs leading-4", granted ? "text-foreground/65" : "text-foreground/25")}>
                                 {label}
                               </span>
                             </div>
@@ -656,10 +661,10 @@ export default function ProfilePage() {
 
         <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
           <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-4 py-3 dark:bg-[hsl(var(--surface-sunken))] sm:px-5">
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+            <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
               Data &amp; Privacy
             </h2>
-            <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+            <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
               Your rights under GDPR and applicable US privacy laws.
             </p>
           </div>
@@ -668,10 +673,10 @@ export default function ProfilePage() {
               <div className="flex items-start gap-3">
                 <Shield className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                 <div className="space-y-2">
-                  <p className="text-sm leading-6 text-muted-foreground">
+                  <p className="text-sm leading-5 text-muted-foreground">
                     Your data is handled under <strong className="text-foreground">GDPR</strong> for EEA and UK residents and applicable US privacy laws including CCPA. We apply data minimisation principles and do not sell personal data.
                   </p>
-                  <p className="text-sm leading-6 text-muted-foreground">
+                  <p className="text-sm leading-5 text-muted-foreground">
                     You can request access, correction, or deletion of personal data by contacting{" "}
                     <a href="mailto:privacy@socialraven.io" className="font-medium text-foreground underline hover:no-underline">
                       privacy@socialraven.io
@@ -686,7 +691,7 @@ export default function ProfilePage() {
                 href="/privacy-policy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-1 text-sm font-medium leading-5 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ExternalLink className="h-3 w-3" />
                 Privacy Policy
@@ -695,14 +700,14 @@ export default function ProfilePage() {
                 href="/terms-of-service"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="flex items-center gap-1 text-sm font-medium leading-5 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ExternalLink className="h-3 w-3" />
                 Terms of Service
               </a>
               <a
                 href="mailto:privacy@socialraven.io?subject=Data%20Deletion%20Request"
-                className="flex items-center gap-1 text-sm text-red-600 transition-colors hover:text-red-700"
+                className="flex items-center gap-1 text-sm font-medium leading-5 text-red-600 transition-colors hover:text-red-700"
               >
                 Request Data Deletion (GDPR Art. 17)
               </a>

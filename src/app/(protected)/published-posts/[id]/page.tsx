@@ -29,12 +29,14 @@ import {
   Share2,
   MoreHorizontal,
   Play,
+  RefreshCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { PostResponse } from "@/model/PostResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
+import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/service/getImageUrl";
@@ -222,7 +224,7 @@ export default function PublishedCollectionDetailPage() {
   }, [collectionId, getToken]);
 
   if (loading) {
-    return <SkeletonDetailPage />;
+    return <CollectionDetailPageSkeleton />;
   }
 
   if (error || !collection) {
@@ -255,6 +257,13 @@ export default function PublishedCollectionDetailPage() {
   const type = typeConfig[collection.postCollectionType] ?? typeConfig.TEXT;
   const StatusIcon = status.Icon;
   const TypeIcon = type.Icon;
+  const recoveryBadge = collection.failureState === "RECOVERED"
+    ? { label: "Recovered", className: "border-emerald-200 bg-emerald-50 text-emerald-700" }
+    : null;
+  const canOpenChannelRecovery = collection.overallStatus === "PARTIAL_SUCCESS"
+    && (collection.failedChannelCount ?? 0) > 0
+    && collection.failureState === "RECOVERY_REQUIRED"
+    && !collection.recoveryCollectionId;
 
   // Group posts by platform
   const groupedPosts = collection.posts.reduce<Record<string, PostResponse[]>>(
@@ -344,6 +353,11 @@ export default function PublishedCollectionDetailPage() {
                   <StatusIcon className="h-3.5 w-3.5" />
                   {status.label}
                 </span>
+                {recoveryBadge && (
+                  <span className={cn("inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium leading-4", recoveryBadge.className)}>
+                    {recoveryBadge.label}
+                  </span>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
@@ -351,6 +365,18 @@ export default function PublishedCollectionDetailPage() {
                 <Calendar className="h-3.5 w-3.5" />
                 <span>{formattedDate} · {formattedTime}</span>
               </div>
+              {canOpenChannelRecovery && (
+                <AtlassianButton
+                  appearance="primary"
+                  spacing="compact"
+                  onClick={() => router.push(`/recovery-drafts/${collection.id}`)}
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <RefreshCcw className="h-3.5 w-3.5" />
+                    <span>Recover Failed Channels</span>
+                  </span>
+                </AtlassianButton>
+              )}
               <div className="flex items-center gap-1.5">
                 {Object.keys(groupedPosts).map((plat) => {
                   const platUpper = plat.toUpperCase();
@@ -376,6 +402,27 @@ export default function PublishedCollectionDetailPage() {
         {/* Main layout: sidebar + platform sections */}
         <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)] items-start">
           <div className="space-y-4">
+            {canOpenChannelRecovery && (
+              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="flex items-start gap-3 px-5 py-4">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-700" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold leading-5 text-amber-900">Failed channels still need attention</p>
+                    <p className="mt-1 text-sm leading-5 text-amber-800">
+                      {collection.failedChannelCount} channel{collection.failedChannelCount === 1 ? "" : "s"} did not publish successfully. Create a recovery draft to correct and reschedule only those failed channels.
+                    </p>
+                    <div className="mt-3">
+                      <AtlassianButton appearance="primary" spacing="compact" onClick={() => router.push(`/recovery-drafts/${collection.id}`)}>
+                        <span className="inline-flex items-center gap-1.5">
+                          <RefreshCcw className="h-3.5 w-3.5" />
+                          <span>Open Channel Recovery</span>
+                        </span>
+                      </AtlassianButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
               <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                 <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />

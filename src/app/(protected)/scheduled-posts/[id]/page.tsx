@@ -44,6 +44,7 @@ import {
   CloudUpload,
   X,
   Save,
+  RefreshCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -68,6 +69,7 @@ import type { PostResponse } from "@/model/PostResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PlatformConfigs } from "@/model/PostCollection";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
+import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/service/getImageUrl";
 import { MediaPreview } from "@/components/generic/media-preview";
@@ -750,7 +752,7 @@ export default function ScheduledCollectionDetailPage() {
 
   /* ── Loading / error states ── */
   if (loading) {
-    return <SkeletonDetailPage />;
+    return <CollectionDetailPageSkeleton />;
   }
 
   if (error || !collection) {
@@ -774,6 +776,13 @@ export default function ScheduledCollectionDetailPage() {
   const status = statusConfig[collection.overallStatus] ?? statusConfig.SCHEDULED;
   const type = typeConfig[collection.postCollectionType] ?? typeConfig.TEXT;
   const isScheduled = collection.overallStatus === "SCHEDULED";
+  const recoveryBadge = collection.failureState === "RECOVERED"
+    ? { appearance: "success", label: "Recovered" }
+    : null;
+  const canOpenChannelRecovery = collection.overallStatus === "PARTIAL_SUCCESS"
+    && (collection.failedChannelCount ?? 0) > 0
+    && collection.failureState === "RECOVERY_REQUIRED"
+    && !collection.recoveryCollectionId;
 
   // Group posts by platform
   const groupedPosts = collection.posts.reduce<Record<string, PostResponse[]>>(
@@ -931,6 +940,11 @@ export default function ScheduledCollectionDetailPage() {
                     <Lozenge appearance={getStatusLozengeAppearance(collection.overallStatus)} isBold>
                       {status.label}
                     </Lozenge>
+                    {recoveryBadge && (
+                      <Lozenge appearance={recoveryBadge.appearance as "success"}>
+                        {recoveryBadge.label}
+                      </Lozenge>
+                    )}
                     <div className="flex items-center gap-1.5 sm:hidden">
                       {isScheduled && (
                         <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
@@ -947,6 +961,16 @@ export default function ScheduledCollectionDetailPage() {
                   <Tag text={`${formattedDate} · ${formattedTime}`} />
                   <Tag text={`${collection.posts.length} post${collection.posts.length !== 1 ? "s" : ""}`} />
                   <Tag text={`${platformCount} platform${platformCount !== 1 ? "s" : ""}`} />
+                  {canOpenChannelRecovery && (
+                    <button
+                      type="button"
+                      onClick={() => router.push(`/recovery-drafts/${collection.id}`)}
+                      className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-medium leading-4 text-amber-800 transition-colors hover:bg-amber-100"
+                    >
+                      <RefreshCcw className="h-3 w-3" />
+                      Recover Failed Channels
+                    </button>
+                  )}
                   {Object.keys(groupedPosts).map((plat) => (
                     <Tag
                       key={plat}
@@ -963,6 +987,25 @@ export default function ScheduledCollectionDetailPage() {
                 </div>
               )}
             </div>
+
+            {canOpenChannelRecovery && (
+              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="flex flex-wrap items-start justify-between gap-3 px-6 py-4">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold leading-5 text-amber-900">Failed channels still need attention</p>
+                    <p className="mt-1 text-sm leading-5 text-amber-800">
+                      {collection.failedChannelCount} channel{collection.failedChannelCount === 1 ? "" : "s"} did not publish successfully. Create a recovery draft to correct and reschedule only those failed channels.
+                    </p>
+                  </div>
+                  <AtlassianButton appearance="primary" spacing="compact" onClick={() => router.push(`/recovery-drafts/${collection.id}`)}>
+                    <span className="inline-flex items-center gap-1.5">
+                      <RefreshCcw className="h-3.5 w-3.5" />
+                      <span>Open Channel Recovery</span>
+                    </span>
+                  </AtlassianButton>
+                </div>
+              </div>
+            )}
 
             <div className="flex flex-col lg:flex-row gap-5 items-start">
               <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">

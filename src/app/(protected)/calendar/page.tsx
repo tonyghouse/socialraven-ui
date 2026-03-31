@@ -39,6 +39,7 @@ import {
 } from "date-fns";
 import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { CalendarPageSkeleton } from "@/components/calendar/calendar-page-skeleton";
 import { fetchCalendarPostsApi } from "@/service/calendarPosts";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import type { CalendarPostResponse } from "@/model/CalendarPostResponse";
@@ -893,14 +894,7 @@ export default function CalendarPage() {
         )}`;
 
   if (loadingData) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-[hsl(var(--surface))] px-6 py-8 shadow-sm">
-          <Loader2 className="h-6 w-6 animate-spin text-[hsl(var(--accent))]" />
-          <p className="text-sm text-muted-foreground">Loading calendar...</p>
-        </div>
-      </div>
-    );
+    return <CalendarPageSkeleton />;
   }
 
   if (error) {
