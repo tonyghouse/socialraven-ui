@@ -307,10 +307,10 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
         <CalendarCheck2 className="h-5 w-5 text-[hsl(var(--success))]" />
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-[hsl(var(--foreground))]">
+      <h3 className="mt-4 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
         Nothing published yet
       </h3>
-      <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+      <p className="mx-auto mt-2 max-w-sm text-sm leading-5 text-[hsl(var(--foreground-muted))]">
         Once your scheduled posts go live across platforms, they&apos;ll
         appear here automatically.
       </p>
@@ -322,7 +322,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
           </span>
         </AtlassianButton>
       </div>
-      <p className="mt-4 text-xs text-[hsl(var(--foreground-subtle))]">
+      <p className="mt-4 text-xs leading-4 text-[hsl(var(--foreground-subtle))]">
         Posts go out automatically — no need to stay online.
       </p>
     </div>

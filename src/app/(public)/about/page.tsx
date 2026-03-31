@@ -15,7 +15,6 @@ import {
 import {
   PublicPrimaryLinkButton,
   PublicSubtleLinkButton,
-  PublicTag,
 } from "@/components/public/public-atlassian";
 import {
   PublicCard,
@@ -117,10 +116,10 @@ export default function AboutPage() {
           <PublicCard className="grid gap-5 p-6 sm:grid-cols-2">
             {STATS.map(({ value, label }) => (
               <div key={label}>
-                <p className="text-3xl font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                <p className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
                   {value}
                 </p>
-                <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">{label}</p>
+                <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{label}</p>
               </div>
             ))}
           </PublicCard>
@@ -130,16 +129,16 @@ export default function AboutPage() {
       <PublicSection>
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <div className="space-y-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+            <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
               Our mission
             </p>
-            <h2 className="text-3xl font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))] md:text-4xl">
+            <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
               Give every team the tools that used to cost a fortune.
             </h2>
-            <p className="leading-7 text-[hsl(var(--foreground-muted))]">
+            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
               Enterprise social media tools charge thousands per month and take weeks to set up. Meanwhile, creators and small businesses are duct-taping together spreadsheets, free trials, and manual posting.
             </p>
-            <p className="leading-7 text-[hsl(var(--foreground-muted))]">
+            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
               Social Raven exists to close that gap. We believe powerful, professional-grade scheduling and analytics should be accessible to every creator, agency, and business — not just the ones with six-figure software budgets.
             </p>
             <div>
@@ -157,8 +156,8 @@ export default function AboutPage() {
                 <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
                   <Icon className="h-4 w-4" />
                 </div>
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</p>
-                <p className="text-xs leading-6 text-[hsl(var(--foreground-muted))]">{value}</p>
+                <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{label}</p>
+                <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{value}</p>
               </PublicInsetCard>
             ))}
           </div>
@@ -172,8 +171,8 @@ export default function AboutPage() {
               <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="font-semibold text-[hsl(var(--foreground))]">{title}</h3>
-              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{description}</p>
+              <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{title}</h3>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{description}</p>
             </PublicInsetCard>
           ))}
         </div>
@@ -184,8 +183,8 @@ export default function AboutPage() {
           {PERSONAS.map(({ title, description, bullets }) => (
             <PublicCard key={title} className="space-y-4 p-7">
               <div className="space-y-3">
-                <PublicTag text={title} />
-                <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{description}</p>
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{title}</h3>
+                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{description}</p>
               </div>
               <ul className="space-y-2.5 pt-1">
                 {bullets.map((bullet) => (
@@ -206,13 +205,13 @@ export default function AboutPage() {
       <PublicSection>
         <PublicCard className="px-8 py-10 text-center md:px-14 md:py-16">
           <div className="mx-auto max-w-3xl space-y-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+            <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
               Get started
             </p>
-            <h2 className="text-3xl font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))] md:text-4xl">
+            <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
               Ready to take back your time?
             </h2>
-            <p className="mx-auto max-w-md text-base leading-7 text-[hsl(var(--foreground-muted))]">
+            <p className="mx-auto max-w-md text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
               Join thousands of creators and agencies managing their social media with Social Raven. Start free — no credit card required.
             </p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">

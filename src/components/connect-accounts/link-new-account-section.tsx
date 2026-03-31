@@ -78,12 +78,12 @@ export default function LinkNewAccountSection() {
     <section className="overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
       <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-3 sm:px-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
-            Available providers
+          <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+            Add new account connection
           </p>
           <Badge
             variant="outline"
-            className="rounded-md border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2.5 py-1 text-[11px] font-medium text-[hsl(var(--foreground-muted))]"
+            className="rounded-md border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2.5 py-1 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]"
           >
             OAuth redirect
           </Badge>
@@ -103,7 +103,7 @@ export default function LinkNewAccountSection() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-2.5 p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-1 2xl:grid-cols-2">
+      <div className="grid grid-cols-2 gap-2 p-3 sm:grid-cols-3 sm:p-4 lg:grid-cols-5 xl:grid-cols-7">
         {PROVIDERS.map((provider) => (
           <a
             key={provider.key}
@@ -112,43 +112,39 @@ export default function LinkNewAccountSection() {
               if (!provider.enabled) e.preventDefault();
             }}
             className={cn(
-              "group relative flex min-h-[88px] flex-col justify-between rounded-xl border px-3 py-2.5 transition-[border-color,background-color,transform,box-shadow]",
+              "group relative flex min-h-[108px] flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-center transition-[border-color,background-color,transform,box-shadow]",
               "border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]",
               provider.enabled
                 ? "cursor-pointer hover:-translate-y-0.5 hover:border-[hsl(var(--accent))]/35 hover:bg-[hsl(var(--surface))] hover:shadow-sm"
                 : "cursor-not-allowed opacity-55",
             )}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
-                <provider.icon className={`h-4 w-4 ${provider.iconColor}`} />
-              </div>
-
-              <div className="flex items-center gap-2">
-                {!provider.enabled && (
-                  <Badge
-                    variant="outline"
-                    className="rounded-md border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-[hsl(var(--foreground-muted))]"
-                  >
-                    Soon
-                  </Badge>
-                )}
-                {provider.enabled && (
-                  <div className="rounded-md bg-[hsl(var(--accent))]/[0.08] p-1 text-[hsl(var(--accent))] transition-colors group-hover:bg-[hsl(var(--accent))]/[0.12]">
-                    <ArrowUpRight size={14} />
-                  </div>
-                )}
-              </div>
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+              <provider.icon className={`h-4 w-4 ${provider.iconColor}`} />
             </div>
 
-            <div className="space-y-0.5">
-              <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+            <div className="min-w-0 space-y-0.5">
+              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground))]">
                 {provider.name}
               </p>
-              <p className="text-xs leading-5 text-[hsl(var(--foreground-muted))]">
+              <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                 {provider.enabled ? "Connect account" : "Not available yet"}
               </p>
             </div>
+
+            {!provider.enabled && (
+              <Badge
+                variant="outline"
+                className="absolute right-2 top-2 rounded-md border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-1.5 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]"
+              >
+                Soon
+              </Badge>
+            )}
+            {provider.enabled && (
+              <div className="absolute right-2 top-2 rounded-md bg-[hsl(var(--accent))]/[0.08] p-1 text-[hsl(var(--accent))] transition-colors group-hover:bg-[hsl(var(--accent))]/[0.12]">
+                <ArrowUpRight size={14} />
+              </div>
+            )}
           </a>
         ))}
       </div>

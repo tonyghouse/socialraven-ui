@@ -70,7 +70,7 @@ export function AppSidebar() {
   ];
 
   const navItemBase =
-    "group relative flex items-center gap-2.5 rounded-lg border text-sm leading-none transition-[background-color,color,border-color,box-shadow] duration-150";
+    "group relative flex items-center gap-2.5 rounded-lg border text-sm font-medium leading-5 transition-[background-color,color,border-color,box-shadow] duration-150";
   const navItemActive =
     "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))] shadow-xs";
   const navItemIdle =
@@ -117,7 +117,7 @@ export function AppSidebar() {
 
             {!isCollapsed && (
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">
+                <p className="truncate text-base font-bold leading-5 text-[hsl(var(--foreground))]">
                   SocialRaven
                 </p>
               </div>
@@ -172,7 +172,7 @@ export function AppSidebar() {
                 {label && (
                   <div className="pb-0.5">
                     {!isCollapsed ? (
-                      <p className="px-2.5 text-[10px] font-semibold tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
+                      <p className="px-2.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                         {label}
                       </p>
                     ) : (
@@ -223,7 +223,7 @@ export function AppSidebar() {
 
                       {!isCollapsed && (
                         <div className="min-w-0 flex-1">
-                          <span className="truncate text-[13px] font-medium tracking-[-0.005em]">
+                          <span className="truncate">
                             {title}
                           </span>
                         </div>

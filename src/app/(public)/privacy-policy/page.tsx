@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import {
-  PublicPrimaryLinkButton,
-  PublicSectionMessage,
-} from "@/components/public/public-atlassian";
+import { PublicPrimaryLinkButton } from "@/components/public/public-atlassian";
 import {
   PublicCard,
   PublicHero,
@@ -44,7 +41,7 @@ export default function PrivacyPolicyPage() {
         topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+            className="inline-flex items-center gap-1 text-sm font-medium leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
           >
             ← Back
           </Link>
@@ -65,12 +62,12 @@ export default function PrivacyPolicyPage() {
 
           <div className="min-w-0 space-y-10">
             <PublicCard id="data-controller" className="space-y-4 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">1. Data Controller</h2>
-              <p className="text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">1. Data Controller</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 The data controller responsible for your personal data is:
               </p>
-              <PublicInsetCard className="space-y-1 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <p className="font-semibold text-[hsl(var(--foreground))]">Social Raven</p>
+              <PublicInsetCard className="space-y-1 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <p className="font-bold text-[hsl(var(--foreground))]">Social Raven</p>
                 <p>
                   Email:{" "}
                   <a
@@ -82,20 +79,20 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <p>Website: socialraven.io</p>
               </PublicInsetCard>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 For EU residents, if you have questions about how we process your data or wish to exercise
                 your rights, contact us at the address above.
               </p>
             </PublicCard>
 
             <PublicCard id="information-collected" className="space-y-5 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">2. Information We Collect</h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">2. Information We Collect</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 We collect only the minimum data required to deliver, secure, and improve our service.
               </p>
 
-              <PublicInsetCard className="space-y-3 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <h3 className="font-semibold text-[hsl(var(--foreground))]">2.1 Account Information</h3>
+              <PublicInsetCard className="space-y-3 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">2.1 Account Information</h3>
                 <ul className="ml-5 list-disc space-y-1">
                   <li>Full name and email address (provided during registration)</li>
                   <li>Authentication identifiers managed by Clerk</li>
@@ -103,8 +100,8 @@ export default function PrivacyPolicyPage() {
                 </ul>
               </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <h3 className="font-semibold text-[hsl(var(--foreground))]">2.2 Connected Social Media Accounts</h3>
+              <PublicInsetCard className="space-y-3 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">2.2 Connected Social Media Accounts</h3>
                 <p>
                   When you connect a social account (Instagram, Facebook, YouTube, LinkedIn, X/Twitter), we
                   store:
@@ -121,16 +118,16 @@ export default function PrivacyPolicyPage() {
                 </p>
               </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <h3 className="font-semibold text-[hsl(var(--foreground))]">2.3 Content You Create</h3>
+              <PublicInsetCard className="space-y-3 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">2.3 Content You Create</h3>
                 <ul className="ml-5 list-disc space-y-1">
                   <li>Post drafts, captions, hashtags, and scheduling metadata</li>
                   <li>Images and videos uploaded for scheduling (stored temporarily on our servers and/or AWS S3)</li>
                 </ul>
               </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <h3 className="font-semibold text-[hsl(var(--foreground))]">2.4 Usage and Technical Data</h3>
+              <PublicInsetCard className="space-y-3 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">2.4 Usage and Technical Data</h3>
                 <ul className="ml-5 list-disc space-y-1">
                   <li>IP address, browser type, device type, and operating system</li>
                   <li>Pages visited, features used, and session duration</li>
@@ -138,8 +135,8 @@ export default function PrivacyPolicyPage() {
                 </ul>
               </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <h3 className="font-semibold text-[hsl(var(--foreground))]">2.5 Cookies &amp; Tracking</h3>
+              <PublicInsetCard className="space-y-3 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">2.5 Cookies &amp; Tracking</h3>
                 <p>
                   We use strictly necessary cookies for session management and authentication. We may also
                   use analytics cookies (e.g., anonymised analytics) to understand how users interact with
@@ -150,10 +147,10 @@ export default function PrivacyPolicyPage() {
             </PublicCard>
 
             <PublicCard id="legal-basis" className="space-y-5 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">
                 3. Legal Basis for Processing (GDPR – EU/EEA Users)
               </h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Under the GDPR, we process your personal data on the following legal bases:
               </p>
               <PublicTable
@@ -170,11 +167,11 @@ export default function PrivacyPolicyPage() {
             </PublicCard>
 
             <PublicCard id="how-we-use" className="space-y-5 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">4. How We Use Your Information</h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">4. How We Use Your Information</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 We use your data solely for the following purposes:
               </p>
-              <ul className="ml-5 list-disc space-y-1 text-sm text-[hsl(var(--foreground-muted))]">
+              <ul className="ml-5 list-disc space-y-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 <li>Authenticating your identity and maintaining your account</li>
                 <li>Scheduling, queuing, and auto-publishing posts to connected platforms</li>
                 <li>Storing content drafts and post history</li>
@@ -184,19 +181,24 @@ export default function PrivacyPolicyPage() {
                 <li>Ensuring the security and integrity of our platform</li>
                 <li>Complying with legal obligations</li>
               </ul>
-              <PublicSectionMessage appearance="error" title="We will never">
-                <ul className="ml-5 list-disc space-y-1 text-sm">
+              <PublicInsetCard className="overflow-hidden border-[hsl(4_68%_84%)] bg-[linear-gradient(180deg,hsl(8_100%_98%)_0%,hsl(0_100%_97%)_100%)] dark:border-[hsl(4_40%_34%)] dark:bg-[linear-gradient(180deg,hsl(218_42%_18%)_0%,hsl(218_40%_16%)_100%)]">
+                <div className="border-b border-[hsl(4_60%_86%)] bg-[hsl(8_100%_97%/0.85)] px-4 py-3 dark:border-[hsl(4_36%_30%)] dark:bg-[hsl(218_36%_20%/0.9)]">
+                  <h3 className="text-sm leading-5 font-bold text-[hsl(2_72%_40%)] dark:text-[hsl(8_92%_78%)]">
+                    We will never
+                  </h3>
+                </div>
+                <ul className="ml-5 list-disc space-y-2 px-4 py-4 text-sm leading-5 text-[hsl(var(--foreground-muted))] marker:text-[hsl(2_72%_48%)] dark:text-[hsl(215_18%_82%)] dark:marker:text-[hsl(8_92%_72%)]">
                   <li>Sell, rent, or trade your personal data to third parties</li>
                   <li>Share your data for advertising or profiling purposes</li>
                   <li>Use your content for AI training without explicit consent</li>
                   <li>Monetize your profile or social media presence</li>
                 </ul>
-              </PublicSectionMessage>
+              </PublicInsetCard>
             </PublicCard>
 
             <PublicCard id="data-sharing" className="space-y-5 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">5. Data Sharing &amp; Third-Party Services</h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">5. Data Sharing &amp; Third-Party Services</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 We share data only with trusted sub-processors necessary to operate our service:
               </p>
               <PublicTable
@@ -210,7 +212,7 @@ export default function PrivacyPolicyPage() {
                   ["X / Twitter", "Content publishing via official API", "OAuth tokens, post content"],
                 ]}
               />
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 All sub-processors are bound by data processing agreements (DPAs) and handle data in
                 accordance with applicable law. Each integration uses the official platform API and
                 operates within the scopes you explicitly authorise.
@@ -218,13 +220,13 @@ export default function PrivacyPolicyPage() {
             </PublicCard>
 
             <PublicCard id="international-transfers" className="space-y-4 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">6. International Data Transfers</h2>
-              <p className="text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">6. International Data Transfers</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Social Raven operates globally. Your data may be transferred to and processed in countries
                 outside the European Economic Area (EEA), including the United States. Where such
                 transfers occur, we ensure adequate safeguards are in place through:
               </p>
-              <ul className="ml-5 list-disc space-y-1 text-sm text-[hsl(var(--foreground-muted))]">
+              <ul className="ml-5 list-disc space-y-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 <li>Standard Contractual Clauses (SCCs) approved by the European Commission</li>
                 <li>Transfers to countries with an EU adequacy decision</li>
                 <li>Binding Corporate Rules or other recognised legal mechanisms where applicable</li>
@@ -232,27 +234,27 @@ export default function PrivacyPolicyPage() {
             </PublicCard>
 
             <PublicCard id="data-storage" className="space-y-4 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">7. Data Storage &amp; Security</h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">7. Data Storage &amp; Security</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 We implement industry-standard technical and organisational security measures to protect
                 your data:
               </p>
-              <ul className="ml-5 list-disc space-y-1 text-sm text-[hsl(var(--foreground-muted))]">
+              <ul className="ml-5 list-disc space-y-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 <li>Encryption of data in transit (TLS 1.2+) and at rest (AES-256)</li>
                 <li>Encrypted storage of OAuth tokens — never stored in plaintext</li>
                 <li>Role-based access control limiting internal access to personal data</li>
                 <li>Regular security audits and vulnerability assessments</li>
                 <li>Incident response procedures meeting 72-hour GDPR breach notification requirements</li>
               </ul>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 While we take all reasonable precautions, no internet-based service is 100% secure. We
                 encourage you to use strong passwords and report any suspected security issues promptly.
               </p>
             </PublicCard>
 
             <PublicCard id="data-retention" className="space-y-5 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">8. Data Retention</h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">8. Data Retention</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 We retain personal data only as long as necessary for the purposes for which it was
                 collected, or as required by law:
               </p>
@@ -266,17 +268,17 @@ export default function PrivacyPolicyPage() {
                   ["Technical/log data", "Up to 90 days"],
                 ]}
               />
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Upon account deletion, all personal data is permanently erased within{" "}
-                <span className="font-semibold">30 days</span>, except where retention is required by law.
+                <span className="font-bold">30 days</span>, except where retention is required by law.
               </p>
             </PublicCard>
 
             <PublicCard id="your-rights" className="space-y-5 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">9. Your Privacy Rights</h2>
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">9. Your Privacy Rights</h2>
 
-              <PublicInsetCard className="space-y-3 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <h3 className="font-semibold text-[hsl(var(--foreground))]">9.1 Rights Under GDPR (EU/EEA Residents)</h3>
+              <PublicInsetCard className="space-y-3 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">9.1 Rights Under GDPR (EU/EEA Residents)</h3>
                 <p>Under the GDPR, you have the following rights:</p>
                 <ul className="ml-5 list-disc space-y-1">
                   <li><strong>Right of Access (Art. 15):</strong> Request a copy of the personal data we hold about you.</li>
@@ -291,8 +293,8 @@ export default function PrivacyPolicyPage() {
                 </ul>
               </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-sm text-[hsl(var(--foreground-muted))]">
-                <h3 className="font-semibold text-[hsl(var(--foreground))]">9.2 Rights Under CCPA (California Residents)</h3>
+              <PublicInsetCard className="space-y-3 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">9.2 Rights Under CCPA (California Residents)</h3>
                 <p>If you are a California resident, you have the following rights under the CCPA/CPRA:</p>
                 <ul className="ml-5 list-disc space-y-1">
                   <li><strong>Right to Know:</strong> Request disclosure of the categories and specific pieces of personal information we have collected.</li>
@@ -304,31 +306,31 @@ export default function PrivacyPolicyPage() {
                 </ul>
               </PublicInsetCard>
 
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 To exercise any of the above rights, contact us at{" "}
                 <a
                   href="mailto:team+privacy@socialraven.io"
                   className="text-[hsl(var(--accent))] underline underline-offset-2"
                 >
                   team+privacy@socialraven.io
-                </a>. We will respond within <span className="font-semibold">30 days</span> (or 45 days for
+                </a>. We will respond within <span className="font-bold">30 days</span> (or 45 days for
                 CCPA requests where permitted). We may require identity verification before processing requests.
               </p>
             </PublicCard>
 
             <PublicCard id="data-deletion" className="space-y-4 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">10. Data Deletion Requests</h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">10. Data Deletion Requests</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 To request deletion of your data, email us with the subject line{" "}
                 <em>&quot;Data Deletion Request&quot;</em>:
               </p>
               <PublicPrimaryLinkButton href="mailto:team+privacy@socialraven.io">
                 team+privacy@socialraven.io
               </PublicPrimaryLinkButton>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Upon confirmed request, we will permanently erase:
               </p>
-              <ul className="ml-5 list-disc space-y-1 text-sm text-[hsl(var(--foreground-muted))]">
+              <ul className="ml-5 list-disc space-y-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 <li>Your account and profile information</li>
                 <li>All OAuth access and refresh tokens</li>
                 <li>All scheduled and published post records</li>
@@ -336,17 +338,17 @@ export default function PrivacyPolicyPage() {
                 <li>Analytics data linked to your identity</li>
                 <li>All server logs containing your identifiers</li>
               </ul>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
-                Deletion is completed within <span className="font-semibold">30 days</span> of verification.
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                Deletion is completed within <span className="font-bold">30 days</span> of verification.
                 We will confirm completion via email.
               </p>
             </PublicCard>
 
             <PublicCard id="children" className="space-y-4 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">11. Children&apos;s Privacy</h2>
-              <p className="text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">11. Children&apos;s Privacy</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Social Raven is not directed at individuals under the age of{" "}
-                <span className="font-semibold">16</span> (or the applicable minimum age in your
+                <span className="font-bold">16</span> (or the applicable minimum age in your
                 jurisdiction). We do not knowingly collect personal data from children. If we become aware
                 that we have collected data from a child without appropriate consent, we will delete it
                 promptly. If you believe a child has provided us with personal data, contact{" "}
@@ -361,31 +363,31 @@ export default function PrivacyPolicyPage() {
             </PublicCard>
 
             <PublicCard id="updates" className="space-y-4 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">12. Updates to This Privacy Policy</h2>
-              <p className="text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">12. Updates to This Privacy Policy</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 We may update this Privacy Policy periodically to reflect changes to our practices,
                 technology, legal requirements, or other factors. When we make material changes, we will
                 notify you by email or via a prominent notice within the application at least{" "}
-                <span className="font-semibold">14 days</span> before changes take effect. The
+                <span className="font-bold">14 days</span> before changes take effect. The
                 &quot;Last Updated&quot; date at the top of this page indicates when the most recent revision was made.
               </p>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Continued use of Social Raven after the effective date of changes constitutes acceptance
                 of the revised policy.
               </p>
             </PublicCard>
 
             <PublicCard id="contact" className="space-y-4 p-8">
-              <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">13. Contact Us</h2>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">13. Contact Us</h2>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 For questions, complaints, or to exercise your data rights:
               </p>
               <PublicPrimaryLinkButton href="mailto:team+privacy@socialraven.io">
                 team+privacy@socialraven.io
               </PublicPrimaryLinkButton>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 We aim to respond to all privacy-related enquiries within{" "}
-                <span className="font-semibold">72 hours</span>.
+                <span className="font-bold">72 hours</span>.
               </p>
             </PublicCard>
           </div>

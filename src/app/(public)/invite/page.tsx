@@ -93,8 +93,8 @@ function InvitePageContent() {
 
         {state.status === "needs-auth" && (
           <div>
-            <h2 className="mb-2 text-xl font-semibold text-[hsl(var(--foreground))]">Sign in to accept</h2>
-            <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
+            <h2 className="mb-2 text-base leading-5 font-bold text-[hsl(var(--foreground))]">Sign in to accept</h2>
+            <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
               Sign in or create an account to accept this workspace invitation.
             </p>
             <SignIn
@@ -108,15 +108,15 @@ function InvitePageContent() {
         {(state.status === "idle" || state.status === "loading") && (
           <div className="flex flex-col items-center gap-3 text-[hsl(var(--foreground-muted))]">
             <Loader2 className="h-8 w-8 animate-spin" />
-            <p className="text-sm">Accepting invitation…</p>
+            <p className="text-sm leading-5">Accepting invitation…</p>
           </div>
         )}
 
         {state.status === "success" && (
           <div className="flex flex-col items-center gap-4">
             <CheckCircle className="h-12 w-12 text-[hsl(var(--success))]" />
-            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">You&apos;re in!</h2>
-            <p className="text-sm text-[hsl(var(--foreground-muted))]">
+            <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">You&apos;re in!</h2>
+            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
               You&apos;ve successfully joined the workspace.
             </p>
             <PublicPrimaryButton onClick={() => enterWorkspace(state.workspaceId)}>
@@ -130,7 +130,7 @@ function InvitePageContent() {
             <div className="flex justify-center">
               <XCircle className="h-12 w-12 text-[hsl(var(--destructive))]" />
             </div>
-            <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">Invitation error</h2>
+            <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">Invitation error</h2>
             <PublicSectionMessage appearance="error" title={state.message}>
               <p>This invitation could not be accepted.</p>
             </PublicSectionMessage>

@@ -161,7 +161,7 @@ function StepCard({
       >
         <div
           className={cn(
-            "mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold transition-colors duration-200",
+            "mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border text-xs font-medium leading-4 transition-colors duration-200",
             complete
               ? "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
               : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]",
@@ -176,14 +176,14 @@ function StepCard({
         <div className="flex-1 min-w-0">
           {!isOpen && complete && summary ? (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">{title}</span>
+              <span className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">{title}</span>
               <span className="text-[hsl(var(--foreground-subtle))]">·</span>
               {summary}
             </div>
           ) : (
             <>
-              <h2 className="text-sm font-bold text-[hsl(var(--foreground))]">{title}</h2>
-              <p className="mt-0.5 text-xs leading-relaxed text-[hsl(var(--foreground-muted))]">{description}</p>
+              <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{title}</h2>
+              <p className="mt-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">{description}</p>
             </>
           )}
         </div>
@@ -191,7 +191,7 @@ function StepCard({
         {canToggle && (
           <div className="flex-shrink-0 flex items-center gap-1.5 text-[hsl(var(--foreground-muted))]">
             {!isOpen && (
-              <span className="hidden items-center gap-1 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 py-0.5 text-[10px] font-medium text-[hsl(var(--foreground-muted))] sm:flex">
+              <span className="hidden items-center gap-1 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))] sm:flex">
                 <Pencil className="w-2.5 h-2.5" />
                 Edit
               </span>
@@ -391,7 +391,7 @@ export default function DraftEditPage() {
   const TypeIcon = typeCfg.Icon;
 
   const step1Summary = (
-    <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+    <span className="flex items-center gap-1.5 text-sm font-medium leading-5 text-foreground">
       <TypeIcon className="w-3.5 h-3.5 text-primary" />
       {typeCfg.label}
     </span>
@@ -399,15 +399,15 @@ export default function DraftEditPage() {
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm font-semibold text-primary">{selectedIds.length}</span>
-      <span className="text-xs text-muted-foreground">{selectedIds.length === 1 ? "account" : "accounts"}</span>
+      <span className="text-sm font-medium leading-5 text-primary">{selectedIds.length}</span>
+      <span className="text-xs leading-4 text-muted-foreground">{selectedIds.length === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
-        <span key={p} className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded-full border", PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border")}>
+        <span key={p} className={cn("text-xs font-medium leading-4 px-1.5 py-0.5 rounded-full border", PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border")}>
           {PLATFORM_LABELS[p] ?? p}
         </span>
       ))}
       {selectedPlatformKeys.length > 3 && (
-        <span className="text-[10px] text-muted-foreground">+{selectedPlatformKeys.length - 3}</span>
+        <span className="text-xs leading-4 text-muted-foreground">+{selectedPlatformKeys.length - 3}</span>
       )}
     </span>
   );
@@ -494,8 +494,8 @@ export default function DraftEditPage() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
             <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
           </div>
-          <h3 className="mb-1 font-semibold text-[hsl(var(--foreground))]">Draft not found</h3>
-          <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
+          <h3 className="mb-1 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Draft not found</h3>
+          <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
             {error ?? "This draft couldn't be loaded. It may have been deleted."}
           </p>
           <AtlassianButton appearance="primary" onClick={() => router.push(`/drafts/${id}`)}>
@@ -555,8 +555,8 @@ export default function DraftEditPage() {
         <div className="mb-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{typeCfg.label} draft</p>
-              <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">{typeCfg.description}</p>
+              <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{typeCfg.label} draft</p>
+              <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{typeCfg.description}</p>
             </div>
             <div className="flex items-center gap-2">
               <Lozenge appearance="default">Draft</Lozenge>
@@ -587,10 +587,10 @@ export default function DraftEditPage() {
               <TypeIcon className="h-4 w-4" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-foreground">{typeCfg.label} Post</p>
-              <p className="text-xs text-muted-foreground">Format is fixed for this draft</p>
+              <p className="text-sm font-semibold leading-5 text-foreground">{typeCfg.label} Post</p>
+              <p className="text-xs leading-4 text-muted-foreground">Format is fixed for this draft</p>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted border border-border/50 px-2.5 py-1 rounded-lg">
+            <div className="flex items-center gap-1.5 text-xs font-medium leading-4 text-muted-foreground bg-muted border border-border/50 px-2.5 py-1 rounded-lg">
               <Lock className="h-3 w-3" />
               Locked
             </div>
@@ -640,12 +640,12 @@ export default function DraftEditPage() {
           {/* Caption */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-foreground">
+              <label className="text-sm font-medium leading-5 text-foreground">
                 {postType === "TEXT" ? "Content" : "Caption"}
               </label>
               <span className={cn(
                 "text-xs font-mono tabular-nums transition-colors",
-                overLimit ? "text-red-500 font-semibold" : nearLimit ? "text-amber-500" : "text-muted-foreground",
+                overLimit ? "text-red-500 font-medium" : nearLimit ? "text-amber-500" : "text-muted-foreground",
               )}>
                 {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()}
               </span>
@@ -679,7 +679,7 @@ export default function DraftEditPage() {
           {postType !== "TEXT" && (
             <div className="space-y-2 mt-6">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-foreground">
+                <label className="text-sm font-medium leading-5 text-foreground">
                   {postType === "IMAGE" ? "Images" : "Video"}
                 </label>
                 {selectedPlatforms.length > 0 && (
@@ -693,7 +693,7 @@ export default function DraftEditPage() {
               {/* Existing kept media thumbnails */}
               {keptMedia.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                  <p className="text-xs font-medium leading-4 text-muted-foreground flex items-center gap-1.5">
                     <CloudUpload className="w-3.5 h-3.5" />
                     Existing media — click × to remove
                   </p>

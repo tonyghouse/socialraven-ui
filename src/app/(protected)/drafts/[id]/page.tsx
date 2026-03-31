@@ -180,7 +180,7 @@ export default function DraftDetailPage() {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => router.push("/drafts")}
-              className="inline-flex items-center gap-1.5 text-[13px] text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+              className="inline-flex items-center gap-1.5 text-sm font-medium leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
             >
               <BookOpen className="h-3.5 w-3.5" />
               <span>Drafts</span>
@@ -197,7 +197,7 @@ export default function DraftDetailPage() {
             <aside className="space-y-5">
               <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                 <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Platforms</p>
+                  <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Platforms</p>
                 </div>
                 <div className="space-y-3 px-5 py-4">
                   {hasAccounts ? (
@@ -234,7 +234,7 @@ export default function DraftDetailPage() {
                 <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                   <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                     <FileText className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Caption</p>
+                    <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Caption</p>
                   </div>
                   <div className="px-5 py-4">
                     <p className="whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
@@ -274,8 +274,8 @@ export default function DraftDetailPage() {
                         <CalendarClock className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-base font-semibold text-[hsl(var(--foreground))]">Ready to publish?</p>
-                        <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                        <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Ready to publish?</p>
+                        <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                           Pick a date and time to schedule this draft
                         </p>
                       </div>
@@ -358,8 +358,8 @@ export default function DraftDetailPage() {
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
                     <BookOpen className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
                   </div>
-                  <p className="mt-4 text-sm font-semibold text-[hsl(var(--foreground))]">No accounts connected yet</p>
-                  <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                  <p className="mt-4 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">No accounts connected yet</p>
+                  <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                     Add connected accounts to this draft before scheduling
                   </p>
                   <div className="mt-5 flex justify-center">
@@ -425,7 +425,7 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
             >
               <ChevronRight className="h-4 w-4" />
             </button>
-            <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-0.5 text-[10px] font-semibold text-white backdrop-blur-sm">
+            <div className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-0.5 text-xs font-medium leading-4 text-white backdrop-blur-sm">
               {idx + 1} / {media.length}
             </div>
           </>
@@ -516,8 +516,8 @@ function ErrorState({ error, onBack }: { error: string | null; onBack: () => voi
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
           <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
         </div>
-        <h3 className="mb-1 font-semibold text-[hsl(var(--foreground))]">Draft not found</h3>
-        <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
+        <h3 className="mb-1 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Draft not found</h3>
+        <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
           {error ?? "This draft couldn't be loaded. It may have been deleted."}
         </p>
         <AtlassianButton appearance="primary" onClick={onBack}>

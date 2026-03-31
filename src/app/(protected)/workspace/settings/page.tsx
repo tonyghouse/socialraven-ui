@@ -247,10 +247,10 @@ function SectionHeader({
           <Icon size={17} />
         </div>
         <div className="space-y-1">
-          <h2 className="text-base font-semibold tracking-[-0.005em] text-slate-900 dark:text-[#f1f5f9]">
+          <h2 className="text-sm font-semibold leading-5 text-slate-900 dark:text-[#f1f5f9]">
             {title}
           </h2>
-          <p className={cn("text-sm leading-5", subtleTextClass)}>{description}</p>
+          <p className={cn("text-xs leading-4", subtleTextClass)}>{description}</p>
         </div>
       </div>
       {action}
@@ -272,8 +272,8 @@ function EmptyState({
         dividerClass
       )}
     >
-      <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">{title}</p>
-      <p className={cn("mt-1 text-sm", subtleTextClass)}>{description}</p>
+      <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">{title}</p>
+      <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>{description}</p>
     </div>
   );
 }
@@ -320,10 +320,10 @@ function RoleContextPanel({ role }: { role: WorkspaceRole }) {
           <Icon size={16} />
         </div>
         <div className="space-y-1">
-          <p className={cn("text-sm font-medium", roleHeadingClass(role))}>
+          <p className={cn("text-sm font-medium leading-5", roleHeadingClass(role))}>
             {context.title}
           </p>
-          <p className={cn("text-sm leading-5", subtleTextClass)}>{context.description}</p>
+          <p className={cn("text-xs leading-4", subtleTextClass)}>{context.description}</p>
         </div>
       </div>
     </div>
@@ -645,12 +645,12 @@ export default function WorkspaceSettingsPage() {
     return (
       <div className="w-full px-6 py-6 md:px-8 md:py-8">
           <div className="space-y-6">
-            <div className="space-y-2">
+          <div className="space-y-2">
             <p className={cn("text-xs", subtleTextClass)}>Workspace settings</p>
-            <h1 className="text-xl font-semibold tracking-[-0.01em] text-slate-900 dark:text-[#f1f5f9]">
+            <h1 className="text-lg font-semibold leading-6 text-slate-900 dark:text-[#f1f5f9]">
               No active workspace selected
             </h1>
-            <p className={cn("max-w-2xl text-sm leading-6", subtleTextClass)}>
+            <p className={cn("max-w-2xl text-sm leading-5", subtleTextClass)}>
               You can still restore deleted workspaces below. Once a workspace is active,
               team access and naming controls will appear here.
             </p>
@@ -669,7 +669,7 @@ export default function WorkspaceSettingsPage() {
                   description="Archived workspaces will appear here when they can be restored."
                 />
               ) : (
-                <div className="grid gap-4 lg:grid-cols-2">
+                <div className="grid gap-4">
                   {deletedWorkspaces.map((workspace) => (
                     <div key={workspace.id} className={cn(raisedSurfaceClass, "p-4")}>
                       <div className="flex items-start justify-between gap-3">
@@ -727,10 +727,10 @@ export default function WorkspaceSettingsPage() {
                 <AlertTriangle size={18} />
               </div>
               <div className="space-y-1">
-                <h2 className="text-base font-semibold text-slate-900 dark:text-[#f1f5f9]">
+                <h2 className="text-sm font-semibold leading-5 text-slate-900 dark:text-[#f1f5f9]">
                   Delete workspace?
                 </h2>
-                <p className={cn("text-sm leading-6", subtleTextClass)}>
+                <p className={cn("text-sm leading-5", subtleTextClass)}>
                   This removes access for the whole team immediately. Type{" "}
                   <span className="font-medium text-slate-900 dark:text-[#f1f5f9]">
                     {activeWorkspace.name}
@@ -787,7 +787,7 @@ export default function WorkspaceSettingsPage() {
           <>
             <div
               className={cn(
-                "hidden items-center gap-2 rounded-md border bg-white/80 px-3 py-2 text-sm shadow-sm backdrop-blur-sm md:inline-flex dark:bg-white/5",
+                "hidden items-center gap-2 rounded-md border bg-white/80 px-3 py-2 text-xs font-medium leading-4 shadow-sm backdrop-blur-sm md:inline-flex dark:bg-white/5",
                 dividerClass
               )}
             >
@@ -820,13 +820,6 @@ export default function WorkspaceSettingsPage() {
 
       <div className="w-full px-6 py-6 md:px-8 md:py-8">
         <div className="space-y-6">
-          <div className={cn(surfaceClass, "px-4 py-3 md:px-5")}>
-            <div className={pillClass}>
-              <FolderKanban size={14} className={atlBlueTextClass} />
-              Workspace settings
-            </div>
-          </div>
-
           {error && (
             <div className="rounded-xl border border-[#f5c2c7] bg-[#fff4f5] px-4 py-3 text-sm text-[#ae2e24] dark:border-[#5d1f1a] dark:bg-[#2b1917] dark:text-[#fd9891]">
               {error}
@@ -848,10 +841,10 @@ export default function WorkspaceSettingsPage() {
                         <BriefcaseBusiness size={18} />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                        <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                           main
                         </p>
-                        <p className={cn("text-sm", subtleTextClass)}>
+                        <p className={cn("text-xs leading-4", subtleTextClass)}>
                           One workspace on the Influencer plan.
                         </p>
                       </div>
@@ -869,7 +862,7 @@ export default function WorkspaceSettingsPage() {
                         >
                           <span className="flex min-w-0 items-center gap-2">
                             <BriefcaseBusiness size={16} className={atlBlueTextClass} />
-                            <span className="truncate font-medium text-slate-900 dark:text-[#f1f5f9]">
+                            <span className="truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                               {workspaceName}
                             </span>
                           </span>
@@ -893,10 +886,10 @@ export default function WorkspaceSettingsPage() {
                                   switchWorkspace(ws);
                                   setSwitcherOpen(false);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
+                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
                               >
                                 <BriefcaseBusiness size={16} className={atlBlueTextClass} />
-                                <span className="flex-1 truncate text-slate-900 dark:text-[#f1f5f9]">
+                                <span className="flex-1 truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                                   {ws.name}
                                 </span>
                                 {ws.id === activeWorkspace.id && (
@@ -929,10 +922,10 @@ export default function WorkspaceSettingsPage() {
                     <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                             Create workspace
                           </p>
-                          <p className={cn("text-sm", subtleTextClass)}>
+                          <p className={cn("text-xs leading-4", subtleTextClass)}>
                             Add another workspace.
                           </p>
                         </div>
@@ -1050,7 +1043,7 @@ export default function WorkspaceSettingsPage() {
                       ) : (
                         <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
                           <p className={cn("text-xs", subtleTextClass)}>Current name</p>
-                          <p className="mt-1 text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="mt-1 text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                             {activeWorkspace.name}
                           </p>
                         </div>
@@ -1065,10 +1058,10 @@ export default function WorkspaceSettingsPage() {
                       <div className="flex items-start gap-3">
                         <Info size={16} className={cn("mt-0.5", atlBlueTextClass)} />
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                             Influencer plan
                           </p>
-                          <p className={cn("text-sm leading-6", subtleTextClass)}>
+                          <p className={cn("text-xs leading-4", subtleTextClass)}>
                             Team invites and multiple workspaces require Agency.
                           </p>
                         </div>
@@ -1093,7 +1086,7 @@ export default function WorkspaceSettingsPage() {
                         type="button"
                         onClick={() => setTab(item)}
                         className={cn(
-                          "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                          "rounded-md px-3 py-1.5 text-xs font-medium leading-4 transition-colors",
                           tab === item
                             ? "bg-[hsl(var(--surface))] text-slate-900 shadow-sm dark:bg-[hsl(var(--surface))] dark:text-white"
                             : cn(subtleTextClass, "hover:text-slate-900 dark:hover:text-white")
@@ -1111,10 +1104,10 @@ export default function WorkspaceSettingsPage() {
                   <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                        <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                           Invite teammate
                         </p>
-                        <p className={cn("text-sm", subtleTextClass)}>
+                        <p className={cn("text-xs leading-4", subtleTextClass)}>
                           Send a role-based invite.
                         </p>
                       </div>
@@ -1218,7 +1211,7 @@ export default function WorkspaceSettingsPage() {
                         return (
                           <div key={role} className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <p className={cn("text-sm font-semibold", roleHeadingClass(role))}>
+                              <p className={cn("text-sm font-semibold leading-5", roleHeadingClass(role))}>
                                 {role === "VIEWER" ? "Viewers" : `${roleLabel(role)}s`}
                               </p>
                               <span className={cn("text-xs", subtleTextClass)}>
@@ -1259,7 +1252,7 @@ export default function WorkspaceSettingsPage() {
                                       <div className="min-w-0 space-y-1">
                                         <p
                                           className={cn(
-                                            "truncate text-sm",
+                                            "truncate text-sm leading-5",
                                             fullName
                                               ? "font-medium text-slate-900 dark:text-[#f1f5f9]"
                                               : subtleTextClass
@@ -1268,7 +1261,7 @@ export default function WorkspaceSettingsPage() {
                                           {fullName || "Unknown user"}
                                         </p>
                                         {member.email && (
-                                          <p className={cn("truncate text-sm", subtleTextClass)}>
+                                          <p className={cn("truncate text-xs leading-4", subtleTextClass)}>
                                             {member.email}
                                           </p>
                                         )}
@@ -1350,10 +1343,10 @@ export default function WorkspaceSettingsPage() {
                             <Mail size={18} />
                           </div>
                           <div className="min-w-0 space-y-1">
-                            <p className="truncate text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                            <p className="truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                               {invitation.invitedEmail}
                             </p>
-                            <p className={cn("flex items-center gap-1 text-sm", subtleTextClass)}>
+                            <p className={cn("flex items-center gap-1 text-xs leading-4", subtleTextClass)}>
                               <History size={14} />
                               Expires{" "}
                               {new Date(invitation.expiresAt).toLocaleDateString("en-US", {
@@ -1414,15 +1407,15 @@ export default function WorkspaceSettingsPage() {
                       description="Restorable workspaces will appear here."
                     />
                   ) : (
-                    <div className="grid gap-3 lg:grid-cols-2">
+                    <div className="grid gap-3">
                       {deletedWorkspaces.map((workspace) => (
                         <div key={workspace.id} className={cn(raisedSurfaceClass, "p-4")}>
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                              <p className="truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
                                 {workspace.name}
                               </p>
-                              <p className={cn("mt-1 text-sm", subtleTextClass)}>
+                              <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
                                 Deleted {formatDisplayDate(workspace.deletedAt ?? undefined)}
                               </p>
                               <p className={cn("mt-1 text-xs", subtleTextClass)}>
@@ -1466,7 +1459,7 @@ export default function WorkspaceSettingsPage() {
                     }
                   />
                   <div className="p-4">
-                    <p className={cn("text-sm leading-5", subtleTextClass)}>
+                    <p className={cn("text-xs leading-4", subtleTextClass)}>
                       Deleting removes team access immediately. Restore it later from deleted workspaces.
                     </p>
                   </div>

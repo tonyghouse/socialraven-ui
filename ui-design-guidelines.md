@@ -162,16 +162,22 @@ Hard-coded values are allowed only for:
 
 Atlassian's current app typefaces are Atlassian Sans and Atlassian Mono.
 
-SocialRaven currently uses **Inter** in the actual app via [`socialraven-ui/src/app/layout.tsx`](/Users/mac/Workspace/RemoteRepo/socialraven/socialraven-ui/src/app/layout.tsx).
+Atlassian Sans is derived from Inter. Atlassian Mono is derived from JetBrains Mono.
+
+SocialRaven's typography standard for this repo is:
+- use **Inter** for sans-serif UI text
+- use **JetBrains Mono** for monospace text
 
 For this repo:
-- keep **Inter** as the app UI font unless the user explicitly requests a font migration
-- follow Atlassian's density, hierarchy, and readability principles
+- keep **Inter** as the app UI font unless the user explicitly requests a sans-serif font migration
+- keep **JetBrains Mono** as the app monospace font unless the user explicitly requests a monospace font migration
+- follow Atlassian's density, hierarchy, readability, and scale principles
 - do not introduce a second UI sans-serif family into the protected app
+- do not introduce a second monospace family into the protected app
 
 This is important for AI tools:
 - use Atlassian as the design language reference
-- do not silently switch the product font to Atlassian Sans in implementation work
+- do not silently switch the product font to Atlassian Sans or Atlassian Mono in implementation work
 
 ---
 
@@ -472,35 +478,261 @@ Use:
 
 ### 7.1 Type direction
 
-SocialRaven currently uses **Inter** for app UI.
+SocialRaven follows Atlassian's app typography model, adapted to this repo's fonts.
 
 Use:
-- Inter for app shell, forms, tables, cards, and dashboards
-- `font-mono` only for code-like values, IDs, or tokens
+- **Inter** for headings and body text across app shell, forms, tables, cards, dashboards, and settings
+- **JetBrains Mono** for code, code-like values, IDs, tokens, and technical strings only
+- a single app-wide type scale grounded in rem values from a `16px` root size
+- consistent heading, body, metric, and code roles instead of one-off text styling
 
 Do not introduce:
 - display fonts in the protected app
 - multiple sans-serif families
+- multiple monospace families
 - marketing-style typography in operational screens
+- arbitrary per-page font-size systems
 
-### 7.2 Hierarchy and density
+### 7.2 Atlassian reference model
 
-Use a practical product-first scale.
+The typography guidance in this file is derived from Atlassian's:
+- Applying Typography
+- App Typefaces and Scale
 
-| Role | Size | Weight |
-|------|------|--------|
-| Page title | `20px` to `24px` | `600` |
-| Section heading | `16px` to `18px` | `600` |
-| Card heading | `14px` to `16px` | `600` |
-| Standard UI text | `14px` | `400` to `500` |
-| Dense nav / compact labels | `13px` | `400` to `500` |
-| Secondary metadata | `12px` | `400` to `500` |
+For SocialRaven, treat those pages as the reference for:
+- hierarchy logic
+- size relationships
+- line-height rhythm
+- accessibility expectations
+- metric and code usage
 
-Rules:
-- if there is no reason to go larger, use `13px` or `14px`
-- keep protected-app typography compact and consistent
-- prefer emphasis through weight and color before increasing font size
+Treat this file as the repo-specific translation of that system.
+
+Important repo rule:
+- Atlassian's docs reference **Atlassian Sans** and **Atlassian Mono** as their product fonts
+- SocialRaven does **not** adopt those font files by default
+- keep Atlassian's typography behavior, hierarchy, and scale discipline
+- keep SocialRaven's implementation fonts as **Inter** for UI text and **JetBrains Mono** for code-like text
+- treat Atlassian Sans as a behavioral reference for how **Inter** should be applied in this repo
+- treat Atlassian Mono as a behavioral reference for how **JetBrains Mono** should be applied in this repo
+- do not swap in Atlassian Sans or Atlassian Mono unless the task explicitly includes a font migration
+
+### 7.3 Canonical app scale
+
+Use the Atlassian app scale as the canonical source of truth for size and line-height decisions.
+
+Use `rem` as the primary unit for font sizes and line heights in implementation.
+This preserves accessibility and respects browser or OS text scaling preferences.
+`px` values below are included only as reference equivalents at a `16px` root size.
+
+#### Heading scale
+
+All heading styles use **bold** weight.
+
+| Token role | Size | Line height | Product use |
+|------|------|--------|--------|
+| Heading XXL | `2rem` (`32px`) | `2.25rem` (`36px`) | brand and marketing content only |
+| Heading XL | `1.75rem` (`28px`) | `2rem` (`32px`) | rare app page titles |
+| Heading L | `1.5rem` (`24px`) | `1.75rem` (`28px`) | primary app page titles |
+| Heading M | `1.25rem` (`20px`) | `1.5rem` (`24px`) | modal titles and major sections |
+| Heading S | `1rem` (`16px`) | `1.25rem` (`20px`) | section headings |
+| Heading XS | `0.875rem` (`14px`) | `1.25rem` (`20px`) | small component headings |
+| Heading XXS | `0.75rem` (`12px`) | `1rem` (`16px`) | fine print headings, use sparingly |
+
+#### Body scale
+
+Body sizes are the default text styles for the product UI.
+
+| Token role | Size | Line height | Primary use |
+|------|------|--------|--------|
+| Body L | `1rem` (`16px`) | `1.5rem` (`24px`) | long-form reading text |
+| Body M | `0.875rem` (`14px`) | `1.25rem` (`20px`) | default app UI text |
+| Body S | `0.75rem` (`12px`) | `1rem` (`16px`) | secondary metadata and fine print |
+
+Paragraph spacing for written content should follow the Atlassian body rhythm:
+- Body L paragraphs: `1rem` (`16px`)
+- Body M paragraphs: `0.75rem` (`12px`)
+- Body S paragraphs: `0.5rem` (`8px`)
+
+#### Metric scale
+
+Metric styles are only for emphasizing short numbers or numeric summaries.
+
+| Token role | Size | Line height | Primary use |
+|------|------|--------|--------|
+| Metric L | `1.75rem` (`28px`) | `2rem` (`32px`) | large chart totals |
+| Metric M | `1.5rem` (`24px`) | `1.75rem` (`28px`) | medium chart totals |
+| Metric S | `1rem` (`16px`) | `1.25rem` (`20px`) | compact stat tiles |
+
+#### Code scale
+
+| Token role | Size | Line height | Primary use |
+|------|------|--------|--------|
+| Code | `0.75rem` (`12px`) | `1.25rem` (`20px`) | code blocks only |
+
+Inline code should use **JetBrains Mono** and remain relative to its container rather than introducing a separate UI text scale.
+
+### 7.4 Applying text styles
+
+Use text styles by role, not by personal preference.
+
+#### Headings
+
+Use headings only to introduce content or establish structure.
+
+Use:
+- Heading L for primary app page titles
+- Heading M for major section titles and dialog titles
+- Heading S for card, panel, and subsection headings
+- Heading XS or XXS only in genuinely constrained component spaces
+
+Do not:
+- use heading styles for button labels, tabs, menus, badges, or field labels
+- use headings as a shortcut to make ordinary text louder
+- use similar heading sizes for adjacent levels when the hierarchy should be obvious
+
+Hierarchy rules:
+- use one `h1` per page
+- keep heading levels sequential and meaningful
+- keep heading sizes equal to or smaller than twice the default body size
+- keep `2` to `4` size steps between heading levels so the structure remains visible at a glance
+- do not use heading sizes smaller than the body size they label
+
+#### Body text
+
+Use body styles for nearly all product UI copy.
+
+Use:
+- Body M as the default text style for components, controls, tables, menus, helper text, and short descriptions
+- Body L for long-form reading areas such as policy pages or educational text blocks
+- Body S for secondary metadata, timestamps, legal copy, semantic support text, and compact supporting labels
+
+Do not:
+- use Body S as the default paragraph size for operational screens
+- use body text as a fake heading by only increasing weight
+- use heading text inside standard controls
+
+Paragraph spacing should follow the scale above and be handled with layout spacing rather than ad hoc margin values.
+
+#### Metrics
+
+Metric styles are for short, emphasized numeric content only.
+
+Use metrics for:
+- chart totals
+- donut center values
+- KPI tiles
+- short number-first summaries such as `55% complete`
+
+Do not use metrics for:
+- chart titles
+- axis labels
+- legends
+- billing line items or ordinary amounts in tables
+- long statements or explanatory copy
+
+When metric text includes supporting words, keep the phrase short.
+If the value is not the focal point, use body text instead.
+
+#### Code
+
+Use code styles only when the content is actually code-like.
+
+Valid uses:
+- code blocks
+- inline code
+- IDs
+- tokens
+- API keys or fragments
+- technical strings where character distinction matters
+
+Invalid uses:
+- generic metadata
+- prices
+- dates
+- button labels
+- navigation
+
+### 7.5 Accessibility and structure
+
+Typography choices must support both readability and assistive technology.
+
+Mandatory rules:
+- use semantic HTML headings that match the visual hierarchy
+- keep font sizing responsive by using `rem`
+- use tokenized text styles instead of one-off font declarations
+- use accessible text color tokens that maintain contrast in both themes
+- keep long-form reading text at `16px` equivalent minimum
+- treat `12px` text as fine print only and use it sparingly
+- design body copy to read comfortably at roughly `60` to `80` characters per line when the layout allows
+
+Writing and readability rules:
+- prefer succinct headings
 - use sentence case by default
+- avoid all caps except for acronyms or existing component behavior that already requires it
+- never rely on truncation for important content
+- if truncation is unavoidable for unknown user-generated content, provide a way to reveal the full value
+
+### 7.6 Font weights and usage
+
+Atlassian's system uses four named weights:
+- regular
+- medium
+- semibold
+- bold
+
+For SocialRaven implementation with **Inter** and **JetBrains Mono**, map those weights as:
+- regular = `400`
+- medium = `500`
+- semibold = `600`
+- bold = `700`
+
+Use these defaults:
+- headings: bold
+- paragraphs and descriptive copy: regular
+- component text and text beside icons: medium
+- stronger emphasis inside body text: bold, sparingly
+- semibold: avoid by default; use only when an existing component pattern already depends on it
+
+Do not:
+- use regular or bold text beside line icons when medium is the correct match
+- simulate hierarchy by randomly mixing many weights in one viewport
+- use bold as a substitute for a proper heading level
+
+### 7.7 Product-specific typography mapping
+
+Use these mappings by default in SocialRaven screens:
+
+| UI element | Recommended style |
+|------|------|
+| protected app page title | Heading L |
+| dialog title | Heading M |
+| card or panel heading | Heading S |
+| standard component text | Body M medium |
+| paragraph or descriptive message | Body M regular |
+| long-form text block | Body L regular |
+| helper text and metadata | Body S regular |
+| text beside icons | Body M medium |
+| chart title | Heading S or Body M bold, depending on density |
+| chart legend, axes, and keys | Body S |
+| KPI number | Metric S, M, or L depending on container |
+| inline code or technical identifiers | Code / JetBrains Mono |
+
+These mappings are defaults, not excuses to improvise.
+Depart from them only when a component clearly needs a different level of emphasis.
+
+### 7.8 Typography anti-patterns
+
+Do not:
+- create a custom type scale for a single page
+- mix too many weights in one viewport
+- use oversized headings to compensate for weak layout structure
+- use metric styles as decorative large text
+- use code font to make data feel technical
+- use `12px` text as the default size in dense product screens
+- stack several text sizes that are visually too close together
+- make headings verbose enough to wrap awkwardly across common desktop widths
+- force visual hierarchy with color alone when size and weight should do the work
 
 ---
 

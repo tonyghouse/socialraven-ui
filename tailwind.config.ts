@@ -25,6 +25,10 @@ const config = {
   				'var(--font-sans)',
                     ...defaultTheme.fontFamily.sans
                 ],
+  			mono: [
+  				'var(--font-mono)',
+  				...defaultTheme.fontFamily.mono
+  			],
   			heming: [
   				'var(--font-heming)'
   			]

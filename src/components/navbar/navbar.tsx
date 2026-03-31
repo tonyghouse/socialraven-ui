@@ -58,7 +58,7 @@ export default function Navbar() {
                       window.location.href = "/sign-up";
                     }}
                   >
-                    Start
+                    Signup
                   </AtlassianButton>
                 </div>
               </>

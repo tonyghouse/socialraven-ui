@@ -52,17 +52,17 @@ export default function ChangelogPage() {
           {ENTRIES.map(({ version, date, badge, items }) => (
             <PublicCard key={version} className="p-8">
               <div className="mb-1 flex flex-wrap items-center gap-3">
-                <h2 className="text-xl font-semibold text-[hsl(var(--foreground))]">{version}</h2>
+                <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{version}</h2>
                 <PublicLozenge appearance="new" isBold>
                   {badge}
                 </PublicLozenge>
               </div>
-              <p className="mb-6 text-xs text-[hsl(var(--foreground-muted))]">{date}</p>
+              <p className="mb-6 text-xs leading-4 text-[hsl(var(--foreground-muted))]">{date}</p>
               <ul className="grid gap-3 sm:grid-cols-2">
                 {items.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-2.5 text-sm leading-6 text-[hsl(var(--foreground-muted))]"
+                    className="flex items-start gap-2.5 text-sm leading-5 text-[hsl(var(--foreground-muted))]"
                   >
                     <span className="mt-0.5 text-[hsl(var(--accent))]">✓</span>
                     <span>{item}</span>

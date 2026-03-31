@@ -113,18 +113,18 @@ function Trend({ value }: { value: number | null }) {
   if (value === null) return null;
   if (value > 0)
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-[11px] font-medium text-[hsl(var(--success))]">
+      <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--success))]">
         <TrendingUp className="h-3 w-3" />+{value.toFixed(1)}%
       </span>
     );
   if (value < 0)
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-[11px] font-medium text-[hsl(var(--destructive))]">
+      <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--destructive))]">
         <TrendingDown className="h-3 w-3" />{value.toFixed(1)}%
       </span>
     );
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-[11px] font-medium text-[hsl(var(--foreground-subtle))]">
+    <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
       <Minus className="h-3 w-3" />0%
     </span>
   );
@@ -154,10 +154,10 @@ function KpiCard({
         {trend !== undefined && <Trend value={trend ?? null} />}
       </div>
       <div>
-        <p className="text-[12px] font-medium text-[hsl(var(--foreground-muted))]">{label}</p>
+        <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">{label}</p>
         {loading
           ? <Sk className="mt-2 h-7 w-20" />
-          : <p className="mt-1 text-[24px] font-semibold leading-tight text-[hsl(var(--foreground))]">{value}</p>
+          : <p className="mt-1 text-[28px] font-bold leading-8 text-[hsl(var(--foreground))]">{value}</p>
         }
       </div>
     </div>
@@ -192,17 +192,17 @@ function AccountChip({
       <Avatar className="h-6 w-6 shrink-0">
         {!imgErr && src
           ? <AvatarImage src={src} alt={account.username} onError={() => setImgErr(true)} />
-          : <AvatarFallback className="bg-[hsl(var(--surface-raised))] text-[10px] font-semibold text-[hsl(var(--foreground-muted))]">
+          : <AvatarFallback className="bg-[hsl(var(--surface-raised))] text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
               {initials(account.username)}
             </AvatarFallback>
         }
       </Avatar>
       <div className="min-w-0 text-left">
-        <p className={cn("max-w-[120px] truncate text-[13px] font-medium", isSelected ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground))]")}>
+        <p className={cn("max-w-[120px] truncate text-sm font-medium leading-5", isSelected ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground))]")}>
           {account.username}
         </p>
       </div>
-      <span className="rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-[11px] font-medium text-[hsl(var(--foreground-muted))]">
+      <span className="rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
         {m.label}
       </span>
     </button>
@@ -345,7 +345,7 @@ export default function AnalyticsPage() {
                   key={r}
                   onClick={() => setDateRange(r)}
                   className={cn(
-                    "rounded-md px-3 py-1.5 text-[13px] font-medium transition-colors",
+                    "rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors",
                     dateRange === r
                       ? "bg-[hsl(var(--surface))] text-[hsl(var(--foreground))] shadow-sm"
                       : "text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]"
@@ -372,16 +372,16 @@ export default function AnalyticsPage() {
         <section className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-4 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-[16px] font-semibold text-[hsl(var(--foreground))]">Overview</p>
-              <p className="text-[13px] text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Overview</p>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 {activeProvider && selectedAccount
                   ? `Showing ${meta(activeProvider).label} analytics for ${selectedAccount.username}.`
                   : "Showing analytics across all connected accounts."}
               </p>
             </div>
             <div className="space-y-1 text-right">
-              <p className="text-[12px] font-medium text-[hsl(var(--foreground-subtle))]">{rangeLabel}</p>
-              <p className="text-[12px] text-[hsl(var(--foreground-muted))]">
+              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">{rangeLabel}</p>
+              <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                 {lastRefreshed ? `Updated ${lastRefreshed.toLocaleTimeString()}` : "Waiting for first refresh"}
               </p>
             </div>
@@ -390,10 +390,10 @@ export default function AnalyticsPage() {
 
         {/* ── Error banner ──────────────────────────────────────────────── */}
         {error && (
-          <div className="flex items-center gap-2.5 rounded-xl border border-[hsl(var(--destructive))]/25 bg-[hsl(var(--destructive))]/10 px-4 py-3 text-[13px] text-[hsl(var(--destructive))]">
+          <div className="flex items-center gap-2.5 rounded-xl border border-[hsl(var(--destructive))]/25 bg-[hsl(var(--destructive))]/10 px-4 py-3 text-sm leading-5 text-[hsl(var(--destructive))]">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span className="flex-1">{error}</span>
-            <button onClick={fetchAnalytics} className="text-[12px] font-semibold underline underline-offset-2">Retry</button>
+            <button onClick={fetchAnalytics} className="text-xs font-medium leading-4 underline underline-offset-2">Retry</button>
           </div>
         )}
 
@@ -406,8 +406,8 @@ export default function AnalyticsPage() {
           <div className="px-4 py-4">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="text-[16px] font-semibold text-[hsl(var(--foreground))]">Connected Accounts</p>
-                <p className="text-[13px] text-[hsl(var(--foreground-muted))]">
+                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Connected Accounts</p>
+                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                   {selectedAccount
                     ? `Viewing analytics for ${selectedAccount.username}.`
                     : "Select an account to filter the analytics view."}
@@ -420,7 +420,7 @@ export default function AnalyticsPage() {
                 {Array.from({ length: 4 }).map((_, i) => <Sk key={i} className="h-9 w-36" />)}
               </div>
             ) : accounts.length === 0 ? (
-              <p className="text-[13px] text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 No connected accounts. Go to{" "}
                 <a href="/connect-accounts" className="text-[hsl(var(--accent))] underline underline-offset-2">Connect Accounts</a>.
               </p>
@@ -489,8 +489,8 @@ export default function AnalyticsPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-[13px] font-semibold text-[hsl(var(--foreground))]">{m.label}</span>
-                            <span className="text-[12px] text-[hsl(var(--foreground-muted))]">{fmt(s.impressions)} impressions</span>
+                            <span className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{m.label}</span>
+                            <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{fmt(s.impressions)} impressions</span>
                           </div>
                           <div className="h-1.5 overflow-hidden rounded-full bg-[hsl(var(--surface-raised))]">
                             <div
@@ -501,14 +501,14 @@ export default function AnalyticsPage() {
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-4 pl-11 text-[11px] text-[hsl(var(--foreground-muted))]">
+                      <div className="flex flex-wrap items-center gap-4 pl-11 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                         <span className="flex items-center gap-1"><Heart className="h-3 w-3" />{fmt(s.likes)} likes</span>
                         <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{fmt(s.comments)} comments</span>
                         <span className="flex items-center gap-1"><Share2 className="h-3 w-3" />{fmt(s.shares)} shares</span>
                         <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />{fmt(engagements)} total</span>
                         {s.videoViews > 0 && <span className="flex items-center gap-1"><Video className="h-3 w-3" />{fmt(s.videoViews)} views</span>}
                         {s.clicks > 0 && <span className="flex items-center gap-1"><MousePointerClick className="h-3 w-3" />{fmt(s.clicks)} clicks</span>}
-                        <span className="ml-auto font-semibold text-[hsl(var(--foreground))]">{s.engagementRate.toFixed(1)}% eng. rate</span>
+                        <span className="ml-auto font-medium text-[hsl(var(--foreground))]">{s.engagementRate.toFixed(1)}% eng. rate</span>
                       </div>
                     </div>
                   );
@@ -596,7 +596,7 @@ export default function AnalyticsPage() {
               <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                 <Star className="h-3.5 w-3.5" />
               </div>
-              <h2 className="text-[16px] font-semibold text-[hsl(var(--foreground))]">Top Posts</h2>
+              <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Top Posts</h2>
             </div>
             <div className="flex items-center gap-1 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-1">
               {(["T24H", "T7D", "T30D", "T90D"] as SnapshotType[]).map((t) => (
@@ -604,7 +604,7 @@ export default function AnalyticsPage() {
                   key={t}
                   onClick={() => setSnapshotType(t)}
                   className={cn(
-                    "rounded-md px-2.5 py-1 text-[12px] font-medium transition-colors",
+                    "rounded-md px-2.5 py-1 text-xs font-medium leading-4 transition-colors",
                     snapshotType === t
                       ? "bg-[hsl(var(--surface))] text-[hsl(var(--foreground))] shadow-sm"
                       : "text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]"
@@ -632,17 +632,17 @@ export default function AnalyticsPage() {
                     key={`${post.postId}-${post.provider}`}
                     className="flex items-start gap-4 px-5 py-4 transition-colors hover:bg-[hsl(var(--surface-raised))]"
                   >
-                    <span className="mt-0.5 w-5 shrink-0 text-[12px] font-semibold text-[hsl(var(--foreground-subtle))]">{idx + 1}</span>
+                    <span className="mt-0.5 w-5 shrink-0 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">{idx + 1}</span>
 
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
                       <PlatIcon className="h-4 w-4" />
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="line-clamp-2 text-[13px] leading-snug text-[hsl(var(--foreground))]">
+                      <p className="line-clamp-2 text-sm leading-5 text-[hsl(var(--foreground))]">
                         {post.content ?? "(No preview)"}
                       </p>
-                      <p className="mt-1 text-[11px] text-[hsl(var(--foreground-muted))]">
+                      <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                         {fmtDate(post.publishedAt)} · {m.label}
                       </p>
                     </div>
@@ -655,8 +655,8 @@ export default function AnalyticsPage() {
                         { label: "Eng. Rate",   value: `${post.engagementRate.toFixed(1)}%` },
                       ].map((col) => (
                         <div key={col.label}>
-                          <p className="text-[10px] text-[hsl(var(--foreground-subtle))]">{col.label}</p>
-                          <p className="text-[12px] font-semibold text-[hsl(var(--foreground))]">{col.value}</p>
+                          <p className="text-xs leading-4 text-[hsl(var(--foreground-subtle))]">{col.label}</p>
+                          <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground))]">{col.value}</p>
                         </div>
                       ))}
                     </div>
@@ -685,7 +685,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center mb-1">
                     <div className="w-10 shrink-0" />
                     {Array.from({ length: 24 }).map((_, h) => (
-                      <div key={h} className="flex-1 text-center text-[9px] text-[hsl(var(--foreground-subtle))]">
+                      <div key={h} className="flex-1 text-center text-xs leading-4 text-[hsl(var(--foreground-subtle))]">
                         {h % 3 === 0 ? `${h}h` : ""}
                       </div>
                     ))}
@@ -695,7 +695,7 @@ export default function AnalyticsPage() {
                     const isoDay = di + 1;
                     return (
                       <div key={day} className="flex items-center mb-0.5">
-                        <div className="w-10 shrink-0 pr-2 text-right text-[10px] font-medium text-[hsl(var(--foreground-muted))]">{day}</div>
+                        <div className="w-10 shrink-0 pr-2 text-right text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">{day}</div>
                         {Array.from({ length: 24 }).map((_, hour) => {
                           const cell = heatmap.find((c) => c.dayOfWeek === isoDay && c.hourOfDay === hour);
                           const maxAvg = Math.max(...heatmap.map((c) => c.avgEngagement), 1);
@@ -717,11 +717,11 @@ export default function AnalyticsPage() {
                   })}
 
                   <div className="flex items-center gap-2 mt-3 justify-end">
-                    <span className="text-[10px] text-[hsl(var(--foreground-muted))]">Less</span>
+                    <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">Less</span>
                     {[0.1, 0.3, 0.5, 0.7, 0.9].map((v) => (
                       <div key={v} className="h-3.5 w-6 rounded-sm border border-[hsl(var(--border-subtle))]" style={{ backgroundColor: `hsl(var(--chart-1) / ${0.08 + v * 0.72})` }} />
                     ))}
-                    <span className="text-[10px] text-[hsl(var(--foreground-muted))]">More</span>
+                    <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">More</span>
                   </div>
                 </div>
               )}
@@ -734,7 +734,7 @@ export default function AnalyticsPage() {
         ───────────────────────────────────────────────────────────────── */}
         <section>
           <div className="mb-3 flex items-center gap-3">
-            <span className="text-[12px] font-semibold text-[hsl(var(--foreground-muted))]">Coming Soon</span>
+            <span className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">Coming Soon</span>
             <div className="h-px flex-1 bg-[hsl(var(--border-subtle))]" />
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -752,9 +752,9 @@ export default function AnalyticsPage() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
                       <PlatIcon className="h-4 w-4" />
                     </div>
-                    <p className="text-[13px] font-semibold text-[hsl(var(--foreground))]">{m.label}</p>
-                    <p className="text-[11px] leading-snug text-[hsl(var(--foreground-muted))]">{p.desc}</p>
-                    <span className="mt-1 inline-flex w-fit rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-[10px] font-medium text-[hsl(var(--foreground-muted))]">
+                    <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{m.label}</p>
+                    <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{p.desc}</p>
+                    <span className="mt-1 inline-flex w-fit rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
                       Coming soon
                     </span>
                   </div>
@@ -786,8 +786,8 @@ function SectionHeader({
       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
         <Icon className="h-3.5 w-3.5" />
       </div>
-      <h2 className="text-[16px] font-semibold text-[hsl(var(--foreground))]">{title}</h2>
-      {sub && <span className="ml-0.5 text-[12px] text-[hsl(var(--foreground-muted))]">{sub}</span>}
+      <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{title}</h2>
+      {sub && <span className="ml-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">{sub}</span>}
     </div>
   );
 }
@@ -795,7 +795,7 @@ function SectionHeader({
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="px-5 py-10 text-center">
-      <p className="text-[13px] text-[hsl(var(--foreground-muted))]">{text}</p>
+      <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{text}</p>
     </div>
   );
 }

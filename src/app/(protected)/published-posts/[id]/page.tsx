@@ -232,10 +232,10 @@ export default function PublishedCollectionDetailPage() {
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
             <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
           </div>
-          <h3 className="mb-1 font-semibold text-[hsl(var(--foreground))]">
+          <h3 className="mb-1 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
             Collection not found
           </h3>
-          <p className="mb-6 text-sm text-[hsl(var(--foreground-muted))]">
+          <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
             This collection couldn&apos;t be loaded. It may have been deleted.
           </p>
           <AtlassianButton appearance="primary" onClick={() => router.push("/published-posts")}>
@@ -313,7 +313,7 @@ export default function PublishedCollectionDetailPage() {
         <nav className="flex min-w-0 items-center gap-1.5 text-sm">
           <button
             onClick={() => router.push("/published-posts")}
-            className="flex items-center gap-1.5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))] flex-shrink-0"
+            className="flex items-center gap-1.5 text-sm font-medium leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))] flex-shrink-0"
           >
             <CheckCircle2 className="h-3.5 w-3.5" />
             <span className="hidden sm:inline font-medium">
@@ -332,22 +332,22 @@ export default function PublishedCollectionDetailPage() {
           <div className="h-[3px] w-full bg-[hsl(var(--success))]" />
           <div className="px-6 pt-6 pb-5">
             <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
-              <h1 className="min-w-0 flex-1 text-2xl font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">
+              <h1 className="min-w-0 flex-1 text-xl font-semibold leading-7 text-[hsl(var(--foreground))]">
                 {collection.description}
               </h1>
               <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                <span className={cn("inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold", type.className)}>
+                <span className={cn("inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium leading-4", type.className)}>
                   <TypeIcon className="h-3.5 w-3.5" />
                   {type.label}
                 </span>
-                <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold", status.className)}>
+                <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium leading-4", status.className)}>
                   <StatusIcon className="h-3.5 w-3.5" />
                   {status.label}
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-3 flex-wrap">
-              <div className="inline-flex items-center gap-2 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-xs font-medium text-[hsl(var(--foreground-muted))]">
+              <div className="inline-flex items-center gap-2 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>{formattedDate} · {formattedTime}</span>
               </div>
@@ -379,7 +379,7 @@ export default function PublishedCollectionDetailPage() {
             <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
               <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                 <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))] flex-1">Published</p>
+                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">Published</p>
               </div>
               <div className="p-5 space-y-2.5">
                 <div className="flex items-center gap-2.5 text-sm">
@@ -397,7 +397,7 @@ export default function PublishedCollectionDetailPage() {
             <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
               <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                 <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))] flex-1">Caption</p>
+                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">Caption</p>
               </div>
               <div className="p-5">
                 {captionText ? (
@@ -416,7 +416,7 @@ export default function PublishedCollectionDetailPage() {
               <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                 <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                   <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-sm font-semibold text-[hsl(var(--foreground))] flex-1">
+                  <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">
                     Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
                   </p>
                 </div>
@@ -431,11 +431,11 @@ export default function PublishedCollectionDetailPage() {
               <div className="px-5 py-4 flex items-center divide-x divide-border/40">
                 <div className="flex-1 text-center pr-4">
                   <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mt-1.5">Posts</p>
+                  <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Posts</p>
                 </div>
                 <div className="flex-1 text-center pl-4">
                   <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium mt-1.5">Platforms</p>
+                  <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Platforms</p>
                 </div>
               </div>
               <div className="px-5 pb-4 border-t border-border/30 pt-4 space-y-3">
@@ -952,10 +952,10 @@ function PlatformSection({
         <div className={cn("h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0", accent.iconClass)}>
           {Icon ? <Icon className="h-4.5 w-4.5" /> : null}
         </div>
-        <p className="text-sm font-semibold text-foreground flex-1">
+        <p className="text-sm font-semibold leading-5 text-foreground flex-1">
           {platformDisplayName[p] ?? platformDisplayName[platform] ?? platform}
         </p>
-        <span className="text-xs text-muted-foreground font-medium">
+        <span className="text-xs font-medium leading-4 text-muted-foreground">
           {posts.length} account{posts.length !== 1 ? "s" : ""}
         </span>
       </div>
@@ -997,7 +997,7 @@ function PlatformSection({
                   </div>
                 )}
               </div>
-              <span className="text-xs font-medium text-foreground/75 max-w-[140px] truncate leading-none">
+              <span className="text-xs font-medium leading-4 text-foreground/75 max-w-[140px] truncate">
                 {post.connectedAccount?.username ?? "Account"}
               </span>
               <div className={cn(

@@ -224,11 +224,11 @@ export default function DashboardPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <StatusBadge variant="accent">Trial</StatusBadge>
-                <p className="text-[13px] font-semibold text-[hsl(var(--foreground))]">
+                <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                   Free trial active
                 </p>
               </div>
-              <p className="text-[13px] text-[hsl(var(--foreground-muted))] dark:text-[hsl(var(--foreground-subtle))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] dark:text-[hsl(var(--foreground-subtle))]">
                 {trialDaysLeft} day{trialDaysLeft !== 1 ? "s" : ""} remaining on your trial.
               </p>
             </div>
@@ -263,9 +263,9 @@ export default function DashboardPage() {
                   <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                     <Clock className="h-3.5 w-3.5" />
                   </div>
-                  <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Upcoming Posts</h2>
+                  <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Upcoming Posts</h2>
                   {scheduledPosts.length > 0 && (
-                    <span className="inline-flex min-w-6 items-center justify-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-1.5 py-0.5 text-[11px] font-semibold text-[hsl(var(--foreground-muted))]">
+                    <span className="inline-flex min-w-6 items-center justify-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-1.5 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
                       {scheduledPosts.length}
                     </span>
                   )}
@@ -304,10 +304,10 @@ export default function DashboardPage() {
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="truncate text-[13px] font-medium leading-5 text-[hsl(var(--foreground))]">
+                            <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                               {post.description || "No content"}
                             </p>
-                            <p className="mt-0.5 text-[12px] text-[hsl(var(--foreground-muted))] capitalize">
+                            <p className="mt-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))] capitalize">
                               {post.provider}
                             </p>
                           </div>
@@ -333,9 +333,9 @@ export default function DashboardPage() {
                     <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                       <BarChart2 className="h-3.5 w-3.5" />
                     </div>
-                    <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Scheduled by Platform</h2>
+                    <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Scheduled by Platform</h2>
                   </div>
-                  <span className="text-[12px] text-[hsl(var(--foreground-muted))]">{scheduledPosts.length} post{scheduledPosts.length !== 1 ? "s" : ""} queued</span>
+                  <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{scheduledPosts.length} post{scheduledPosts.length !== 1 ? "s" : ""} queued</span>
                 </div>
 
                 <div className="space-y-4 p-5">
@@ -355,15 +355,15 @@ export default function DashboardPage() {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-[13px] font-medium text-[hsl(var(--foreground))] capitalize">{platform}</span>
-                            <span className="text-[12px] text-[hsl(var(--foreground-muted))]">
+                            <span className="text-sm font-medium leading-5 text-[hsl(var(--foreground))] capitalize">{platform}</span>
+                            <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                               {count} post{count !== 1 ? "s" : ""}
                             </span>
                           </div>
                           <ProgressBar ariaLabel={`${platform} scheduled posts`} value={pct / 100} appearance="default" />
                         </div>
 
-                        <span className="w-9 text-right text-[12px] font-semibold tabular-nums text-[hsl(var(--foreground-muted))]">
+                        <span className="w-9 text-right text-xs font-medium leading-4 tabular-nums text-[hsl(var(--foreground-muted))]">
                           {pct}%
                         </span>
                       </div>
@@ -381,7 +381,7 @@ export default function DashboardPage() {
                     <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                       <CheckCircle className="h-3.5 w-3.5" />
                     </div>
-                    <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Recently Published</h2>
+                    <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Recently Published</h2>
                   </div>
                   <LinkButton appearance="subtle" href="/published-posts" spacing="compact">
                     View all
@@ -416,8 +416,8 @@ export default function DashboardPage() {
                           </div>
 
                           <div className="flex-1 min-w-0">
-                            <p className="truncate text-[13px] font-medium text-[hsl(var(--foreground))]">{col.description}</p>
-                            <p className="mt-0.5 text-[12px] text-[hsl(var(--foreground-muted))]">{col.scheduledTime ? formatShort(col.scheduledTime) : ""}</p>
+                            <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{col.description}</p>
+                            <p className="mt-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">{col.scheduledTime ? formatShort(col.scheduledTime) : ""}</p>
                           </div>
 
                           <div className="flex items-center gap-2 flex-shrink-0">
@@ -449,7 +449,7 @@ export default function DashboardPage() {
                   <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                     <Activity className="h-3.5 w-3.5" />
                   </div>
-                  <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Usage This Month</h2>
+                  <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Usage This Month</h2>
                 </div>
 
                 <div className="p-5 space-y-4">
@@ -469,7 +469,7 @@ export default function DashboardPage() {
 
                   {userPlan && (
                     <div className="flex items-center justify-between border-t border-[hsl(var(--border-subtle))] pt-2">
-                      <span className="text-[12px] text-[hsl(var(--foreground-muted))]">Current plan</span>
+                      <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">Current plan</span>
                       <StatusBadge
                         variant={
                           userPlan.currentPlan.endsWith("_TRIAL")
@@ -495,7 +495,7 @@ export default function DashboardPage() {
                 <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                   <Globe className="h-3.5 w-3.5" />
                 </div>
-                <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Connected Accounts</h2>
+                <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Connected Accounts</h2>
               </div>
 
               <div className="p-5">
@@ -504,11 +504,11 @@ export default function DashboardPage() {
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-2">
                         <StatusBadge variant="warning">Attention</StatusBadge>
-                        <p className="text-[13px] font-semibold text-[hsl(var(--foreground))]">
+                        <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                           No accounts connected
                         </p>
                       </div>
-                      <p className="text-[13px] text-[hsl(var(--foreground-muted))] dark:text-[hsl(var(--foreground-subtle))]">
+                      <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] dark:text-[hsl(var(--foreground-subtle))]">
                         Connect your social media accounts to start scheduling.
                       </p>
                       <div>
@@ -533,8 +533,8 @@ export default function DashboardPage() {
                             {Icon && <Icon className="h-4 w-4" />}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-[13px] font-medium text-[hsl(var(--foreground))] capitalize">{acc.platform}</p>
-                            <p className="truncate text-[12px] text-[hsl(var(--foreground-muted))]">@{acc.username}</p>
+                            <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))] capitalize">{acc.platform}</p>
+                            <p className="truncate text-xs leading-4 text-[hsl(var(--foreground-muted))]">@{acc.username}</p>
                           </div>
                           <StatusBadge variant="success">Active</StatusBadge>
                         </div>
@@ -542,7 +542,7 @@ export default function DashboardPage() {
                     })}
 
                     {accounts.length > 5 && (
-                      <p className="text-center text-[12px] text-[hsl(var(--foreground-muted))]">
+                      <p className="text-center text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                         +{accounts.length - 5} more
                       </p>
                     )}
@@ -566,7 +566,7 @@ export default function DashboardPage() {
                 <div className="flex h-7 w-7 items-center justify-center rounded-md bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                   <Zap className="h-3.5 w-3.5" />
                 </div>
-                <h2 className="text-[14px] font-semibold tracking-[-0.005em] text-[hsl(var(--foreground))]">Quick Actions</h2>
+                <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Quick Actions</h2>
               </div>
 
               <div className="p-2">
@@ -610,12 +610,12 @@ function StatCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.04em] leading-none text-[hsl(var(--foreground-subtle))]">
+          <p className="mb-1.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
             {label}
           </p>
           <p
             className={cn(
-              "mt-1 text-[24px] font-semibold tracking-[-0.01em] tabular-nums",
+              "mt-1 text-[28px] font-bold leading-8 tracking-[-0.01em] tabular-nums",
               danger ? "text-red-600 dark:text-red-400" : "text-[hsl(var(--foreground))]"
             )}
           >
@@ -649,7 +649,7 @@ function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex min-h-6 items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold leading-none tracking-[-0.003em]",
+        "inline-flex min-h-6 items-center rounded-md border px-2 py-0.5 text-xs font-medium leading-4",
         badgeVariants[variant]
       )}
     >
@@ -671,7 +671,7 @@ function TokenLink({
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--foreground))] transition-colors hover:bg-[hsl(var(--surface))] hover:text-[hsl(var(--foreground))]",
+        "inline-flex items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-sm font-medium leading-5 text-[hsl(var(--foreground))] transition-colors hover:bg-[hsl(var(--surface))] hover:text-[hsl(var(--foreground))]",
         fullWidth && "flex w-full"
       )}
     >
@@ -694,14 +694,14 @@ function UsageBar({
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-[13px] font-medium text-[hsl(var(--foreground))]">{label}</span>
-        <span className="text-[12px] tabular-nums text-[hsl(var(--foreground-muted))]">
+        <span className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{label}</span>
+        <span className="text-xs leading-4 tabular-nums text-[hsl(var(--foreground-muted))]">
           {used} / {limit === "Unlimited" ? "∞" : limit}
         </span>
       </div>
       <ProgressBar ariaLabel={label} value={Math.max(0, Math.min(1, progress / 100))} appearance="default" />
       {limit !== "Unlimited" && (
-        <p className="mt-1 text-[12px] text-[hsl(var(--foreground-muted))]">
+        <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
           {Math.round(progress)}% of limit used
         </p>
       )}
@@ -742,11 +742,11 @@ function QuickAction({
         </div>
 
         <div className="flex-1 min-w-0">
-          <span className={cn("block text-[13px] font-medium leading-5", accent ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground))]")}>
+          <span className={cn("block text-sm font-medium leading-5", accent ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground))]")}>
             {label}
           </span>
           {desc && (
-            <span className="text-[12px] leading-none text-[hsl(var(--foreground-muted))]">{desc}</span>
+            <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{desc}</span>
           )}
         </div>
 
@@ -975,8 +975,8 @@ function EmptyState({
       <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
         <Icon className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
       </div>
-      <p className="mb-1 text-[14px] font-semibold text-[hsl(var(--foreground))]">{title}</p>
-      <p className="mb-4 max-w-[220px] text-[13px] leading-relaxed text-[hsl(var(--foreground-muted))]">{desc}</p>
+      <p className="mb-1 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{title}</p>
+      <p className="mb-4 max-w-[220px] text-sm leading-5 text-[hsl(var(--foreground-muted))]">{desc}</p>
       <LinkButton appearance="subtle" href={href}>
         {cta}
       </LinkButton>

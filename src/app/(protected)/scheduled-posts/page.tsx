@@ -316,10 +316,10 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
         <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
           <CalendarDays className="h-6 w-6 text-[hsl(var(--accent))]" />
         </div>
-        <h3 className="text-lg font-semibold text-[hsl(var(--foreground))]">
+        <h3 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
           Nothing scheduled yet
         </h3>
-        <p className="mt-2 text-[13px] text-[hsl(var(--foreground-muted))]">
+        <p className="mt-2 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
           Create a scheduled post to start your queue.
         </p>
         <div className="mt-5">

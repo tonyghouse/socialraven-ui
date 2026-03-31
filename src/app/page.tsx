@@ -3,7 +3,6 @@
 import Avatar from "@atlaskit/avatar";
 import AtlassianButton, { LinkButton } from "@atlaskit/button/new";
 import ProgressBar from "@atlaskit/progress-bar";
-import SectionMessage from "@atlaskit/section-message";
 import { useUser } from "@clerk/nextjs";
 import {
   Facebook,
@@ -202,7 +201,7 @@ function StatusPill({
 
   return (
     <span
-      className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${toneClass}`}
+      className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium leading-4 ${toneClass}`}
     >
       {children}
     </span>
@@ -237,12 +236,12 @@ export default function LandingPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <h1 className="max-w-3xl text-5xl font-semibold tracking-[-0.03em] text-[hsl(var(--foreground))] md:text-6xl lg:text-[68px] lg:leading-[1.02]">
+                    <h1 className="max-w-3xl text-[2.5rem] leading-[2.75rem] font-bold tracking-[-0.025em] text-[hsl(var(--foreground))] md:text-[3rem] md:leading-[3.25rem] lg:text-[3.5rem] lg:leading-[3.75rem]">
                       Your social media,
                       <br />
                       <span className="text-[hsl(var(--accent))]">on autopilot.</span>
                     </h1>
-                    <p className="max-w-2xl text-base leading-7 text-[hsl(var(--foreground-muted))] md:text-lg">
+                    <p className="max-w-2xl text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[0.875rem] md:leading-5">
                       Schedule, publish, and analyse across every platform from one beautifully simple workspace.
                       Built for creators, agencies, and growth-focused teams.
                     </p>
@@ -260,7 +259,7 @@ export default function LandingPage() {
                     </AtlassianButton>
                   </div>
 
-                  <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                  <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                     14-day Pro trial · No credit card · GDPR compliant
                   </p>
                 </div>
@@ -270,10 +269,10 @@ export default function LandingPage() {
                     <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                          <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                             Campaign overview
                           </p>
-                          <h2 className="mt-1 text-lg font-semibold tracking-[-0.01em]">Q2 content operations</h2>
+                          <h2 className="mt-1 text-base leading-5 font-bold tracking-[-0.01em]">Q2 content operations</h2>
                         </div>
                         <StatusPill tone="success">Live publishing</StatusPill>
                       </div>
@@ -290,8 +289,8 @@ export default function LandingPage() {
                             key={item.label}
                             className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-3.5"
                           >
-                            <p className="text-xs text-[hsl(var(--foreground-muted))]">{item.label}</p>
-                            <p className="mt-1.5 text-xl font-semibold tracking-[-0.02em]">{item.value}</p>
+                            <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{item.label}</p>
+                            <p className="mt-1.5 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">{item.value}</p>
                           </div>
                         ))}
                       </div>
@@ -300,8 +299,8 @@ export default function LandingPage() {
                         <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-sm font-semibold">Performance</p>
-                              <p className="text-xs text-[hsl(var(--foreground-muted))]">Last 7 days</p>
+                              <p className="text-sm font-bold leading-5">Performance</p>
+                              <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">Last 7 days</p>
                             </div>
                             <StatusPill tone="success">Stable</StatusPill>
                           </div>
@@ -312,9 +311,9 @@ export default function LandingPage() {
                               { label: "Approval throughput", value: 84 },
                             ].map((metric) => (
                               <div key={metric.label}>
-                                <div className="mb-2 flex items-center justify-between text-sm">
+                                <div className="mb-2 flex items-center justify-between text-sm leading-5">
                                   <span className="text-[hsl(var(--foreground-muted))]">{metric.label}</span>
-                                  <span className="font-semibold text-[hsl(var(--foreground))]">{metric.value}%</span>
+                                  <span className="font-medium text-[hsl(var(--foreground))]">{metric.value}%</span>
                                 </div>
                                 <ProgressBar ariaLabel={metric.label} value={metric.value} appearance="default" />
                               </div>
@@ -323,8 +322,8 @@ export default function LandingPage() {
                         </div>
 
                         <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
-                          <p className="text-sm font-semibold">Next scheduled publish</p>
-                          <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                          <p className="text-sm font-bold leading-5">Next scheduled publish</p>
+                          <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                             Today, 7:30 PM IST
                           </p>
 
@@ -346,15 +345,15 @@ export default function LandingPage() {
                             <div className="flex items-center gap-3">
                               <Avatar name="Sarah Chen" size="small" appearance="square" />
                               <div>
-                                <p className="text-sm font-semibold">Reviewed by Sarah Chen</p>
-                                <p className="text-xs text-[hsl(var(--foreground-muted))]">Content Operations</p>
+                                <p className="text-sm font-medium leading-5">Reviewed by Sarah Chen</p>
+                                <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">Content Operations</p>
                               </div>
                             </div>
                             <div className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-3">
-                              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                                 Campaign note
                               </p>
-                              <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                              <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                                 Your next campaign is lined up and ready to publish across connected platforms.
                               </p>
                             </div>
@@ -373,9 +372,9 @@ export default function LandingPage() {
               <div className="grid gap-4 md:grid-cols-4">
                 {STATS.map((item) => (
                   <SurfaceCard key={item.label} className="p-5">
-                    <p className="text-3xl font-semibold tracking-[-0.03em] text-[hsl(var(--foreground))]">{item.value}</p>
-                    <p className="mt-2 text-sm font-medium text-[hsl(var(--foreground))]">{item.label}</p>
-                    <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">{item.detail}</p>
+                    <p className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">{item.value}</p>
+                    <p className="mt-2 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{item.label}</p>
+                    <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{item.detail}</p>
                   </SurfaceCard>
                 ))}
               </div>
@@ -385,10 +384,10 @@ export default function LandingPage() {
           <section id="integrations" className="bg-[hsl(var(--background))] py-16">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mx-auto max-w-3xl text-center">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                   Works with your platforms
                 </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em] md:text-[1.5rem] md:leading-7">
                   Connect the channels your team already uses.
                 </h2>
               </div>
@@ -404,7 +403,7 @@ export default function LandingPage() {
                     >
                       <Icon className={`h-4 w-4 ${tint}`} />
                     </div>
-                    <span className="text-sm font-medium text-[hsl(var(--foreground))]">{name}</span>
+                    <span className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{name}</span>
                   </SurfaceCard>
                 ))}
               </div>
@@ -414,10 +413,10 @@ export default function LandingPage() {
           <section id="features" className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-12 max-w-2xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                   Features
                 </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
                   Built for speed.
                   <br />
                   Designed for growth.
@@ -429,14 +428,14 @@ export default function LandingPage() {
                   <SurfaceCard key={feature.title} className="p-6 shadow-sm">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                        <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                           {String(index + 1).padStart(2, "0")}
                         </p>
-                        <h3 className="mt-3 text-lg font-semibold tracking-[-0.01em]">{feature.title}</h3>
+                        <h3 className="mt-3 text-base leading-5 font-bold tracking-[-0.01em]">{feature.title}</h3>
                       </div>
                       <StatusPill tone="accent">{feature.meta}</StatusPill>
                     </div>
-                    <p className="mt-4 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                    <p className="mt-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                       {feature.description}
                     </p>
                   </SurfaceCard>
@@ -448,10 +447,10 @@ export default function LandingPage() {
           <section id="how-it-works" className="bg-[hsl(var(--background))] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-12 max-w-2xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                   How it works
                 </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
                   Up and running in minutes
                 </h2>
               </div>
@@ -460,11 +459,11 @@ export default function LandingPage() {
                 {STEPS.map((step) => (
                   <SurfaceCard key={step.step} className="p-6 shadow-sm">
                     <div className="flex items-center justify-between">
-                      <span className="text-2xl font-semibold tracking-[-0.03em] text-[hsl(var(--accent))]">{step.step}</span>
+                      <span className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--accent))]">{step.step}</span>
                       <StatusPill tone="accent">Guided flow</StatusPill>
                     </div>
-                    <h3 className="mt-6 text-lg font-semibold tracking-[-0.01em]">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-[hsl(var(--foreground-muted))]">{step.description}</p>
+                    <h3 className="mt-6 text-base leading-5 font-bold tracking-[-0.01em]">{step.title}</h3>
+                    <p className="mt-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{step.description}</p>
                   </SurfaceCard>
                 ))}
               </div>
@@ -474,10 +473,10 @@ export default function LandingPage() {
           <section className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-12 max-w-2xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                   Testimonials
                 </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
                   Loved by creators worldwide
                 </h2>
               </div>
@@ -486,14 +485,14 @@ export default function LandingPage() {
                 {TESTIMONIALS.map((item) => (
                   <SurfaceCard key={item.author} className="p-6 shadow-sm">
                     <StatusPill tone={item.tone === "success" ? "success" : "accent"}>Verified customer</StatusPill>
-                    <p className="mt-5 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                    <p className="mt-5 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                       &quot;{item.quote}&quot;
                     </p>
                     <div className="mt-6 flex items-center gap-3">
                       <Avatar name={item.author} size="small" appearance="square" />
                       <div>
-                        <p className="text-sm font-semibold">{item.author}</p>
-                        <p className="text-xs text-[hsl(var(--foreground-muted))]">{item.role}</p>
+                        <p className="text-sm font-medium leading-5">{item.author}</p>
+                        <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{item.role}</p>
                       </div>
                     </div>
                   </SurfaceCard>
@@ -505,17 +504,22 @@ export default function LandingPage() {
           <section id="pricing" className="bg-[hsl(var(--background))] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-6 max-w-2xl">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                   Pricing
                 </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
                   Simple, transparent pricing
                 </h2>
               </div>
 
-              <SectionMessage appearance="information" title="All plans include a 14-day free trial">
-                Start free and upgrade when you are ready.
-              </SectionMessage>
+              <div className="rounded-xl border border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 px-5 py-4 text-[hsl(var(--foreground))]">
+                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+                  All plans include a 14-day free trial
+                </p>
+                <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                  Start free and upgrade when you are ready.
+                </p>
+              </div>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
                 {PAID_PLANS.map((plan, index) => {
@@ -537,8 +541,8 @@ export default function LandingPage() {
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <h3 className="text-xl font-semibold tracking-[-0.01em]">{plan.name}</h3>
-                          <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                          <h3 className="text-base leading-5 font-bold tracking-[-0.01em]">{plan.name}</h3>
+                          <p className="mt-2 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                             {plan.description}
                           </p>
                         </div>
@@ -549,18 +553,18 @@ export default function LandingPage() {
 
                       <div className="mt-6">
                         {plan.customPricing ? (
-                          <p className="text-4xl font-semibold tracking-[-0.03em]">Custom pricing</p>
+                          <p className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em]">Custom pricing</p>
                         ) : (
                           <div className="flex items-end gap-2">
-                            <span className="text-4xl font-semibold tracking-[-0.03em]">${plan.price}</span>
-                            <span className="pb-1 text-sm text-[hsl(var(--foreground-muted))]">per month</span>
+                            <span className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em]">${plan.price}</span>
+                            <span className="pb-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">per month</span>
                           </div>
                         )}
                       </div>
 
                       <ul className="mt-6 space-y-3">
                         {plan.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-3 text-sm text-[hsl(var(--foreground-muted))]">
+                          <li key={feature} className="flex items-start gap-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                             <span className="mt-1 h-2 w-2 rounded-full bg-[hsl(var(--accent))]" />
                             <span>{feature}</span>
                           </li>
@@ -582,10 +586,10 @@ export default function LandingPage() {
           <section className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
             <div className="container mx-auto max-w-3xl px-6">
               <div className="text-center">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                   FAQ
                 </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.02em] md:text-4xl">
+                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
                   Common questions from teams evaluating the platform.
                 </h2>
               </div>
@@ -600,7 +604,7 @@ export default function LandingPage() {
                         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
                         onClick={() => setOpenFaq(isOpen ? null : index)}
                       >
-                        <span className="text-sm font-medium text-[hsl(var(--foreground))]">{item.question}</span>
+                        <span className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{item.question}</span>
                         {isOpen ? (
                           <Minus className="h-4 w-4 shrink-0 text-[hsl(var(--foreground-muted))]" />
                         ) : (
@@ -608,7 +612,7 @@ export default function LandingPage() {
                         )}
                       </button>
                       {isOpen && (
-                        <div className="border-t border-[hsl(var(--border-subtle))] px-5 py-4 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                        <div className="border-t border-[hsl(var(--border-subtle))] px-5 py-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                           {item.answer}
                         </div>
                       )}
@@ -624,13 +628,13 @@ export default function LandingPage() {
               <div className="rounded-xl border border-white/15 bg-white/5 p-8 backdrop-blur-sm md:p-10">
                 <div className="grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
                   <div>
-                    <span className="inline-flex items-center rounded-md border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-semibold text-white/80">
+                    <span className="inline-flex items-center rounded-md border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-medium leading-4 text-white/80">
                       Trusted by teams across 40+ countries
                     </span>
-                    <h2 className="mt-5 text-4xl font-semibold tracking-[-0.03em] md:text-5xl">
+                    <h2 className="mt-5 text-[2rem] leading-9 font-bold tracking-[-0.02em]">
                       Start growing today.
                     </h2>
-                    <p className="mt-4 max-w-2xl text-sm leading-7 text-white/70 md:text-base">
+                    <p className="mt-4 max-w-2xl text-sm leading-5 text-white/70 md:text-[0.875rem] md:leading-5">
                       Join thousands of creators and agencies who&apos;ve simplified their workflow with SocialRaven.
                     </p>
                   </div>
@@ -660,12 +664,12 @@ export default function LandingPage() {
               <div className="max-w-sm">
                 <div className="flex items-center gap-3">
                   <Image src="/SocialRavenLogo.svg" alt="SocialRaven logo" width={28} height={28} className="h-7 w-7" />
-                  <span className="text-lg font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">SocialRaven</span>
+                  <span className="text-base leading-5 font-bold tracking-[-0.01em] text-[hsl(var(--foreground))]">SocialRaven</span>
                 </div>
-                <p className="mt-4 text-sm leading-7 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                   Structured social media scheduling and publishing for creators, agencies, and operations-focused teams.
                 </p>
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-1.5 text-xs text-[hsl(var(--foreground-muted))]">
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-1.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                   <Lock className="h-3.5 w-3.5" />
                   GDPR-conscious · US and EU ready
                 </div>
@@ -698,7 +702,7 @@ export default function LandingPage() {
                 },
               ].map((group) => (
                 <div key={group.title}>
-                  <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                  <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                     {group.title}
                   </p>
                   <ul className="mt-4 space-y-3">
@@ -706,7 +710,7 @@ export default function LandingPage() {
                       <li key={item.label}>
                         <Link
                           href={item.href}
-                          className="text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+                          className="text-sm leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
                         >
                           {item.label}
                         </Link>
@@ -719,7 +723,7 @@ export default function LandingPage() {
 
             <Separator className="my-8 bg-[hsl(var(--border-subtle))]" />
 
-            <div className="flex flex-col gap-2 text-xs text-[hsl(var(--foreground-muted))] md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-2 text-xs leading-4 text-[hsl(var(--foreground-muted))] md:flex-row md:items-center md:justify-between">
               <p>© 2026 SocialRaven. All rights reserved.</p>
               <p>Built for calm execution across global publishing teams.</p>
             </div>

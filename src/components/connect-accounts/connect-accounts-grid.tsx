@@ -17,6 +17,7 @@ interface PlatformMeta {
   accent: string;
   connectHref: string;
   comingSoon?: boolean;
+  iconClassName?: string;
 }
 
 
@@ -60,6 +61,7 @@ export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
     accent: "text-slate-900",
     connectHref: "/api/auth/tiktok",
     comingSoon: true,
+    iconClassName: "h-[15px] w-[15px]",
   },
   threads: {
     label: "Threads",
@@ -67,6 +69,7 @@ export const PLATFORM_META: Record<PlatformKey, PlatformMeta> = {
     accent: "text-slate-900",
     connectHref: "/api/auth/threads",
     comingSoon: true,
+    iconClassName: "h-[15px] w-[15px]",
   },
 };
 
@@ -98,6 +101,7 @@ export default function ConnectedAccountsGrid({
             connectHref={meta.connectHref}
             accounts={accountsForPlatform}
             comingSoon={meta.comingSoon}
+            iconClassName={meta.iconClassName}
             onRemove={onRemove}
             onReconnect={onReconnect}
             canWrite={canWrite}

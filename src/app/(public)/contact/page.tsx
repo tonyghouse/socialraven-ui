@@ -15,7 +15,6 @@ import {
 import {
   PublicLozenge,
   PublicPrimaryLinkButton,
-  PublicTag,
 } from "@/components/public/public-atlassian";
 import {
   PublicCard,
@@ -140,8 +139,8 @@ export default function ContactPage() {
                   <Icon className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</p>
-                  <p className="text-xs leading-5 text-[hsl(var(--foreground-muted))]">{sub}</p>
+                  <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{label}</p>
+                  <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{sub}</p>
                 </div>
               </div>
             ))}
@@ -157,16 +156,16 @@ export default function ContactPage() {
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
                   <Icon className="h-5 w-5" />
                 </div>
-                <div className="flex items-center gap-1 text-xs text-[hsl(var(--foreground-muted))]">
+                <div className="flex items-center gap-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
                   <Clock className="h-3 w-3" />
                   {response}
                 </div>
               </div>
               <div className="space-y-2">
-                <h2 className="text-base font-semibold text-[hsl(var(--foreground))]">{label}</h2>
-                <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{description}</p>
+                <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{label}</h2>
+                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{description}</p>
               </div>
-              <p className="border-t border-[hsl(var(--border-subtle))] pt-4 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              <p className="border-t border-[hsl(var(--border-subtle))] pt-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 {detail}
               </p>
               <PublicPrimaryLinkButton href={`mailto:${email}`}>{email}</PublicPrimaryLinkButton>
@@ -178,9 +177,9 @@ export default function ContactPage() {
       <PublicSection eyebrow="Quick answers" title="Before you write" surface="surface">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FAQS.map(({ q, a }) => (
-            <PublicInsetCard key={q} className="space-y-2 p-5">
-              <PublicTag text={q} />
-              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">{a}</p>
+            <PublicInsetCard key={q} className="space-y-3 p-6">
+              <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{q}</h3>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{a}</p>
             </PublicInsetCard>
           ))}
         </div>
@@ -191,10 +190,10 @@ export default function ContactPage() {
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div className="space-y-4">
               <PublicLozenge appearance="inprogress">Agency</PublicLozenge>
-              <h2 className="text-2xl font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))] md:text-3xl">
+              <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
                 Need something built for scale?
               </h2>
-              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Custom seat limits, dedicated onboarding, white-label options, and SLA guarantees. We partner with agencies and businesses that need more than an off-the-shelf plan.
               </p>
               <PublicPrimaryLinkButton href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry">
@@ -205,7 +204,7 @@ export default function ContactPage() {
               {AGENCY_FEATURES.map((feature) => (
                 <PublicInsetCard
                   key={feature}
-                  className="flex items-center gap-2.5 p-4 text-sm text-[hsl(var(--foreground-muted))]"
+                  className="flex items-center gap-2.5 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]"
                 >
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--accent))]" />
                   {feature}

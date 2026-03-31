@@ -146,7 +146,7 @@ export default function DraftsPage() {
       />
 
       <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
-        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 text-[13px] text-[hsl(var(--foreground-muted))] sm:px-6">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 text-sm leading-5 text-[hsl(var(--foreground-muted))] sm:px-6">
           <Lozenge appearance="default">
             {loading && collections.length === 0
               ? "Loading drafts"
@@ -269,10 +269,10 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
         <FileText className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
       </div>
-      <h3 className="mt-4 text-lg font-semibold text-[hsl(var(--foreground))]">
+      <h3 className="mt-4 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
         No drafts yet
       </h3>
-      <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+      <p className="mx-auto mt-2 max-w-sm text-sm leading-5 text-[hsl(var(--foreground-muted))]">
         Save work-in-progress posts as drafts. When you&apos;re ready,
         schedule them across all your platforms with a single click.
       </p>

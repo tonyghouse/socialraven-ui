@@ -36,18 +36,18 @@ export function PublicHero({
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-6 py-16 md:px-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-start lg:py-20">
         <div className="space-y-5">
           {topSlot ? <div>{topSlot}</div> : null}
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+          <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
             {eyebrow}
           </p>
           <div className="space-y-4">
-            <h1 className="max-w-4xl text-4xl font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))] md:text-5xl lg:text-[56px] lg:leading-[1.06]">
+            <h1 className="max-w-4xl text-[2rem] leading-9 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))] md:text-[2.5rem] md:leading-[2.75rem] lg:text-[2.75rem] lg:leading-[3rem]">
               {title}
             </h1>
             {meta ? (
-              <div className="text-sm text-[hsl(var(--foreground-muted))]">{meta}</div>
+              <div className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{meta}</div>
             ) : null}
             {description ? (
-              <p className="max-w-3xl text-base leading-7 text-[hsl(var(--foreground-muted))] md:text-lg">
+              <p className="max-w-3xl text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
                 {description}
               </p>
             ) : null}
@@ -84,17 +84,17 @@ export function PublicSection({
         {eyebrow || title || description ? (
           <div className="mb-8 space-y-2">
             {eyebrow ? (
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                 {eyebrow}
               </p>
             ) : null}
             {title ? (
-              <h2 className="text-2xl font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))] md:text-3xl">
+              <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
                 {title}
               </h2>
             ) : null}
             {description ? (
-              <p className="max-w-3xl text-sm leading-6 text-[hsl(var(--foreground-muted))] md:text-base">
+              <p className="max-w-3xl text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
                 {description}
               </p>
             ) : null}
@@ -154,7 +154,7 @@ export function PublicToc({
   return (
     <aside className="hidden lg:block">
       <PublicCard className="sticky top-24 p-5">
-        <p className="mb-3 text-xs font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+        <p className="mb-3 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
           Contents
         </p>
         <nav className="space-y-1">
@@ -162,7 +162,7 @@ export function PublicToc({
             <a
               key={id}
               href={`#${id}`}
-              className="block rounded-md px-2 py-1 text-xs text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+              className="block rounded-md px-2 py-1 text-sm leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
             >
               {label}
             </a>
@@ -182,11 +182,11 @@ export function PublicTable({
 }) {
   return (
     <div className="overflow-x-auto rounded-xl border border-[hsl(var(--border))]">
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full border-collapse text-sm leading-5">
         <thead>
           <tr className="border-b border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
             {headers.map((header, index) => (
-              <th key={index} className="p-3 text-left font-semibold text-[hsl(var(--foreground))]">
+              <th key={index} className="p-3 text-left font-bold text-[hsl(var(--foreground))]">
                 {header}
               </th>
             ))}

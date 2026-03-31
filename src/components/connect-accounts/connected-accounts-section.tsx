@@ -106,7 +106,7 @@ export default function ConnectedAccountsSection({
         onCancel={() => setPendingConfirm(null)}
       />
       <section className="overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
-        <div className="flex flex-col gap-3 border-b border-[hsl(var(--border-subtle))] px-4 py-3 sm:px-5 sm:py-4">
+        <div className="flex flex-col gap-3 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-3 sm:px-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             {header ? <div className="min-w-0 flex-1">{header}</div> : <div />}
             <Button
@@ -114,13 +114,13 @@ export default function ConnectedAccountsSection({
               variant="outline"
               size="sm"
               onClick={handleRefresh}
-              className="h-9 shrink-0 rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-3 text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+              className="h-7 shrink-0 rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2.5 text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
               title="Refresh accounts"
               aria-label="Refresh accounts"
               disabled={refreshing}
             >
               <RefreshCw
-                size={14}
+                size={12}
                 className={refreshing ? "animate-spin" : ""}
               />
               <span>Refresh</span>

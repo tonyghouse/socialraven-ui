@@ -67,70 +67,44 @@ export default function ManageAccountsPage() {
 
       <main className="px-4 py-6 sm:px-6 sm:py-8">
         <section className="space-y-6">
-          <div className="grid gap-3 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,1fr)] xl:items-stretch">
-            <div className="flex h-full flex-col justify-between rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-5">
-              <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge
-                    variant="outline"
-                    className="rounded-full border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/[0.08] px-2.5 py-1 text-[11px] font-medium text-[hsl(var(--accent))]"
-                  >
-                    Account access
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className="rounded-full border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-2.5 py-1 text-[11px] font-medium text-[hsl(var(--foreground-muted))]"
-                  >
-                    OAuth connections
-                  </Badge>
-                </div>
-
-                <div className="space-y-2">
-                  <h2 className="max-w-2xl text-xl font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">
-                    Keep every publishing channel connected from one workspace.
-                  </h2>
-                  <p className="max-w-2xl text-sm leading-6 text-[hsl(var(--foreground-muted))]">
-                    Add new platforms, review active connections, and keep publishing access stable without jumping between provider dashboards.
-                  </p>
-                </div>
+          <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-5">
+            <div className="flex flex-col gap-4">
+              <div className="space-y-2">
+                <h2 className="max-w-2xl text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+                  Keep every publishing channel connected from one workspace.
+                </h2>
+                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                  Add new platforms, review active connections, and keep publishing access stable without jumping between provider dashboards.
+                </p>
               </div>
 
-              <div className="mt-5 flex flex-wrap gap-2">
-                <div className="inline-flex h-8 items-center rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 text-xs font-medium text-[hsl(var(--foreground-muted))]">
-                  Centralized workspace access
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex items-start gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-4">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                    <ShieldCheck size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
+                      Security
+                    </p>
+                    <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground))]">
+                      Access tokens stay encrypted and can be removed the moment credentials change.
+                    </p>
+                  </div>
                 </div>
-                <div className="inline-flex h-8 items-center rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 text-xs font-medium text-[hsl(var(--foreground-muted))]">
-                  Secure token storage
-                </div>
-              </div>
-            </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-              <div className="flex h-full items-start gap-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-4">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
-                  <ShieldCheck size={15} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-[hsl(var(--foreground-muted))]">
-                    Security
-                  </p>
-                  <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground))]">
-                    Access tokens stay encrypted and can be removed the moment credentials change.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex h-full items-start gap-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-4">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
-                  <RefreshCw size={15} />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-medium text-[hsl(var(--foreground-muted))]">
-                    Reliability
-                  </p>
-                  <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground))]">
-                    Refresh active connections and reconnect expired channels without leaving the workspace.
-                  </p>
+                <div className="flex items-start gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-4">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                    <RefreshCw size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
+                      Reliability
+                    </p>
+                    <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground))]">
+                      Refresh active connections and reconnect expired channels without leaving the workspace.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -139,9 +113,6 @@ export default function ManageAccountsPage() {
           {canWrite && (
             <div id="connect-platforms" className="space-y-3">
               <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
-                  Add platform
-                </p>
               </div>
               <LinkNewAccountSection />
             </div>
@@ -151,8 +122,8 @@ export default function ManageAccountsPage() {
             <ConnectedAccountsSection
               canWrite={canWrite}
               header={
-                <div className="space-y-1">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[hsl(var(--foreground-subtle))]">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
                     Active connections
                   </p>
                 </div>

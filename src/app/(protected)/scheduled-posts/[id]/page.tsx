@@ -365,7 +365,7 @@ function StepCard({
         >
           {complete
             ? <CheckCircle2 className="w-4 h-4 text-primary" />
-            : <span className="text-xs font-bold text-muted-foreground">{step}</span>
+            : <span className="text-xs font-medium leading-4 text-muted-foreground">{step}</span>
           }
         </div>
 
@@ -373,14 +373,14 @@ function StepCard({
         <div className="flex-1 min-w-0">
           {!isOpen && complete && summary ? (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{title}</span>
+              <span className="text-xs font-medium leading-4 text-muted-foreground">{title}</span>
               <span className="text-muted-foreground/40">·</span>
               {summary}
             </div>
           ) : (
             <>
-              <h2 className="text-sm font-bold text-foreground">{title}</h2>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</p>
+              <h2 className="text-sm font-semibold leading-5 text-foreground">{title}</h2>
+              <p className="mt-0.5 text-xs leading-4 text-muted-foreground">{description}</p>
             </>
           )}
         </div>
@@ -389,7 +389,7 @@ function StepCard({
         {canToggle && (
           <div className="flex-shrink-0 flex items-center gap-1.5 text-muted-foreground">
             {!isOpen && (
-              <span className="hidden sm:flex items-center gap-1 text-[10px] font-medium text-primary/70 bg-primary/8 px-2 py-0.5 rounded-full border border-primary/15">
+              <span className="hidden sm:flex items-center gap-1 text-xs font-medium leading-4 text-primary/70 bg-primary/8 px-2 py-0.5 rounded-full border border-primary/15">
                 <Pencil className="w-2.5 h-2.5" />
                 Edit
               </span>
@@ -429,7 +429,7 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200",
+          "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium leading-5 transition-all duration-200",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
           disabled
             ? "bg-muted text-muted-foreground cursor-not-allowed"
@@ -494,7 +494,7 @@ function DeleteModal({
             <div>
               <h2
                 id="delete-modal-title"
-                className="text-base font-semibold text-foreground leading-snug"
+                className="text-sm font-semibold leading-5 text-foreground"
               >
                 Delete this collection?
               </h2>
@@ -510,10 +510,10 @@ function DeleteModal({
           {/* Collection preview card */}
           <div className="mb-5 space-y-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] p-4">
             <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+              <p className="mb-1 text-xs font-medium leading-4 text-muted-foreground">
                 Collection
               </p>
-              <p className="text-sm font-semibold text-foreground truncate">
+              <p className="text-sm font-medium leading-5 text-foreground truncate">
                 {collection.description}
               </p>
             </div>
@@ -564,11 +564,11 @@ function DeleteModal({
 
             <div className="pt-1 border-t border-border/30 flex items-center gap-4">
               <span className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground tabular-nums">
+                  <span className="font-medium text-foreground tabular-nums">
                   {collection.posts.length}
                 </span>{" "}
                 post{collection.posts.length !== 1 ? "s" : ""} across{" "}
-                <span className="font-semibold text-foreground tabular-nums">
+                <span className="font-medium text-foreground tabular-nums">
                   {Object.keys(groupedPosts).length}
                 </span>{" "}
                 platform{Object.keys(groupedPosts).length !== 1 ? "s" : ""}
@@ -604,14 +604,14 @@ function DeleteModal({
               ref={cancelRef}
               onClick={onCancel}
               disabled={isDeleting}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-border/60 text-sm font-semibold text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2.5 rounded-xl border border-border/60 text-sm font-medium leading-5 text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               onClick={onConfirm}
               disabled={!canDelete || isDeleting}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-medium leading-5 hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isDeleting ? (
                 <>
@@ -921,7 +921,7 @@ export default function ScheduledCollectionDetailPage() {
             <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
               <div className="border-b border-[hsl(var(--border-subtle))] px-6 py-5">
                 <div className="mb-3 flex flex-wrap items-start gap-3">
-                  <h1 className="min-w-0 flex-1 text-[24px] font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                  <h1 className="min-w-0 flex-1 text-xl font-semibold leading-7 text-[hsl(var(--foreground))]">
                     {collection.description}
                   </h1>
                   <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
@@ -969,7 +969,7 @@ export default function ScheduledCollectionDetailPage() {
                 <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                   <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                     <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <p className="text-sm font-semibold text-foreground flex-1">Schedule</p>
+                    <p className="text-sm font-semibold leading-5 text-foreground flex-1">Schedule</p>
                     {isScheduled && (
                       <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
                         <Pencil className="h-3.5 w-3.5" />
@@ -979,8 +979,8 @@ export default function ScheduledCollectionDetailPage() {
                   <div className="p-5 space-y-4">
                     {isScheduled && getCountdown(scheduledDate) && (
                       <div className="rounded-lg border border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 px-4 py-4">
-                        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Publishing in</p>
-                        <p className="mt-1 text-[28px] font-semibold tracking-[-0.03em] text-[hsl(var(--accent))] tabular-nums">{getCountdown(scheduledDate)}</p>
+                        <p className="text-xs font-medium leading-4 text-muted-foreground">Publishing in</p>
+                        <p className="mt-1 text-[26px] font-bold leading-8 text-[hsl(var(--accent))] tabular-nums">{getCountdown(scheduledDate)}</p>
                       </div>
                     )}
                     <div className="space-y-2.5">
@@ -999,7 +999,7 @@ export default function ScheduledCollectionDetailPage() {
                 <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                   <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                     <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <p className="text-sm font-semibold text-foreground flex-1">Caption</p>
+                    <p className="text-sm font-semibold leading-5 text-foreground flex-1">Caption</p>
                     {isScheduled && (
                       <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
                         <Pencil className="h-3.5 w-3.5" />
@@ -1023,7 +1023,7 @@ export default function ScheduledCollectionDetailPage() {
                   <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
                     <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                       <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <p className="text-sm font-semibold text-foreground flex-1">
+                      <p className="text-sm font-semibold leading-5 text-foreground flex-1">
                         Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
                       </p>
                       {isScheduled && collection.postCollectionType !== "TEXT" && (
@@ -1042,11 +1042,11 @@ export default function ScheduledCollectionDetailPage() {
                   <div className="px-5 py-4 flex items-center divide-x divide-border/40">
                     <div className="flex-1 text-center pr-4">
                       <p className="text-2xl font-semibold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
-                      <p className="mt-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Posts</p>
+                      <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Posts</p>
                     </div>
                     <div className="flex-1 text-center pl-4">
                       <p className="text-2xl font-semibold text-foreground tabular-nums leading-none">{platformCount}</p>
-                      <p className="mt-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">Platforms</p>
+                      <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Platforms</p>
                     </div>
                   </div>
                   <div className="px-5 pb-4 border-t border-border/30 pt-4 space-y-3">
@@ -1242,7 +1242,7 @@ function EditModePanel({
   const EditTypeIcon = editType.Icon;
 
   const step1Summary = (
-    <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+    <span className="flex items-center gap-1.5 text-sm font-medium leading-5 text-foreground">
       <EditTypeIcon className="w-3.5 h-3.5 text-primary" />
       {editType.label}
     </span>
@@ -1250,15 +1250,15 @@ function EditModePanel({
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm font-semibold text-primary">{selectedAccountIds.length}</span>
-      <span className="text-xs text-muted-foreground">{selectedAccountIds.length === 1 ? "account" : "accounts"}</span>
+      <span className="text-sm font-medium leading-5 text-primary">{selectedAccountIds.length}</span>
+      <span className="text-xs leading-4 text-muted-foreground">{selectedAccountIds.length === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
-        <span key={p} className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded-full border", PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border")}>
+        <span key={p} className={cn("text-xs font-medium leading-4 px-1.5 py-0.5 rounded-full border", PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border")}>
           {PLATFORM_LABELS[p] ?? p}
         </span>
       ))}
       {selectedPlatformKeys.length > 3 && (
-        <span className="text-[10px] text-muted-foreground">+{selectedPlatformKeys.length - 3}</span>
+        <span className="text-xs leading-4 text-muted-foreground">+{selectedPlatformKeys.length - 3}</span>
       )}
     </span>
   );
@@ -1350,12 +1350,12 @@ function EditModePanel({
             className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm font-medium hidden sm:inline">Back</span>
+            <span className="text-sm font-medium leading-5 hidden sm:inline">Back</span>
           </button>
         }
         actions={
           selectedAccountIds.length > 0 ? (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-semibold text-primary flex-shrink-0 border border-primary/20">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-medium leading-4 text-primary flex-shrink-0 border border-primary/20">
               <Zap className="w-3 h-3" />
               {selectedAccountIds.length}{" "}
               {selectedAccountIds.length === 1 ? "account" : "accounts"}
@@ -1406,10 +1406,10 @@ function EditModePanel({
               <EditTypeIcon className="h-4 w-4" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-foreground">{editType.label} Post</p>
-              <p className="text-xs text-muted-foreground">Format is fixed for this collection</p>
+              <p className="text-sm font-semibold leading-5 text-foreground">{editType.label} Post</p>
+              <p className="text-xs leading-4 text-muted-foreground">Format is fixed for this collection</p>
             </div>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground bg-muted border border-border/50 px-2.5 py-1 rounded-lg">
+            <div className="flex items-center gap-1.5 text-xs font-medium leading-4 text-muted-foreground bg-muted border border-border/50 px-2.5 py-1 rounded-lg">
               <Lock className="h-3 w-3" />
               Locked
             </div>
@@ -1459,12 +1459,12 @@ function EditModePanel({
           {/* Caption */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-foreground">
+              <label className="text-sm font-medium leading-5 text-foreground">
                 {postType === "TEXT" ? "Content" : "Caption"}
               </label>
               <span className={cn(
                 "text-xs font-mono tabular-nums transition-colors",
-                overLimit ? "text-red-500 font-semibold" : nearLimit ? "text-amber-500" : "text-muted-foreground",
+                overLimit ? "text-red-500 font-medium" : nearLimit ? "text-amber-500" : "text-muted-foreground",
               )}>
                 {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()}
               </span>
@@ -1498,7 +1498,7 @@ function EditModePanel({
           {postType !== "TEXT" && (
             <div className="space-y-2 mt-6">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-foreground">
+                <label className="text-sm font-medium leading-5 text-foreground">
                   {postType === "IMAGE" ? "Images" : "Video"}
                 </label>
                 {selectedPlatforms.length > 0 && (
@@ -1512,7 +1512,7 @@ function EditModePanel({
               {/* Existing kept media thumbnails */}
               {keptMedia.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground font-medium flex items-center gap-1.5">
+                  <p className="text-xs font-medium leading-4 text-muted-foreground flex items-center gap-1.5">
                     <CloudUpload className="w-3.5 h-3.5" />
                     Existing media — click × to remove
                   </p>
@@ -1619,7 +1619,7 @@ function EditModePanel({
             <Button
               onClick={save}
               disabled={saving || selectedAccountIds.length === 0 || hasAnyCharError || validatingMedia}
-              className="w-full h-11 font-semibold gap-2 text-sm"
+              className="w-full h-11 font-medium gap-2 text-sm"
               size="lg"
             >
               {saving ? (
@@ -2113,10 +2113,10 @@ function PlatformSection({
         <div className={cn("h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0", accent.iconClass)}>
           {Icon ? <Icon className="h-4.5 w-4.5" /> : null}
         </div>
-        <p className="text-sm font-semibold text-foreground flex-1">
+        <p className="text-sm font-semibold leading-5 text-foreground flex-1">
           {platformDisplayName[p] ?? platformDisplayName[platform] ?? platform}
         </p>
-        <span className="text-xs text-muted-foreground font-medium">
+        <span className="text-xs font-medium leading-4 text-muted-foreground">
           {posts.length} account{posts.length !== 1 ? "s" : ""}
         </span>
       </div>
