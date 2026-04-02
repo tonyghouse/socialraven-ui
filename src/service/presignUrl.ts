@@ -1,8 +1,11 @@
 import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function getPresignedUrl(file: File, getToken: any) {
+  const tokenStart = performance.now();
   const token = await getToken();
-  const startedAt = performance.now();
+  const tokenDurationMs = Math.round(performance.now() - tokenStart);
+
+  const requestStart = performance.now();
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/media/presign`, {
     method: "POST",
@@ -19,15 +22,20 @@ export async function getPresignedUrl(file: File, getToken: any) {
 
   if (!res.ok) throw new Error("Failed to get presigned URL");
 
-  const durationMs = Math.round(performance.now() - startedAt);
+  const browserDurationMs = Math.round(performance.now() - requestStart);
   const serverDurationMs = Number(res.headers.get("X-Presign-Latency-Ms") || "0");
+  const networkAndOverheadMs = Math.max(browserDurationMs - serverDurationMs, 0);
+  const serverTiming = res.headers.get("Server-Timing") || "";
 
-  if (durationMs > 1000 || serverDurationMs > 300) {
+  if (browserDurationMs > 700 || tokenDurationMs > 300 || serverDurationMs > 300) {
     console.warn("Slow presign detected", {
       fileName: file.name,
       fileSizeBytes: file.size,
-      browserDurationMs: durationMs,
+      tokenDurationMs,
+      browserDurationMs,
       serverDurationMs,
+      networkAndOverheadMs,
+      serverTiming,
     });
   }
 
