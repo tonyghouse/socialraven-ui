@@ -1,4 +1,8 @@
-import { CreateWorkspaceRequest, WorkspaceResponse } from "@/model/Workspace";
+import {
+  CreateWorkspaceRequest,
+  WorkspaceApprovalMode,
+  WorkspaceResponse,
+} from "@/model/Workspace";
 import { apiHeaders } from "@/lib/api-headers";
 
 type GetToken = () => Promise<string | null>;
@@ -54,7 +58,12 @@ export async function createWorkspaceApi(
 export async function updateWorkspaceApi(
   getToken: GetToken,
   workspaceId: string,
-  req: { name?: string; companyName?: string }
+  req: {
+    name?: string;
+    companyName?: string;
+    approvalMode?: WorkspaceApprovalMode;
+    approverUserIds?: string[];
+  }
 ): Promise<WorkspaceResponse> {
   const headers = await apiHeaders(getToken, { "X-Workspace-Id": workspaceId });
   const res = await fetch(`${BACKEND}/workspaces/${workspaceId}`, {

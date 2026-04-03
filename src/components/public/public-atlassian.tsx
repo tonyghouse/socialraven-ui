@@ -36,13 +36,15 @@ export function PublicSubtleLinkButton({
 
 export function PublicPrimaryButton({
   onClick,
+  disabled,
   children,
 }: {
   onClick: () => void;
+  disabled?: boolean;
   children: ReactNode;
 }) {
   return (
-    <AtlassianButton appearance="primary" onClick={onClick}>
+    <AtlassianButton appearance="primary" isDisabled={disabled} onClick={onClick}>
       {children}
     </AtlassianButton>
   );
@@ -50,13 +52,15 @@ export function PublicPrimaryButton({
 
 export function PublicSubtleButton({
   onClick,
+  disabled,
   children,
 }: {
   onClick: () => void;
+  disabled?: boolean;
   children: ReactNode;
 }) {
   return (
-    <AtlassianButton appearance="subtle" onClick={onClick}>
+    <AtlassianButton appearance="subtle" isDisabled={disabled} onClick={onClick}>
       {children}
     </AtlassianButton>
   );

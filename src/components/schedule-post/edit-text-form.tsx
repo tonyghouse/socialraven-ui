@@ -47,7 +47,9 @@ export default function EditTextForm({
 }: Props) {
   const { getToken } = useAuth();
   const isScheduled = collection.overallStatus === "SCHEDULED";
-  const isDraft = collection.overallStatus === "DRAFT";
+  const isDraft =
+    collection.overallStatus === "DRAFT" ||
+    collection.overallStatus === "CHANGES_REQUESTED";
 
   const scheduledDate = collection.scheduledTime ? new Date(collection.scheduledTime) : null;
 

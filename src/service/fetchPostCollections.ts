@@ -4,7 +4,7 @@ import { workspaceIdHeader } from "@/lib/api-headers";
 export async function fetchPostCollectionsApi(
   getToken: () => Promise<string | null>,
   page: number,
-  type?: "scheduled" | "published" | "draft",
+  type?: "scheduled" | "published" | "draft" | "review",
   search?: string,
   providerUserIds?: string[],
   platform?: string,

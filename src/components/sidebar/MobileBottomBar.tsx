@@ -34,11 +34,12 @@ export function MobileBottomBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
-  const { canWrite, isOwner } = useRole();
+  const { canWrite, canSeeApprovalQueue, isOwner } = useRole();
   const { workspaces, activeWorkspace, switchWorkspace } = useWorkspace();
 
   const drawerItems = [
     { title: "Analytics",        url: "/analytics",         icon: ChartBar },
+    ...(canSeeApprovalQueue ? [{ title: "Approvals", url: "/approvals", icon: Check }] : []),
     { title: "Drafts",           url: "/drafts",            icon: NotePencil },
     { title: "Published Posts",  url: "/published-posts",   icon: CalendarCheck },
     { title: "Connect Accounts", url: "/connect-accounts",  icon: Plug },

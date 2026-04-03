@@ -25,6 +25,10 @@ import {
 import { cn } from "@/lib/utils";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import { deletePostCollectionApi } from "@/service/deletePostCollectionApi";
+import {
+  approvePostCollectionApi,
+  requestChangesPostCollectionApi,
+} from "@/service/reviewPostCollectionApi";
 import { scheduleDraftCollectionApi } from "@/service/scheduleDraftCollectionApi";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
@@ -35,6 +39,11 @@ import { localToUTC } from "@/lib/timeUtil";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { useRole } from "@/hooks/useRole";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { InternalCollaborationPanel } from "@/components/posts/internal-collaboration-panel";
+import { ClientReviewPanel } from "@/components/posts/client-review-panel";
+import { ApprovalSafetyPanel } from "@/components/posts/approval-safety-panel";
 
 const TYPE_CONFIG = {
   IMAGE: { label: "Image", Icon: ImageIcon },
@@ -42,10 +51,80 @@ const TYPE_CONFIG = {
   TEXT: { label: "Text", Icon: FileText },
 } as const;
 
+function isDraftWorkflowStatus(status: PostCollectionResponse["overallStatus"]) {
+  return (
+    status === "DRAFT" ||
+    status === "IN_REVIEW" ||
+    status === "CHANGES_REQUESTED"
+  );
+}
+
+function getStatusAppearance(status: PostCollectionResponse["overallStatus"]) {
+  switch (status) {
+    case "IN_REVIEW":
+      return "inprogress";
+    case "CHANGES_REQUESTED":
+      return "moved";
+    default:
+      return "default";
+  }
+}
+
+function getStatusLabel(status: PostCollectionResponse["overallStatus"]) {
+  switch (status) {
+    case "IN_REVIEW":
+      return "In Review";
+    case "CHANGES_REQUESTED":
+      return "Changes Requested";
+    default:
+      return "Draft";
+  }
+}
+
+function formatReviewActionLabel(
+  action:
+    | "SUBMITTED"
+    | "RESUBMITTED"
+    | "STEP_APPROVED"
+    | "APPROVED"
+    | "CHANGES_REQUESTED"
+    | "REAPPROVAL_REQUIRED"
+    | "REMINDER_SENT"
+    | "ESCALATED"
+) {
+  switch (action) {
+    case "STEP_APPROVED":
+      return "completed approval step";
+    case "CHANGES_REQUESTED":
+      return "requested changes";
+    case "REAPPROVAL_REQUIRED":
+      return "triggered reapproval";
+    case "REMINDER_SENT":
+      return "sent a reminder";
+    case "ESCALATED":
+      return "escalated the approval";
+    case "RESUBMITTED":
+      return "resubmitted";
+    case "SUBMITTED":
+      return "submitted";
+    case "APPROVED":
+      return "approved";
+    default:
+      return String(action).replaceAll("_", " ").toLowerCase();
+  }
+}
+
 export default function DraftDetailPage() {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
   const { getToken } = useAuth();
+  const { activeWorkspace } = useWorkspace();
+  const {
+    canApprovePosts,
+    canPublishPosts,
+    canRequestChanges,
+    isOwner,
+  } = useRole();
 
   const [collection, setCollection] = useState<PostCollectionResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,19 +134,36 @@ export default function DraftDetailPage() {
   const [scheduleDate, setScheduleDate] = useState("");
   const [scheduleTime, setScheduleTime] = useState("");
   const [scheduling, setScheduling] = useState(false);
+  const [approving, setApproving] = useState(false);
+  const [requestingChanges, setRequestingChanges] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  async function refreshCollection() {
+    const coll = await fetchPostCollectionByIdApi(getToken, id);
+    if (!isDraftWorkflowStatus(coll.overallStatus)) {
+      router.replace(`/scheduled-posts/${id}`);
+      return null;
+    }
+    setCollection(coll);
+    if (coll.scheduledTime) {
+      const scheduled = new Date(coll.scheduledTime);
+      const year = scheduled.getFullYear();
+      const month = String(scheduled.getMonth() + 1).padStart(2, "0");
+      const day = String(scheduled.getDate()).padStart(2, "0");
+      const hour = String(scheduled.getHours()).padStart(2, "0");
+      const minute = String(scheduled.getMinutes()).padStart(2, "0");
+      setScheduleDate(`${year}-${month}-${day}`);
+      setScheduleTime(`${hour}:${minute}`);
+    }
+    return coll;
+  }
 
   useEffect(() => {
     async function load() {
       try {
         setLoading(true);
-        const coll = await fetchPostCollectionByIdApi(getToken, id);
-        if (coll.overallStatus !== "DRAFT") {
-          router.replace(`/scheduled-posts/${id}`);
-          return;
-        }
-        setCollection(coll);
+        await refreshCollection();
       } catch {
         setError("Failed to load draft.");
       } finally {
@@ -91,13 +187,52 @@ export default function DraftDetailPage() {
     setScheduling(true);
     try {
       const scheduledTime = localToUTC(scheduleDate, scheduleTime);
-      await scheduleDraftCollectionApi(getToken, collection.id, scheduledTime);
-      toast.success("Draft scheduled! It will be published on time.");
-      router.push(`/scheduled-posts/${collection.id}`);
+      const next = await scheduleDraftCollectionApi(getToken, collection.id, scheduledTime);
+      if (next.overallStatus === "IN_REVIEW") {
+        setCollection(next);
+        setShowSchedulePanel(false);
+        toast.success("Draft submitted for review.");
+      } else {
+        toast.success("Draft scheduled! It will be published on time.");
+        router.push(`/scheduled-posts/${collection.id}`);
+      }
     } catch (err: any) {
       toast.error(err?.message ?? "Failed to schedule. Please try again.");
     } finally {
       setScheduling(false);
+    }
+  }
+
+  async function handleApprove() {
+    if (!collection) return;
+    setApproving(true);
+    try {
+      const next = await approvePostCollectionApi(getToken, collection.id);
+      if (next.overallStatus === "IN_REVIEW") {
+        setCollection(next);
+        toast.success("Approval recorded. Awaiting final owner sign-off.");
+      } else {
+        toast.success("Content approved and scheduled.");
+        router.push(`/scheduled-posts/${collection.id}`);
+      }
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to approve content.");
+    } finally {
+      setApproving(false);
+    }
+  }
+
+  async function handleRequestChanges() {
+    if (!collection) return;
+    setRequestingChanges(true);
+    try {
+      const next = await requestChangesPostCollectionApi(getToken, collection.id);
+      setCollection(next);
+      toast.success("Changes requested.");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to request changes.");
+    } finally {
+      setRequestingChanges(false);
     }
   }
 
@@ -128,6 +263,24 @@ export default function DraftDetailPage() {
   const uniquePlatforms = [...new Set(collection.posts.map((p) => p.provider))];
   const hasAccounts = collection.posts.length > 0;
   const captionText = collection.description?.trim() ?? "";
+  const isInReview = collection.overallStatus === "IN_REVIEW";
+  const isChangesRequested = collection.overallStatus === "CHANGES_REQUESTED";
+  const isAwaitingOwnerFinal = isInReview && collection.nextApprovalStage === "OWNER_FINAL";
+  const canEdit = collection.overallStatus === "DRAFT" || isChangesRequested;
+  const canDirectSchedule =
+    activeWorkspace?.approvalMode === "NONE" ||
+    (activeWorkspace?.approvalMode === "OPTIONAL" && canPublishPosts);
+  const canApproveCurrentStage =
+    canApprovePosts && (!isAwaitingOwnerFinal || isOwner);
+  const primaryActionLabel = canDirectSchedule
+    ? "Schedule"
+    : isChangesRequested
+    ? "Resubmit for Review"
+    : "Submit for Review";
+  const scheduleSectionTitle = canDirectSchedule ? "Ready to schedule?" : "Ready for review?";
+  const scheduleSectionDescription = canDirectSchedule
+    ? "Pick a date and time to add this content to the publishing queue."
+    : "Pick a date and time and send this content through the approval workflow.";
   const scheduledLabel = collection.scheduledTime
     ? new Intl.DateTimeFormat("en-US", {
         month: "short",
@@ -136,6 +289,7 @@ export default function DraftDetailPage() {
         minute: "2-digit",
       }).format(new Date(collection.scheduledTime))
     : null;
+  const reviewHistory = collection.reviewHistory ?? [];
 
   return (
     <>
@@ -151,28 +305,61 @@ export default function DraftDetailPage() {
       <main className="min-h-screen bg-[hsl(var(--background))]">
         <ProtectedPageHeader
           title={collection.description || "Untitled Draft"}
-          description="Draft details and scheduling controls."
+          description={
+            isInReview
+              ? "Submitted for workspace review."
+              : isChangesRequested
+              ? "Changes were requested before scheduling."
+              : "Draft details and scheduling controls."
+          }
           icon={<BookOpen className="h-4 w-4" />}
           actions={
             <>
-              <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}/edit`)}>
-                <span className="inline-flex items-center gap-1.5">
-                  <Pencil className="h-3.5 w-3.5" />
-                  <span>Edit</span>
-                </span>
-              </AtlassianButton>
+              {canEdit && (
+                <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}/edit`)}>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Pencil className="h-3.5 w-3.5" />
+                    <span>Edit</span>
+                  </span>
+                </AtlassianButton>
+              )}
               <AtlassianButton appearance="subtle" isDisabled={deleting} onClick={handleDelete}>
                 <span className="inline-flex items-center gap-1.5">
                   {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                   <span>Delete</span>
                 </span>
               </AtlassianButton>
-              <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel((v) => !v)}>
-                <span className="inline-flex items-center gap-1.5">
-                  <Send className="h-3.5 w-3.5" />
-                  <span>{showSchedulePanel ? "Cancel" : "Schedule"}</span>
-                </span>
-              </AtlassianButton>
+              {isInReview ? (
+                canRequestChanges || canApproveCurrentStage ? (
+                  <>
+                    {canRequestChanges && (
+                      <AtlassianButton appearance="subtle" isDisabled={requestingChanges} onClick={handleRequestChanges}>
+                        <span className="inline-flex items-center gap-1.5">
+                          {requestingChanges ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                          <span>Request Changes</span>
+                        </span>
+                      </AtlassianButton>
+                    )}
+                    {canApproveCurrentStage && (
+                      <AtlassianButton appearance="primary" isDisabled={approving} onClick={handleApprove}>
+                        <span className="inline-flex items-center gap-1.5">
+                          {approving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                          <span>
+                            {isAwaitingOwnerFinal ? "Final Approve & Schedule" : collection.requiredApprovalSteps > 1 ? "Approve Step 1" : "Approve & Schedule"}
+                          </span>
+                        </span>
+                      </AtlassianButton>
+                    )}
+                  </>
+                ) : null
+              ) : (
+                <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel((v) => !v)}>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Send className="h-3.5 w-3.5" />
+                    <span>{showSchedulePanel ? "Cancel" : primaryActionLabel}</span>
+                  </span>
+                </AtlassianButton>
+              )}
             </>
           }
         />
@@ -187,7 +374,9 @@ export default function DraftDetailPage() {
               <span>Drafts</span>
             </button>
             <ChevronRight className="h-3.5 w-3.5 text-[hsl(var(--foreground-subtle))]" />
-            <Lozenge appearance="default">Draft</Lozenge>
+            <Lozenge appearance={getStatusAppearance(collection.overallStatus)}>
+              {getStatusLabel(collection.overallStatus)}
+            </Lozenge>
             <Lozenge appearance="new">{typeCfg.label}</Lozenge>
             {scheduledLabel && <Lozenge appearance="inprogress">{scheduledLabel}</Lozenge>}
           </div>
@@ -275,22 +464,66 @@ export default function DraftDetailPage() {
                         <CalendarClock className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Ready to publish?</p>
+                        <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{scheduleSectionTitle}</p>
                         <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                          Pick a date and time to schedule this draft
+                          {scheduleSectionDescription}
                         </p>
                       </div>
                     </div>
-                    <AtlassianButton appearance={showSchedulePanel ? "subtle" : "primary"} onClick={() => setShowSchedulePanel((v) => !v)}>
-                      <span className="inline-flex items-center gap-1.5">
-                        <Send className="h-3.5 w-3.5" />
-                        <span>{showSchedulePanel ? "Cancel" : "Schedule Now"}</span>
-                      </span>
-                    </AtlassianButton>
+                    {!isInReview && (
+                      <AtlassianButton appearance={showSchedulePanel ? "subtle" : "primary"} onClick={() => setShowSchedulePanel((v) => !v)}>
+                        <span className="inline-flex items-center gap-1.5">
+                          <Send className="h-3.5 w-3.5" />
+                          <span>{showSchedulePanel ? "Cancel" : primaryActionLabel}</span>
+                        </span>
+                      </AtlassianButton>
+                    )}
                   </div>
                 </div>
 
                 <div className="px-5 py-5">
+                  {isInReview && (
+                    <SectionMessage
+                      appearance="information"
+                      title={
+                        isAwaitingOwnerFinal
+                          ? isOwner
+                            ? "Your final sign-off is required"
+                            : "Awaiting owner final sign-off"
+                          : canApproveCurrentStage || canRequestChanges
+                          ? "Awaiting approval decision"
+                          : "Waiting for approver review"
+                      }
+                    >
+                      <p className="text-sm">
+                        {isAwaitingOwnerFinal
+                          ? isOwner
+                            ? "An internal approver completed the first review step. Final owner approval will schedule this content."
+                            : "The first approval step is complete. This content is now waiting for final owner sign-off before it can be scheduled."
+                          : canApproveCurrentStage || canRequestChanges
+                          ? "Review the content, then approve it to move it forward or request changes to send it back to the creator."
+                          : "This content is locked while it is in review. An approver can approve it or send it back with requested changes."}
+                      </p>
+                    </SectionMessage>
+                  )}
+
+                  {collection.requiredApprovalSteps > 0 && (
+                    <div className="mt-4 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
+                      <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                        Approval progress
+                      </p>
+                      <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                        {collection.completedApprovalSteps} of {collection.requiredApprovalSteps} required approval step
+                        {collection.requiredApprovalSteps === 1 ? "" : "s"} completed.
+                      </p>
+                      {collection.nextApprovalStage && (
+                        <p className="mt-1 text-xs text-[hsl(var(--foreground-subtle))]">
+                          Next step: {collection.nextApprovalStage === "OWNER_FINAL" ? "Owner final sign-off" : "Approver review"}
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {hasAccounts ? (
                     <div className="flex flex-wrap items-center gap-1.5">
                       {uniquePlatforms.map((platform) => {
@@ -314,7 +547,7 @@ export default function DraftDetailPage() {
                     </SectionMessage>
                   )}
 
-                  {showSchedulePanel && (
+                  {showSchedulePanel && !isInReview && (
                     <div className="mt-5 space-y-4 border-t border-[hsl(var(--border-subtle))] pt-5">
                       {!hasAccounts && (
                         <SectionMessage appearance="warning" title="No accounts selected">
@@ -344,7 +577,7 @@ export default function DraftDetailPage() {
                           ) : (
                             <>
                               <Zap className="h-4 w-4" />
-                              <span>Confirm Schedule</span>
+                              <span>{canDirectSchedule ? "Confirm Schedule" : primaryActionLabel}</span>
                             </>
                           )}
                         </span>
@@ -353,6 +586,56 @@ export default function DraftDetailPage() {
                   )}
                 </div>
               </section>
+
+              <InternalCollaborationPanel
+                collection={collection}
+                onCollectionRefresh={refreshCollection}
+              />
+
+              <ClientReviewPanel collection={collection} />
+
+              <ApprovalSafetyPanel collection={collection} />
+
+              {reviewHistory.length > 0 && (
+                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
+                    <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Review History</p>
+                  </div>
+                  <div className="space-y-3 px-5 py-4">
+                    {reviewHistory.map((event) => (
+                      <div key={event.id} className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                              {event.actorDisplayName} · {formatReviewActionLabel(event.action)}
+                            </p>
+                            {event.actorType === "CLIENT_REVIEWER" && (
+                              <Lozenge appearance="new">Client reviewer</Lozenge>
+                            )}
+                            {event.actorType === "SYSTEM" && (
+                              <Lozenge appearance="inprogress">System</Lozenge>
+                            )}
+                          </div>
+                          <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                            {new Date(event.createdAt).toLocaleString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                        <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                          {event.fromStatus.replaceAll("_", " ")} to {event.toStatus.replaceAll("_", " ")}
+                        </p>
+                        {event.note && (
+                          <p className="mt-2 text-sm text-[hsl(var(--foreground-muted))]">{event.note}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
 
               {!hasAccounts && (
                 <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-10 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
@@ -364,10 +647,10 @@ export default function DraftDetailPage() {
                     Add connected accounts to this draft before scheduling
                   </p>
                   <div className="mt-5 flex justify-center">
-                    <AtlassianButton appearance="primary" onClick={() => router.push(`/drafts/${id}/edit`)}>
+                    <AtlassianButton appearance="primary" isDisabled={!canEdit} onClick={() => router.push(`/drafts/${id}/edit`)}>
                       <span className="inline-flex items-center gap-1.5">
                         <Pencil className="h-3.5 w-3.5" />
-                        <span>Edit Draft</span>
+                        <span>{canEdit ? "Edit Draft" : "Locked During Review"}</span>
                       </span>
                     </AtlassianButton>
                   </div>
@@ -375,18 +658,20 @@ export default function DraftDetailPage() {
               )}
 
               <div className="grid gap-3 sm:hidden">
-                <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}/edit`)}>
+                <AtlassianButton appearance="subtle" isDisabled={!canEdit} onClick={() => router.push(`/drafts/${id}/edit`)}>
                   <span className="inline-flex items-center gap-2">
                     <Pencil className="h-4 w-4" />
                     <span>Edit</span>
                   </span>
                 </AtlassianButton>
-                <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel(true)}>
-                  <span className="inline-flex items-center gap-2">
-                    <Send className="h-4 w-4" />
-                    <span>Schedule</span>
-                  </span>
-                </AtlassianButton>
+                {!isInReview && (
+                  <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel(true)}>
+                    <span className="inline-flex items-center gap-2">
+                      <Send className="h-4 w-4" />
+                      <span>{primaryActionLabel}</span>
+                    </span>
+                  </AtlassianButton>
+                )}
               </div>
             </div>
           </div>

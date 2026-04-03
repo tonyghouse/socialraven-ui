@@ -32,6 +32,20 @@ const STATUS_CONFIG = {
     className:
       "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
   },
+  IN_REVIEW: {
+    label: "In Review",
+    dotColor: "bg-amber-500",
+    pulse: true,
+    className:
+      "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-500/20 dark:bg-amber-500/10 dark:text-amber-400",
+  },
+  CHANGES_REQUESTED: {
+    label: "Changes Requested",
+    dotColor: "bg-orange-500",
+    pulse: false,
+    className:
+      "border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400",
+  },
   SCHEDULED: {
     label: "Scheduled",
     dotColor: "bg-[hsl(var(--accent))]",
@@ -274,6 +288,14 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
   const uniquePlatforms = Array.from(
     new Set(collection.posts.map((p) => p.provider))
   );
+  const approvalEscalated = Boolean(collection.approvalEscalatedAt);
+  const approvalOverdue =
+    collection.overallStatus === "IN_REVIEW" &&
+    !approvalEscalated &&
+    Boolean(
+      collection.nextApprovalReminderAt &&
+        new Date(collection.nextApprovalReminderAt).getTime() <= Date.now()
+    );
   const visiblePlatforms = uniquePlatforms.slice(0, 5);
   const hiddenPlatformCount = uniquePlatforms.length - visiblePlatforms.length;
 
@@ -347,6 +369,16 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
           />
           {statusCfg.label}
         </span>
+        {approvalEscalated && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-1 text-[10px] font-semibold text-orange-700">
+            Escalated
+          </span>
+        )}
+        {approvalOverdue && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-1 text-[10px] font-semibold text-amber-700">
+            Reminder due
+          </span>
+        )}
       </div>
 
       <div className="flex gap-3 px-3 py-3">

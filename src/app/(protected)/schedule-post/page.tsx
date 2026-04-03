@@ -28,6 +28,8 @@ import {
 } from "@/lib/mediaValidation";
 import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { useRole } from "@/hooks/useRole";
 
 import PostTypeSelector from "@/components/schedule-post/post-type-selector";
 import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
@@ -206,6 +208,8 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
 export default function ScheduledPostCollectionPage() {
   const { isLoaded, getToken } = useAuth();
   const searchParams = useSearchParams();
+  const { activeWorkspace } = useWorkspace();
+  const { canPublishPosts } = useRole();
 
   const initialDate = searchParams.get("date") ?? "";
   const initialTime = searchParams.get("time") ?? "";
@@ -301,6 +305,14 @@ export default function ScheduledPostCollectionPage() {
   const step2Complete = postType !== null && selectedAccountIds.length > 0;
   const step3Complete = postType !== null && description.trim().length > 0 && (postType === "TEXT" || files.length > 0);
   const step4Complete = !!date && !!time;
+  const canDirectSchedule =
+    activeWorkspace?.approvalMode === "NONE" ||
+    (activeWorkspace?.approvalMode === "OPTIONAL" && canPublishPosts);
+  const submitActionLabel = canDirectSchedule ? "Schedule" : "Submit for Review";
+  const step4Title = canDirectSchedule ? "Schedule & Publish" : "Schedule & Review";
+  const step4Description = canDirectSchedule
+    ? "Set when your post should go live, or save it as a draft."
+    : "Set when your post should go live, then send it into the approval workflow.";
 
   // ── Load accounts ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -390,7 +402,7 @@ export default function ScheduledPostCollectionPage() {
 
       if (postType !== "TEXT" && media.length === 0) { toast.error("No valid files found"); return; }
 
-      await postConnectedAccountsApi(getToken, {
+      const response = await postConnectedAccountsApi(getToken, {
         description,
         postType,
         media,
@@ -399,7 +411,11 @@ export default function ScheduledPostCollectionPage() {
         platformConfigs,
       });
 
-      toast.success(`${POST_TYPE_META[postType].label} post scheduled successfully!`);
+      toast.success(
+        response.overallStatus === "IN_REVIEW"
+          ? `${POST_TYPE_META[postType].label} post submitted for review.`
+          : `${POST_TYPE_META[postType].label} post scheduled successfully!`
+      );
       resetAll();
     } catch {
       toast.error("Upload failed. Please check your connection and try again.");
@@ -681,8 +697,8 @@ export default function ScheduledPostCollectionPage() {
         {/* ── Step 4: Schedule & Publish ── */}
         <StepCard
           step={4}
-          title="Schedule & Publish"
-          description="Set when your post should go live, or save it as a draft."
+          title={step4Title}
+          description={step4Description}
           complete={step4Complete}
           locked={reachedStep < 4}
           isOpen={activeStep === 4}
@@ -709,13 +725,13 @@ export default function ScheduledPostCollectionPage() {
               size="lg"
             >
               {submitLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              Schedule
+              {submitActionLabel}
             </Button>
           </div>
 
           {selectedAccountIds.length === 0 && (
             <p className="text-xs text-center text-muted-foreground mt-2">
-              Select an account to schedule, or save as draft to finish later.
+              Select an account to {canDirectSchedule ? "schedule" : "submit for review"}, or save as draft to finish later.
             </p>
           )}
         </StepCard>

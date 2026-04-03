@@ -27,8 +27,8 @@ const ROLE_BADGE: Record<
 > = {
   OWNER:  { label: "Owner",  icon: Crown,       tone: "text-accent" },
   ADMIN:  { label: "Admin",  icon: ShieldCheck, tone: "text-accent" },
-  MEMBER: { label: "Member", icon: Users,       tone: "text-[hsl(var(--foreground-muted))]" },
-  VIEWER: { label: "Viewer", icon: Eye,         tone: "text-[hsl(var(--foreground-muted))]" },
+  EDITOR: { label: "Editor", icon: Users,       tone: "text-[hsl(var(--foreground-muted))]" },
+  READ_ONLY: { label: "Read Only", icon: Eye,      tone: "text-[hsl(var(--foreground-muted))]" },
 };
 
 const PLAN_LABELS: Partial<Record<PlanType, string>> = {
@@ -90,23 +90,23 @@ export function UserAvatar({
       icon: Sparkles,
       tone: "text-accent",
     };
-  } else if (role === "OWNER" || role === "VIEWER") {
-    // No change for owners and viewers
+  } else if (role === "OWNER" || role === "READ_ONLY") {
+    // No change for owners and read-only users
     badge = ROLE_BADGE[role];
   } else {
-    // Teammate: collect unique ADMIN/MEMBER roles across all workspaces
+    // Teammate: collect unique ADMIN/EDITOR roles across all workspaces
     const teamRoles = [
       ...new Set(
         workspaces
           .map((w) => w.role)
-          .filter((r): r is "ADMIN" | "MEMBER" => r === "ADMIN" || r === "MEMBER")
+          .filter((r): r is "ADMIN" | "EDITOR" => r === "ADMIN" || r === "EDITOR")
       ),
     ];
     const hasAdmin = teamRoles.includes("ADMIN");
-    const hasMember = teamRoles.includes("MEMBER");
+    const hasEditor = teamRoles.includes("EDITOR");
     const parts: string[] = [];
     if (hasAdmin) parts.push("Admin");
-    if (hasMember) parts.push("Member");
+    if (hasEditor) parts.push("Editor");
     badge = {
       label: parts.join(" / ") || ROLE_BADGE[role].label,
       icon: hasAdmin ? ShieldCheck : Users,

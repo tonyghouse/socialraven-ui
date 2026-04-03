@@ -5,6 +5,7 @@ import {
   Building2 as Buildings,
   Calendar,
   CalendarCheck,
+  CheckCheck,
   ChevronLeft as CaretLeft,
   CreditCard,
   FilePen as NotePencil,
@@ -34,7 +35,7 @@ import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 export function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
-  const { canWrite, isOwner } = useRole();
+  const { canWrite, canSeeApprovalQueue, isOwner } = useRole();
 
   const navGroups = [
     {
@@ -47,6 +48,7 @@ export function AppSidebar() {
       label: "Content",
       items: [
         ...(canWrite ? [{ title: "Schedule Post", url: "/schedule-post", icon: PaperPlaneTilt }] : []),
+        ...(canSeeApprovalQueue ? [{ title: "Approvals", url: "/approvals", icon: CheckCheck }] : []),
         { title: "Calendar", url: "/calendar", icon: Calendar },
         { title: "Scheduled Posts", url: "/scheduled-posts", icon: ClockCounterClockwise },
         { title: "Drafts", url: "/drafts", icon: NotePencil },

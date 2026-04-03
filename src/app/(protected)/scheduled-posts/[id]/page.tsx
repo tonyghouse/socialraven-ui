@@ -81,6 +81,7 @@ import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker"
 import PlatformCharLimits from "@/components/schedule-post/platform-char-limits";
 import MediaValidationPanel from "@/components/schedule-post/media-validation-panel";
 import PlatformConfigsPanel from "@/components/schedule-post/platform-configs-panel";
+import { ApprovalSafetyPanel } from "@/components/posts/approval-safety-panel";
 
 /* ─── Config maps ─────────────────────────────────────────── */
 
@@ -670,6 +671,14 @@ export default function ScheduledCollectionDetailPage() {
       try {
         setLoading(true);
         const data = await fetchPostCollectionByIdApi(getToken, collectionId);
+        if (
+          data.overallStatus === "DRAFT" ||
+          data.overallStatus === "IN_REVIEW" ||
+          data.overallStatus === "CHANGES_REQUESTED"
+        ) {
+          router.replace(`/drafts/${collectionId}`);
+          return;
+        }
         setCollection(data);
         // Pre-populate selected account IDs from existing posts
         const ids = [
@@ -686,7 +695,7 @@ export default function ScheduledCollectionDetailPage() {
         setLoading(false);
       }
     })();
-  }, [collectionId, getToken]);
+  }, [collectionId, getToken, router]);
 
   /* ── Load accounts (needed for edit mode) ── */
   useEffect(() => {
@@ -737,6 +746,14 @@ export default function ScheduledCollectionDetailPage() {
   }
 
   function handleEditSuccess(updated: PostCollectionResponse) {
+    if (
+      updated.overallStatus === "DRAFT" ||
+      updated.overallStatus === "IN_REVIEW" ||
+      updated.overallStatus === "CHANGES_REQUESTED"
+    ) {
+      router.push(`/drafts/${updated.id}`);
+      return;
+    }
     setCollection(updated);
     // Re-sync selected IDs from the updated collection's posts
     const ids = [
@@ -1006,6 +1023,8 @@ export default function ScheduledCollectionDetailPage() {
                 </div>
               </div>
             )}
+
+            <ApprovalSafetyPanel collection={collection} />
 
             <div className="flex flex-col lg:flex-row gap-5 items-start">
               <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
@@ -1353,8 +1372,18 @@ function EditModePanel({
         return;
       }
     }
+    const acknowledgeApprovalLock = collection.approvalLocked
+      ? window.confirm(
+          "Saving material edits will remove this collection from the publishing queue and send it back into review. Continue?"
+        )
+      : false;
+    if (collection.approvalLocked && !acknowledgeApprovalLock) {
+      return;
+    }
+
     setSaving(true);
     try {
+
       const uploadedMedia = [];
       for (const file of newFiles) {
         if (postType === "VIDEO" && !file.type.startsWith("video/")) continue;
@@ -1369,9 +1398,14 @@ function EditModePanel({
         newMedia: uploadedMedia,
         connectedAccounts: selectedAccounts,
         scheduledTime: localToUTC(date, time),
+        acknowledgeApprovalLock,
       };
       const updated = await updatePostCollectionApi(getToken, collection.id, payload);
-      toast.success("Post updated successfully!");
+      toast.success(
+        updated.overallStatus === "IN_REVIEW"
+          ? "Material changes saved. The collection is back in review."
+          : "Post updated successfully!"
+      );
       onSuccess(updated);
     } catch {
       toast.error("Failed to save. Please try again.");
@@ -1428,6 +1462,14 @@ function EditModePanel({
 
       {/* ── Steps ── */}
       <div className="px-4 sm:px-6 py-6 space-y-4">
+        {collection.approvalLocked && (
+          <SectionMessage appearance="warning" title="Approval lock acknowledged">
+            <p className="text-sm">
+              Saving material edits will remove this collection from the publishing queue and send it back into
+              the approval workflow.
+            </p>
+          </SectionMessage>
+        )}
 
         {/* ── Step 1: Content Type (toggleable, starts collapsed) ── */}
         <StepCard

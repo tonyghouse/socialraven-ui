@@ -28,6 +28,7 @@ import {
 import { useWorkspace } from "@/context/WorkspaceContext";
 import {
   WorkspaceInvitation,
+  WorkspaceApprovalMode,
   WorkspaceMember,
   WorkspaceResponse,
   WorkspaceRole,
@@ -63,6 +64,7 @@ import {
 } from "@/service/workspace";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Tab = "team" | "invitations";
 
@@ -71,13 +73,39 @@ type LoadDataOptions = {
   syncWorkspaceList?: boolean;
 };
 
-const ROLE_OPTIONS: WorkspaceRole[] = ["ADMIN", "MEMBER", "VIEWER"];
+const ROLE_OPTIONS: WorkspaceRole[] = ["ADMIN", "EDITOR", "READ_ONLY"];
+const APPROVAL_MODE_OPTIONS: Array<{
+  value: WorkspaceApprovalMode;
+  label: string;
+  description: string;
+}> = [
+  {
+    value: "NONE",
+    label: "No approval required",
+    description: "Any editor can schedule content directly without review.",
+  },
+  {
+    value: "OPTIONAL",
+    label: "Optional approval",
+    description: "Publishers can schedule directly while other teammates submit into review.",
+  },
+  {
+    value: "REQUIRED",
+    label: "Required approval",
+    description: "Every scheduled item enters a single-step approval queue before publishing.",
+  },
+  {
+    value: "MULTI_STEP",
+    label: "Multi-step approval",
+    description: "Every scheduled item requires an approver review followed by final owner sign-off.",
+  },
+];
 
 const ROLE_ORDER: Record<WorkspaceRole, number> = {
   OWNER: 0,
   ADMIN: 1,
-  MEMBER: 2,
-  VIEWER: 3,
+  EDITOR: 2,
+  READ_ONLY: 3,
 };
 
 const surfaceClass =
@@ -97,7 +125,29 @@ const pillClass =
   "inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db]";
 
 function roleLabel(role: WorkspaceRole) {
-  return role.charAt(0) + role.slice(1).toLowerCase();
+  switch (role) {
+    case "READ_ONLY":
+      return "Read Only";
+    case "EDITOR":
+      return "Editor";
+    case "ADMIN":
+      return "Admin";
+    case "OWNER":
+      return "Owner";
+  }
+}
+
+function roleGroupLabel(role: WorkspaceRole) {
+  switch (role) {
+    case "READ_ONLY":
+      return "Read-only teammates";
+    case "EDITOR":
+      return "Editors";
+    case "ADMIN":
+      return "Admins";
+    case "OWNER":
+      return "Owners";
+  }
 }
 
 function roleBadgeClass(role: WorkspaceRole) {
@@ -106,11 +156,15 @@ function roleBadgeClass(role: WorkspaceRole) {
       return "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]";
     case "ADMIN":
       return "border-[#b3d4ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]";
-    case "MEMBER":
+    case "EDITOR":
       return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
-    case "VIEWER":
+    case "READ_ONLY":
       return "border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]";
   }
+}
+
+function approvalModeLabel(mode: WorkspaceApprovalMode) {
+  return APPROVAL_MODE_OPTIONS.find((option) => option.value === mode)?.label ?? mode;
 }
 
 function avatarToneClass(role: WorkspaceRole) {
@@ -119,9 +173,9 @@ function avatarToneClass(role: WorkspaceRole) {
       return "bg-[hsl(var(--accent))]/12 text-[hsl(var(--accent))]";
     case "ADMIN":
       return "bg-[#deebff] text-[#0c66e4] dark:bg-[#1b2638] dark:text-[#85b8ff]";
-    case "MEMBER":
+    case "EDITOR":
       return "bg-[#dcfff1] text-[#216e4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
-    case "VIEWER":
+    case "READ_ONLY":
       return "bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-[#9fadbc]";
   }
 }
@@ -144,14 +198,14 @@ const ROLE_CONTEXT: Record<
     title: "Admin",
     description: "Manages teammates, invitations, and workspace updates.",
   },
-  MEMBER: {
+  EDITOR: {
     icon: Users,
-    title: "Member",
-    description: "Collaborates in the workspace without admin privileges.",
+    title: "Editor",
+    description: "Creates and manages content without admin privileges.",
   },
-  VIEWER: {
+  READ_ONLY: {
     icon: Eye,
-    title: "Viewer",
+    title: "Read Only",
     description: "Has read-only visibility into workspace activity.",
   },
 };
@@ -205,11 +259,16 @@ function workspacesEqual(a: WorkspaceResponse[], b: WorkspaceResponse[]) {
     const other = b[index];
     return (
       workspace.id === other.id &&
+      workspace.companyId === other.companyId &&
       workspace.name === other.name &&
       workspace.companyName === other.companyName &&
-      workspace.ownerUserId === other.ownerUserId &&
+      workspace.companyLogoS3Key === other.companyLogoS3Key &&
       workspace.logoS3Key === other.logoS3Key &&
       workspace.role === other.role &&
+      workspace.approvalMode === other.approvalMode &&
+      workspace.ownerFinalApprovalRequired === other.ownerFinalApprovalRequired &&
+      workspace.approverUserIds.join(",") === other.approverUserIds.join(",") &&
+      workspace.capabilities.join(",") === other.capabilities.join(",") &&
       workspace.createdAt === other.createdAt &&
       workspace.updatedAt === other.updatedAt &&
       workspace.deletedAt === other.deletedAt
@@ -284,9 +343,9 @@ function roleHeadingClass(role: WorkspaceRole) {
       return "text-[hsl(var(--accent))]";
     case "ADMIN":
       return "text-[#0c66e4] dark:text-[#85b8ff]";
-    case "MEMBER":
+    case "EDITOR":
       return "text-[#216e4e] dark:text-[#7ee2b8]";
-    case "VIEWER":
+    case "READ_ONLY":
       return "text-slate-600 dark:text-[#9fadbc]";
   }
 }
@@ -297,9 +356,9 @@ function roleContextAccentClass(role: WorkspaceRole) {
       return "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]";
     case "ADMIN":
       return "border-[#b3d4ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]";
-    case "MEMBER":
+    case "EDITOR":
       return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
-    case "VIEWER":
+    case "READ_ONLY":
       return "border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]";
   }
 }
@@ -352,6 +411,9 @@ export default function WorkspaceSettingsPage() {
   const [isEditingWorkspaceName, setIsEditingWorkspaceName] = useState(false);
   const [workspaceNameInput, setWorkspaceNameInput] = useState("");
   const [renameWorkspaceBusy, setRenameWorkspaceBusy] = useState(false);
+  const [approvalModeInput, setApprovalModeInput] = useState<WorkspaceApprovalMode>("OPTIONAL");
+  const [editorApproverIds, setEditorApproverIds] = useState<string[]>([]);
+  const [savingApprovalRules, setSavingApprovalRules] = useState(false);
 
   const [pendingConfirm, setPendingConfirm] = useState<{
     title: string;
@@ -365,7 +427,7 @@ export default function WorkspaceSettingsPage() {
 
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState<WorkspaceRole>("MEMBER");
+  const [inviteRole, setInviteRole] = useState<WorkspaceRole>("EDITOR");
   const [inviteBusy, setInviteBusy] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [inviteSuccess, setInviteSuccess] = useState(false);
@@ -435,6 +497,11 @@ export default function WorkspaceSettingsPage() {
     setWorkspaceNameInput(activeWorkspace?.name ?? "");
     setIsEditingWorkspaceName(false);
   }, [activeWorkspace?.id, activeWorkspace?.name]);
+
+  useEffect(() => {
+    setApprovalModeInput(activeWorkspace?.approvalMode ?? "OPTIONAL");
+    setEditorApproverIds(activeWorkspace?.approverUserIds ?? []);
+  }, [activeWorkspace?.id, activeWorkspace?.approvalMode, activeWorkspace?.approverUserIds]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -516,6 +583,24 @@ export default function WorkspaceSettingsPage() {
       toast.error(e.message ?? "Failed to update workspace name");
     } finally {
       setRenameWorkspaceBusy(false);
+    }
+  }
+
+  async function handleSaveApprovalRules() {
+    if (!workspaceId || !isAdminOrOwner) return;
+    setSavingApprovalRules(true);
+    try {
+      await updateWorkspaceApi(getToken, workspaceId, {
+        approvalMode: approvalModeInput,
+        approverUserIds: editorApproverIds,
+      });
+      await refresh();
+      await loadData({ silent: true, syncWorkspaceList: true });
+      toast.success("Approval workflow updated");
+    } catch (e: any) {
+      toast.error(e.message ?? "Failed to update approval workflow");
+    } finally {
+      setSavingApprovalRules(false);
     }
   }
 
@@ -631,6 +716,15 @@ export default function WorkspaceSettingsPage() {
     : "";
 
   const sortedMembers = [...members].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role]);
+  const editorMembers = sortedMembers.filter((member) => member.role === "EDITOR");
+  const defaultApproverMembers = sortedMembers.filter(
+    (member) => member.role === "OWNER" || member.role === "ADMIN"
+  );
+  const activeApprovalMode = activeWorkspace?.approvalMode ?? "OPTIONAL";
+  const activeApproverUserIds = activeWorkspace?.approverUserIds ?? [];
+  const approvalRulesDirty =
+    approvalModeInput !== activeApprovalMode ||
+    [...editorApproverIds].sort().join(",") !== [...activeApproverUserIds].sort().join(",");
   const groupedMembers = sortedMembers.reduce<Record<WorkspaceRole, WorkspaceMember[]>>(
     (acc, member) => {
       if (!acc[member.role]) acc[member.role] = [];
@@ -639,7 +733,7 @@ export default function WorkspaceSettingsPage() {
     },
     {} as Record<WorkspaceRole, WorkspaceMember[]>
   );
-  const roleGroups: WorkspaceRole[] = ["OWNER", "ADMIN", "MEMBER", "VIEWER"];
+  const roleGroups: WorkspaceRole[] = ["OWNER", "ADMIN", "EDITOR", "READ_ONLY"];
 
   if (!activeWorkspace && !loading) {
     return (
@@ -781,7 +875,9 @@ export default function WorkspaceSettingsPage() {
 
       <ProtectedPageHeader
         title={`Manage ${workspaceName}`}
-        description="Administer members, invitations, and workspace controls."
+        description={activeWorkspace.companyName
+          ? `Company: ${activeWorkspace.companyName}`
+          : "Administer members, invitations, and workspace controls."}
         icon={<FolderKanban className="h-4 w-4" />}
         actions={
           <>
@@ -1051,6 +1147,187 @@ export default function WorkspaceSettingsPage() {
                     </div>
                   )}
 
+                  <div className={cn(raisedSurfaceClass, "space-y-4 p-4")}>
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                        Approval workflow
+                      </p>
+                      <p className={cn("text-sm", subtleTextClass)}>
+                        Configure when content needs approval and which editors can act as approvers.
+                      </p>
+                    </div>
+
+                    {isAdminOrOwner ? (
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                            Review mode
+                          </p>
+                          <Select
+                            value={approvalModeInput}
+                            onValueChange={(value) => setApprovalModeInput(value as WorkspaceApprovalMode)}
+                          >
+                            <SelectTrigger className="h-10">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {APPROVAL_MODE_OPTIONS.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <p className={cn("text-xs leading-4", subtleTextClass)}>
+                            {APPROVAL_MODE_OPTIONS.find((option) => option.value === approvalModeInput)?.description}
+                          </p>
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                            Default approvers
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {defaultApproverMembers.length > 0 ? (
+                              defaultApproverMembers.map((member) => (
+                                <span key={member.userId} className={pillClass}>
+                                  {member.firstName || member.email || member.userId}
+                                  <span className="text-[11px] text-slate-500 dark:text-[#9fadbc]">
+                                    {roleLabel(member.role)}
+                                  </span>
+                                </span>
+                              ))
+                            ) : (
+                              <span className={cn("text-xs", subtleTextClass)}>
+                                Owners and admins automatically inherit approval rights.
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                              Editor approvers
+                            </p>
+                            <p className={cn("text-xs leading-4", subtleTextClass)}>
+                              Grant selected editors the ability to approve posts in the review queue.
+                            </p>
+                          </div>
+
+                          {editorMembers.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]">
+                              Invite or assign editors first to grant extra approver capability.
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {editorMembers.map((member) => {
+                                const checked = editorApproverIds.includes(member.userId);
+                                const label =
+                                  [member.firstName, member.lastName].filter(Boolean).join(" ") ||
+                                  member.email ||
+                                  member.userId;
+
+                                return (
+                                  <label
+                                    key={member.userId}
+                                    className={cn(
+                                      "flex items-start gap-3 rounded-xl border px-3 py-3 transition-colors",
+                                      checked
+                                        ? "border-[#b3d4ff] bg-[#f7fbff] dark:border-[#2c4f7c] dark:bg-[#1b2638]"
+                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#161a22]"
+                                    )}
+                                  >
+                                    <Checkbox
+                                      checked={checked}
+                                      onCheckedChange={(nextChecked) => {
+                                        setEditorApproverIds((current) =>
+                                          nextChecked
+                                            ? [...current, member.userId].filter(
+                                                (value, index, array) => array.indexOf(value) === index
+                                              )
+                                            : current.filter((value) => value !== member.userId)
+                                        );
+                                      }}
+                                      className="mt-0.5"
+                                    />
+                                    <div className="space-y-1">
+                                      <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                                        {label}
+                                      </p>
+                                      <p className={cn("text-xs leading-4", subtleTextClass)}>
+                                        Can approve pending review items. Publishing still follows workspace rules.
+                                      </p>
+                                    </div>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            onClick={handleSaveApprovalRules}
+                            disabled={savingApprovalRules || !approvalRulesDirty}
+                          >
+                            {savingApprovalRules ? "Saving..." : "Save workflow"}
+                          </Button>
+                          {approvalRulesDirty && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setApprovalModeInput(activeWorkspace.approvalMode);
+                                setEditorApproverIds(activeWorkspace.approverUserIds);
+                              }}
+                              disabled={savingApprovalRules}
+                            >
+                              Reset
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                          <p className={cn("text-xs", subtleTextClass)}>Current mode</p>
+                          <p className="mt-1 text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                            {approvalModeLabel(activeWorkspace.approvalMode)}
+                          </p>
+                          <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
+                            {APPROVAL_MODE_OPTIONS.find((option) => option.value === activeWorkspace.approvalMode)?.description}
+                          </p>
+                        </div>
+                        {activeWorkspace.approverUserIds.length > 0 && (
+                          <div>
+                            <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                              Extra editor approvers
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {activeWorkspace.approverUserIds.map((userId) => {
+                                const member = editorMembers.find((item) => item.userId === userId);
+                                const label =
+                                  member
+                                    ? [member.firstName, member.lastName].filter(Boolean).join(" ") ||
+                                      member.email ||
+                                      member.userId
+                                    : userId;
+
+                                return (
+                                  <span key={userId} className={pillClass}>
+                                    {label}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   {myRole && <RoleContextPanel role={myRole} />}
 
                   {isInfluencer && (
@@ -1212,7 +1489,7 @@ export default function WorkspaceSettingsPage() {
                           <div key={role} className="space-y-2">
                             <div className="flex items-center justify-between">
                               <p className={cn("text-sm font-semibold leading-5", roleHeadingClass(role))}>
-                                {role === "VIEWER" ? "Viewers" : `${roleLabel(role)}s`}
+                                {roleGroupLabel(role)}
                               </p>
                               <span className={cn("text-xs", subtleTextClass)}>
                                 {group.length}

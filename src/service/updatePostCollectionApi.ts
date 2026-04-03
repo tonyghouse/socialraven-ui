@@ -20,6 +20,8 @@ export interface UpdatePostCollectionPayload {
   keepMediaKeys?: string[];
   /** Updated list of connected accounts (replaces current account list) */
   connectedAccounts?: ConnectedAccount[];
+  /** Explicit confirmation that editing approval-locked content should trigger reapproval */
+  acknowledgeApprovalLock?: boolean;
 }
 
 export async function updatePostCollectionApi(

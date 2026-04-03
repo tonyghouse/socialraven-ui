@@ -7,6 +7,13 @@ import { Building2, Plus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { WorkspaceResponse } from "@/model/Workspace";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { createWorkspaceApi } from "@/service/workspace";
@@ -25,8 +32,23 @@ export default function WorkspaceSelectPage() {
   const [selected, setSelected] = useState<WorkspaceResponse | null>(null);
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
+  const [createCompanyId, setCreateCompanyId] = useState<string>("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const manageableCompanies = Array.from(
+    new Map(
+      workspaces
+        .filter((workspace) => workspace.role === "OWNER" || workspace.role === "ADMIN")
+        .map((workspace) => [
+          workspace.companyId,
+          {
+            id: workspace.companyId,
+            name: workspace.companyName ?? workspace.name,
+          },
+        ])
+    ).values()
+  );
 
   function activateWorkspace(workspace: WorkspaceResponse) {
     localStorage.setItem("activeWorkspaceId", workspace.id);
@@ -55,6 +77,12 @@ export default function WorkspaceSelectPage() {
     }
   }, [isLoading, workspaces, canCreateWorkspaces, router]);
 
+  useEffect(() => {
+    if (!createCompanyId && manageableCompanies.length > 0) {
+      setCreateCompanyId(manageableCompanies[0].id);
+    }
+  }, [createCompanyId, manageableCompanies]);
+
   function handleSelect(w: WorkspaceResponse) {
     setSelected(w);
     setCreating(false);
@@ -72,7 +100,14 @@ export default function WorkspaceSelectPage() {
     setBusy(true);
     setError(null);
     try {
-      const workspace = await createWorkspaceApi(getToken, { name: newName.trim() });
+      const payload =
+        manageableCompanies.length > 1
+          ? { name: newName.trim(), companyId: createCompanyId }
+          : {
+              name: newName.trim(),
+              companyId: createCompanyId || manageableCompanies[0]?.id,
+            };
+      const workspace = await createWorkspaceApi(getToken, payload);
       await refresh();
       activateWorkspace(workspace);
       router.replace("/dashboard");
@@ -130,8 +165,8 @@ export default function WorkspaceSelectPage() {
                 <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                   {w.name}
                 </p>
-                <p className="text-xs font-medium leading-4 text-muted-foreground capitalize">
-                  {w.role.toLowerCase()}
+                <p className="text-xs font-medium leading-4 text-muted-foreground">
+                  {[w.companyName, w.role.replace("_", " ").toLowerCase()].filter(Boolean).join(" • ")}
                 </p>
               </div>
               {selected?.id === w.id && (
@@ -180,10 +215,29 @@ export default function WorkspaceSelectPage() {
                 className="bg-[hsl(var(--surface))]"
               />
             </div>
+            {manageableCompanies.length > 1 && (
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium leading-5">
+                  Company
+                </Label>
+                <Select value={createCompanyId} onValueChange={setCreateCompanyId}>
+                  <SelectTrigger className="bg-[hsl(var(--surface))]">
+                    <SelectValue placeholder="Select a company" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {manageableCompanies.map((company) => (
+                      <SelectItem key={company.id} value={company.id}>
+                        {company.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             {error && <p className="text-xs text-destructive">{error}</p>}
             <Button
               onClick={handleCreate}
-              disabled={!newName.trim() || busy}
+              disabled={!newName.trim() || busy || !createCompanyId}
               className="w-full"
               size="sm"
             >

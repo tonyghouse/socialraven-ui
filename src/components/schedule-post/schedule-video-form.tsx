@@ -160,7 +160,7 @@ export default function ScheduleVideoForm({
         return;
       }
 
-      await postConnectedAccountsApi(getToken, {
+      const response = await postConnectedAccountsApi(getToken, {
         description,
         postType: "VIDEO",
         media,
@@ -169,7 +169,11 @@ export default function ScheduleVideoForm({
         platformConfigs,
       });
 
-      toast.success("Video post scheduled successfully!");
+      toast.success(
+        response.overallStatus === "IN_REVIEW"
+          ? "Video post submitted for review."
+          : "Video post scheduled successfully!"
+      );
       setFiles([]);
       setDescription("");
       resetSelection();

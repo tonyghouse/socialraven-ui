@@ -292,7 +292,11 @@ export default function DraftEditPage() {
           fetchPostCollectionByIdApi(getToken, id),
           fetchAllConnectedAccountsApi(getToken),
         ]);
-        if (coll.overallStatus !== "DRAFT") {
+        if (coll.overallStatus === "IN_REVIEW") {
+          router.replace(`/drafts/${id}`);
+          return;
+        }
+        if (coll.overallStatus !== "DRAFT" && coll.overallStatus !== "CHANGES_REQUESTED") {
           router.replace(`/scheduled-posts/${id}`);
           return;
         }

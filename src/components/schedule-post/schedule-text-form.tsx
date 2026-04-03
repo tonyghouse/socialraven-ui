@@ -78,7 +78,7 @@ export default function ScheduleTextForm({
 
     setLoading(true);
     try {
-      await postConnectedAccountsApi(getToken, {
+      const response = await postConnectedAccountsApi(getToken, {
         description: content,
         postType: "TEXT",
         media: [],
@@ -86,7 +86,11 @@ export default function ScheduleTextForm({
         scheduledTime: localToUTC(date, time),
         platformConfigs,
       });
-      toast.success("Text post scheduled successfully!");
+      toast.success(
+        response.overallStatus === "IN_REVIEW"
+          ? "Text post submitted for review."
+          : "Text post scheduled successfully!"
+      );
       setContent("");
       resetSelection();
       setDate("");

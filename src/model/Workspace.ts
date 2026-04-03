@@ -1,12 +1,26 @@
-export type WorkspaceRole = "OWNER" | "ADMIN" | "MEMBER" | "VIEWER";
+export type WorkspaceRole = "OWNER" | "ADMIN" | "EDITOR" | "READ_ONLY";
+export type WorkspaceApprovalMode = "NONE" | "OPTIONAL" | "REQUIRED" | "MULTI_STEP";
+export type WorkspaceCapability =
+  | "APPROVE_POSTS"
+  | "PUBLISH_POSTS"
+  | "REQUEST_CHANGES"
+  | "MANAGE_APPROVAL_RULES"
+  | "SHARE_REVIEW_LINKS"
+  | "MANAGE_ASSET_LIBRARY"
+  | "EXPORT_CLIENT_REPORTS";
 
 export interface WorkspaceResponse {
   id: string;
+  companyId: string;
   name: string;
   companyName: string | null;
-  ownerUserId: string;
+  companyLogoS3Key: string | null;
   logoS3Key: string | null;
   role: WorkspaceRole;
+  approvalMode: WorkspaceApprovalMode;
+  ownerFinalApprovalRequired: boolean;
+  approverUserIds: string[];
+  capabilities: WorkspaceCapability[];
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
@@ -14,6 +28,7 @@ export interface WorkspaceResponse {
 
 export interface CreateWorkspaceRequest {
   name: string;
+  companyId?: string;
   companyName?: string;
   logoS3Key?: string;
 }

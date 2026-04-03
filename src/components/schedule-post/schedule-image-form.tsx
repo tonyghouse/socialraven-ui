@@ -148,7 +148,7 @@ export default function ScheduleImageForm({
         media.push({ fileName: file.name, mimeType: file.type, fileUrl, fileKey, size: file.size });
       }
 
-      await postConnectedAccountsApi(getToken, {
+      const response = await postConnectedAccountsApi(getToken, {
         description,
         postType: "IMAGE",
         media,
@@ -157,7 +157,11 @@ export default function ScheduleImageForm({
         platformConfigs,
       });
 
-      toast.success("Image post scheduled successfully!");
+      toast.success(
+        response.overallStatus === "IN_REVIEW"
+          ? "Image post submitted for review."
+          : "Image post scheduled successfully!"
+      );
       resetSelection();
       setFiles([]);
       setDescription("");

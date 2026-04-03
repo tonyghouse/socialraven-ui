@@ -1,11 +1,12 @@
 // src/service/connectedAccounts.ts
 import { PostCollection } from "@/model/PostCollection";
+import { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function postConnectedAccountsApi(
   getToken: () => Promise<string | null>,
   post: PostCollection
-): Promise<PostCollection> {
+): Promise<PostCollectionResponse> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const token = await getToken();
 
@@ -27,7 +28,7 @@ export async function postConnectedAccountsApi(
   }
 
   // backend returns string → parse safely
-  const parsed = JSON.parse(body) as PostCollection;
+  const parsed = JSON.parse(body) as PostCollectionResponse;
 
   return parsed;
 }

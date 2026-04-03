@@ -80,14 +80,14 @@ const ROLE_CONFIG: Record<
 > = {
   OWNER: { label: "Owner", description: "Full control of the workspace", icon: Crown, iconBg: "bg-violet-50", iconColor: "text-violet-500", pillBg: "bg-violet-50", pillText: "text-violet-700", pillBorder: "border-violet-200" },
   ADMIN: { label: "Admin", description: "Manage team & workspace settings", icon: ShieldCheck, iconBg: "bg-blue-50", iconColor: "text-blue-500", pillBg: "bg-blue-50", pillText: "text-blue-700", pillBorder: "border-blue-200" },
-  MEMBER: { label: "Member", description: "Create and manage content", icon: Users, iconBg: "bg-emerald-50", iconColor: "text-emerald-500", pillBg: "bg-emerald-50", pillText: "text-emerald-700", pillBorder: "border-emerald-200" },
-  VIEWER: { label: "Viewer", description: "Read-only access to workspace content", icon: Eye, iconBg: "bg-slate-50", iconColor: "text-slate-400", pillBg: "bg-slate-50", pillText: "text-slate-600", pillBorder: "border-slate-200" },
+  EDITOR: { label: "Editor", description: "Create and manage content", icon: Users, iconBg: "bg-emerald-50", iconColor: "text-emerald-500", pillBg: "bg-emerald-50", pillText: "text-emerald-700", pillBorder: "border-emerald-200" },
+  READ_ONLY: { label: "Read Only", description: "Read-only access to workspace content", icon: Eye, iconBg: "bg-slate-50", iconColor: "text-slate-400", pillBg: "bg-slate-50", pillText: "text-slate-600", pillBorder: "border-slate-200" },
 };
 
 const AGENCY_PERMISSIONS: { label: string; roles: WorkspaceRole[] }[] = [
-  { label: "View all content", roles: ["OWNER", "ADMIN", "MEMBER", "VIEWER"] },
-  { label: "Schedule & edit posts", roles: ["OWNER", "ADMIN", "MEMBER"] },
-  { label: "Connect social accounts", roles: ["OWNER", "ADMIN", "MEMBER"] },
+  { label: "View all content", roles: ["OWNER", "ADMIN", "EDITOR", "READ_ONLY"] },
+  { label: "Schedule & edit posts", roles: ["OWNER", "ADMIN", "EDITOR"] },
+  { label: "Connect social accounts", roles: ["OWNER", "ADMIN", "EDITOR"] },
   { label: "Manage workspace members", roles: ["OWNER", "ADMIN"] },
   { label: "Workspace settings", roles: ["OWNER", "ADMIN"] },
   { label: "Billing & plans", roles: ["OWNER"] },

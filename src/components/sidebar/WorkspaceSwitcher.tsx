@@ -24,6 +24,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
   const { workspaces, activeWorkspace, switchWorkspace, refresh } = useWorkspace();
   const [open, setOpen] = useState(false);
   const displayName = activeWorkspace?.name ?? "Workspace";
+  const displayCompanyName = activeWorkspace?.companyName ?? null;
   const canSwitch = workspaces.length > 1;
 
   function handleOpenChange(nextOpen: boolean) {
@@ -110,9 +111,16 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
             <Buildings size={14} />
           </div>
 
-          <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-[hsl(var(--foreground))]">
-            {displayName}
-          </span>
+          <div className="min-w-0 flex-1">
+            <span className="block truncate text-[13px] font-medium text-[hsl(var(--foreground))]">
+              {displayName}
+            </span>
+            {displayCompanyName && (
+              <span className="block truncate text-[11px] leading-4 text-[hsl(var(--foreground-subtle))]">
+                {displayCompanyName}
+              </span>
+            )}
+          </div>
 
           {canSwitch && (
             <ChevronDown
@@ -146,7 +154,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
 
 interface WorkspaceListProps {
   activeWorkspaceId: string | null;
-  workspaces: Array<{ id: string; name: string }>;
+  workspaces: Array<{ id: string; name: string; companyName?: string | null }>;
   onSelect: (workspaceId: string) => void;
 }
 
@@ -190,7 +198,14 @@ function WorkspaceList({
                 </div>
 
                 <span className="flex-1 truncate text-[13px] font-medium">
-                  {workspace.name}
+                  <span className="block truncate text-[13px] font-medium">
+                    {workspace.name}
+                  </span>
+                  {workspace.companyName && (
+                    <span className="block truncate text-[11px] leading-4 text-[hsl(var(--foreground-subtle))]">
+                      {workspace.companyName}
+                    </span>
+                  )}
                 </span>
 
                 {isActive && <Check size={14} className="shrink-0 text-[hsl(var(--accent))]" />}
