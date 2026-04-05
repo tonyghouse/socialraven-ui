@@ -243,7 +243,7 @@ export default function BillingPage() {
       if (url && !url.startsWith("#")) {
         window.location.href = url;
       } else {
-        toast.info("Stripe billing portal is coming soon. We'll notify you by email when it's live.");
+        toast.info("Paddle billing portal is coming soon. We'll notify you by email when it's live.");
       }
     } catch {
       toast.error("Failed to open billing portal.");
@@ -716,15 +716,15 @@ export default function BillingPage() {
             </div>
             <div className="space-y-5 px-5 py-5 sm:px-6">
 
-            {/* Stripe coming-soon notice */}
+            {/* Paddle coming-soon notice */}
             <div className="flex items-start gap-3 rounded-lg border border-sky-200/80 bg-sky-50 p-4 dark:border-sky-500/25 dark:bg-sky-500/10">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-sky-600 dark:text-sky-300" />
               <div>
                 <p className="text-base font-medium text-sky-900 dark:text-sky-100">
-                  Stripe Billing — Coming Soon
+                  Paddle Billing — Coming Soon
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-sky-700 dark:text-sky-200">
-                  We are finalising our Stripe integration. Once live, you can update your payment
+                  We are finalising our Paddle integration. Once live, you can update your payment
                   method, download VAT-compliant invoices, and manage your subscription here. You
                   will be notified by email as soon as billing goes live.
                 </p>
@@ -810,7 +810,7 @@ export default function BillingPage() {
 
                 <p className="flex items-center gap-1.5 text-sm text-[hsl(var(--foreground-muted))]">
                   <Shield className="h-3 w-3 shrink-0" />
-                  Payments are processed securely by Stripe. SocialRaven never stores your card details.
+                  Payments are processed securely by Paddle. SocialRaven never stores your card details.
                 </p>
               </>
             )}

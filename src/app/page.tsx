@@ -8,7 +8,6 @@ import {
   Facebook,
   Instagram,
   Linkedin,
-  Lock,
   Minus,
   Plus,
   Twitter,
@@ -20,7 +19,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import Navbar from "@/components/navbar/navbar";
-import { PLANS } from "@/constants/plans";
+import { PricingGrid } from "@/components/public/pricing-grid";
+import { PublicSiteFooter } from "@/components/public/public-site-footer";
 import { Separator } from "@/components/ui/separator";
 
 function TikTokIcon({ className }: { className?: string }) {
@@ -164,8 +164,6 @@ const FAQ = [
       "Yes, cancel anytime with no questions asked. No lock-in and no exit fees.",
   },
 ];
-
-const PAID_PLANS = PLANS.filter((plan) => !plan.type.endsWith("_TRIAL"));
 
 function SurfaceCard({
   className = "",
@@ -521,64 +519,8 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-                {PAID_PLANS.map((plan, index) => {
-                  const isAgencyCustom = plan.type === "AGENCY_CUSTOM";
-                  const ctaHref = isAgencyCustom
-                    ? "mailto:sales@socialraven.io?subject=Agency%20Plan%20Enquiry"
-                    : "/sign-up";
-                  const centeredLastRowClass =
-                    PAID_PLANS.length === 5 && index === 3
-                      ? "lg:col-span-2 lg:col-start-2"
-                      : PAID_PLANS.length === 5 && index === 4
-                        ? "lg:col-span-2 lg:col-start-4"
-                        : "lg:col-span-2";
-
-                  return (
-                    <SurfaceCard
-                      key={plan.type}
-                      className={`p-6 shadow-sm ${centeredLastRowClass} ${plan.popular ? "border-[hsl(var(--accent))]" : ""}`}
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="text-base leading-5 font-bold tracking-[-0.01em]">{plan.name}</h3>
-                          <p className="mt-2 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                            {plan.description}
-                          </p>
-                        </div>
-                        <StatusPill tone={plan.popular ? "accent" : "neutral"}>
-                          {plan.popular ? "Recommended" : "Standard"}
-                        </StatusPill>
-                      </div>
-
-                      <div className="mt-6">
-                        {plan.customPricing ? (
-                          <p className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em]">Custom pricing</p>
-                        ) : (
-                          <div className="flex items-end gap-2">
-                            <span className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em]">${plan.price}</span>
-                            <span className="pb-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">per month</span>
-                          </div>
-                        )}
-                      </div>
-
-                      <ul className="mt-6 space-y-3">
-                        {plan.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                            <span className="mt-1 h-2 w-2 rounded-full bg-[hsl(var(--accent))]" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      <div className="mt-8">
-                        <LinkButton appearance={plan.popular ? "primary" : "default"} href={ctaHref}>
-                          {isAgencyCustom ? "Contact sales" : "Start free trial"}
-                        </LinkButton>
-                      </div>
-                    </SurfaceCard>
-                  );
-                })}
+              <div className="mt-6">
+                <PricingGrid />
               </div>
             </div>
           </section>
@@ -658,77 +600,7 @@ export default function LandingPage() {
           </section>
         </main>
 
-        <footer className="bg-[hsl(var(--background))]">
-          <div className="container mx-auto max-w-7xl px-6 py-14">
-            <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
-              <div className="max-w-sm">
-                <div className="flex items-center gap-3">
-                  <Image src="/SocialRavenLogo.svg" alt="SocialRaven logo" width={28} height={28} className="h-7 w-7" />
-                  <span className="text-base leading-5 font-bold tracking-[-0.01em] text-[hsl(var(--foreground))]">SocialRaven</span>
-                </div>
-                <p className="mt-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                  Structured social media scheduling and publishing for creators, agencies, and operations-focused teams.
-                </p>
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-1.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
-                  <Lock className="h-3.5 w-3.5" />
-                  GDPR-conscious · US and EU ready
-                </div>
-              </div>
-
-              {[
-                {
-                  title: "Product",
-                  links: [
-                    { label: "Features", href: "#features" },
-                    { label: "Pricing", href: "#pricing" },
-                    { label: "Integrations", href: "#integrations" },
-                    { label: "Changelog", href: "/changelog" },
-                  ],
-                },
-                {
-                  title: "Company",
-                  links: [
-                    { label: "About", href: "/about" },
-                    { label: "Blog", href: "/blog" },
-                    { label: "Contact", href: "/contact" },
-                  ],
-                },
-                {
-                  title: "Legal",
-                  links: [
-                    { label: "Privacy policy", href: "/privacy-policy" },
-                    { label: "Terms of service", href: "/terms-of-service" },
-                  ],
-                },
-              ].map((group) => (
-                <div key={group.title}>
-                  <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
-                    {group.title}
-                  </p>
-                  <ul className="mt-4 space-y-3">
-                    {group.links.map((item) => (
-                      <li key={item.label}>
-                        <Link
-                          href={item.href}
-                          className="text-sm leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
-                        >
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-
-            <Separator className="my-8 bg-[hsl(var(--border-subtle))]" />
-
-            <div className="flex flex-col gap-2 text-xs leading-4 text-[hsl(var(--foreground-muted))] md:flex-row md:items-center md:justify-between">
-              <p>© 2026 SocialRaven. All rights reserved.</p>
-              <p>Built for calm execution across global publishing teams.</p>
-            </div>
-          </div>
-        </footer>
+        <PublicSiteFooter />
       </div>
     </>
   );

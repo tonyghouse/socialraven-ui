@@ -27,7 +27,7 @@ export const PLANS: Plan[] = [
     name: "Influencer Base",
     price: 12,
     description: "For creators building their presence",
-    stripePriceId: "price_todo_influencer_base_monthly",
+    paddlePriceId: "price_todo_influencer_base_monthly",
     features: [
       "100 scheduled posts / month",
       "5 connected accounts",
@@ -47,7 +47,7 @@ export const PLANS: Plan[] = [
     price: 29,
     description: "For serious creators scaling their brand",
     popular: true,
-    stripePriceId: "price_todo_influencer_pro_monthly",
+    paddlePriceId: "price_todo_influencer_pro_monthly",
     features: [
       "500 scheduled posts / month",
       "15 connected accounts",
@@ -86,7 +86,7 @@ export const PLANS: Plan[] = [
     name: "Agency Base",
     price: 79,
     description: "For small agencies managing client brands",
-    stripePriceId: "price_todo_agency_base_monthly",
+    paddlePriceId: "price_todo_agency_base_monthly",
     features: [
       "Up to 3 workspaces",
       "300 posts / month per workspace",
@@ -106,7 +106,7 @@ export const PLANS: Plan[] = [
     price: 199,
     description: "For growing agencies with multiple clients",
     popular: true,
-    stripePriceId: "price_todo_agency_pro_monthly",
+    paddlePriceId: "price_todo_agency_pro_monthly",
     features: [
       "Up to 10 workspaces",
       "1000 posts / month per workspace",

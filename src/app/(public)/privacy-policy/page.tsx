@@ -205,6 +205,7 @@ export default function PrivacyPolicyPage() {
                 headers={["Service", "Purpose", "Data Shared"]}
                 rows={[
                   ["Clerk", "Authentication & user management", "Name, email, auth identifiers"],
+                  ["Paddle", "Payment processing and billing administration", "Billing contact details, subscription metadata, transaction details"],
                   ["Amazon Web Services (AWS S3)", "Media file storage", "Uploaded images/videos"],
                   ["Meta (Instagram, Facebook)", "Content publishing via official API", "OAuth tokens, post content"],
                   ["Google (YouTube)", "Content publishing via official API", "OAuth tokens, post content"],

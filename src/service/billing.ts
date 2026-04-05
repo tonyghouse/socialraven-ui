@@ -1,16 +1,16 @@
 /**
- * Stripe Billing Service
+ * Paddle Billing Service
  *
- * All functions below are MOCKED pending Stripe account setup.
+ * All functions below are MOCKED pending Paddle account setup.
  * Each function documents the backend endpoint it will call and the
- * corresponding Stripe API operation, so wiring up the real backend
+ * corresponding Paddle billing operation, so wiring up the real backend
  * is a straightforward find-and-replace on the mock bodies.
  *
  * Integration checklist:
- *  1. Apply for Stripe account at https://stripe.com
- *  2. Create products + prices in the Stripe dashboard for each plan
- *  3. Update stripePriceId values in src/service/plan.ts
- *  4. Implement backend endpoints listed below using Stripe Node SDK
+ *  1. Configure the Paddle vendor account and checkout products
+ *  2. Create products + prices in the Paddle dashboard for each plan
+ *  3. Update paddlePriceId values in src/constants/plans.ts
+ *  4. Implement backend endpoints listed below using the Paddle billing API
  *  5. Replace each mock body with the real fetch() call
  */
 
@@ -19,7 +19,7 @@ import { Invoice, PlanType, UpcomingInvoice, UserPlan } from "@/model/Plan";
 type GetToken = () => Promise<string | null>;
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
-const STRIPE_LIVE = false; // Flip to true once Stripe is configured
+const PADDLE_LIVE = false; // Flip to true once Paddle is configured
 
 // ---------------------------------------------------------------------------
 // Checkout
@@ -27,9 +27,9 @@ const STRIPE_LIVE = false; // Flip to true once Stripe is configured
 
 /**
  * POST /billing/checkout
- * Backend: stripe.checkout.sessions.create({ mode: "subscription", ... })
+ * Backend: create a hosted Paddle checkout for the selected subscription plan.
  *
- * Redirects the user to a hosted Stripe Checkout page to start a paid plan.
+ * Redirects the user to a hosted Paddle Checkout page to start a paid plan.
  */
 export async function createCheckoutSessionApi(
   _getToken: GetToken,
@@ -37,7 +37,7 @@ export async function createCheckoutSessionApi(
   _successUrl: string,
   _cancelUrl: string
 ): Promise<{ url: string }> {
-  if (STRIPE_LIVE) {
+  if (PADDLE_LIVE) {
     const token = await _getToken();
     const res = await fetch(`${BACKEND}/billing/checkout`, {
       method: "POST",
@@ -56,7 +56,7 @@ export async function createCheckoutSessionApi(
   }
 
   await new Promise((r) => setTimeout(r, 800));
-  return { url: "#stripe-checkout-pending" };
+  return { url: "#paddle-checkout-pending" };
 }
 
 // ---------------------------------------------------------------------------
@@ -65,16 +65,16 @@ export async function createCheckoutSessionApi(
 
 /**
  * POST /billing/portal
- * Backend: stripe.billingPortal.sessions.create({ customer: ..., returnUrl: ... })
+ * Backend: create a Paddle billing management session for the current customer.
  *
- * Opens the Stripe Customer Portal where users can update payment methods,
+ * Opens the Paddle billing portal where users can update payment methods,
  * download invoices, and cancel their subscription.
  */
 export async function createBillingPortalSessionApi(
   _getToken: GetToken,
   _returnUrl: string
 ): Promise<{ url: string }> {
-  if (STRIPE_LIVE) {
+  if (PADDLE_LIVE) {
     const token = await _getToken();
     const res = await fetch(`${BACKEND}/billing/portal`, {
       method: "POST",
@@ -89,7 +89,7 @@ export async function createBillingPortalSessionApi(
   }
 
   await new Promise((r) => setTimeout(r, 600));
-  return { url: "#stripe-portal-pending" };
+  return { url: "#paddle-portal-pending" };
 }
 
 // ---------------------------------------------------------------------------
@@ -98,13 +98,13 @@ export async function createBillingPortalSessionApi(
 
 /**
  * DELETE /billing/subscription
- * Backend: stripe.subscriptions.update(id, { cancel_at_period_end: true })
+ * Backend: mark the Paddle subscription to cancel at the end of the billing period.
  *
  * Marks the subscription to cancel at the end of the current billing period.
  * The user retains access until then.
  */
 export async function cancelSubscriptionApi(_getToken: GetToken): Promise<UserPlan> {
-  if (STRIPE_LIVE) {
+  if (PADDLE_LIVE) {
     const token = await _getToken();
     const res = await fetch(`${BACKEND}/billing/subscription`, {
       method: "DELETE",
@@ -130,7 +130,7 @@ export async function cancelSubscriptionApi(_getToken: GetToken): Promise<UserPl
 
 /**
  * GET /billing/invoice/upcoming
- * Backend: stripe.invoices.retrieveUpcoming({ customer: ... })
+ * Backend: fetch the upcoming Paddle invoice/renewal charge for the current subscription.
  *
  * Returns the next scheduled charge for the current subscription.
  * Returns null for free-plan users.
@@ -138,7 +138,7 @@ export async function cancelSubscriptionApi(_getToken: GetToken): Promise<UserPl
 export async function fetchUpcomingInvoiceApi(
   _getToken: GetToken
 ): Promise<UpcomingInvoice | null> {
-  if (STRIPE_LIVE) {
+  if (PADDLE_LIVE) {
     const token = await _getToken();
     const res = await fetch(`${BACKEND}/billing/invoice/upcoming`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -166,12 +166,12 @@ export async function fetchUpcomingInvoiceApi(
 
 /**
  * GET /billing/invoices
- * Backend: stripe.invoices.list({ customer: ..., limit: 12 })
+ * Backend: fetch recent Paddle invoices for the current customer.
  *
  * Returns the last 12 invoices for the current user.
  */
 export async function fetchInvoicesApi(_getToken: GetToken): Promise<Invoice[]> {
-  if (STRIPE_LIVE) {
+  if (PADDLE_LIVE) {
     const token = await _getToken();
     const res = await fetch(`${BACKEND}/billing/invoices`, {
       headers: { Authorization: `Bearer ${token}` },
@@ -191,7 +191,7 @@ export async function fetchInvoicesApi(_getToken: GetToken): Promise<Invoice[]> 
   //     currency: "usd",
   //     status: "paid",
   //     date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-  //     invoiceUrl: "https://invoice.stripe.com/i/inv_mock_001",
+  //     invoiceUrl: "https://billing.example.com/i/inv_mock_001",
   //     description: "Pro Plan — Feb 2026",
   //   },
   //   {
@@ -200,7 +200,7 @@ export async function fetchInvoicesApi(_getToken: GetToken): Promise<Invoice[]> 
   //     currency: "usd",
   //     status: "paid",
   //     date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-  //     invoiceUrl: "https://invoice.stripe.com/i/inv_mock_002",
+  //     invoiceUrl: "https://billing.example.com/i/inv_mock_002",
   //     description: "Pro Plan — Jan 2026",
   //   },
   // ];

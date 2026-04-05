@@ -306,10 +306,10 @@ export default function TermsOfServicePage() {
                 applicable:
               </p>
               <ul className="list-disc space-y-2 pl-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                <li>Subscription fees are billed in advance on a monthly or annual cycle as selected at the time of purchase;</li>
-                <li>Prices are displayed at checkout inclusive of applicable taxes (VAT for EU users where required);</li>
+                <li>Subscription fees are billed in advance on the billing cycle selected at the time of purchase and processed securely by Paddle;</li>
+                <li>Current plan prices are published on our <a href="/pricing" className="text-[hsl(var(--accent))] underline underline-offset-2">pricing page</a> and displayed at checkout inclusive of applicable taxes where required;</li>
                 <li>EU consumers have a statutory right of withdrawal within 14 days of purchase, unless the service has already commenced with your explicit consent;</li>
-                <li>Refunds outside the statutory withdrawal period are at our discretion;</li>
+                <li>Refund eligibility is governed by our <a href="/refund-policy" className="text-[hsl(var(--accent))] underline underline-offset-2">Refund Policy</a>, except where stricter consumer rights apply by law;</li>
                 <li>We reserve the right to change pricing with at least 30 days&apos; notice to existing subscribers.</li>
               </ul>
             </PublicCard>

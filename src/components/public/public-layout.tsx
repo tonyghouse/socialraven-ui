@@ -1,6 +1,7 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
 import Navbar from "@/components/navbar/navbar";
+import { PublicSiteFooter } from "@/components/public/public-site-footer";
 import { cn } from "@/lib/utils";
 
 export function PublicPageShell({
@@ -25,6 +26,9 @@ export function PublicPageShell({
       >
         {children}
       </main>
+      <div className={cn(hideChromeOnPrint && "print:hidden")}>
+        <PublicSiteFooter />
+      </div>
     </>
   );
 }

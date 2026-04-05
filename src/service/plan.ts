@@ -48,7 +48,7 @@ export async function fetchUserPlanApi(getToken: GetToken): Promise<UserPlan> {
     renewalDate: data.renewalDate,
     status: data.status,
     cancelAtPeriodEnd: data.cancelAtPeriodEnd ?? false,
-    stripeSubscriptionId: data.stripeSubscriptionId ?? undefined,
+    paddleSubscriptionId: data.paddleSubscriptionId ?? undefined,
     trialEndsAt: data.trialEndsAt ?? undefined,
   };
 }
@@ -74,7 +74,7 @@ export async function changeUserPlanApi(
     renewalDate: data.renewalDate,
     status: data.status,
     cancelAtPeriodEnd: data.cancelAtPeriodEnd ?? false,
-    stripeSubscriptionId: data.stripeSubscriptionId ?? undefined,
+    paddleSubscriptionId: data.paddleSubscriptionId ?? undefined,
     trialEndsAt: data.trialEndsAt ?? undefined,
   };
 }

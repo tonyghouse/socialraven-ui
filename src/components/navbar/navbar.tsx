@@ -43,6 +43,9 @@ export default function Navbar() {
               </>
             ) : (
               <>
+                <LinkButton appearance="subtle" href="/pricing">
+                  Pricing
+                </LinkButton>
                 <LinkButton appearance="subtle" href="/sign-in">
                   Sign in
                 </LinkButton>

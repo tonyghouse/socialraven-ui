@@ -21,8 +21,8 @@ export interface Plan {
   features: string[];
   limits: PlanLimits;
   popular?: boolean;
-  /** Stripe Price ID — populated once Stripe is configured */
-  stripePriceId?: string;
+  /** Paddle Price ID — populated once Paddle is configured */
+  paddlePriceId?: string;
   /** If true, price is negotiated — display "Custom pricing" instead of the numeric price */
   customPricing?: boolean;
   /** How many trial days this plan grants (only for TRIAL type) */
@@ -35,7 +35,7 @@ export interface UserPlan {
   startDate?: string;
   status: "ACTIVE" | "CANCELLED" | "PAST_DUE" | "TRIALING";
   cancelAtPeriodEnd?: boolean;
-  stripeSubscriptionId?: string;
+  paddleSubscriptionId?: string;
   /** ISO date when the trial period expires — only present on TRIALING status */
   trialEndsAt?: string;
 }
