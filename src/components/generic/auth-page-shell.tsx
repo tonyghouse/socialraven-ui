@@ -94,8 +94,8 @@ export function AuthPageShell({
             </div>
           </section>
 
-          <section className="rounded-[28px] border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]/94 p-5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur-xl sm:p-6">
-            <div className="rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-5">
+          <section className="mx-auto w-full max-w-md">
+            <div className="mb-5 text-center lg:text-left">
               <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
                 {badge}
               </p>
@@ -107,16 +107,18 @@ export function AuthPageShell({
               </p>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-4 sm:p-5">
-              {children}
-
-              <noscript>
-                <p className="mt-4 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                  This account form requires JavaScript to render fully. If it does not load, contact
-                  team+support@socialraven.io.
-                </p>
-              </noscript>
+            <div className="flex w-full justify-center">
+              <div className="mx-auto flex w-full max-w-md justify-center">
+                {children}
+              </div>
             </div>
+
+            <noscript>
+              <p className="mt-4 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                This account form requires JavaScript to render fully. If it does not load, contact
+                team+support@socialraven.io.
+              </p>
+            </noscript>
 
             <p className="mt-4 text-center text-sm leading-5 text-[hsl(var(--foreground-muted))]">
               {alternatePrompt}{" "}
