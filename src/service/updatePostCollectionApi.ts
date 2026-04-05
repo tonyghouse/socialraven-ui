@@ -1,5 +1,6 @@
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
+import type { WorkspaceApprovalMode } from "@/model/Workspace";
 import { workspaceIdHeader } from "@/lib/api-headers";
 
 export interface PostMediaPayload {
@@ -22,6 +23,10 @@ export interface UpdatePostCollectionPayload {
   connectedAccounts?: ConnectedAccount[];
   /** Explicit confirmation that editing approval-locked content should trigger reapproval */
   acknowledgeApprovalLock?: boolean;
+  /** Optional per-campaign override of the workspace approval mode */
+  approvalModeOverride?: WorkspaceApprovalMode | null;
+  /** When true, clears any saved per-campaign approval override */
+  clearApprovalModeOverride?: boolean;
 }
 
 export async function updatePostCollectionApi(

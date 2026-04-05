@@ -4,7 +4,7 @@ import AtlassianButton from "@atlaskit/button/new";
 import Lozenge from "@atlaskit/lozenge";
 import SectionMessage from "@atlaskit/section-message";
 import { useAuth } from "@clerk/nextjs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AtSign,
   Check,
@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type {
+  PostCollaborationAnnotationMode,
   PostCollaborationThread,
   PostCollaborationThreadType,
   PostCollaborationVisibility,
@@ -38,16 +39,17 @@ import {
 } from "@/service/postCollaboration";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { useRole } from "@/hooks/useRole";
+import {
+  buildFullCaptionSelection,
+  PostCollaborationAnnotationEditor,
+  type CollaborationCaptionSelection,
+  type CollaborationMediaAnnotation,
+} from "@/components/posts/post-collaboration-annotation-editor";
+import { PostCollaborationAnnotationView } from "@/components/posts/post-collaboration-annotation-view";
 
 type Props = {
   collection: PostCollectionResponse;
   onCollectionRefresh: () => Promise<unknown>;
-};
-
-type SelectionState = {
-  start: number;
-  end: number;
-  text: string;
 };
 
 const THREAD_LABELS: Record<PostCollaborationThreadType, string> = {
@@ -55,14 +57,6 @@ const THREAD_LABELS: Record<PostCollaborationThreadType, string> = {
   NOTE: "Internal Note",
   SUGGESTION: "Suggestion",
 };
-
-function buildDefaultSelection(description: string): SelectionState {
-  return {
-    start: 0,
-    end: description.length,
-    text: description,
-  };
-}
 
 function getThreadAppearance(type: PostCollaborationThreadType) {
   switch (type) {
@@ -78,7 +72,7 @@ function getThreadAppearance(type: PostCollaborationThreadType) {
 
 function formatTimestamp(value: string | null) {
   if (!value) return null;
-  return new Date(value).toLocaleString("en-US", {
+  return new Date(value).toLocaleString(undefined, {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -170,6 +164,7 @@ export function InternalCollaborationPanel({
   const { getToken } = useAuth();
   const { activeWorkspace } = useWorkspace();
   const { canWrite } = useRole();
+  const defaultMediaId = collection.media[0]?.id ?? null;
 
   const [threads, setThreads] = useState<PostCollaborationThread[]>([]);
   const [members, setMembers] = useState<WorkspaceMember[]>([]);
@@ -183,9 +178,17 @@ export function InternalCollaborationPanel({
   const [composerBody, setComposerBody] = useState("");
   const [composerSuggestedText, setComposerSuggestedText] = useState("");
   const [composerMentionIds, setComposerMentionIds] = useState<string[]>([]);
-  const [selection, setSelection] = useState<SelectionState>(
-    buildDefaultSelection(collection.description ?? "")
+  const [composerAnnotationMode, setComposerAnnotationMode] =
+    useState<PostCollaborationAnnotationMode>("NONE");
+  const [selection, setSelection] = useState<CollaborationCaptionSelection>(
+    buildFullCaptionSelection(collection.description ?? "")
   );
+  const [composerMediaAnnotation, setComposerMediaAnnotation] =
+    useState<CollaborationMediaAnnotation>({
+      mediaId: defaultMediaId,
+      mediaMarkerX: null,
+      mediaMarkerY: null,
+    });
   const [creatingThread, setCreatingThread] = useState(false);
 
   const [replyDrafts, setReplyDrafts] = useState<Record<number, string>>({});
@@ -193,11 +196,14 @@ export function InternalCollaborationPanel({
   const [submittingReplyThreadId, setSubmittingReplyThreadId] = useState<number | null>(null);
   const [actingThreadId, setActingThreadId] = useState<number | null>(null);
 
-  const captionSelectionRef = useRef<HTMLTextAreaElement | null>(null);
-
   useEffect(() => {
-    setSelection(buildDefaultSelection(collection.description ?? ""));
-  }, [collection.description, collection.id]);
+    setSelection(buildFullCaptionSelection(collection.description ?? ""));
+    setComposerMediaAnnotation({
+      mediaId: defaultMediaId,
+      mediaMarkerX: null,
+      mediaMarkerY: null,
+    });
+  }, [collection.description, collection.id, defaultMediaId]);
 
   useEffect(() => {
     let ignore = false;
@@ -291,21 +297,13 @@ export function InternalCollaborationPanel({
     setComposerBody("");
     setComposerSuggestedText("");
     setComposerMentionIds([]);
-    setSelection(buildDefaultSelection(collection.description ?? ""));
-    if (captionSelectionRef.current) {
-      captionSelectionRef.current.selectionStart = 0;
-      captionSelectionRef.current.selectionEnd = collection.description?.length ?? 0;
-    }
-  }
-
-  function handleCaptionSelection() {
-    const node = captionSelectionRef.current;
-    if (!node) return;
-
-    const start = node.selectionStart ?? 0;
-    const end = node.selectionEnd ?? start;
-    const text = (collection.description ?? "").slice(start, end);
-    setSelection({ start, end, text });
+    setComposerAnnotationMode("NONE");
+    setSelection(buildFullCaptionSelection(collection.description ?? ""));
+    setComposerMediaAnnotation({
+      mediaId: defaultMediaId,
+      mediaMarkerX: null,
+      mediaMarkerY: null,
+    });
   }
 
   async function handleCreateThread() {
@@ -321,9 +319,30 @@ export function InternalCollaborationPanel({
           composerType === "COMMENT" && composerVisibility === "INTERNAL"
             ? composerMentionIds
             : [],
-        anchorStart: composerType === "SUGGESTION" ? selection.start : undefined,
-        anchorEnd: composerType === "SUGGESTION" ? selection.end : undefined,
-        anchorText: composerType === "SUGGESTION" ? selection.text : undefined,
+        anchorStart:
+          composerType === "SUGGESTION" || composerAnnotationMode === "CAPTION"
+            ? selection.start
+            : undefined,
+        anchorEnd:
+          composerType === "SUGGESTION" || composerAnnotationMode === "CAPTION"
+            ? selection.end
+            : undefined,
+        anchorText:
+          composerType === "SUGGESTION" || composerAnnotationMode === "CAPTION"
+            ? selection.text
+            : undefined,
+        mediaId:
+          composerType !== "SUGGESTION" && composerAnnotationMode === "MEDIA"
+            ? composerMediaAnnotation.mediaId ?? undefined
+            : undefined,
+        mediaMarkerX:
+          composerType !== "SUGGESTION" && composerAnnotationMode === "MEDIA"
+            ? composerMediaAnnotation.mediaMarkerX ?? undefined
+            : undefined,
+        mediaMarkerY:
+          composerType !== "SUGGESTION" && composerAnnotationMode === "MEDIA"
+            ? composerMediaAnnotation.mediaMarkerY ?? undefined
+            : undefined,
         suggestedText:
           composerType === "SUGGESTION" ? composerSuggestedText : undefined,
       });
@@ -460,7 +479,7 @@ export function InternalCollaborationPanel({
             </div>
             <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
               Keep review discussion inside the workspace with comments, internal notes,
-              replies, and caption suggestions.
+              replies, annotations, and caption suggestions.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -567,18 +586,23 @@ export function InternalCollaborationPanel({
               </SectionMessage>
             )}
 
-            {composerType === "SUGGESTION" && (
+            {composerType === "SUGGESTION" ? (
               <div className="space-y-4 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4">
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                     Select the caption text to change
                   </p>
                   <Textarea
-                    ref={captionSelectionRef}
                     value={collection.description ?? ""}
                     readOnly
                     disabled={creatingThread}
-                    onSelect={handleCaptionSelection}
+                    onSelect={(event) => {
+                      const node = event.currentTarget;
+                      const start = node.selectionStart ?? 0;
+                      const end = node.selectionEnd ?? start;
+                      const text = (collection.description ?? "").slice(start, end);
+                      setSelection({ start, end, text });
+                    }}
                     className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
                   />
                   <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 py-2.5">
@@ -613,6 +637,18 @@ export function InternalCollaborationPanel({
                   </SectionMessage>
                 )}
               </div>
+            ) : (
+              <PostCollaborationAnnotationEditor
+                description={collection.description ?? ""}
+                media={collection.media}
+                mode={composerAnnotationMode}
+                onModeChange={setComposerAnnotationMode}
+                captionSelection={selection}
+                onCaptionSelectionChange={setSelection}
+                mediaAnnotation={composerMediaAnnotation}
+                onMediaAnnotationChange={setComposerMediaAnnotation}
+                disabled={!canWrite || creatingThread}
+              />
             )}
 
             {composerMentionsEnabled && (
@@ -807,6 +843,13 @@ export function InternalCollaborationPanel({
                     <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
                       {thread.body}
                     </p>
+                  )}
+
+                  {!isSuggestion && (
+                    <PostCollaborationAnnotationView
+                      thread={thread}
+                      media={collection.media}
+                    />
                   )}
 
                   {isSuggestion && (

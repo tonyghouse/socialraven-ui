@@ -1,4 +1,5 @@
 import { ConnectedAccount } from "@/model/ConnectedAccount";
+import { WorkspaceApprovalMode } from "@/model/Workspace";
 import { PostMedia } from "./PostMedia";
 import { PostType } from "./PostType";
 
@@ -63,5 +64,6 @@ export interface PostCollection {
   connectedAccounts: ConnectedAccount[];
   scheduledTime?: string | null; // ISO string; null/undefined when saving as draft
   platformConfigs?: PlatformConfigs;
+  approvalModeOverride?: WorkspaceApprovalMode | null;
   isDraft?: boolean;
 }

@@ -27,12 +27,15 @@ import {
 } from "lucide-react";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import {
+  WorkspaceApprovalRule,
   WorkspaceInvitation,
   WorkspaceApprovalMode,
   WorkspaceMember,
   WorkspaceResponse,
   WorkspaceRole,
 } from "@/model/Workspace";
+import { PostType } from "@/model/PostType";
+import { ConnectedAccount } from "@/model/ConnectedAccount";
 import {
   getMembersApi,
   removeMemberApi,
@@ -62,11 +65,18 @@ import {
   restoreWorkspaceApi,
   updateWorkspaceApi,
 } from "@/service/workspace";
+import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  APPROVAL_MODE_METADATA,
+  approvalModeDescription,
+  approvalModeLabel as getApprovalModeLabel,
+} from "@/lib/approval-workflow";
 
 type Tab = "team" | "invitations";
+type ScopedApprovalModeInput = WorkspaceApprovalMode | "DEFAULT";
 
 type LoadDataOptions = {
   silent?: boolean;
@@ -74,32 +84,18 @@ type LoadDataOptions = {
 };
 
 const ROLE_OPTIONS: WorkspaceRole[] = ["ADMIN", "EDITOR", "READ_ONLY"];
+const CONTENT_TYPE_RULE_TYPES: PostType[] = ["IMAGE", "VIDEO", "TEXT"];
 const APPROVAL_MODE_OPTIONS: Array<{
   value: WorkspaceApprovalMode;
   label: string;
   description: string;
-}> = [
-  {
-    value: "NONE",
-    label: "No approval required",
-    description: "Any editor can schedule content directly without review.",
-  },
-  {
-    value: "OPTIONAL",
-    label: "Optional approval",
-    description: "Publishers can schedule directly while other teammates submit into review.",
-  },
-  {
-    value: "REQUIRED",
-    label: "Required approval",
-    description: "Every scheduled item enters a single-step approval queue before publishing.",
-  },
-  {
-    value: "MULTI_STEP",
-    label: "Multi-step approval",
-    description: "Every scheduled item requires an approver review followed by final owner sign-off.",
-  },
-];
+}> = (Object.entries(APPROVAL_MODE_METADATA) as Array<
+  [WorkspaceApprovalMode, { label: string; description: string }]
+>).map(([value, metadata]) => ({
+  value,
+  label: metadata.label,
+  description: metadata.description,
+}));
 
 const ROLE_ORDER: Record<WorkspaceRole, number> = {
   OWNER: 0,
@@ -123,6 +119,7 @@ const dangerIconBadgeClass =
   "border border-[#f5c2c7] bg-[#fff1f2] text-[#ae2e24] dark:border-[#5d1f1a] dark:bg-[#2b1917] dark:text-[#fd9891]";
 const pillClass =
   "inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db]";
+const DEFAULT_RULE_VALUE = "DEFAULT";
 
 function roleLabel(role: WorkspaceRole) {
   switch (role) {
@@ -164,7 +161,7 @@ function roleBadgeClass(role: WorkspaceRole) {
 }
 
 function approvalModeLabel(mode: WorkspaceApprovalMode) {
-  return APPROVAL_MODE_OPTIONS.find((option) => option.value === mode)?.label ?? mode;
+  return getApprovalModeLabel(mode);
 }
 
 function avatarToneClass(role: WorkspaceRole) {
@@ -212,7 +209,7 @@ const ROLE_CONTEXT: Record<
 
 function formatDisplayDate(date: string | undefined) {
   if (!date) return "Recently";
-  return new Date(date).toLocaleString("en-US", {
+  return new Date(date).toLocaleString(undefined, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -266,14 +263,95 @@ function workspacesEqual(a: WorkspaceResponse[], b: WorkspaceResponse[]) {
       workspace.logoS3Key === other.logoS3Key &&
       workspace.role === other.role &&
       workspace.approvalMode === other.approvalMode &&
+      workspace.autoScheduleAfterApproval === other.autoScheduleAfterApproval &&
       workspace.ownerFinalApprovalRequired === other.ownerFinalApprovalRequired &&
       workspace.approverUserIds.join(",") === other.approverUserIds.join(",") &&
+      workspace.publisherUserIds.join(",") === other.publisherUserIds.join(",") &&
+      serializeApprovalRules(workspace.approvalRules) === serializeApprovalRules(other.approvalRules) &&
       workspace.capabilities.join(",") === other.capabilities.join(",") &&
       workspace.createdAt === other.createdAt &&
       workspace.updatedAt === other.updatedAt &&
       workspace.deletedAt === other.deletedAt
     );
   });
+}
+
+function serializeApprovalRules(rules: WorkspaceApprovalRule[]) {
+  return [...rules]
+    .map((rule) => ({
+      scopeType: rule.scopeType,
+      scopeValue: rule.scopeValue,
+      approvalMode: rule.approvalMode,
+    }))
+    .sort((left, right) =>
+      `${left.scopeType}:${left.scopeValue}:${left.approvalMode}`.localeCompare(
+        `${right.scopeType}:${right.scopeValue}:${right.approvalMode}`
+      )
+    )
+    .map((rule) => `${rule.scopeType}:${rule.scopeValue}:${rule.approvalMode}`)
+    .join("|");
+}
+
+function sortStringValues(values: string[]) {
+  return [...values].sort().join(",");
+}
+
+function memberDisplayLabel(member: WorkspaceMember) {
+  return [member.firstName, member.lastName].filter(Boolean).join(" ") || member.email || member.userId;
+}
+
+function buildApprovalRulePayload(
+  accountRuleModes: Record<string, ScopedApprovalModeInput>,
+  contentTypeRuleModes: Record<PostType, ScopedApprovalModeInput>
+) {
+  const accountRules = Object.entries(accountRuleModes)
+    .filter(([, approvalMode]) => approvalMode !== DEFAULT_RULE_VALUE)
+    .map(([scopeValue, approvalMode]) => ({
+      scopeType: "ACCOUNT" as const,
+      scopeValue,
+      approvalMode: approvalMode as WorkspaceApprovalMode,
+    }));
+
+  const contentTypeRules = CONTENT_TYPE_RULE_TYPES.filter(
+    (contentType) => contentTypeRuleModes[contentType] !== DEFAULT_RULE_VALUE
+  ).map((contentType) => ({
+    scopeType: "CONTENT_TYPE" as const,
+    scopeValue: contentType,
+    approvalMode: contentTypeRuleModes[contentType] as WorkspaceApprovalMode,
+  }));
+
+  return [...accountRules, ...contentTypeRules];
+}
+
+function buildContentTypeRuleModes(rules: WorkspaceApprovalRule[]) {
+  return CONTENT_TYPE_RULE_TYPES.reduce<Record<PostType, ScopedApprovalModeInput>>(
+    (acc, contentType) => {
+      acc[contentType] =
+        rules.find(
+          (rule) =>
+            rule.scopeType === "CONTENT_TYPE" && rule.scopeValue === contentType
+        )?.approvalMode ?? DEFAULT_RULE_VALUE;
+      return acc;
+    },
+    {
+      IMAGE: DEFAULT_RULE_VALUE,
+      VIDEO: DEFAULT_RULE_VALUE,
+      TEXT: DEFAULT_RULE_VALUE,
+    }
+  );
+}
+
+function buildAccountRuleModes(
+  providerUserIds: string[],
+  rules: WorkspaceApprovalRule[]
+) {
+  return providerUserIds.reduce<Record<string, ScopedApprovalModeInput>>((acc, providerUserId) => {
+    acc[providerUserId] =
+      rules.find(
+        (rule) => rule.scopeType === "ACCOUNT" && rule.scopeValue === providerUserId
+      )?.approvalMode ?? DEFAULT_RULE_VALUE;
+    return acc;
+  }, {});
 }
 
 function SectionHeader({
@@ -398,6 +476,7 @@ export default function WorkspaceSettingsPage() {
   const [members, setMembers] = useState<WorkspaceMember[]>([]);
   const [invitations, setInvitations] = useState<WorkspaceInvitation[]>([]);
   const [deletedWorkspaces, setDeletedWorkspaces] = useState<WorkspaceResponse[]>([]);
+  const [connectedAccounts, setConnectedAccounts] = useState<ConnectedAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -412,7 +491,19 @@ export default function WorkspaceSettingsPage() {
   const [workspaceNameInput, setWorkspaceNameInput] = useState("");
   const [renameWorkspaceBusy, setRenameWorkspaceBusy] = useState(false);
   const [approvalModeInput, setApprovalModeInput] = useState<WorkspaceApprovalMode>("OPTIONAL");
+  const [autoScheduleAfterApprovalInput, setAutoScheduleAfterApprovalInput] = useState(true);
   const [editorApproverIds, setEditorApproverIds] = useState<string[]>([]);
+  const [editorPublisherIds, setEditorPublisherIds] = useState<string[]>([]);
+  const [contentTypeRuleModes, setContentTypeRuleModes] = useState<
+    Record<PostType, ScopedApprovalModeInput>
+  >({
+    IMAGE: DEFAULT_RULE_VALUE,
+    VIDEO: DEFAULT_RULE_VALUE,
+    TEXT: DEFAULT_RULE_VALUE,
+  });
+  const [accountRuleModes, setAccountRuleModes] = useState<
+    Record<string, ScopedApprovalModeInput>
+  >({});
   const [savingApprovalRules, setSavingApprovalRules] = useState(false);
 
   const [pendingConfirm, setPendingConfirm] = useState<{
@@ -453,6 +544,7 @@ export default function WorkspaceSettingsPage() {
           Promise<WorkspaceMember[]>,
           Promise<WorkspaceInvitation[]>,
           Promise<WorkspaceResponse[]>,
+          Promise<ConnectedAccount[]>,
           Promise<void> | null,
         ] = [
           workspaceId ? getMembersApi(getToken, workspaceId) : Promise.resolve([]),
@@ -460,10 +552,11 @@ export default function WorkspaceSettingsPage() {
             ? getInvitationsApi(getToken, workspaceId)
             : Promise.resolve([]),
           getDeletedWorkspacesApi(getToken).catch(() => []),
+          workspaceId ? fetchAllConnectedAccountsApi(getToken).catch(() => []) : Promise.resolve([]),
           syncWorkspaceList ? refresh() : null,
         ];
 
-        const [m, inv, deleted] = await Promise.all(requests);
+        const [m, inv, deleted, accounts] = await Promise.all(requests);
 
         setMembers((current) =>
           membersEqual(current, m as WorkspaceMember[]) ? current : (m as WorkspaceMember[])
@@ -475,6 +568,9 @@ export default function WorkspaceSettingsPage() {
         );
         setDeletedWorkspaces((current) =>
           workspacesEqual(current, deleted) ? current : deleted
+        );
+        setConnectedAccounts((current) =>
+          JSON.stringify(current) === JSON.stringify(accounts) ? current : accounts
         );
         setLastRefreshedAt(new Date());
       } catch (e: any) {
@@ -499,9 +595,30 @@ export default function WorkspaceSettingsPage() {
   }, [activeWorkspace?.id, activeWorkspace?.name]);
 
   useEffect(() => {
+    const workspaceApprovalRules = activeWorkspace?.approvalRules ?? [];
+    const accountRuleIds = Array.from(
+      new Set([
+        ...connectedAccounts.map((account) => account.providerUserId),
+        ...workspaceApprovalRules
+          .filter((rule) => rule.scopeType === "ACCOUNT")
+          .map((rule) => rule.scopeValue),
+      ])
+    );
     setApprovalModeInput(activeWorkspace?.approvalMode ?? "OPTIONAL");
+    setAutoScheduleAfterApprovalInput(activeWorkspace?.autoScheduleAfterApproval ?? true);
     setEditorApproverIds(activeWorkspace?.approverUserIds ?? []);
-  }, [activeWorkspace?.id, activeWorkspace?.approvalMode, activeWorkspace?.approverUserIds]);
+    setEditorPublisherIds(activeWorkspace?.publisherUserIds ?? []);
+    setContentTypeRuleModes(buildContentTypeRuleModes(workspaceApprovalRules));
+    setAccountRuleModes(buildAccountRuleModes(accountRuleIds, workspaceApprovalRules));
+  }, [
+    activeWorkspace?.approvalMode,
+    activeWorkspace?.autoScheduleAfterApproval,
+    activeWorkspace?.approvalRules,
+    activeWorkspace?.approverUserIds,
+    activeWorkspace?.id,
+    activeWorkspace?.publisherUserIds,
+    connectedAccounts,
+  ]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -592,7 +709,10 @@ export default function WorkspaceSettingsPage() {
     try {
       await updateWorkspaceApi(getToken, workspaceId, {
         approvalMode: approvalModeInput,
+        autoScheduleAfterApproval: autoScheduleAfterApprovalInput,
         approverUserIds: editorApproverIds,
+        publisherUserIds: editorPublisherIds,
+        approvalRules: buildApprovalRulePayload(accountRuleModes, contentTypeRuleModes),
       });
       await refresh();
       await loadData({ silent: true, syncWorkspaceList: true });
@@ -716,15 +836,32 @@ export default function WorkspaceSettingsPage() {
     : "";
 
   const sortedMembers = [...members].sort((a, b) => ROLE_ORDER[a.role] - ROLE_ORDER[b.role]);
+  const sortedConnectedAccounts = [...connectedAccounts].sort((left, right) =>
+    `${left.platform}:${left.username}:${left.providerUserId}`.localeCompare(
+      `${right.platform}:${right.username}:${right.providerUserId}`
+    )
+  );
   const editorMembers = sortedMembers.filter((member) => member.role === "EDITOR");
   const defaultApproverMembers = sortedMembers.filter(
     (member) => member.role === "OWNER" || member.role === "ADMIN"
   );
+  const defaultPublisherMembers = defaultApproverMembers;
   const activeApprovalMode = activeWorkspace?.approvalMode ?? "OPTIONAL";
+  const activeAutoScheduleAfterApproval = activeWorkspace?.autoScheduleAfterApproval ?? true;
   const activeApproverUserIds = activeWorkspace?.approverUserIds ?? [];
+  const activePublisherUserIds = activeWorkspace?.publisherUserIds ?? [];
+  const approvalRulesPayload = buildApprovalRulePayload(accountRuleModes, contentTypeRuleModes);
+  const activeApprovalRuleSignature = serializeApprovalRules(activeWorkspace?.approvalRules ?? []);
+  const currentApprovalRuleSignature = approvalRulesPayload
+    .map((rule) => `${rule.scopeType}:${rule.scopeValue}:${rule.approvalMode}`)
+    .sort()
+    .join("|");
   const approvalRulesDirty =
     approvalModeInput !== activeApprovalMode ||
-    [...editorApproverIds].sort().join(",") !== [...activeApproverUserIds].sort().join(",");
+    autoScheduleAfterApprovalInput !== activeAutoScheduleAfterApproval ||
+    sortStringValues(editorApproverIds) !== sortStringValues(activeApproverUserIds) ||
+    sortStringValues(editorPublisherIds) !== sortStringValues(activePublisherUserIds) ||
+    currentApprovalRuleSignature !== activeApprovalRuleSignature;
   const groupedMembers = sortedMembers.reduce<Record<WorkspaceRole, WorkspaceMember[]>>(
     (acc, member) => {
       if (!acc[member.role]) acc[member.role] = [];
@@ -1153,7 +1290,7 @@ export default function WorkspaceSettingsPage() {
                         Approval workflow
                       </p>
                       <p className={cn("text-sm", subtleTextClass)}>
-                        Configure when content needs approval and which editors can act as approvers.
+                        Configure the default review mode, scoped approval rules, and editor capability overlays.
                       </p>
                     </div>
 
@@ -1183,6 +1320,25 @@ export default function WorkspaceSettingsPage() {
                           </p>
                         </div>
 
+                        <div className="rounded-xl border border-slate-200/80 bg-white px-4 py-4 dark:border-white/10 dark:bg-[#161a22]">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                Auto-schedule after final approval
+                              </p>
+                              <p className={cn("text-xs leading-4", subtleTextClass)}>
+                                When enabled, final approval immediately adds approved content to the publishing queue. When disabled, approved content stays locked in an approved state until a publisher activates the schedule.
+                              </p>
+                            </div>
+                            <Checkbox
+                              checked={autoScheduleAfterApprovalInput}
+                              onCheckedChange={(checked) =>
+                                setAutoScheduleAfterApprovalInput(checked === true)
+                              }
+                            />
+                          </div>
+                        </div>
+
                         <div className="space-y-2">
                           <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
                             Default approvers
@@ -1191,7 +1347,7 @@ export default function WorkspaceSettingsPage() {
                             {defaultApproverMembers.length > 0 ? (
                               defaultApproverMembers.map((member) => (
                                 <span key={member.userId} className={pillClass}>
-                                  {member.firstName || member.email || member.userId}
+                                  {memberDisplayLabel(member)}
                                   <span className="text-[11px] text-slate-500 dark:text-[#9fadbc]">
                                     {roleLabel(member.role)}
                                   </span>
@@ -1223,10 +1379,7 @@ export default function WorkspaceSettingsPage() {
                             <div className="space-y-2">
                               {editorMembers.map((member) => {
                                 const checked = editorApproverIds.includes(member.userId);
-                                const label =
-                                  [member.firstName, member.lastName].filter(Boolean).join(" ") ||
-                                  member.email ||
-                                  member.userId;
+                                const label = memberDisplayLabel(member);
 
                                 return (
                                   <label
@@ -1256,7 +1409,7 @@ export default function WorkspaceSettingsPage() {
                                         {label}
                                       </p>
                                       <p className={cn("text-xs leading-4", subtleTextClass)}>
-                                        Can approve pending review items. Publishing still follows workspace rules.
+                                        Can approve pending review items. Publishing still follows the effective rule for each campaign.
                                       </p>
                                     </div>
                                   </label>
@@ -1264,6 +1417,218 @@ export default function WorkspaceSettingsPage() {
                               })}
                             </div>
                           )}
+                        </div>
+
+                        <div className="space-y-2">
+                          <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                            Default publishers
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {defaultPublisherMembers.length > 0 ? (
+                              defaultPublisherMembers.map((member) => (
+                                <span key={member.userId} className={pillClass}>
+                                  {memberDisplayLabel(member)}
+                                  <span className="text-[11px] text-slate-500 dark:text-[#9fadbc]">
+                                    {roleLabel(member.role)}
+                                  </span>
+                                </span>
+                              ))
+                            ) : (
+                              <span className={cn("text-xs", subtleTextClass)}>
+                                Owners and admins automatically inherit publishing rights.
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                              Editor publishers
+                            </p>
+                            <p className={cn("text-xs leading-4", subtleTextClass)}>
+                              Grant selected editors direct scheduling rights when a campaign resolves to optional approval.
+                            </p>
+                          </div>
+
+                          {editorMembers.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]">
+                              Invite or assign editors first to grant extra publisher capability.
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {editorMembers.map((member) => {
+                                const checked = editorPublisherIds.includes(member.userId);
+                                const label = memberDisplayLabel(member);
+
+                                return (
+                                  <label
+                                    key={member.userId}
+                                    className={cn(
+                                      "flex items-start gap-3 rounded-xl border px-3 py-3 transition-colors",
+                                      checked
+                                        ? "border-[#c6f0d3] bg-[#f2fcf6] dark:border-[#295f4e] dark:bg-[#1f2e28]"
+                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#161a22]"
+                                    )}
+                                  >
+                                    <Checkbox
+                                      checked={checked}
+                                      onCheckedChange={(nextChecked) => {
+                                        setEditorPublisherIds((current) =>
+                                          nextChecked
+                                            ? [...current, member.userId].filter(
+                                                (value, index, array) => array.indexOf(value) === index
+                                              )
+                                            : current.filter((value) => value !== member.userId)
+                                        );
+                                      }}
+                                      className="mt-0.5"
+                                    />
+                                    <div className="space-y-1">
+                                      <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                                        {label}
+                                      </p>
+                                      <p className={cn("text-xs leading-4", subtleTextClass)}>
+                                        Can schedule directly when the effective rule for a campaign is optional approval.
+                                      </p>
+                                    </div>
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                              Content-type rules
+                            </p>
+                            <p className={cn("text-xs leading-4", subtleTextClass)}>
+                              Override the workspace default for image, video, or text campaigns.
+                            </p>
+                          </div>
+                          <div className="space-y-2">
+                            {CONTENT_TYPE_RULE_TYPES.map((contentType) => (
+                              <div
+                                key={contentType}
+                                className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[#161a22] sm:grid-cols-[130px_minmax(0,1fr)]"
+                              >
+                                <div>
+                                  <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                    {contentType.charAt(0) + contentType.slice(1).toLowerCase()}
+                                  </p>
+                                  <p className={cn("text-xs leading-4", subtleTextClass)}>
+                                    Use a stricter rule when this content type needs extra review.
+                                  </p>
+                                </div>
+                                <div className="space-y-2">
+                                  <Select
+                                    value={contentTypeRuleModes[contentType]}
+                                    onValueChange={(value) =>
+                                      setContentTypeRuleModes((current) => ({
+                                        ...current,
+                                        [contentType]: value as ScopedApprovalModeInput,
+                                      }))
+                                    }
+                                  >
+                                    <SelectTrigger className="h-10">
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value={DEFAULT_RULE_VALUE}>Use workspace default</SelectItem>
+                                      {APPROVAL_MODE_OPTIONS.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                          {option.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  <p className={cn("text-xs leading-4", subtleTextClass)}>
+                                    {contentTypeRuleModes[contentType] === DEFAULT_RULE_VALUE
+                                      ? "No content-type override. The workspace default will apply unless a campaign or account rule is stricter."
+                                      : approvalModeDescription(
+                                          contentTypeRuleModes[contentType] as WorkspaceApprovalMode
+                                        )}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <div className="space-y-1">
+                            <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                              Account rules
+                            </p>
+                            <p className={cn("text-xs leading-4", subtleTextClass)}>
+                              Apply stricter or looser approval modes for specific client accounts. When a campaign targets multiple ruled accounts, the strictest matching rule wins.
+                            </p>
+                          </div>
+
+                          {sortedConnectedAccounts.length === 0 ? (
+                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]">
+                              Connect at least one social account in this workspace before adding account-specific approval rules.
+                            </div>
+                          ) : (
+                            <div className="space-y-2">
+                              {sortedConnectedAccounts.map((account) => (
+                                <div
+                                  key={account.providerUserId}
+                                  className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[#161a22] sm:grid-cols-[minmax(0,1fr)_220px]"
+                                >
+                                  <div className="min-w-0 space-y-1">
+                                    <p className="truncate text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                      {account.username || account.providerUserId}
+                                    </p>
+                                    <p className={cn("text-xs leading-4", subtleTextClass)}>
+                                      {account.platform} account · {account.providerUserId}
+                                    </p>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Select
+                                      value={accountRuleModes[account.providerUserId] ?? DEFAULT_RULE_VALUE}
+                                      onValueChange={(value) =>
+                                        setAccountRuleModes((current) => ({
+                                          ...current,
+                                          [account.providerUserId]: value as ScopedApprovalModeInput,
+                                        }))
+                                      }
+                                    >
+                                      <SelectTrigger className="h-10">
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value={DEFAULT_RULE_VALUE}>Use workspace default</SelectItem>
+                                        {APPROVAL_MODE_OPTIONS.map((option) => (
+                                          <SelectItem key={option.value} value={option.value}>
+                                            {option.label}
+                                          </SelectItem>
+                                        ))}
+                                      </SelectContent>
+                                    </Select>
+                                    <p className={cn("text-xs leading-4", subtleTextClass)}>
+                                      {(accountRuleModes[account.providerUserId] ?? DEFAULT_RULE_VALUE) === DEFAULT_RULE_VALUE
+                                        ? "No account-specific override. Content type or workspace rules will apply."
+                                        : approvalModeDescription(
+                                            accountRuleModes[account.providerUserId] as WorkspaceApprovalMode
+                                          )}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="rounded-xl border border-[#cce0ff] bg-[#f7fbff] px-4 py-3 dark:border-[#2c4f7c] dark:bg-[#1b2638]">
+                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                            Rule precedence
+                          </p>
+                          <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
+                            Campaign override set by an approval-rule manager beats account rules. Account rules beat content-type rules. Content-type rules beat the workspace default.
+                          </p>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -1280,7 +1645,29 @@ export default function WorkspaceSettingsPage() {
                               variant="ghost"
                               onClick={() => {
                                 setApprovalModeInput(activeWorkspace.approvalMode);
+                                setAutoScheduleAfterApprovalInput(
+                                  activeWorkspace.autoScheduleAfterApproval
+                                );
                                 setEditorApproverIds(activeWorkspace.approverUserIds);
+                                setEditorPublisherIds(activeWorkspace.publisherUserIds);
+                                setContentTypeRuleModes(
+                                  buildContentTypeRuleModes(activeWorkspace.approvalRules)
+                                );
+                                setAccountRuleModes(
+                                  buildAccountRuleModes(
+                                    Array.from(
+                                      new Set([
+                                        ...sortedConnectedAccounts.map(
+                                          (account) => account.providerUserId
+                                        ),
+                                        ...activeWorkspace.approvalRules
+                                          .filter((rule) => rule.scopeType === "ACCOUNT")
+                                          .map((rule) => rule.scopeValue),
+                                      ])
+                                    ),
+                                    activeWorkspace.approvalRules
+                                  )
+                                );
                               }}
                               disabled={savingApprovalRules}
                             >
@@ -1297,7 +1684,15 @@ export default function WorkspaceSettingsPage() {
                             {approvalModeLabel(activeWorkspace.approvalMode)}
                           </p>
                           <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
-                            {APPROVAL_MODE_OPTIONS.find((option) => option.value === activeWorkspace.approvalMode)?.description}
+                            {approvalModeDescription(activeWorkspace.approvalMode)}
+                          </p>
+                        </div>
+                        <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                          <p className={cn("text-xs", subtleTextClass)}>Auto-schedule policy</p>
+                          <p className="mt-1 text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                            {activeWorkspace.autoScheduleAfterApproval
+                              ? "Approved content schedules automatically"
+                              : "Approved content waits for a publisher to activate the schedule"}
                           </p>
                         </div>
                         {activeWorkspace.approverUserIds.length > 0 && (
@@ -1308,12 +1703,7 @@ export default function WorkspaceSettingsPage() {
                             <div className="mt-2 flex flex-wrap gap-2">
                               {activeWorkspace.approverUserIds.map((userId) => {
                                 const member = editorMembers.find((item) => item.userId === userId);
-                                const label =
-                                  member
-                                    ? [member.firstName, member.lastName].filter(Boolean).join(" ") ||
-                                      member.email ||
-                                      member.userId
-                                    : userId;
+                                const label = member ? memberDisplayLabel(member) : userId;
 
                                 return (
                                   <span key={userId} className={pillClass}>
@@ -1321,6 +1711,55 @@ export default function WorkspaceSettingsPage() {
                                   </span>
                                 );
                               })}
+                            </div>
+                          </div>
+                        )}
+                        {activeWorkspace.publisherUserIds.length > 0 && (
+                          <div>
+                            <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                              Extra editor publishers
+                            </p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {activeWorkspace.publisherUserIds.map((userId) => {
+                                const member = editorMembers.find((item) => item.userId === userId);
+                                const label = member ? memberDisplayLabel(member) : userId;
+
+                                return (
+                                  <span key={userId} className={pillClass}>
+                                    {label}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                        {activeWorkspace.approvalRules.length > 0 && (
+                          <div className="space-y-2">
+                            <p className={cn("text-xs font-medium uppercase tracking-[0.06em]", subtleTextClass)}>
+                              Scoped rules
+                            </p>
+                            <div className="space-y-2">
+                              {activeWorkspace.approvalRules
+                                .slice()
+                                .sort((left, right) =>
+                                  `${left.scopeType}:${left.scopeValue}`.localeCompare(
+                                    `${right.scopeType}:${right.scopeValue}`
+                                  )
+                                )
+                                .map((rule) => (
+                                  <div key={rule.id} className={cn(raisedSurfaceClass, "px-3 py-3")}>
+                                    <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                      {rule.scopeType === "ACCOUNT"
+                                        ? `Account: ${sortedConnectedAccounts.find(
+                                            (account) => account.providerUserId === rule.scopeValue
+                                          )?.username || rule.scopeValue}`
+                                        : `${rule.scopeValue.charAt(0) + rule.scopeValue.slice(1).toLowerCase()} content`}
+                                    </p>
+                                    <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
+                                      {approvalModeLabel(rule.approvalMode)}. {approvalModeDescription(rule.approvalMode)}
+                                    </p>
+                                  </div>
+                                ))}
                             </div>
                           </div>
                         )}

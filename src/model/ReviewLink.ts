@@ -1,11 +1,16 @@
 import type { MediaResponse } from "./MediaResponse";
 import type { PostCollaborationThread } from "./PostCollaboration";
 
+export type ReviewLinkShareScope = "CAMPAIGN" | "SELECTED_POSTS";
+
 export interface PostCollectionReviewLink {
   id: string;
   token: string;
   createdByUserId: string;
   createdByDisplayName: string;
+  shareScope: ReviewLinkShareScope;
+  sharedPostIds: number[];
+  passcodeProtected: boolean;
   expiresAt: string;
   revokedAt: string | null;
   createdAt: string;
@@ -14,6 +19,9 @@ export interface PostCollectionReviewLink {
 
 export interface CreatePostCollectionReviewLinkRequest {
   expiresAt?: string;
+  passcode?: string;
+  shareScope?: ReviewLinkShareScope;
+  sharedPostIds?: number[];
 }
 
 export interface PublicReviewChannel {
@@ -31,12 +39,14 @@ export interface PublicPostCollectionReviewResponse {
     | "DRAFT"
     | "IN_REVIEW"
     | "CHANGES_REQUESTED"
+    | "APPROVED"
     | "SCHEDULED"
     | "PUBLISHED"
     | "PARTIAL_SUCCESS"
     | "FAILED";
   reviewStatus: "DRAFT" | "IN_REVIEW" | "CHANGES_REQUESTED" | "APPROVED";
   nextApprovalStage: "APPROVER" | "OWNER_FINAL" | null;
+  shareScope: ReviewLinkShareScope;
   channels: PublicReviewChannel[];
   media: MediaResponse[];
   platformConfigs?: Record<string, any> | null;
@@ -53,6 +63,12 @@ export interface PublicReviewCommentRequest {
   reviewerName: string;
   reviewerEmail: string;
   body: string;
+  anchorStart?: number;
+  anchorEnd?: number;
+  anchorText?: string;
+  mediaId?: number;
+  mediaMarkerX?: number;
+  mediaMarkerY?: number;
 }
 
 export interface PublicReviewDecisionRequest {

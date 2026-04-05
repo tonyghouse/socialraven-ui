@@ -46,6 +46,13 @@ const STATUS_CONFIG = {
     className:
       "border-orange-200 bg-orange-50 text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400",
   },
+  APPROVED: {
+    label: "Approved",
+    dotColor: "bg-[hsl(var(--success))]",
+    pulse: false,
+    className:
+      "border-[hsl(var(--success))]/18 bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]",
+  },
   SCHEDULED: {
     label: "Scheduled",
     dotColor: "bg-[hsl(var(--accent))]",

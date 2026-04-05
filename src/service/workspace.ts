@@ -1,6 +1,7 @@
 import {
   CreateWorkspaceRequest,
   WorkspaceApprovalMode,
+  WorkspaceApprovalRule,
   WorkspaceResponse,
 } from "@/model/Workspace";
 import { apiHeaders } from "@/lib/api-headers";
@@ -62,7 +63,14 @@ export async function updateWorkspaceApi(
     name?: string;
     companyName?: string;
     approvalMode?: WorkspaceApprovalMode;
+    autoScheduleAfterApproval?: boolean;
     approverUserIds?: string[];
+    publisherUserIds?: string[];
+    approvalRules?: Array<{
+      scopeType: WorkspaceApprovalRule["scopeType"];
+      scopeValue: string;
+      approvalMode: WorkspaceApprovalMode;
+    }>;
   }
 ): Promise<WorkspaceResponse> {
   const headers = await apiHeaders(getToken, { "X-Workspace-Id": workspaceId });

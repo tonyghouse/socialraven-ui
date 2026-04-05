@@ -3,11 +3,26 @@ import type { HTMLAttributes, ReactNode } from "react";
 import Navbar from "@/components/navbar/navbar";
 import { cn } from "@/lib/utils";
 
-export function PublicPageShell({ children }: { children: ReactNode }) {
+export function PublicPageShell({
+  children,
+  hideChromeOnPrint = false,
+  mainClassName,
+}: {
+  children: ReactNode;
+  hideChromeOnPrint?: boolean;
+  mainClassName?: string;
+}) {
   return (
     <>
-      <Navbar />
-      <main className="min-h-screen bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)] pt-20 text-[hsl(var(--foreground))]">
+      <div className={cn(hideChromeOnPrint && "print:hidden")}>
+        <Navbar />
+      </div>
+      <main
+        className={cn(
+          "min-h-screen bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)] pt-20 text-[hsl(var(--foreground))]",
+          mainClassName,
+        )}
+      >
         {children}
       </main>
     </>
@@ -32,8 +47,8 @@ export function PublicHero({
   aside?: ReactNode;
 }) {
   return (
-    <section className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
-      <div className="mx-auto grid w-full max-w-7xl gap-10 px-6 py-16 md:px-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-start lg:py-20">
+    <section className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] print:border-b-0 print:bg-white">
+      <div className="mx-auto grid w-full max-w-7xl gap-10 px-6 py-16 md:px-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-start lg:py-20 print:gap-6 print:px-0 print:py-8">
         <div className="space-y-5">
           {topSlot ? <div>{topSlot}</div> : null}
           <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
@@ -78,9 +93,10 @@ export function PublicSection({
       className={cn(
         "border-b border-[hsl(var(--border-subtle))]",
         surface === "surface" ? "bg-[hsl(var(--surface))]" : "bg-transparent",
+        "print:border-b-0 print:bg-white",
       )}
     >
-      <div className="mx-auto w-full max-w-7xl px-6 py-14 md:px-10">
+      <div className="mx-auto w-full max-w-7xl px-6 py-14 md:px-10 print:px-0 print:py-8">
         {eyebrow || title || description ? (
           <div className="mb-8 space-y-2">
             {eyebrow ? (
@@ -116,7 +132,7 @@ export function PublicCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[var(--shadow-xs)]",
+        "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[var(--shadow-xs)] print:break-inside-avoid print:shadow-none",
         className,
       )}
       {...props}
@@ -136,7 +152,7 @@ export function PublicInsetCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]",
+        "rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] print:break-inside-avoid print:bg-white",
         className,
       )}
       {...props}
@@ -181,7 +197,7 @@ export function PublicTable({
   rows: ReactNode[][];
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-[hsl(var(--border))]">
+    <div className="overflow-x-auto rounded-xl border border-[hsl(var(--border))] print:break-inside-avoid">
       <table className="w-full border-collapse text-sm leading-5">
         <thead>
           <tr className="border-b border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">

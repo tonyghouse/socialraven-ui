@@ -56,6 +56,10 @@ import { updatePostCollectionApi } from "@/service/updatePostCollectionApi";
 import { getPresignedUrl } from "@/service/presignUrl";
 import { uploadToS3 } from "@/service/uploadToS3";
 import { localToUTC } from "@/lib/timeUtil";
+import {
+  approvalUpdateSuccessMessage,
+  confirmApprovalLockIfNeeded,
+} from "@/lib/approval-lock";
 import { getCharErrors, PLATFORM_DISPLAY_NAMES, validatePlatformConfigs } from "@/lib/platformLimits";
 import {
   validateMediaFiles,
@@ -82,6 +86,19 @@ import PlatformCharLimits from "@/components/schedule-post/platform-char-limits"
 import MediaValidationPanel from "@/components/schedule-post/media-validation-panel";
 import PlatformConfigsPanel from "@/components/schedule-post/platform-configs-panel";
 import { ApprovalSafetyPanel } from "@/components/posts/approval-safety-panel";
+import { LibraryComposerPanel } from "@/components/workspace-library/library-composer-panel";
+import { SelectedLibraryAssets } from "@/components/workspace-library/selected-library-assets";
+import type { ComposerLibraryAsset } from "@/lib/workspace-library";
+import {
+  appendTextBlock,
+  applyFirstCommentSnippet,
+  buildComposerLibraryAssets,
+  buildPseudoFilesFromLibraryAssets,
+  dedupeLibraryAssets,
+  filterRelevantBundleItems,
+  mergePlatformConfigs,
+} from "@/lib/workspace-library";
+import type { WorkspaceLibraryBundle, WorkspaceLibraryItem } from "@/model/WorkspaceLibrary";
 
 /* ─── Config maps ─────────────────────────────────────────── */
 
@@ -674,7 +691,8 @@ export default function ScheduledCollectionDetailPage() {
         if (
           data.overallStatus === "DRAFT" ||
           data.overallStatus === "IN_REVIEW" ||
-          data.overallStatus === "CHANGES_REQUESTED"
+          data.overallStatus === "CHANGES_REQUESTED" ||
+          data.overallStatus === "APPROVED"
         ) {
           router.replace(`/drafts/${collectionId}`);
           return;
@@ -749,7 +767,8 @@ export default function ScheduledCollectionDetailPage() {
     if (
       updated.overallStatus === "DRAFT" ||
       updated.overallStatus === "IN_REVIEW" ||
-      updated.overallStatus === "CHANGES_REQUESTED"
+      updated.overallStatus === "CHANGES_REQUESTED" ||
+      updated.overallStatus === "APPROVED"
     ) {
       router.push(`/drafts/${updated.id}`);
       return;
@@ -1194,6 +1213,7 @@ function EditModePanel({
   const [description, setDescription]         = useState("");
   const [keepMediaKeys, setKeepMediaKeys]     = useState<string[]>([]);
   const [newFiles, setNewFiles]               = useState<File[]>([]);
+  const [selectedLibraryAssets, setSelectedLibraryAssets] = useState<ComposerLibraryAsset[]>([]);
   const [date, setDate]                       = useState("");
   const [time, setTime]                       = useState("");
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>({});
@@ -1226,6 +1246,7 @@ function EditModePanel({
     setPlatformConfigs((collection.platformConfigs ?? {}) as PlatformConfigs);
     setKeepMediaKeys(collection.media.map((m) => m.fileKey));
     setNewFiles([]);
+    setSelectedLibraryAssets([]);
     setShowErrors(false);
     setMediaErrors([]);
     setActiveStep(2);
@@ -1268,13 +1289,29 @@ function EditModePanel({
 
   const keptMedia = collection.media.filter((m) => keepMediaKeys.includes(m.fileKey));
   const keptCount = keptMedia.length;
-  const slotsForNew = Math.max(0, effectiveMaxFiles - keptCount);
-  const hasMedia = keptCount + newFiles.length > 0;
+  const slotsForNew = Math.max(0, effectiveMaxFiles - keptCount - selectedLibraryAssets.length);
+  const pseudoLibraryFiles = useMemo(
+    () => buildPseudoFilesFromLibraryAssets(selectedLibraryAssets),
+    [selectedLibraryAssets],
+  );
+  const hasMedia = keptCount + newFiles.length + selectedLibraryAssets.length > 0;
 
   const syncMediaErrors = useMemo(
-    () => postType !== "TEXT" ? validateMediaSync(newFiles, selectedPlatforms, postType as "IMAGE" | "VIDEO") : [],
+    () =>
+      postType !== "TEXT"
+        ? validateMediaSync(
+            [...newFiles, ...pseudoLibraryFiles],
+            selectedPlatforms,
+            postType as "IMAGE" | "VIDEO"
+          )
+        : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [newFiles.map((f) => f.name + f.size).join(","), selectedPlatforms.join(","), postType],
+    [
+      newFiles.map((f) => f.name + f.size).join(","),
+      pseudoLibraryFiles.map((f) => f.name + f.size).join(","),
+      selectedPlatforms.join(","),
+      postType,
+    ],
   );
 
   useEffect(() => {
@@ -1330,9 +1367,9 @@ function EditModePanel({
       <span className="font-medium truncate max-w-[160px] sm:max-w-[260px]">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
-      {postType !== "TEXT" && (keptCount + newFiles.length) > 0 && (
+      {postType !== "TEXT" && (keptCount + newFiles.length + selectedLibraryAssets.length) > 0 && (
         <span className="text-xs text-muted-foreground flex-shrink-0">
-          · {keptCount + newFiles.length} {postType === "IMAGE" ? "image" : "video"}{(keptCount + newFiles.length) !== 1 ? "s" : ""}
+          · {keptCount + newFiles.length + selectedLibraryAssets.length} {postType === "IMAGE" ? "image" : "video"}{(keptCount + newFiles.length + selectedLibraryAssets.length) !== 1 ? "s" : ""}
         </span>
       )}
     </span>
@@ -1346,11 +1383,111 @@ function EditModePanel({
     </span>
   ) : null;
 
+  function applyLibrarySnippet(item: WorkspaceLibraryItem) {
+    if (!item.body?.trim()) {
+      toast.error("This snippet does not contain any content.");
+      return;
+    }
+
+    if (item.snippetTarget === "FIRST_COMMENT") {
+      const result = applyFirstCommentSnippet(platformConfigs, selectedPlatforms, item.body);
+      if (result.appliedPlatforms.length === 0) {
+        toast.error("Select Facebook or Instagram accounts before applying a first-comment snippet.");
+        return;
+      }
+      setPlatformConfigs(result.platformConfigs);
+      toast.success(`Applied "${item.name}" to first comments.`);
+      return;
+    }
+
+    setDescription((current) => appendTextBlock(current, item.body));
+    toast.success(`Applied snippet "${item.name}".`);
+  }
+
+  function applyLibraryTemplate(item: WorkspaceLibraryItem) {
+    if (item.postCollectionType !== postType) {
+      toast.error(`"${item.name}" does not match this collection's content type.`);
+      return false;
+    }
+
+    if (
+      item.body?.trim() &&
+      description.trim() &&
+      description.trim() !== item.body.trim() &&
+      !window.confirm("Replace the current caption with this template's body content?")
+    ) {
+      return false;
+    }
+
+    if (item.body?.trim()) {
+      setDescription(item.body.trim());
+    }
+    setPlatformConfigs((current) => mergePlatformConfigs(current, item.platformConfigs));
+    toast.success(`Applied template "${item.name}".`);
+    return true;
+  }
+
+  function applyLibraryAssets(item: WorkspaceLibraryItem) {
+    const assets = buildComposerLibraryAssets(item);
+    if (assets.length === 0) {
+      toast.error("This asset does not contain reusable media.");
+      return;
+    }
+    setSelectedLibraryAssets((current) => dedupeLibraryAssets(current, assets));
+    toast.success(`Added ${assets.length} reusable asset${assets.length === 1 ? "" : "s"} from "${item.name}".`);
+  }
+
+  async function handleApplyLibraryItem(item: WorkspaceLibraryItem) {
+    if (item.itemType === "SNIPPET") {
+      applyLibrarySnippet(item);
+      return;
+    }
+    if (item.itemType === "TEMPLATE") {
+      applyLibraryTemplate(item);
+      return;
+    }
+    applyLibraryAssets(item);
+  }
+
+  async function handleApplyLibraryBundle(bundle: WorkspaceLibraryBundle) {
+    const relevantItems = filterRelevantBundleItems(bundle, postType as "IMAGE" | "VIDEO" | "TEXT");
+    if (relevantItems.length === 0) {
+      toast.error("This bundle does not contain usable items for this collection.");
+      return;
+    }
+
+    let appliedCount = 0;
+    let templateApplied = false;
+    for (const item of relevantItems) {
+      if (item.itemType === "TEMPLATE") {
+        if (templateApplied) {
+          continue;
+        }
+        if (applyLibraryTemplate(item)) {
+          templateApplied = true;
+          appliedCount += 1;
+        }
+        continue;
+      }
+      if (item.itemType === "SNIPPET") {
+        applyLibrarySnippet(item);
+        appliedCount += 1;
+        continue;
+      }
+      applyLibraryAssets(item);
+      appliedCount += 1;
+    }
+
+    if (appliedCount > 0) {
+      toast.success(`Applied ${appliedCount} bundle item${appliedCount === 1 ? "" : "s"} from "${bundle.name}".`);
+    }
+  }
+
   /* ── Save ── */
   async function save() {
     setShowErrors(true);
     if (!description.trim()) { toast.error("Please write a caption"); return; }
-    if (postType !== "TEXT" && !hasMedia) { toast.error("Please keep or upload at least one file"); return; }
+    if (postType !== "TEXT" && !hasMedia) { toast.error("Please keep, upload, or attach at least one file"); return; }
     if (selectedAccountIds.length === 0) { toast.error("Please select at least one account"); return; }
     if (isScheduled && (!date || !time)) { toast.error("Please select a date and time"); return; }
     if (platformCharErrors.length > 0) {
@@ -1372,19 +1509,21 @@ function EditModePanel({
         return;
       }
     }
-    const acknowledgeApprovalLock = collection.approvalLocked
-      ? window.confirm(
-          "Saving material edits will remove this collection from the publishing queue and send it back into review. Continue?"
-        )
-      : false;
-    if (collection.approvalLocked && !acknowledgeApprovalLock) {
+    const acknowledgeApprovalLock = collection.approvalLocked;
+    if (!confirmApprovalLockIfNeeded(acknowledgeApprovalLock)) {
       return;
     }
 
     setSaving(true);
     try {
 
-      const uploadedMedia = [];
+      const uploadedMedia = selectedLibraryAssets.map((asset) => ({
+        fileName: asset.fileName,
+        mimeType: asset.mimeType,
+        fileUrl: asset.fileUrl ?? "",
+        fileKey: asset.fileKey,
+        size: asset.size ?? 0,
+      }));
       for (const file of newFiles) {
         if (postType === "VIDEO" && !file.type.startsWith("video/")) continue;
         const { uploadUrl, fileUrl, fileKey } = await getPresignedUrl(file, getToken);
@@ -1398,14 +1537,10 @@ function EditModePanel({
         newMedia: uploadedMedia,
         connectedAccounts: selectedAccounts,
         scheduledTime: localToUTC(date, time),
-        acknowledgeApprovalLock,
+        acknowledgeApprovalLock: acknowledgeApprovalLock || undefined,
       };
       const updated = await updatePostCollectionApi(getToken, collection.id, payload);
-      toast.success(
-        updated.overallStatus === "IN_REVIEW"
-          ? "Material changes saved. The collection is back in review."
-          : "Post updated successfully!"
-      );
+      toast.success(approvalUpdateSuccessMessage(updated, "Post updated successfully!"));
       onSuccess(updated);
     } catch {
       toast.error("Failed to save. Please try again.");
@@ -1541,6 +1676,14 @@ function EditModePanel({
           onToggle={reachedStep >= 3 ? () => toggleStep(3) : undefined}
           summary={step3Summary}
         >
+          <div className="mb-6">
+            <LibraryComposerPanel
+              postType={postType as "IMAGE" | "VIDEO" | "TEXT"}
+              onApplyItem={handleApplyLibraryItem}
+              onApplyBundle={handleApplyLibraryBundle}
+            />
+          </div>
+
           {/* Caption */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -1649,6 +1792,14 @@ function EditModePanel({
                   maxFilesLabel={restrictivePlatformLabel}
                 />
               )}
+              <SelectedLibraryAssets
+                assets={selectedLibraryAssets}
+                onRemove={(fileKey) =>
+                  setSelectedLibraryAssets((current) =>
+                    current.filter((asset) => asset.fileKey !== fileKey)
+                  )
+                }
+              />
               {slotsForNew === 0 && newFiles.length === 0 && (
                 <p className="text-xs text-muted-foreground">
                   Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove an existing file to add new ones.
@@ -1661,7 +1812,7 @@ function EditModePanel({
                   postType={postType as "IMAGE" | "VIDEO"}
                   errors={allMediaErrors}
                   validating={validatingMedia}
-                  hasFiles={newFiles.length > 0}
+                  hasFiles={hasMedia}
                 />
               )}
             </div>

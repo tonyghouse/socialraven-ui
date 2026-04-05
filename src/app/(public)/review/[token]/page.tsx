@@ -7,6 +7,7 @@ import {
   CalendarClock,
   CheckCircle2,
   Globe2,
+  LockKeyhole,
   Loader2,
   MessageSquare,
   XCircle,
@@ -24,11 +25,19 @@ import {
   PublicSectionMessage,
   PublicSubtleButton,
 } from "@/components/public/public-atlassian";
+import {
+  buildFullCaptionSelection,
+  PostCollaborationAnnotationEditor,
+  type CollaborationCaptionSelection,
+  type CollaborationMediaAnnotation,
+} from "@/components/posts/post-collaboration-annotation-editor";
+import { PostCollaborationAnnotationView } from "@/components/posts/post-collaboration-annotation-view";
 import { Textarea } from "@/components/ui/textarea";
 import type {
   PublicPostCollectionReviewResponse,
   PublicReviewDecisionRequest,
 } from "@/model/ReviewLink";
+import type { PostCollaborationAnnotationMode } from "@/model/PostCollaboration";
 import {
   addPublicReviewCommentApi,
   approvePublicReviewApi,
@@ -36,9 +45,14 @@ import {
   rejectPublicReviewApi,
 } from "@/service/reviewLinks";
 
+type ReviewLinkFetchError = Error & {
+  status?: number;
+  body?: string;
+};
+
 function formatTimestamp(value: string | null) {
   if (!value) return "Not set";
-  return new Date(value).toLocaleString("en-US", {
+  return new Date(value).toLocaleString(undefined, {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -52,6 +66,8 @@ function statusAppearance(status: PublicPostCollectionReviewResponse["overallSta
       return "inprogress";
     case "CHANGES_REQUESTED":
       return "moved";
+    case "APPROVED":
+      return "success";
     case "SCHEDULED":
       return "new";
     case "PUBLISHED":
@@ -63,6 +79,18 @@ function statusAppearance(status: PublicPostCollectionReviewResponse["overallSta
   }
 }
 
+function passcodeStorageKey(token: string) {
+  return `publicReviewPasscode:${token}`;
+}
+
+function isPasscodeError(error: ReviewLinkFetchError) {
+  return (
+    error?.status === 403 &&
+    (error?.body?.toLowerCase().includes("passcode") ||
+      error?.message?.toLowerCase().includes("passcode"))
+  );
+}
+
 export default function PublicReviewPage() {
   const { token } = useParams<{ token: string }>();
   const [review, setReview] = useState<PublicPostCollectionReviewResponse | null>(null);
@@ -71,9 +99,26 @@ export default function PublicReviewPage() {
   const [reviewerName, setReviewerName] = useState("");
   const [reviewerEmail, setReviewerEmail] = useState("");
   const [commentBody, setCommentBody] = useState("");
+  const [reviewPasscode, setReviewPasscode] = useState("");
+  const [lockedMessage, setLockedMessage] = useState<string | null>(null);
+  const [unlocking, setUnlocking] = useState(false);
+  const [commentAnnotationMode, setCommentAnnotationMode] =
+    useState<PostCollaborationAnnotationMode>("NONE");
+  const [commentSelection, setCommentSelection] = useState<CollaborationCaptionSelection>(
+    buildFullCaptionSelection("")
+  );
+  const [commentMediaAnnotation, setCommentMediaAnnotation] =
+    useState<CollaborationMediaAnnotation>({
+      mediaId: null,
+      mediaMarkerX: null,
+      mediaMarkerY: null,
+    });
   const [decisionNote, setDecisionNote] = useState("");
   const [commenting, setCommenting] = useState(false);
   const [acting, setActing] = useState<"approve" | "reject" | null>(null);
+  const reviewCollectionId = review?.collectionId ?? null;
+  const reviewDescription = review?.description ?? "";
+  const reviewDefaultMediaId = review?.media[0]?.id ?? null;
 
   useEffect(() => {
     const savedName = localStorage.getItem("publicReviewerName");
@@ -85,17 +130,39 @@ export default function PublicReviewPage() {
   useEffect(() => {
     let ignore = false;
 
-    async function load() {
+    async function load(nextPasscode?: string) {
       try {
         setLoading(true);
         setError(null);
-        const next = await getPublicPostCollectionReviewApi(token);
+        const storedPasscode =
+          nextPasscode !== undefined
+            ? nextPasscode
+            : sessionStorage.getItem(passcodeStorageKey(token)) ?? "";
+        if (nextPasscode === undefined && storedPasscode) {
+          setReviewPasscode(storedPasscode);
+        }
+        const next = await getPublicPostCollectionReviewApi(token, storedPasscode || undefined);
         if (!ignore) {
           setReview(next);
+          setLockedMessage(null);
+          if (storedPasscode) {
+            sessionStorage.setItem(passcodeStorageKey(token), storedPasscode);
+          } else {
+            sessionStorage.removeItem(passcodeStorageKey(token));
+          }
         }
       } catch (err: any) {
         if (!ignore) {
-          setError(err?.message ?? "Failed to load review link.");
+          const reviewError = err as ReviewLinkFetchError;
+          if (isPasscodeError(reviewError)) {
+            setReview(null);
+            setLockedMessage(reviewError.body ?? "This review link requires a passcode.");
+            setError(null);
+            sessionStorage.removeItem(passcodeStorageKey(token));
+          } else {
+            setError(reviewError?.message ?? "Failed to load review link.");
+            setLockedMessage(null);
+          }
         }
       } finally {
         if (!ignore) {
@@ -109,6 +176,18 @@ export default function PublicReviewPage() {
       ignore = true;
     };
   }, [token]);
+
+  useEffect(() => {
+    if (reviewCollectionId === null) {
+      return;
+    }
+    setCommentSelection(buildFullCaptionSelection(reviewDescription));
+    setCommentMediaAnnotation({
+      mediaId: reviewDefaultMediaId,
+      mediaMarkerX: null,
+      mediaMarkerY: null,
+    });
+  }, [reviewCollectionId, reviewDefaultMediaId, reviewDescription]);
 
   function persistIdentity() {
     localStorage.setItem("publicReviewerName", reviewerName.trim());
@@ -131,8 +210,19 @@ export default function PublicReviewPage() {
   }
 
   async function refreshReview() {
-    const next = await getPublicPostCollectionReviewApi(token);
+    const next = await getPublicPostCollectionReviewApi(token, reviewPasscode || undefined);
     setReview(next);
+  }
+
+  function resetCommentDraft() {
+    setCommentBody("");
+    setCommentAnnotationMode("NONE");
+    setCommentSelection(buildFullCaptionSelection(reviewDescription));
+    setCommentMediaAnnotation({
+      mediaId: reviewDefaultMediaId,
+      mediaMarkerX: null,
+      mediaMarkerY: null,
+    });
   }
 
   async function handleAddComment() {
@@ -150,8 +240,24 @@ export default function PublicReviewPage() {
         reviewerName: identity.reviewerName,
         reviewerEmail: identity.reviewerEmail,
         body: commentBody.trim(),
-      });
-      setCommentBody("");
+        anchorStart:
+          commentAnnotationMode === "CAPTION" ? commentSelection.start : undefined,
+        anchorEnd: commentAnnotationMode === "CAPTION" ? commentSelection.end : undefined,
+        anchorText: commentAnnotationMode === "CAPTION" ? commentSelection.text : undefined,
+        mediaId:
+          commentAnnotationMode === "MEDIA"
+            ? commentMediaAnnotation.mediaId ?? undefined
+            : undefined,
+        mediaMarkerX:
+          commentAnnotationMode === "MEDIA"
+            ? commentMediaAnnotation.mediaMarkerX ?? undefined
+            : undefined,
+        mediaMarkerY:
+          commentAnnotationMode === "MEDIA"
+            ? commentMediaAnnotation.mediaMarkerY ?? undefined
+            : undefined,
+      }, reviewPasscode || undefined);
+      resetCommentDraft();
       await refreshReview();
     } catch (err: any) {
       setError(err?.message ?? "Failed to add comment.");
@@ -169,14 +275,41 @@ export default function PublicReviewPage() {
     try {
       const next =
         action === "approve"
-          ? await approvePublicReviewApi(token, identity)
-          : await rejectPublicReviewApi(token, identity);
+          ? await approvePublicReviewApi(token, identity, reviewPasscode || undefined)
+          : await rejectPublicReviewApi(token, identity, reviewPasscode || undefined);
       setReview(next);
       setDecisionNote("");
     } catch (err: any) {
       setError(err?.message ?? `Failed to ${action} content.`);
     } finally {
       setActing(null);
+    }
+  }
+
+  async function handleUnlockReview() {
+    if (!reviewPasscode.trim()) {
+      setLockedMessage("Enter the review passcode to continue.");
+      return;
+    }
+
+    setUnlocking(true);
+    setError(null);
+    try {
+      const next = await getPublicPostCollectionReviewApi(token, reviewPasscode.trim());
+      setReview(next);
+      setLockedMessage(null);
+      setError(null);
+      sessionStorage.setItem(passcodeStorageKey(token), reviewPasscode.trim());
+    } catch (err: any) {
+      const reviewError = err as ReviewLinkFetchError;
+      if (isPasscodeError(reviewError)) {
+        setLockedMessage(reviewError.body ?? "Incorrect review link passcode.");
+        sessionStorage.removeItem(passcodeStorageKey(token));
+      } else {
+        setError(reviewError?.message ?? "Failed to unlock review link.");
+      }
+    } finally {
+      setUnlocking(false);
     }
   }
 
@@ -188,7 +321,7 @@ export default function PublicReviewPage() {
     );
   }
 
-  if (error && !review) {
+  if (error && !review && !lockedMessage) {
     return (
       <PublicPageShell>
         <div className="mx-auto max-w-xl px-6 py-24">
@@ -208,6 +341,52 @@ export default function PublicReviewPage() {
     );
   }
 
+  if (lockedMessage && !review) {
+    return (
+      <PublicPageShell>
+        <div className="mx-auto max-w-xl px-6 py-24">
+          <PublicCard className="p-8">
+            <div className="mb-4 flex justify-center">
+              <LockKeyhole className="h-12 w-12 text-[hsl(var(--accent))]" />
+            </div>
+            <h1 className="text-center text-[1.5rem] font-bold text-[hsl(var(--foreground))]">
+              Passcode Required
+            </h1>
+            <p className="mt-3 text-center text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              This review link is protected. Enter the passcode shared by the workspace team to
+              view the campaign.
+            </p>
+            <div className="mt-6 space-y-3">
+              <input
+                value={reviewPasscode}
+                onChange={(event) => setReviewPasscode(event.target.value)}
+                className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                placeholder="Enter passcode"
+                type="password"
+              />
+              <PublicPrimaryButton onClick={handleUnlockReview} disabled={unlocking}>
+                <span className="inline-flex items-center gap-2">
+                  {unlocking ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <LockKeyhole className="h-4 w-4" />
+                  )}
+                  <span>{unlocking ? "Unlocking…" : "Unlock Review"}</span>
+                </span>
+              </PublicPrimaryButton>
+            </div>
+            <p className="mt-4 text-center text-sm text-[hsl(var(--foreground-muted))]">
+              {lockedMessage}
+            </p>
+            {error && (
+              <p className="mt-2 text-center text-sm text-[hsl(var(--destructive))]">{error}</p>
+            )}
+          </PublicCard>
+        </div>
+      </PublicPageShell>
+    );
+  }
+
   if (!review) {
     return null;
   }
@@ -216,6 +395,10 @@ export default function PublicReviewPage() {
     ? "This review link has been revoked by the workspace team."
     : review.linkExpired
     ? "This review link has expired."
+    : review.overallStatus === "APPROVED"
+    ? "Final approval has been recorded. The internal team can now activate scheduling based on their workspace policy."
+    : review.shareScope === "SELECTED_POSTS"
+    ? "This link covers selected post variants. Leave comments here, then use the full campaign review link for final approval."
     : review.canApprove || review.canReject
     ? "Review the content below, leave comments if needed, and approve or reject it."
     : "This content is visible for reference, but review actions are no longer available.";
@@ -234,6 +417,9 @@ export default function PublicReviewPage() {
             {review.postCollectionType && (
               <PublicLozenge appearance="default">{review.postCollectionType}</PublicLozenge>
             )}
+            <PublicLozenge appearance="default">
+              {review.shareScope === "SELECTED_POSTS" ? "Selected posts" : "Full campaign"}
+            </PublicLozenge>
             <PublicLozenge appearance="new">
               Expires {formatTimestamp(review.linkExpiresAt)}
             </PublicLozenge>
@@ -307,7 +493,19 @@ export default function PublicReviewPage() {
                   value={commentBody}
                   onChange={(event) => setCommentBody(event.target.value)}
                   placeholder="Share any feedback for the team..."
+                  disabled={!review.canComment || commenting || acting !== null}
                   className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
+                />
+                <PostCollaborationAnnotationEditor
+                  description={review.description ?? ""}
+                  media={review.media}
+                  mode={commentAnnotationMode}
+                  onModeChange={setCommentAnnotationMode}
+                  captionSelection={commentSelection}
+                  onCaptionSelectionChange={setCommentSelection}
+                  mediaAnnotation={commentMediaAnnotation}
+                  onMediaAnnotationChange={setCommentMediaAnnotation}
+                  disabled={!review.canComment || commenting || acting !== null}
                 />
                 <PublicPrimaryButton
                   onClick={handleAddComment}
@@ -325,41 +523,52 @@ export default function PublicReviewPage() {
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm font-medium text-[hsl(var(--foreground))]">Decision note</p>
-                <Textarea
-                  value={decisionNote}
-                  onChange={(event) => setDecisionNote(event.target.value)}
-                  placeholder="Optional context for your decision..."
-                  className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
-                />
-                <div className="flex flex-wrap gap-3">
-                  <PublicPrimaryButton
-                    onClick={() => handleDecision("approve")}
-                    disabled={!review.canApprove || acting !== null || commenting}
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      {acting === "approve" ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <CheckCircle2 className="h-4 w-4" />
-                      )}
-                      <span>Approve</span>
-                    </span>
-                  </PublicPrimaryButton>
-                  <PublicSubtleButton
-                    onClick={() => handleDecision("reject")}
-                    disabled={!review.canReject || acting !== null || commenting}
-                  >
-                    <span className="inline-flex items-center gap-2">
-                      {acting === "reject" ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <XCircle className="h-4 w-4" />
-                      )}
-                      <span>Reject</span>
-                    </span>
-                  </PublicSubtleButton>
-                </div>
+                {review.shareScope === "SELECTED_POSTS" ? (
+                  <PublicSectionMessage appearance="information" title="Comment-only review link">
+                    <p>
+                      This link covers selected post variants for feedback. Final approve or reject
+                      decisions stay on the full campaign review link.
+                    </p>
+                  </PublicSectionMessage>
+                ) : (
+                  <>
+                    <p className="text-sm font-medium text-[hsl(var(--foreground))]">Decision note</p>
+                    <Textarea
+                      value={decisionNote}
+                      onChange={(event) => setDecisionNote(event.target.value)}
+                      placeholder="Optional context for your decision..."
+                      className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
+                    />
+                    <div className="flex flex-wrap gap-3">
+                      <PublicPrimaryButton
+                        onClick={() => handleDecision("approve")}
+                        disabled={!review.canApprove || acting !== null || commenting}
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          {acting === "approve" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <CheckCircle2 className="h-4 w-4" />
+                          )}
+                          <span>Approve</span>
+                        </span>
+                      </PublicPrimaryButton>
+                      <PublicSubtleButton
+                        onClick={() => handleDecision("reject")}
+                        disabled={!review.canReject || acting !== null || commenting}
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          {acting === "reject" ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <XCircle className="h-4 w-4" />
+                          )}
+                          <span>Reject</span>
+                        </span>
+                      </PublicSubtleButton>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </PublicCard>
@@ -385,6 +594,8 @@ export default function PublicReviewPage() {
                     ? "Link revoked"
                     : review.linkExpired
                     ? "Link expired"
+                    : review.shareScope === "SELECTED_POSTS" && review.canComment
+                    ? "Comment-only link"
                     : review.canApprove || review.canReject
                     ? "Actions available"
                     : "View-only state"
@@ -480,6 +691,7 @@ export default function PublicReviewPage() {
                           {thread.body}
                         </p>
                       )}
+                      <PostCollaborationAnnotationView thread={thread} media={review.media} />
                       {thread.replies.length > 0 && (
                         <div className="mt-4 space-y-3 border-t border-[hsl(var(--border-subtle))] pt-4">
                           {thread.replies.map((reply) => (

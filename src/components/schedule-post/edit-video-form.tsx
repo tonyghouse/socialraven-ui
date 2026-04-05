@@ -13,6 +13,10 @@ import { updatePostCollectionApi } from "@/service/updatePostCollectionApi";
 import { getPresignedUrl } from "@/service/presignUrl";
 import { uploadToS3 } from "@/service/uploadToS3";
 import { localToUTC } from "@/lib/timeUtil";
+import {
+  approvalUpdateSuccessMessage,
+  confirmApprovalLockIfNeeded,
+} from "@/lib/approval-lock";
 import MediaUploader from "./media-uploader";
 import ScheduleDateTimePicker from "./date-time-picker";
 import PlatformCharLimits from "./platform-char-limits";
@@ -65,7 +69,8 @@ export default function EditVideoForm({
   const isScheduled = collection.overallStatus === "SCHEDULED";
   const isDraft =
     collection.overallStatus === "DRAFT" ||
-    collection.overallStatus === "CHANGES_REQUESTED";
+    collection.overallStatus === "CHANGES_REQUESTED" ||
+    collection.overallStatus === "APPROVED";
 
   const scheduledDate = collection.scheduledTime ? new Date(collection.scheduledTime) : null;
 
@@ -194,6 +199,10 @@ export default function EditVideoForm({
         return;
       }
     }
+    const acknowledgeApprovalLock = collection.approvalLocked;
+    if (!confirmApprovalLockIfNeeded(acknowledgeApprovalLock)) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -217,6 +226,7 @@ export default function EditVideoForm({
         keepMediaKeys,
         newMedia: uploadedMedia,
         connectedAccounts: selectedAccounts,
+        acknowledgeApprovalLock: acknowledgeApprovalLock || undefined,
       };
 
       if (isScheduled) {
@@ -224,7 +234,7 @@ export default function EditVideoForm({
       }
 
       const updated = await updatePostCollectionApi(getToken, collectionId, payload);
-      toast.success("Post updated successfully!");
+      toast.success(approvalUpdateSuccessMessage(updated, "Post updated successfully!"));
       onSuccess(updated);
     } catch {
       toast.error("Failed to save. Please try again.");

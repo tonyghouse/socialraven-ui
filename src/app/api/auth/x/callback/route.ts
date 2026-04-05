@@ -2,6 +2,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import crypto from "crypto";
+import {
+  buildClientConnectResultUrl,
+  clearClientConnectCookies,
+  getClientConnectContext,
+} from "@/lib/client-connect-flow";
 
 const X_API_KEY = process.env.X_API_KEY!;
 const X_API_SECRET = process.env.X_API_SECRET!;
@@ -26,16 +31,109 @@ function generateOAuthSignature(
 
   const signingKey = `${encodeURIComponent(consumerSecret)}&${encodeURIComponent(tokenSecret)}`;
 
-  const signature = crypto
+  return crypto
     .createHmac("sha1", signingKey)
     .update(signatureBase)
     .digest("base64");
-
-  return signature;
 }
 
 export async function GET(req: NextRequest) {
   console.log("🔵 OAuth 1.0a Callback hit");
+
+  const url = new URL(req.url);
+  const oauthToken = url.searchParams.get("oauth_token");
+  const oauthVerifier = url.searchParams.get("oauth_verifier");
+  const denied = url.searchParams.get("denied");
+  const publicContext = getClientConnectContext(req);
+
+  if (publicContext.token) {
+    const finish = (status: "success" | "error", reason?: string) => {
+      const response = NextResponse.redirect(
+        buildClientConnectResultUrl(publicContext.token, "x", status, reason)
+      );
+      clearClientConnectCookies(response);
+      return response;
+    };
+
+    if (denied) {
+      return finish("error", "The X authorization request was denied.");
+    }
+    if (!oauthToken || !oauthVerifier || !publicContext.xTokenSecret) {
+      return finish("error", "Missing X OAuth callback parameters.");
+    }
+
+    try {
+      const accessTokenUrl = "https://api.twitter.com/oauth/access_token";
+      const oauthParams: Record<string, string> = {
+        oauth_consumer_key: X_API_KEY,
+        oauth_nonce: crypto.randomBytes(32).toString("base64").replace(/\W/g, ""),
+        oauth_signature_method: "HMAC-SHA1",
+        oauth_timestamp: Math.floor(Date.now() / 1000).toString(),
+        oauth_token: oauthToken,
+        oauth_verifier: oauthVerifier,
+        oauth_version: "1.0",
+      };
+
+      oauthParams.oauth_signature = generateOAuthSignature(
+        "POST",
+        accessTokenUrl,
+        oauthParams,
+        X_API_SECRET,
+        publicContext.xTokenSecret
+      );
+
+      const authHeader =
+        "OAuth " +
+        Object.keys(oauthParams)
+          .map((key) => `${key}="${encodeURIComponent(oauthParams[key])}"`)
+          .join(", ");
+
+      const response = await fetch(accessTokenUrl, {
+        method: "POST",
+        headers: {
+          Authorization: authHeader,
+        },
+      });
+
+      if (!response.ok) {
+        return finish("error", "Failed to exchange the X request token.");
+      }
+
+      const responseText = await response.text();
+      const params = new URLSearchParams(responseText);
+      const accessToken = params.get("oauth_token");
+      const accessTokenSecret = params.get("oauth_token_secret");
+
+      if (!accessToken || !accessTokenSecret) {
+        return finish("error", "X did not return a valid access token.");
+      }
+
+      const backendResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/client-connect/${publicContext.token}/x/callback`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            accessToken,
+            accessTokenSecret,
+            actorDisplayName: publicContext.actorName,
+            actorEmail: publicContext.actorEmail,
+          }),
+        }
+      );
+
+      if (!backendResponse.ok) {
+        return finish("error", (await backendResponse.text()) || "X connection failed.");
+      }
+
+      return finish("success");
+    } catch (error) {
+      console.error("❌ Public X OAuth callback error:", error);
+      return finish("error", "Unable to complete the X connection.");
+    }
+  }
 
   const { getToken } = await auth();
   const jwt = await getToken();
@@ -47,12 +145,6 @@ export async function GET(req: NextRequest) {
 
   const workspaceId = req.cookies.get("oauth_workspace_id")?.value ?? "";
 
-  const url = new URL(req.url);
-  const oauthToken = url.searchParams.get("oauth_token");
-  const oauthVerifier = url.searchParams.get("oauth_verifier");
-  const denied = url.searchParams.get("denied");
-
-  // User denied authorization
   if (denied) {
     console.log("⚠️ User denied authorization");
     const errorResponse = NextResponse.redirect(
@@ -71,9 +163,8 @@ export async function GET(req: NextRequest) {
     return errorResponse;
   }
 
-  // Try to get token secret from backend first, fallback to cookie
   let tokenSecret = "";
-  
+
   try {
     console.log("🔍 Attempting to retrieve token secret from backend...");
     const secretResponse = await fetch(
@@ -92,11 +183,10 @@ export async function GET(req: NextRequest) {
     } else {
       console.log("⚠️ Backend token secret not found, using cookie fallback");
     }
-  } catch (e) {
+  } catch {
     console.log("⚠️ Failed to fetch from backend, using cookie fallback");
   }
 
-  // Fallback to cookie if backend didn't work
   if (!tokenSecret) {
     tokenSecret = req.cookies.get("x_oauth_token_secret")?.value || "";
     if (tokenSecret) {
@@ -114,7 +204,6 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    // Step 3: Exchange for access token
     const accessTokenUrl = "https://api.twitter.com/oauth/access_token";
 
     const oauthParams: Record<string, string> = {
@@ -127,17 +216,14 @@ export async function GET(req: NextRequest) {
       oauth_version: "1.0",
     };
 
-    // Generate signature with token secret
-    const signature = generateOAuthSignature(
+    oauthParams.oauth_signature = generateOAuthSignature(
       "POST",
       accessTokenUrl,
       oauthParams,
       X_API_SECRET,
       tokenSecret
     );
-    oauthParams.oauth_signature = signature;
 
-    // Build Authorization header
     const authHeader =
       "OAuth " +
       Object.keys(oauthParams)
@@ -146,7 +232,6 @@ export async function GET(req: NextRequest) {
 
     console.log("🟡 Exchanging verifier for access token...");
 
-    // Request access token
     const response = await fetch(accessTokenUrl, {
       method: "POST",
       headers: {
@@ -182,7 +267,6 @@ export async function GET(req: NextRequest) {
 
     console.log("✅ Got access token for user:", screenName);
 
-    // Send to your backend
     const backendResponse = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/x/callback`,
       {
@@ -213,15 +297,12 @@ export async function GET(req: NextRequest) {
 
     console.log("✅ Successfully connected X account");
 
-    // Success - clean up and redirect
     const successResponse = NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=x&status=success`
     );
     successResponse.cookies.delete("x_oauth_token_secret");
     successResponse.cookies.delete("oauth_workspace_id");
-
     return successResponse;
-
   } catch (error) {
     console.error("❌ OAuth callback error:", error);
     const errorResponse = NextResponse.redirect(

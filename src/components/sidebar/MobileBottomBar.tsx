@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   ArrowLeftRight as ArrowsLeftRight,
   BarChart3 as ChartBar,
+  BriefcaseBusiness,
   Building2 as Buildings,
   Calendar,
   CalendarCheck,
@@ -14,6 +15,7 @@ import {
   FilePen as NotePencil,
   History as ClockCounterClockwise,
   Home,
+  LibraryBig,
   LogOut as SignOut,
   Plug,
   Send as PaperPlaneTilt,
@@ -34,11 +36,13 @@ export function MobileBottomBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
-  const { canWrite, canSeeApprovalQueue, isOwner } = useRole();
+  const { canWrite, canSeeAgencyOps, canSeeApprovalQueue, isOwner, canManageAssetLibrary } = useRole();
   const { workspaces, activeWorkspace, switchWorkspace } = useWorkspace();
 
   const drawerItems = [
     { title: "Analytics",        url: "/analytics",         icon: ChartBar },
+    ...(canWrite || canManageAssetLibrary ? [{ title: "Asset Library", url: "/asset-library", icon: LibraryBig }] : []),
+    ...(canSeeAgencyOps ? [{ title: "Agency Ops", url: "/agency-ops", icon: BriefcaseBusiness }] : []),
     ...(canSeeApprovalQueue ? [{ title: "Approvals", url: "/approvals", icon: Check }] : []),
     { title: "Drafts",           url: "/drafts",            icon: NotePencil },
     { title: "Published Posts",  url: "/published-posts",   icon: CalendarCheck },

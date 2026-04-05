@@ -1,10 +1,15 @@
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
+import type { WorkspaceApprovalMode } from "@/model/Workspace";
 import { workspaceIdHeader } from "@/lib/api-headers";
 
 export async function scheduleDraftCollectionApi(
   getToken: () => Promise<string | null>,
   collectionId: number,
-  scheduledTime: string
+  scheduledTime: string,
+  options?: {
+    approvalModeOverride?: WorkspaceApprovalMode | null;
+    clearApprovalModeOverride?: boolean;
+  }
 ): Promise<PostCollectionResponse> {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
   const token = await getToken();
@@ -17,7 +22,11 @@ export async function scheduleDraftCollectionApi(
       Authorization: `Bearer ${token}`,
       ...workspaceIdHeader(),
     },
-    body: JSON.stringify({ scheduledTime }),
+    body: JSON.stringify({
+      scheduledTime,
+      approvalModeOverride: options?.approvalModeOverride ?? undefined,
+      clearApprovalModeOverride: options?.clearApprovalModeOverride ?? undefined,
+    }),
   });
 
   const body = await res.text();

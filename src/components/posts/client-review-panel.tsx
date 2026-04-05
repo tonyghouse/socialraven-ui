@@ -4,11 +4,22 @@ import AtlassianButton from "@atlaskit/button/new";
 import Lozenge from "@atlaskit/lozenge";
 import SectionMessage from "@atlaskit/section-message";
 import { useAuth } from "@clerk/nextjs";
-import { Copy, Globe2, Link2, Loader2, Trash2 } from "lucide-react";
+import {
+  Copy,
+  Globe2,
+  Layers3,
+  Link2,
+  Loader2,
+  LockKeyhole,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
-import type { PostCollectionReviewLink } from "@/model/ReviewLink";
+import type {
+  PostCollectionReviewLink,
+  ReviewLinkShareScope,
+} from "@/model/ReviewLink";
 import {
   createPostCollectionReviewLinkApi,
   getPostCollectionReviewLinksApi,
@@ -24,7 +35,7 @@ const LINK_EXPIRY_OPTIONS = [
 
 function formatTimestamp(value: string | null) {
   if (!value) return null;
-  return new Date(value).toLocaleString("en-US", {
+  return new Date(value).toLocaleString(undefined, {
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -34,6 +45,17 @@ function formatTimestamp(value: string | null) {
 
 function isDraftWorkflowStatus(status: PostCollectionResponse["overallStatus"]) {
   return status === "DRAFT" || status === "IN_REVIEW" || status === "CHANGES_REQUESTED";
+}
+
+function getCollectionPostLabel(collection: PostCollectionResponse, postId: number) {
+  const post = collection.posts.find((item) => item.id === postId);
+  if (!post) {
+    return `Post #${postId}`;
+  }
+  const username = post.connectedAccount?.username
+    ? ` · ${post.connectedAccount.username}`
+    : "";
+  return `${post.provider}${username}`;
 }
 
 export function ClientReviewPanel({
@@ -49,6 +71,9 @@ export function ClientReviewPanel({
   const [creating, setCreating] = useState(false);
   const [actingLinkId, setActingLinkId] = useState<string | null>(null);
   const [selectedHours, setSelectedHours] = useState<number>(LINK_EXPIRY_OPTIONS[2].hours);
+  const [shareScope, setShareScope] = useState<ReviewLinkShareScope>("CAMPAIGN");
+  const [selectedPostIds, setSelectedPostIds] = useState<number[]>([]);
+  const [passcode, setPasscode] = useState("");
 
   useEffect(() => {
     if (!canShareReviewLinks) return;
@@ -79,6 +104,12 @@ export function ClientReviewPanel({
     };
   }, [canShareReviewLinks, collection.id, getToken]);
 
+  useEffect(() => {
+    setShareScope("CAMPAIGN");
+    setSelectedPostIds(collection.posts.length === 1 ? [collection.posts[0].id] : []);
+    setPasscode("");
+  }, [collection.id, collection.posts]);
+
   if (!canShareReviewLinks) {
     return null;
   }
@@ -88,14 +119,41 @@ export function ClientReviewPanel({
     setLinks(next);
   }
 
+  function toggleSelectedPost(postId: number) {
+    setSelectedPostIds((current) =>
+      current.includes(postId)
+        ? current.filter((item) => item !== postId)
+        : [...current, postId]
+    );
+  }
+
   async function handleCreateLink() {
+    const normalizedPasscode = passcode.trim();
+    if (normalizedPasscode && (normalizedPasscode.length < 6 || normalizedPasscode.length > 64)) {
+      toast.error("Passcodes must be between 6 and 64 characters.");
+      return;
+    }
+    if (shareScope === "SELECTED_POSTS" && selectedPostIds.length === 0) {
+      toast.error("Select at least one post variant to share.");
+      return;
+    }
+
     setCreating(true);
     try {
       const expiresAt = new Date(Date.now() + selectedHours * 60 * 60 * 1000).toISOString();
-      const created = await createPostCollectionReviewLinkApi(getToken, collection.id, { expiresAt });
+      const created = await createPostCollectionReviewLinkApi(getToken, collection.id, {
+        expiresAt,
+        passcode: normalizedPasscode || undefined,
+        shareScope,
+        sharedPostIds: shareScope === "SELECTED_POSTS" ? selectedPostIds : undefined,
+      });
       setLinks((current) => [created, ...current]);
       await copyLink(created.token);
-      toast.success("Review link created and copied.");
+      toast.success(
+        created.passcodeProtected
+          ? "Review link created and copied. Send the passcode separately."
+          : "Review link created and copied."
+      );
     } catch (err: any) {
       toast.error(err?.message ?? "Failed to create review link.");
     } finally {
@@ -111,7 +169,11 @@ export function ClientReviewPanel({
   async function handleCopy(link: PostCollectionReviewLink) {
     try {
       await copyLink(link.token);
-      toast.success("Review link copied.");
+      toast.success(
+        link.passcodeProtected
+          ? "Review link copied. Send the passcode separately."
+          : "Review link copied."
+      );
     } catch {
       toast.error("Failed to copy review link.");
     }
@@ -128,6 +190,16 @@ export function ClientReviewPanel({
     } finally {
       setActingLinkId(null);
     }
+  }
+
+  function describeLinkScope(link: PostCollectionReviewLink) {
+    if (link.shareScope !== "SELECTED_POSTS") {
+      return "Full campaign review";
+    }
+    if (link.sharedPostIds.length === 0) {
+      return "Selected post review";
+    }
+    return link.sharedPostIds.map((postId) => getCollectionPostLabel(collection, postId)).join(", ");
   }
 
   const canCreateLink = isDraftWorkflowStatus(collection.overallStatus);
@@ -162,51 +234,142 @@ export function ClientReviewPanel({
           </SectionMessage>
         )}
 
-        <div className="flex flex-wrap items-center gap-3 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4">
-          <div className="min-w-[160px]">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
-              Link expiry
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {LINK_EXPIRY_OPTIONS.map((option) => (
-                <button
-                  key={option.hours}
-                  type="button"
+        <div className="space-y-4 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                  Share scope
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {([
+                    {
+                      value: "CAMPAIGN",
+                      label: "Full campaign",
+                    },
+                    {
+                      value: "SELECTED_POSTS",
+                      label: "Selected posts",
+                    },
+                  ] as const).map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      disabled={creating || !canCreateLink}
+                      onClick={() => setShareScope(option.value)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                        shareScope === option.value
+                          ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
+                      } ${creating || !canCreateLink ? "cursor-not-allowed opacity-60" : ""}`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {shareScope === "SELECTED_POSTS" && (
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                    Included post variants
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {collection.posts.map((post) => {
+                      const selected = selectedPostIds.includes(post.id);
+                      return (
+                        <button
+                          key={post.id}
+                          type="button"
+                          disabled={creating || !canCreateLink}
+                          onClick={() => toggleSelectedPost(post.id)}
+                          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                            selected
+                              ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                              : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
+                          } ${creating || !canCreateLink ? "cursor-not-allowed opacity-60" : ""}`}
+                        >
+                          {getCollectionPostLabel(collection, post.id)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-xs text-[hsl(var(--foreground-muted))]">
+                    Selected-post links are feedback-only. Final approve/reject stays on the full
+                    campaign review link.
+                  </p>
+                </div>
+              )}
+
+              <label className="block">
+                <span className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                  Optional passcode
+                </span>
+                <input
+                  value={passcode}
+                  onChange={(event) => setPasscode(event.target.value)}
                   disabled={creating || !canCreateLink}
-                  onClick={() => setSelectedHours(option.hours)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                    selectedHours === option.hours
-                      ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                      : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
-                  } ${creating || !canCreateLink ? "cursor-not-allowed opacity-60" : ""}`}
-                >
-                  {option.label}
-                </button>
-              ))}
+                  placeholder="Add a separate passcode"
+                  type="password"
+                  className="mt-2 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                />
+              </label>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                  Link expiry
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {LINK_EXPIRY_OPTIONS.map((option) => (
+                    <button
+                      key={option.hours}
+                      type="button"
+                      disabled={creating || !canCreateLink}
+                      onClick={() => setSelectedHours(option.hours)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                        selectedHours === option.hours
+                          ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
+                      } ${creating || !canCreateLink ? "cursor-not-allowed opacity-60" : ""}`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <AtlassianButton
+                appearance="primary"
+                isDisabled={creating || !canCreateLink}
+                onClick={handleCreateLink}
+              >
+                <span className="inline-flex items-center gap-2">
+                  {creating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span>Creating…</span>
+                    </>
+                  ) : (
+                    <>
+                      <Link2 className="h-4 w-4" />
+                      <span>Create Review Link</span>
+                    </>
+                  )}
+                </span>
+              </AtlassianButton>
             </div>
           </div>
 
-          <div className="ml-auto">
-            <AtlassianButton
-              appearance="primary"
-              isDisabled={creating || !canCreateLink}
-              onClick={handleCreateLink}
-            >
-              <span className="inline-flex items-center gap-2">
-                {creating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Creating…</span>
-                  </>
-                ) : (
-                  <>
-                    <Link2 className="h-4 w-4" />
-                    <span>Create Review Link</span>
-                  </>
-                )}
-              </span>
-            </AtlassianButton>
-          </div>
+          {passcode.trim().length > 0 && (
+            <SectionMessage appearance="information" title="Passcodes are never embedded in the URL">
+              <p className="text-sm">
+                Send the copied link and the passcode separately. This keeps review access tighter
+                for client contacts in the US and EU.
+              </p>
+            </SectionMessage>
+          )}
         </div>
 
         {error && (
@@ -243,6 +406,20 @@ export function ClientReviewPanel({
                         <Lozenge appearance={link.active ? "success" : "moved"}>
                           {link.active ? "Active" : link.revokedAt ? "Revoked" : "Expired"}
                         </Lozenge>
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-2.5 py-1 text-xs font-medium text-[hsl(var(--foreground-muted))]">
+                          <Layers3 className="h-3.5 w-3.5" />
+                          <span>
+                            {link.shareScope === "SELECTED_POSTS"
+                              ? "Selected posts"
+                              : "Full campaign"}
+                          </span>
+                        </span>
+                        {link.passcodeProtected && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/25 bg-[hsl(var(--accent))]/10 px-2.5 py-1 text-xs font-medium text-[hsl(var(--accent))]">
+                            <LockKeyhole className="h-3.5 w-3.5" />
+                            <span>Passcode protected</span>
+                          </span>
+                        )}
                         <span className="text-xs text-[hsl(var(--foreground-muted))]">
                           Expires {formatTimestamp(link.expiresAt)}
                         </span>
@@ -250,6 +427,9 @@ export function ClientReviewPanel({
                       <p className="text-sm text-[hsl(var(--foreground-muted))]">
                         Created by {link.createdByDisplayName}
                         {link.createdAt ? ` · ${formatTimestamp(link.createdAt)}` : ""}
+                      </p>
+                      <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                        {describeLinkScope(link)}
                       </p>
                     </div>
 

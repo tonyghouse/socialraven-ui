@@ -11,13 +11,31 @@ import type { PostCollaborationThread } from "@/model/PostCollaboration";
 type GetToken = () => Promise<string | null>;
 
 const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
+const REVIEW_LINK_PASSCODE_HEADER = "X-Review-Link-Passcode";
 
 async function parseJsonResponse<T>(res: Response): Promise<T> {
   const body = await res.text();
   if (!res.ok) {
-    throw new Error(`Backend error: ${res.status} - ${body}`);
+    const error = new Error(`Backend error: ${res.status} - ${body}`) as Error & {
+      status?: number;
+      body?: string;
+    };
+    error.status = res.status;
+    error.body = body;
+    throw error;
   }
   return JSON.parse(body) as T;
+}
+
+function publicReviewHeaders(passcode?: string): HeadersInit {
+  const headers: Record<string, string> = {
+    Accept: "application/json",
+  };
+  const normalizedPasscode = passcode?.trim();
+  if (normalizedPasscode) {
+    headers[REVIEW_LINK_PASSCODE_HEADER] = normalizedPasscode;
+  }
+  return headers;
 }
 
 export async function getPostCollectionReviewLinksApi(
@@ -78,22 +96,24 @@ export async function revokePostCollectionReviewLinkApi(
 }
 
 export async function getPublicPostCollectionReviewApi(
-  token: string
+  token: string,
+  passcode?: string
 ): Promise<PublicPostCollectionReviewResponse> {
   const res = await fetch(`${BACKEND}/public/review-links/${token}`, {
-    headers: { Accept: "application/json" },
+    headers: publicReviewHeaders(passcode),
   });
   return parseJsonResponse<PublicPostCollectionReviewResponse>(res);
 }
 
 export async function addPublicReviewCommentApi(
   token: string,
-  request: PublicReviewCommentRequest
+  request: PublicReviewCommentRequest,
+  passcode?: string
 ): Promise<PostCollaborationThread> {
   const res = await fetch(`${BACKEND}/public/review-links/${token}/comments`, {
     method: "POST",
     headers: {
-      Accept: "application/json",
+      ...publicReviewHeaders(passcode),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(request),
@@ -104,12 +124,13 @@ export async function addPublicReviewCommentApi(
 async function postPublicDecision(
   token: string,
   action: "approve" | "reject",
-  request: PublicReviewDecisionRequest
+  request: PublicReviewDecisionRequest,
+  passcode?: string
 ): Promise<PublicPostCollectionReviewResponse> {
   const res = await fetch(`${BACKEND}/public/review-links/${token}/${action}`, {
     method: "POST",
     headers: {
-      Accept: "application/json",
+      ...publicReviewHeaders(passcode),
       "Content-Type": "application/json",
     },
     body: JSON.stringify(request),
@@ -119,14 +140,16 @@ async function postPublicDecision(
 
 export function approvePublicReviewApi(
   token: string,
-  request: PublicReviewDecisionRequest
+  request: PublicReviewDecisionRequest,
+  passcode?: string
 ) {
-  return postPublicDecision(token, "approve", request);
+  return postPublicDecision(token, "approve", request, passcode);
 }
 
 export function rejectPublicReviewApi(
   token: string,
-  request: PublicReviewDecisionRequest
+  request: PublicReviewDecisionRequest,
+  passcode?: string
 ) {
-  return postPublicDecision(token, "reject", request);
+  return postPublicDecision(token, "reject", request, passcode);
 }

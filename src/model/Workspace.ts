@@ -1,5 +1,6 @@
 export type WorkspaceRole = "OWNER" | "ADMIN" | "EDITOR" | "READ_ONLY";
 export type WorkspaceApprovalMode = "NONE" | "OPTIONAL" | "REQUIRED" | "MULTI_STEP";
+export type WorkspaceApprovalRuleScope = "ACCOUNT" | "CONTENT_TYPE";
 export type WorkspaceCapability =
   | "APPROVE_POSTS"
   | "PUBLISH_POSTS"
@@ -8,6 +9,13 @@ export type WorkspaceCapability =
   | "SHARE_REVIEW_LINKS"
   | "MANAGE_ASSET_LIBRARY"
   | "EXPORT_CLIENT_REPORTS";
+
+export interface WorkspaceApprovalRule {
+  id: number;
+  scopeType: WorkspaceApprovalRuleScope;
+  scopeValue: string;
+  approvalMode: WorkspaceApprovalMode;
+}
 
 export interface WorkspaceResponse {
   id: string;
@@ -18,8 +26,11 @@ export interface WorkspaceResponse {
   logoS3Key: string | null;
   role: WorkspaceRole;
   approvalMode: WorkspaceApprovalMode;
+  autoScheduleAfterApproval: boolean;
   ownerFinalApprovalRequired: boolean;
   approverUserIds: string[];
+  publisherUserIds: string[];
+  approvalRules: WorkspaceApprovalRule[];
   capabilities: WorkspaceCapability[];
   createdAt: string;
   updatedAt: string;

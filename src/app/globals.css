@@ -232,6 +232,19 @@
   }
 }
 
+@media print {
+  @page {
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    background: #fff;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
 .dark .schedule-date-picker button svg {
   color: hsl(var(--foreground-muted));
 }

@@ -3,6 +3,7 @@ export type PostCollaborationVisibility = "INTERNAL" | "CLIENT_VISIBLE";
 export type PostCollaborationThreadStatus = "OPEN" | "RESOLVED";
 export type PostCollaborationSuggestionStatus = "PENDING" | "ACCEPTED" | "REJECTED";
 export type PostCollaborationAuthorType = "WORKSPACE_USER" | "CLIENT_REVIEWER";
+export type PostCollaborationAnnotationMode = "NONE" | "CAPTION" | "MEDIA";
 
 export interface PostCollaborationMention {
   userId: string;
@@ -32,6 +33,9 @@ export interface PostCollaborationThread {
   anchorStart: number | null;
   anchorEnd: number | null;
   anchorText: string | null;
+  mediaId: number | null;
+  mediaMarkerX: number | null;
+  mediaMarkerY: number | null;
   suggestedText: string | null;
   suggestionStatus: PostCollaborationSuggestionStatus | null;
   suggestionDecidedByUserId: string | null;
@@ -53,10 +57,28 @@ export interface CreatePostCollaborationThreadRequest {
   anchorStart?: number;
   anchorEnd?: number;
   anchorText?: string;
+  mediaId?: number;
+  mediaMarkerX?: number;
+  mediaMarkerY?: number;
   suggestedText?: string;
 }
 
 export interface CreatePostCollaborationReplyRequest {
   body: string;
   mentionUserIds?: string[];
+}
+
+export function getPostCollaborationAnnotationMode(
+  thread: Pick<
+    PostCollaborationThread,
+    "anchorStart" | "anchorEnd" | "anchorText" | "mediaId" | "mediaMarkerX" | "mediaMarkerY"
+  >
+): PostCollaborationAnnotationMode {
+  if (thread.mediaId !== null || thread.mediaMarkerX !== null || thread.mediaMarkerY !== null) {
+    return "MEDIA";
+  }
+  if (thread.anchorStart !== null || thread.anchorEnd !== null || thread.anchorText !== null) {
+    return "CAPTION";
+  }
+  return "NONE";
 }

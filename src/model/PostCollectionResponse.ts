@@ -34,6 +34,7 @@ export interface PostCollectionVersionResponse {
     | "CHANGES_REQUESTED"
     | "REAPPROVAL_REQUIRED"
     | "SCHEDULED_DIRECT"
+    | "SCHEDULED_AFTER_APPROVAL"
     | "RECOVERY_CREATED";
   actorType: "WORKSPACE_USER" | "CLIENT_REVIEWER" | "SYSTEM";
   actorUserId: string | null;
@@ -61,6 +62,22 @@ export interface PostCollectionApprovalDiffResponse {
   changes: PostCollectionApprovalDiffItemResponse[];
 }
 
+export interface PostCollectionActivityTimelineEntryResponse {
+  eventKey: string;
+  category: "WORKFLOW" | "VERSION" | "SYSTEM" | string;
+  eventType: string;
+  label: string;
+  actorType: "WORKSPACE_USER" | "CLIENT_REVIEWER" | "SYSTEM";
+  actorUserId: string | null;
+  actorDisplayName: string;
+  createdAt: string;
+  note: string | null;
+  fromStatus: "DRAFT" | "IN_REVIEW" | "CHANGES_REQUESTED" | "APPROVED" | null;
+  toStatus: "DRAFT" | "IN_REVIEW" | "CHANGES_REQUESTED" | "APPROVED" | null;
+  versionNumber: number | null;
+  scheduledTime: string | null;
+}
+
 export interface PostCollectionResponse {
   id: number;
   description: string;
@@ -70,11 +87,14 @@ export interface PostCollectionResponse {
     | "DRAFT"
     | "IN_REVIEW"
     | "CHANGES_REQUESTED"
+    | "APPROVED"
     | "SCHEDULED"
     | "PUBLISHED"
     | "PARTIAL_SUCCESS"
     | "FAILED";
   reviewStatus: "DRAFT" | "IN_REVIEW" | "CHANGES_REQUESTED" | "APPROVED";
+  approvalModeOverride: "NONE" | "OPTIONAL" | "REQUIRED" | "MULTI_STEP" | null;
+  effectiveApprovalMode: "NONE" | "OPTIONAL" | "REQUIRED" | "MULTI_STEP";
   reviewSubmittedAt: string | null;
   approvedAt: string | null;
   approvalLocked: boolean;
@@ -91,6 +111,7 @@ export interface PostCollectionResponse {
   approvalEscalatedAt?: string | null;
   versionHistory?: PostCollectionVersionResponse[] | null;
   approvedDiff?: PostCollectionApprovalDiffResponse | null;
+  activityTimeline?: PostCollectionActivityTimelineEntryResponse[] | null;
   platformConfigs?: Record<string, any>;
   failureState?: "NONE" | "RECOVERY_REQUIRED" | "RECOVERED" | "ESCALATED_TO_ADMIN";
   failureReasonSummary?: string | null;

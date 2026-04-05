@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import LinkNewAccountSection from "@/components/connect-accounts/link-new-account-section";
 import ConnectedAccountsSection from "@/components/connect-accounts/connected-accounts-section";
+import ClientConnectionHandoffSection from "@/components/connect-accounts/client-connection-handoff-section";
 import {
   Link2,
   PlugZap,
@@ -117,6 +118,8 @@ export default function ManageAccountsPage() {
               <LinkNewAccountSection />
             </div>
           )}
+
+          {canWrite && <ClientConnectionHandoffSection />}
 
           <div>
             <ConnectedAccountsSection

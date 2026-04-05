@@ -30,6 +30,24 @@ import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { useRole } from "@/hooks/useRole";
+import { WorkspaceApprovalMode } from "@/model/Workspace";
+import {
+  approvalModeDescription,
+  approvalModeLabel,
+  canDirectScheduleForMode,
+  resolveWorkspaceApprovalMode,
+} from "@/lib/approval-workflow";
+import type { ComposerLibraryAsset } from "@/lib/workspace-library";
+import {
+  appendTextBlock,
+  applyFirstCommentSnippet,
+  buildComposerLibraryAssets,
+  buildPseudoFilesFromLibraryAssets,
+  dedupeLibraryAssets,
+  filterRelevantBundleItems,
+  mergePlatformConfigs,
+} from "@/lib/workspace-library";
+import type { WorkspaceLibraryBundle, WorkspaceLibraryItem } from "@/model/WorkspaceLibrary";
 
 import PostTypeSelector from "@/components/schedule-post/post-type-selector";
 import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
@@ -38,6 +56,8 @@ import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker"
 import PlatformCharLimits from "@/components/schedule-post/platform-char-limits";
 import MediaValidationPanel from "@/components/schedule-post/media-validation-panel";
 import PlatformConfigsPanel from "@/components/schedule-post/platform-configs-panel";
+import { LibraryComposerPanel } from "@/components/workspace-library/library-composer-panel";
+import { SelectedLibraryAssets } from "@/components/workspace-library/selected-library-assets";
 
 // ── Post type meta ─────────────────────────────────────────────────────────────
 
@@ -63,6 +83,7 @@ const PLATFORM_LABELS: Record<string, string> = {
   facebook: "Facebook", instagram: "Instagram", x: "X",
   linkedin: "LinkedIn", youtube: "YouTube",    threads: "Threads", tiktok: "TikTok",
 };
+const DEFAULT_APPROVAL_OVERRIDE = "DEFAULT";
 
 // ── Accordion step card ────────────────────────────────────────────────────────
 
@@ -209,7 +230,7 @@ export default function ScheduledPostCollectionPage() {
   const { isLoaded, getToken } = useAuth();
   const searchParams = useSearchParams();
   const { activeWorkspace } = useWorkspace();
-  const { canPublishPosts } = useRole();
+  const { canManageApprovalRules, canPublishPosts } = useRole();
 
   const initialDate = searchParams.get("date") ?? "";
   const initialTime = searchParams.get("time") ?? "";
@@ -223,9 +244,13 @@ export default function ScheduledPostCollectionPage() {
   // ── Form state ───────────────────────────────────────────────────────────────
   const [description, setDescription] = useState("");
   const [files, setFiles]             = useState<File[]>([]);
+  const [selectedLibraryAssets, setSelectedLibraryAssets] = useState<ComposerLibraryAsset[]>([]);
   const [date, setDate]               = useState(initialDate);
   const [time, setTime]               = useState(initialTime);
   const [platformConfigs, setPlatformConfigs] = useState<PlatformConfigs>({});
+  const [approvalModeOverrideInput, setApprovalModeOverrideInput] = useState<
+    WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
+  >(DEFAULT_APPROVAL_OVERRIDE);
 
   // ── Submission state ─────────────────────────────────────────────────────────
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -269,6 +294,7 @@ export default function ScheduledPostCollectionPage() {
     () => postType && postType !== "TEXT" ? getEffectiveMaxFiles(selectedPlatforms, postType) : 0,
     [selectedPlatforms, postType],
   );
+  const availableUploadSlots = Math.max(0, effectiveMaxFiles - selectedLibraryAssets.length);
   const restrictivePlatform = useMemo(
     () => postType && postType !== "TEXT" ? getMostRestrictivePlatform(selectedPlatforms, postType) : null,
     [selectedPlatforms, postType],
@@ -276,11 +302,25 @@ export default function ScheduledPostCollectionPage() {
   const restrictivePlatformLabel = restrictivePlatform
     ? (PLATFORM_DISPLAY_NAMES[restrictivePlatform] ?? restrictivePlatform)
     : undefined;
+  const totalMediaCount = files.length + selectedLibraryAssets.length;
+  const pseudoLibraryFiles = useMemo(
+    () => buildPseudoFilesFromLibraryAssets(selectedLibraryAssets),
+    [selectedLibraryAssets],
+  );
 
   const syncMediaErrors = useMemo(
-    () => (postType && postType !== "TEXT" ? validateMediaSync(files, selectedPlatforms, postType) : []),
+    () => (
+      postType && postType !== "TEXT"
+        ? validateMediaSync([...files, ...pseudoLibraryFiles], selectedPlatforms, postType)
+        : []
+    ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [files.map((f) => f.name + f.size).join(","), selectedPlatforms.join(","), postType],
+    [
+      files.map((f) => f.name + f.size).join(","),
+      pseudoLibraryFiles.map((f) => f.name + f.size).join(","),
+      selectedPlatforms.join(","),
+      postType,
+    ],
   );
 
   useEffect(() => {
@@ -303,11 +343,21 @@ export default function ScheduledPostCollectionPage() {
   // ── Completeness flags ───────────────────────────────────────────────────────
   const step1Complete = postType !== null;
   const step2Complete = postType !== null && selectedAccountIds.length > 0;
-  const step3Complete = postType !== null && description.trim().length > 0 && (postType === "TEXT" || files.length > 0);
+  const step3Complete =
+    postType !== null && description.trim().length > 0 && (postType === "TEXT" || totalMediaCount > 0);
   const step4Complete = !!date && !!time;
-  const canDirectSchedule =
-    activeWorkspace?.approvalMode === "NONE" ||
-    (activeWorkspace?.approvalMode === "OPTIONAL" && canPublishPosts);
+  const effectiveApprovalMode = resolveWorkspaceApprovalMode(activeWorkspace, {
+    approvalModeOverride:
+      approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE
+        ? null
+        : approvalModeOverrideInput,
+    providerUserIds: selectedAccountIds,
+    postType,
+  });
+  const canDirectSchedule = canDirectScheduleForMode(
+    effectiveApprovalMode,
+    canPublishPosts
+  );
   const submitActionLabel = canDirectSchedule ? "Schedule" : "Submit for Review";
   const step4Title = canDirectSchedule ? "Schedule & Publish" : "Schedule & Review";
   const step4Description = canDirectSchedule
@@ -336,7 +386,9 @@ export default function ScheduledPostCollectionPage() {
     setSelectedAccountIds([]);
     setDescription("");
     setFiles([]);
+    setSelectedLibraryAssets([]);
     setPlatformConfigs({});
+    setApprovalModeOverrideInput(DEFAULT_APPROVAL_OVERRIDE);
     setMediaErrors([]);
     setShowErrors(false);
     // Reset progress and advance to step 2
@@ -349,9 +401,11 @@ export default function ScheduledPostCollectionPage() {
     setSelectedAccountIds([]);
     setDescription("");
     setFiles([]);
+    setSelectedLibraryAssets([]);
     setDate(initialDate);
     setTime(initialTime);
     setPlatformConfigs({});
+    setApprovalModeOverrideInput(DEFAULT_APPROVAL_OVERRIDE);
     setShowErrors(false);
     setMediaErrors([]);
     setActiveStep(1);
@@ -359,12 +413,118 @@ export default function ScheduledPostCollectionPage() {
   }
 
   // ── Submit ────────────────────────────────────────────────────────────────────
+  function applyLibrarySnippet(item: WorkspaceLibraryItem) {
+    if (!item.body?.trim()) {
+      toast.error("This snippet does not contain any content.");
+      return;
+    }
+
+    if (item.snippetTarget === "FIRST_COMMENT") {
+      const result = applyFirstCommentSnippet(platformConfigs, selectedPlatforms, item.body);
+      if (result.appliedPlatforms.length === 0) {
+        toast.error("Select Facebook or Instagram accounts before applying a first-comment snippet.");
+        return;
+      }
+      setPlatformConfigs(result.platformConfigs);
+      toast.success(`Applied "${item.name}" to first comments.`);
+      return;
+    }
+
+    setDescription((current) => appendTextBlock(current, item.body));
+    toast.success(`Applied snippet "${item.name}".`);
+  }
+
+  function applyLibraryTemplate(item: WorkspaceLibraryItem) {
+    if (item.postCollectionType !== postType) {
+      toast.error(`"${item.name}" does not match the selected content type.`);
+      return false;
+    }
+
+    if (
+      item.body?.trim() &&
+      description.trim() &&
+      description.trim() !== item.body.trim() &&
+      !window.confirm("Replace the current caption with this template's body content?")
+    ) {
+      return false;
+    }
+
+    if (item.body?.trim()) {
+      setDescription(item.body.trim());
+    }
+    setPlatformConfigs((current) => mergePlatformConfigs(current, item.platformConfigs));
+    toast.success(`Applied template "${item.name}".`);
+    return true;
+  }
+
+  function applyLibraryAssets(item: WorkspaceLibraryItem) {
+    const assets = buildComposerLibraryAssets(item);
+    if (assets.length === 0) {
+      toast.error("This asset does not contain reusable media.");
+      return;
+    }
+    setSelectedLibraryAssets((current) => dedupeLibraryAssets(current, assets));
+    toast.success(`Added ${assets.length} reusable asset${assets.length === 1 ? "" : "s"} from "${item.name}".`);
+  }
+
+  async function handleApplyLibraryItem(item: WorkspaceLibraryItem) {
+    if (!postType) {
+      return;
+    }
+    if (item.itemType === "SNIPPET") {
+      applyLibrarySnippet(item);
+      return;
+    }
+    if (item.itemType === "TEMPLATE") {
+      applyLibraryTemplate(item);
+      return;
+    }
+    applyLibraryAssets(item);
+  }
+
+  async function handleApplyLibraryBundle(bundle: WorkspaceLibraryBundle) {
+    if (!postType) {
+      return;
+    }
+    const relevantItems = filterRelevantBundleItems(bundle, postType);
+    if (relevantItems.length === 0) {
+      toast.error("This bundle does not contain usable items for the current composer.");
+      return;
+    }
+
+    let appliedCount = 0;
+    let templateApplied = false;
+    for (const item of relevantItems) {
+      if (item.itemType === "TEMPLATE") {
+        if (templateApplied) {
+          continue;
+        }
+        if (applyLibraryTemplate(item)) {
+          templateApplied = true;
+          appliedCount += 1;
+        }
+        continue;
+      }
+      if (item.itemType === "SNIPPET") {
+        applyLibrarySnippet(item);
+        appliedCount += 1;
+        continue;
+      }
+      applyLibraryAssets(item);
+      appliedCount += 1;
+    }
+
+    if (appliedCount > 0) {
+      toast.success(`Applied ${appliedCount} bundle item${appliedCount === 1 ? "" : "s"} from "${bundle.name}".`);
+    }
+  }
+
   async function submit() {
     setShowErrors(true);
 
     if (!postType)                         { toast.error("Please choose a content type");             return; }
     if (!description.trim())             { toast.error("Please write a caption");                     return; }
-    if (postType !== "TEXT" && files.length === 0) { toast.error("Please upload at least one file"); return; }
+    if (postType !== "TEXT" && totalMediaCount === 0) { toast.error("Please upload or attach at least one file"); return; }
     if (!date || !time)                  { toast.error("Please select a date and time");              return; }
     if (selectedAccountIds.length === 0) { toast.error("Please select at least one account");        return; }
 
@@ -392,7 +552,13 @@ export default function ScheduledPostCollectionPage() {
 
     setSubmitLoading(true);
     try {
-      const media = [];
+      const media = selectedLibraryAssets.map((asset) => ({
+        fileName: asset.fileName,
+        mimeType: asset.mimeType,
+        fileUrl: asset.fileUrl ?? "",
+        fileKey: asset.fileKey,
+        size: asset.size ?? 0,
+      }));
       for (const file of files) {
         if (postType === "VIDEO" && !file.type.startsWith("video/")) continue;
         const { uploadUrl, fileUrl, fileKey } = await getPresignedUrl(file, getToken);
@@ -409,6 +575,10 @@ export default function ScheduledPostCollectionPage() {
         connectedAccounts: selectedAccounts,
         scheduledTime: localToUTC(date, time),
         platformConfigs,
+        approvalModeOverride:
+          approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE
+            ? undefined
+            : approvalModeOverrideInput,
       });
 
       toast.success(
@@ -431,7 +601,13 @@ export default function ScheduledPostCollectionPage() {
 
     setDraftLoading(true);
     try {
-      const media = [];
+      const media = selectedLibraryAssets.map((asset) => ({
+        fileName: asset.fileName,
+        mimeType: asset.mimeType,
+        fileUrl: asset.fileUrl ?? "",
+        fileKey: asset.fileKey,
+        size: asset.size ?? 0,
+      }));
       for (const file of files) {
         if (postType === "VIDEO" && !file.type.startsWith("video/")) continue;
         const { uploadUrl, fileUrl, fileKey } = await getPresignedUrl(file, getToken);
@@ -445,6 +621,10 @@ export default function ScheduledPostCollectionPage() {
         media,
         connectedAccounts: selectedAccounts,
         platformConfigs,
+        approvalModeOverride:
+          approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE
+            ? undefined
+            : approvalModeOverrideInput,
         isDraft: true,
       });
 
@@ -495,9 +675,9 @@ export default function ScheduledPostCollectionPage() {
       <span className="font-medium truncate max-w-[160px] sm:max-w-[260px]">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
-          {postType && postType !== "TEXT" && files.length > 0 && (
+          {postType && postType !== "TEXT" && totalMediaCount > 0 && (
         <span className="text-xs text-muted-foreground flex-shrink-0">
-          · {files.length} {postType === "IMAGE" ? "image" : "video"}{files.length !== 1 ? "s" : ""}
+          · {totalMediaCount} {postType === "IMAGE" ? "image" : "video"}{totalMediaCount !== 1 ? "s" : ""}
         </span>
       )}
     </span>
@@ -601,6 +781,14 @@ export default function ScheduledPostCollectionPage() {
           onToggle={reachedStep >= 3 ? () => toggleStep(3) : undefined}
           summary={step3Summary}
         >
+          <div className="mb-6">
+            <LibraryComposerPanel
+              postType={postType}
+              onApplyItem={handleApplyLibraryItem}
+              onApplyBundle={handleApplyLibraryBundle}
+            />
+          </div>
+
           {/* Caption */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -652,15 +840,29 @@ export default function ScheduledPostCollectionPage() {
                   </span>
                 )}
               </div>
-              <MediaUploader
-                files={files}
-                setFiles={setFiles}
-                accept={postType === "IMAGE" ? "image/*" : "video/*"}
-                label={files.length === 0
-                  ? `Upload ${postType === "IMAGE" ? "Images" : "Video"}`
-                  : postType === "IMAGE" ? "Add More Images" : "Add Another Video"}
-                maxFiles={effectiveMaxFiles}
-                maxFilesLabel={restrictivePlatformLabel}
+              {availableUploadSlots > 0 ? (
+                <MediaUploader
+                  files={files}
+                  setFiles={setFiles}
+                  accept={postType === "IMAGE" ? "image/*" : "video/*"}
+                  label={files.length === 0
+                    ? `Upload ${postType === "IMAGE" ? "Images" : "Video"}`
+                    : postType === "IMAGE" ? "Add More Images" : "Add Another Video"}
+                  maxFiles={availableUploadSlots}
+                  maxFilesLabel={restrictivePlatformLabel}
+                />
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove a library asset to upload more files.
+                </p>
+              )}
+              <SelectedLibraryAssets
+                assets={selectedLibraryAssets}
+                onRemove={(fileKey) =>
+                  setSelectedLibraryAssets((current) =>
+                    current.filter((asset) => asset.fileKey !== fileKey)
+                  )
+                }
               />
               {selectedPlatforms.length > 0 && (
                 <MediaValidationPanel
@@ -668,7 +870,7 @@ export default function ScheduledPostCollectionPage() {
                   postType={postType}
                   errors={allMediaErrors}
                   validating={validatingMedia}
-                  hasFiles={files.length > 0}
+                  hasFiles={totalMediaCount > 0}
                 />
               )}
             </div>
@@ -706,6 +908,45 @@ export default function ScheduledPostCollectionPage() {
           summary={step4Summary ?? undefined}
         >
           <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
+
+          <div className="mt-4 rounded-xl border border-border-subtle bg-surface-raised p-4">
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-foreground">Effective approval mode</p>
+              <p className="text-xs leading-5 text-muted-foreground">
+                {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
+              </p>
+            </div>
+
+            {canManageApprovalRules ? (
+              <div className="mt-4 space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Campaign override
+                </label>
+                <select
+                  value={approvalModeOverrideInput}
+                  onChange={(event) =>
+                    setApprovalModeOverrideInput(
+                      event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
+                    )
+                  }
+                  className="flex h-10 w-full rounded-md border border-border-subtle bg-background px-3 text-sm text-foreground outline-none ring-0 transition-colors focus:border-primary"
+                >
+                  <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
+                  <option value="NONE">No approval required</option>
+                  <option value="OPTIONAL">Optional approval</option>
+                  <option value="REQUIRED">Required approval</option>
+                  <option value="MULTI_STEP">Multi-step approval</option>
+                </select>
+                <p className="text-xs leading-5 text-muted-foreground">
+                  Campaign overrides beat account and content-type rules for this collection only.
+                </p>
+              </div>
+            ) : (
+              <p className="mt-4 text-xs leading-5 text-muted-foreground">
+                Approval is resolved automatically from workspace policy, account rules, and content type.
+              </p>
+            )}
+          </div>
 
           <div className="flex gap-2 mt-6">
             <Button

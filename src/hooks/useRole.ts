@@ -1,5 +1,9 @@
 import { useWorkspace } from "@/context/WorkspaceContext";
-import { WorkspaceCapability, WorkspaceRole } from "@/model/Workspace";
+import {
+  WorkspaceCapability,
+  WorkspaceResponse,
+  WorkspaceRole,
+} from "@/model/Workspace";
 
 function defaultCapabilitiesForRole(role: WorkspaceRole): WorkspaceCapability[] {
   switch (role) {
@@ -11,6 +15,8 @@ function defaultCapabilitiesForRole(role: WorkspaceRole): WorkspaceCapability[] 
         "REQUEST_CHANGES",
         "MANAGE_APPROVAL_RULES",
         "SHARE_REVIEW_LINKS",
+        "MANAGE_ASSET_LIBRARY",
+        "EXPORT_CLIENT_REPORTS",
       ];
     case "EDITOR":
       return ["REQUEST_CHANGES"];
@@ -18,6 +24,17 @@ function defaultCapabilitiesForRole(role: WorkspaceRole): WorkspaceCapability[] 
     default:
       return [];
   }
+}
+
+function capabilitiesForWorkspace(
+  workspace: WorkspaceResponse | null | undefined
+): Set<WorkspaceCapability> {
+  const role: WorkspaceRole = workspace?.role ?? "READ_ONLY";
+  return new Set<WorkspaceCapability>(
+    workspace?.capabilities?.length
+      ? workspace.capabilities
+      : defaultCapabilitiesForRole(role)
+  );
 }
 
 /**
@@ -31,13 +48,16 @@ function defaultCapabilitiesForRole(role: WorkspaceRole): WorkspaceCapability[] 
  * - isOwner:             OWNER only            — billing tab, danger zone
  */
 export function useRole() {
-  const { activeWorkspace } = useWorkspace();
+  const { activeWorkspace, workspaces } = useWorkspace();
   const role: WorkspaceRole = activeWorkspace?.role ?? "READ_ONLY";
-  const capabilities = new Set<WorkspaceCapability>(
-    activeWorkspace?.capabilities?.length
-      ? activeWorkspace.capabilities
-      : defaultCapabilitiesForRole(role)
-  );
+  const capabilities = capabilitiesForWorkspace(activeWorkspace);
+  const canSeeAgencyOps = workspaces.some((workspace) => {
+    const workspaceCapabilities = capabilitiesForWorkspace(workspace);
+    return (
+      workspaceCapabilities.has("APPROVE_POSTS") ||
+      workspaceCapabilities.has("REQUEST_CHANGES")
+    );
+  });
 
   return {
     role,
@@ -50,6 +70,9 @@ export function useRole() {
     canRequestChanges: capabilities.has("REQUEST_CHANGES"),
     canManageApprovalRules: capabilities.has("MANAGE_APPROVAL_RULES"),
     canShareReviewLinks: capabilities.has("SHARE_REVIEW_LINKS"),
+    canManageAssetLibrary: capabilities.has("MANAGE_ASSET_LIBRARY"),
+    canExportClientReports: capabilities.has("EXPORT_CLIENT_REPORTS"),
+    canSeeAgencyOps,
     canSeeApprovalQueue:
       capabilities.has("APPROVE_POSTS") || capabilities.has("REQUEST_CHANGES"),
     isOwner: role === "OWNER",

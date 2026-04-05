@@ -10,6 +10,10 @@ import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { PlatformConfigs } from "@/model/PostCollection";
 import { updatePostCollectionApi } from "@/service/updatePostCollectionApi";
 import { localToUTC } from "@/lib/timeUtil";
+import {
+  approvalUpdateSuccessMessage,
+  confirmApprovalLockIfNeeded,
+} from "@/lib/approval-lock";
 import ScheduleDateTimePicker from "./date-time-picker";
 import PlatformCharLimits from "./platform-char-limits";
 import PlatformConfigsPanel from "./platform-configs-panel";
@@ -49,7 +53,8 @@ export default function EditTextForm({
   const isScheduled = collection.overallStatus === "SCHEDULED";
   const isDraft =
     collection.overallStatus === "DRAFT" ||
-    collection.overallStatus === "CHANGES_REQUESTED";
+    collection.overallStatus === "CHANGES_REQUESTED" ||
+    collection.overallStatus === "APPROVED";
 
   const scheduledDate = collection.scheduledTime ? new Date(collection.scheduledTime) : null;
 
@@ -104,6 +109,10 @@ export default function EditTextForm({
       toast.error(`Content exceeds the ${MAX_CHARS.toLocaleString()} character limit`);
       return;
     }
+    const acknowledgeApprovalLock = collection.approvalLocked;
+    if (!confirmApprovalLockIfNeeded(acknowledgeApprovalLock)) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -111,6 +120,7 @@ export default function EditTextForm({
         description: content,
         platformConfigs,
         connectedAccounts: selectedAccounts,
+        acknowledgeApprovalLock: acknowledgeApprovalLock || undefined,
       };
 
       if (isScheduled) {
@@ -118,7 +128,7 @@ export default function EditTextForm({
       }
 
       const updated = await updatePostCollectionApi(getToken, collectionId, payload);
-      toast.success("Post updated successfully!");
+      toast.success(approvalUpdateSuccessMessage(updated, "Post updated successfully!"));
       onSuccess(updated);
     } catch {
       toast.error("Failed to save. Please try again.");

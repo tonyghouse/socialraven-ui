@@ -2,6 +2,7 @@
 
 import {
   BarChart3 as ChartBar,
+  BriefcaseBusiness,
   Building2 as Buildings,
   Calendar,
   CalendarCheck,
@@ -10,6 +11,7 @@ import {
   CreditCard,
   FilePen as NotePencil,
   Home,
+  LibraryBig,
   Plug,
   Send as PaperPlaneTilt,
   History as ClockCounterClockwise,
@@ -35,7 +37,7 @@ import { ThemeSwitcher } from "@/components/theme/theme-switcher";
 export function AppSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
-  const { canWrite, canSeeApprovalQueue, isOwner } = useRole();
+  const { canWrite, canSeeAgencyOps, canSeeApprovalQueue, isOwner, canManageAssetLibrary } = useRole();
 
   const navGroups = [
     {
@@ -48,6 +50,8 @@ export function AppSidebar() {
       label: "Content",
       items: [
         ...(canWrite ? [{ title: "Schedule Post", url: "/schedule-post", icon: PaperPlaneTilt }] : []),
+        ...(canWrite || canManageAssetLibrary ? [{ title: "Asset Library", url: "/asset-library", icon: LibraryBig }] : []),
+        ...(canSeeAgencyOps ? [{ title: "Agency Ops", url: "/agency-ops", icon: BriefcaseBusiness }] : []),
         ...(canSeeApprovalQueue ? [{ title: "Approvals", url: "/approvals", icon: CheckCheck }] : []),
         { title: "Calendar", url: "/calendar", icon: Calendar },
         { title: "Scheduled Posts", url: "/scheduled-posts", icon: ClockCounterClockwise },

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
 import {
   AreaChart,
   Area,
@@ -20,6 +21,7 @@ import {
   Minus,
   RefreshCw,
   BarChart2,
+  FileText,
   Clock,
   MessageCircle,
   Share2,
@@ -49,6 +51,7 @@ import {
 } from "@/service/analytics";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { useRole } from "@/hooks/useRole";
 
 // ─── Platform meta ────────────────────────────────────────────────────────────
 
@@ -215,6 +218,7 @@ function AccountChip({
 
 export default function AnalyticsPage() {
   const { getToken } = useAuth();
+  const { canExportClientReports } = useRole();
 
   // ── Filters ──────────────────────────────────────────────────────────────
   const [dateRange, setDateRange]         = useState<DateRange>("30d");
@@ -355,6 +359,16 @@ export default function AnalyticsPage() {
                 </button>
               ))}
             </div>
+
+            {canExportClientReports && (
+              <Link
+                href="/client-reports"
+                className="inline-flex h-9 items-center gap-2 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm font-medium text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Client Reports</span>
+              </Link>
+            )}
 
             <button
               onClick={fetchAnalytics}
