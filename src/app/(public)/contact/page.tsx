@@ -4,7 +4,6 @@ import {
   MessageCircle,
   Lock,
   Handshake,
-  Clock,
   CheckCircle2,
   Building2,
   Shield,
@@ -39,17 +38,15 @@ const CONTACTS = [
       "Billing questions, feature how-tos, post scheduling issues, connected account problems — we handle it all.",
     email: "team+support@socialraven.io",
     icon: MessageCircle,
-    response: "Within 24 hours",
   },
   {
     label: "Sales & Agency",
     description:
-      "Custom plans, white-labelling, volume pricing, or agency onboarding.",
+      "Custom plans, workspace setup, or agency onboarding.",
     detail:
-      "We offer bespoke packages for large agencies. Let's find the right fit for your scale.",
+      "We can help you choose the right plan and rollout path for multi-brand teams.",
     email: "team+sales@socialraven.io",
     icon: Building2,
-    response: "Within 4 hours",
   },
   {
     label: "Privacy & Legal",
@@ -59,7 +56,6 @@ const CONTACTS = [
       "GDPR requests processed within 30 days. CCPA requests within 45 days. Legal notices handled promptly.",
     email: "team+privacy@socialraven.io",
     icon: Lock,
-    response: "Within 72 hours",
   },
   {
     label: "Press & Partnerships",
@@ -69,21 +65,20 @@ const CONTACTS = [
       "We're open to integration partnerships, co-marketing campaigns, and media coverage. Let's connect.",
     email: "team+press@socialraven.io",
     icon: Handshake,
-    response: "Within 48 hours",
   },
 ];
 
 const TRUST = [
-  { icon: Zap, label: "< 24h avg response", sub: "Average support reply time" },
-  { icon: Globe, label: "40+ countries", sub: "Customers worldwide" },
-  { icon: Shield, label: "GDPR & CCPA", sub: "Privacy-compliant platform" },
-  { icon: CheckCircle2, label: "98% delivery", sub: "Post scheduling reliability" },
+  { icon: Zap, label: "Public pricing", sub: "Plan and billing details are available before checkout" },
+  { icon: Globe, label: "Public website", sub: "Product, pricing, and policy pages are live on the main domain" },
+  { icon: Shield, label: "Policy links", sub: "Privacy, terms, and refund policies are publicly accessible" },
+  { icon: CheckCircle2, label: "Clear product scope", sub: "The site explains supported platforms and publishing workflows" },
 ];
 
 const FAQS = [
   {
     q: "How do I cancel my subscription?",
-    a: "Email team+support@socialraven.io with the subject line 'Cancel subscription'. We'll process it the same business day — no questions asked.",
+    a: "Cancellation and refund terms are described on our refund policy and terms pages. Contact support if you need help with a billing or account issue.",
   },
   {
     q: "How do I request deletion of my data?",
@@ -103,17 +98,17 @@ const FAQS = [
   },
   {
     q: "Is my data safe with Social Raven?",
-    a: "Yes. All data is encrypted in transit (TLS 1.2+) and at rest (AES-256). We never sell your data or use it for advertising.",
+    a: "We use scoped OAuth connections, publish our privacy policy publicly, and limit data use to operating the service and supporting your account.",
   },
 ];
 
 const AGENCY_FEATURES = [
-  "Custom seat limits",
-  "Dedicated onboarding",
-  "White-label options",
-  "SLA guarantee",
-  "Priority support",
-  "Custom invoicing",
+  "Multi-workspace planning",
+  "Connected account setup guidance",
+  "Team onboarding",
+  "Plan selection support",
+  "Billing workflow guidance",
+  "Priority coordination",
 ];
 
 export default function ContactPage() {
@@ -130,7 +125,7 @@ export default function ContactPage() {
         }
         eyebrow="Contact"
         title="We&apos;re here when you need us."
-        description="Reach the right team directly — whether it&apos;s a support question, an agency enquiry, or a legal matter."
+        description="Reach the right team directly — whether it&apos;s a support question, an agency enquiry, or a legal matter. Social Raven is operated by Kammullu Ghouse, a sole proprietor trading as Social Raven."
         aside={
           <PublicCard className="grid gap-4 p-6 sm:grid-cols-2">
             {TRUST.map(({ icon: Icon, label, sub }) => (
@@ -150,16 +145,10 @@ export default function ContactPage() {
 
       <PublicSection eyebrow="Get in touch" title="Contact the right team">
         <div className="grid gap-5 sm:grid-cols-2">
-          {CONTACTS.map(({ label, description, detail, email, icon: Icon, response }) => (
+          {CONTACTS.map(({ label, description, detail, email, icon: Icon }) => (
             <PublicCard key={label} className="space-y-4 p-7">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div className="flex items-center gap-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
-                  <Clock className="h-3 w-3" />
-                  {response}
-                </div>
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                <Icon className="h-5 w-5" />
               </div>
               <div className="space-y-2">
                 <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{label}</h2>
@@ -194,7 +183,7 @@ export default function ContactPage() {
                 Need something built for scale?
               </h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Custom seat limits, dedicated onboarding, white-label options, and SLA guarantees. We partner with agencies and businesses that need more than an off-the-shelf plan.
+                Dedicated onboarding, workspace planning, and support for multi-brand teams that need more guidance than a standard self-serve setup.
               </p>
               <PublicPrimaryLinkButton href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry">
                 Talk to sales

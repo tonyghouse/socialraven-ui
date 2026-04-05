@@ -13,7 +13,7 @@ import {
 export const metadata: Metadata = {
   title: "Refund Policy | Social Raven",
   description:
-    "Refund Policy for Social Raven subscriptions, including trial cancellations, renewal charges, refund eligibility, and support contact details.",
+    "Refund Policy for Social Raven subscriptions, including trial terms, future renewal charges, refund eligibility, and support contact details.",
 };
 
 const TOC = [
@@ -46,7 +46,7 @@ export default function RefundPolicyPage() {
             Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 5, 2026</span>
           </>
         }
-        description="This Refund Policy explains how SocialRaven handles subscription cancellations, renewal charges, and refund requests for purchases processed through Paddle."
+        description="This Refund Policy explains how SocialRaven will handle subscription cancellations, renewal charges, and refund requests once paid billing is enabled."
       />
 
       <PublicSection>
@@ -57,24 +57,27 @@ export default function RefundPolicyPage() {
             <PublicCard id="overview" className="space-y-4 p-8">
               <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">1. Overview</h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                This policy applies to paid SocialRaven subscriptions purchased through our checkout flow.
-                Payments are processed securely by Paddle.
+                This policy applies to paid SocialRaven subscriptions once public paid billing is enabled
+                and purchases are processed through our checkout flow. SocialRaven is operated by Kammullu
+                Ghouse, a sole proprietor trading as Social Raven.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                We aim to be clear and fair: if we charged you incorrectly or a billing issue prevented
-                you from using the service as purchased, we will review the case promptly.
+                Trial signup may be available before paid billing is launched. We aim to be clear and fair:
+                if a paid charge is taken incorrectly or a billing issue prevents access to a purchased
+                service, we will review the case promptly.
               </p>
             </PublicCard>
 
             <PublicCard id="trials" className="space-y-4 p-8">
               <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">2. Free Trials</h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Eligible plans may include a free trial. If you cancel before the trial ends, you will not
-                be charged for the next billing period.
+                Eligible plans may include a free trial. Trial signup is currently offered without payment
+                details in the public self-serve flow.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                If a charge is taken during an active trial because of a billing error, contact us and we
-                will investigate it as a priority refund case.
+                If paid billing is enabled later, any trial-to-paid transition terms will be shown clearly
+                before a charge is taken. If a charge is taken contrary to the published trial terms,
+                contact us and we will investigate it as a priority refund case.
               </p>
             </PublicCard>
 
@@ -83,12 +86,12 @@ export default function RefundPolicyPage() {
                 3. Renewals &amp; Cancellations
               </h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Paid subscriptions renew automatically on the billing cycle you selected at checkout unless
-                you cancel before the renewal date.
+                Once paid subscriptions are enabled, they renew automatically on the billing cycle selected
+                at checkout unless you cancel before the renewal date.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Cancelling a subscription stops future renewals. Your access remains active until the end
-                of the current paid period unless we state otherwise in writing.
+                Once paid billing is active, cancelling a subscription stops future renewals. Access remains
+                active until the end of the current paid period unless we state otherwise in writing.
               </p>
             </PublicCard>
 
@@ -114,7 +117,7 @@ export default function RefundPolicyPage() {
             <PublicCard id="non-refundable" className="space-y-5 p-8">
               <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">5. Non-Refundable Cases</h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Unless required by law, refunds are generally not provided for:
+                Unless required by law, refunds are generally not provided for the following paid billing cases:
               </p>
               <ul className="list-disc space-y-2 pl-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 <li>Change-of-mind cancellations after a renewal charge has already been processed;</li>
@@ -162,8 +165,8 @@ export default function RefundPolicyPage() {
                 8. Timing and Processing
               </h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                We aim to review refund requests within 5 business days. If approved, refunds are issued
-                back to the original payment method through Paddle.
+                We aim to review refund requests within 5 business days. Once paid billing is enabled, any
+                approved refunds will be issued back to the original payment method through Paddle.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 Once processed, the time it takes for funds to appear depends on your bank, card issuer,

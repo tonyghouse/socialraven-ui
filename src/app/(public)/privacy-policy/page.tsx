@@ -67,7 +67,10 @@ export default function PrivacyPolicyPage() {
                 The data controller responsible for your personal data is:
               </p>
               <PublicInsetCard className="space-y-1 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                <p className="font-bold text-[hsl(var(--foreground))]">Social Raven</p>
+                <p className="font-bold text-[hsl(var(--foreground))]">Kammullu Ghouse</p>
+                <p>Business form: Sole proprietor</p>
+                <p>Trading name: Social Raven</p>
+                <p>Country: India</p>
                 <p>
                   Email:{" "}
                   <a
@@ -205,7 +208,7 @@ export default function PrivacyPolicyPage() {
                 headers={["Service", "Purpose", "Data Shared"]}
                 rows={[
                   ["Clerk", "Authentication & user management", "Name, email, auth identifiers"],
-                  ["Paddle", "Payment processing and billing administration", "Billing contact details, subscription metadata, transaction details"],
+                  ["Paddle", "Payment processing and billing administration if paid billing is enabled", "Billing contact details, subscription metadata, transaction details"],
                   ["Amazon Web Services (AWS S3)", "Media file storage", "Uploaded images/videos"],
                   ["Meta (Instagram, Facebook)", "Content publishing via official API", "OAuth tokens, post content"],
                   ["Google (YouTube)", "Content publishing via official API", "OAuth tokens, post content"],

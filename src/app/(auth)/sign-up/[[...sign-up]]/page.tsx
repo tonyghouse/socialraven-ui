@@ -1,15 +1,20 @@
 import { SignUp } from "@clerk/nextjs";
-import { AuthPatternBackground } from "@/components/generic/auth-pattern-background";
+
+import { AuthPageShell } from "@/components/generic/auth-page-shell";
 
 export default function SignUpPage() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center">
-      <AuthPatternBackground />
-      
-      {/* Content wrapper */}
-      <div className="relative z-10 w-full max-w-md px-4">
-            <SignUp />
-      </div>
-    </div>
+    <AuthPageShell
+      badge="Create account"
+      title="Create your Social Raven account"
+      description="Start a trial workspace, connect supported channels, and evaluate the planning, review, and publishing workflow."
+      helperTitle="Account creation"
+      helperDescription="Self-serve account creation is available on this page. New workspaces begin on a trial flow, and public pricing plus policy links remain available before you continue."
+      alternatePrompt="Already have an account?"
+      alternateLabel="Sign in instead"
+      alternateHref="/sign-in"
+    >
+      <SignUp />
+    </AuthPageShell>
   );
 }

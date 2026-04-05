@@ -17,7 +17,7 @@ import {
 export const metadata: Metadata = {
   title: "Pricing | Social Raven",
   description:
-    "Simple Social Raven pricing for creators, brands, and agencies. Compare plans, trial details, billing notes, and checkout information.",
+    "Simple Social Raven pricing for creators, brands, and agencies. Compare plans, trial details, and current billing status.",
 };
 
 const INCLUDED_WITH_EVERY_PLAN = [
@@ -31,22 +31,22 @@ const BILLING_NOTES = [
   {
     title: "Currency and taxes",
     description:
-      "All listed prices are in USD. Taxes, VAT, or sales tax are calculated at checkout where required.",
+      "All listed prices are in USD. If paid self-serve checkout is enabled, applicable taxes, VAT, or sales tax will be shown in the billing flow where required.",
   },
   {
-    title: "Billing cadence",
+    title: "Current billing status",
     description:
-      "Paid subscriptions renew automatically until cancelled. You retain access through the end of the current billing period after cancellation.",
+      "Public plan pricing is live on this page. Trial signup is available now, while paid self-serve billing is still being finalized.",
   },
   {
     title: "Payments and invoices",
     description:
-      "Payments are processed securely by Paddle. VAT-compliant invoices and subscription billing records are delivered through the billing flow once live.",
+      "Once paid billing is enabled, payments will be processed by Paddle and invoice or subscription records will be handled through that billing flow.",
   },
   {
     title: "Refunds",
     description:
-      "Refund requests are handled according to our refund policy and any mandatory consumer rights that apply in your jurisdiction.",
+      "Our refund policy describes how paid subscription charges will be handled once paid billing is enabled, alongside any mandatory consumer rights that apply in your jurisdiction.",
   },
 ];
 
@@ -69,10 +69,10 @@ export default function PricingPage() {
             Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 5, 2026</span>
           </>
         }
-        description="Choose a plan based on how many brands, accounts, and campaigns you need to manage. Start with a trial, then move to a paid plan when you are ready."
+        description="Choose a plan based on how many brands, accounts, and campaigns you need to manage. Trial signup is available now; paid self-serve billing is still being finalized."
         actions={
           <>
-            <PublicPrimaryLinkButton href="/sign-up">Start free trial</PublicPrimaryLinkButton>
+            <PublicPrimaryLinkButton href="/sign-up">Create trial workspace</PublicPrimaryLinkButton>
             <PublicSubtleLinkButton href="/refund-policy">View refund policy</PublicSubtleLinkButton>
           </>
         }
@@ -80,18 +80,18 @@ export default function PricingPage() {
           <PublicCard className="space-y-4 p-6">
             <div>
               <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
-                Billing summary
+                Pricing summary
               </p>
               <h2 className="mt-2 text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
-                Simple checkout, no hidden tiers.
+                Public pricing is live. Paid self-serve billing is not yet enabled.
               </h2>
             </div>
             <div className="grid gap-3">
               {[
                 "USD pricing",
-                "Secure checkout by Paddle",
-                "Cancel future renewals anytime",
-                "Agency custom plans by quote",
+                "Trial signup available now",
+                "Paid self-serve billing in progress",
+                "Agency custom plans by email enquiry",
               ].map((item) => (
                 <PublicInsetCard key={item} className="px-4 py-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                   {item}
@@ -126,7 +126,7 @@ export default function PricingPage() {
             14-day free trial available on standard plans
           </p>
           <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-            Start free and upgrade when you are ready. Custom agency plans are quoted separately.
+            Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Custom agency plans start with a direct enquiry.
           </p>
         </div>
 
@@ -137,8 +137,8 @@ export default function PricingPage() {
 
       <PublicSection
         eyebrow="Billing notes"
-        title="What to expect at checkout"
-        description="Important pricing, billing, and refund details for paid subscriptions."
+        title="Billing status and launch notes"
+        description="Important pricing, billing, and refund details based on the current public setup."
         surface="surface"
       >
         <div className="grid gap-4 md:grid-cols-2">

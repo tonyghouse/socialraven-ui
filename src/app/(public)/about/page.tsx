@@ -31,10 +31,10 @@ export const metadata: Metadata = {
 };
 
 const STATS = [
-  { value: "10K+", label: "Active users" },
-  { value: "2M+", label: "Posts scheduled" },
-  { value: "98%", label: "Delivery rate" },
-  { value: "40+", label: "Countries served" },
+  { value: "5", label: "Supported platforms" },
+  { value: "3", label: "Post types" },
+  { value: "OAuth", label: "Secure connections" },
+  { value: "Review", label: "Approval workflows" },
 ];
 
 const VALUES = [
@@ -48,19 +48,19 @@ const VALUES = [
     icon: Shield,
     title: "Privacy by design",
     description:
-      "GDPR and CCPA-compliant from the ground up. Your data is never sold, never shared for advertising, and never used to train AI without your explicit consent.",
+      "We publish clear policy pages, limit data use to operating the service, and keep connected accounts scoped to official OAuth permissions.",
   },
   {
     icon: Zap,
     title: "Reliability you can count on",
     description:
-      "Missed post times cost engagement. We obsess over uptime, delivery rates, and resilience so your content goes live exactly when it should.",
+      "Scheduling tools should be predictable. We focus on clear workflows, visible status, and fewer operational surprises.",
   },
   {
     icon: Globe,
     title: "Built for global teams",
     description:
-      "Whether you're a solo creator in London or an agency in New York, Social Raven works seamlessly across regions and time zones.",
+      "Whether you're a solo operator or a multi-brand team, Social Raven is designed for distributed publishing work across regions and time zones.",
   },
 ];
 
@@ -71,7 +71,7 @@ const PERSONAS = [
       "Stop spending hours manually posting across platforms. Batch-create your content for the week, schedule it in minutes, and focus on what actually matters — making great content.",
     bullets: [
       "Multi-platform publishing in one step",
-      "AI-powered best-time scheduling",
+      "Shared calendar planning",
       "Post performance analytics",
     ],
   },
@@ -80,7 +80,7 @@ const PERSONAS = [
     description:
       "Manage every client account from one clean dashboard. No more tab-switching, no more missed posts. Professional workflows built for teams handling multiple brands simultaneously.",
     bullets: [
-      "Unlimited social profiles",
+      "Multi-workspace account management",
       "Client account management",
       "Team collaboration tools",
     ],
@@ -88,7 +88,7 @@ const PERSONAS = [
   {
     title: "Brands & Businesses",
     description:
-      "Maintain a consistent brand voice across all channels without a dedicated operations team. Scale your social presence intelligently with AI-powered insights and automation.",
+      "Maintain a consistent publishing process across channels without a dedicated operations team. Keep reviews, scheduling, and reporting in one place.",
     bullets: [
       "Brand consistency tools",
       "Advanced cross-platform analytics",
@@ -111,7 +111,7 @@ export default function AboutPage() {
       <PublicHero
         eyebrow="Our story"
         title="Built for teams who take social media seriously."
-        description="Social Raven is a professional social media management platform — built by a small, focused team who believed the category was overcomplicated and overpriced. We set out to fix that."
+        description="Social Raven is a professional social media management platform operated by Kammullu Ghouse, a sole proprietor trading as Social Raven. It was built to make serious publishing workflows simpler and more affordable."
         aside={
           <PublicCard className="grid gap-5 p-6 sm:grid-cols-2">
             {STATS.map(({ value, label }) => (
@@ -141,15 +141,18 @@ export default function AboutPage() {
             <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
               Social Raven exists to close that gap. We believe powerful, professional-grade scheduling and analytics should be accessible to every creator, agency, and business — not just the ones with six-figure software budgets.
             </p>
+            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
+              The service is operated from India by Kammullu Ghouse under the Social Raven brand.
+            </p>
             <div>
               <PublicPrimaryLinkButton href="/sign-up">Start for free</PublicPrimaryLinkButton>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { icon: Calendar, label: "Smart scheduling", value: "Post at peak times, automatically" },
+              { icon: Calendar, label: "Smart scheduling", value: "Plan campaigns and publishing windows clearly" },
               { icon: BarChart, label: "Unified analytics", value: "All platforms in one view" },
-              { icon: Users, label: "Multi-account", value: "Unlimited social profiles" },
+              { icon: Users, label: "Multi-account", value: "Workspace-based account management" },
               { icon: Lock, label: "Secure & compliant", value: "GDPR · CCPA · TLS 1.2+" },
             ].map(({ icon: Icon, label, value }) => (
               <PublicInsetCard key={label} className="space-y-3 p-5">
@@ -212,7 +215,7 @@ export default function AboutPage() {
               Ready to take back your time?
             </h2>
             <p className="mx-auto max-w-md text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
-              Join thousands of creators and agencies managing their social media with Social Raven. Start free — no credit card required.
+              Start with a trial workspace and see whether Social Raven fits the way your team plans and publishes content.
             </p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
               <PublicPrimaryLinkButton href="/sign-up">Start free trial</PublicPrimaryLinkButton>

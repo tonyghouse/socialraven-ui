@@ -1,16 +1,20 @@
 import { SignIn } from "@clerk/nextjs";
-import { AuthPatternBackground } from "@/components/generic/auth-pattern-background";
+
+import { AuthPageShell } from "@/components/generic/auth-page-shell";
 
 export default function SignInPage() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center">
-      <AuthPatternBackground />
-      
-      {/* Content wrapper */}
-      <div className="relative z-10 w-full max-w-md px-4">
-       
-            <SignIn afterSignInUrl="/dashboard" />
-          </div>
-    </div>
+    <AuthPageShell
+      badge="Sign in"
+      title="Sign in to Social Raven"
+      description="Access your workspace, connected accounts, approval flows, and publishing history from one place."
+      helperTitle="Returning users"
+      helperDescription="Use this page to sign in to an existing Social Raven account. If you need a new account, use the sign-up page to create a trial workspace."
+      alternatePrompt="Need a new account?"
+      alternateLabel="Create one here"
+      alternateHref="/sign-up"
+    >
+      <SignIn afterSignInUrl="/dashboard" />
+    </AuthPageShell>
   );
 }

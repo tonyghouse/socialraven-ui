@@ -31,15 +31,15 @@ export const metadata: Metadata = {
 const CATEGORIES = [
   {
     icon: TrendingUp,
-    title: "Growth Strategy",
+    title: "Publishing Workflows",
     description:
-      "Proven tactics to grow your following and engagement across every platform.",
+      "Practical ways to plan campaigns, manage calendars, and keep recurring publishing work organized.",
   },
   {
     icon: Zap,
     title: "Automation & Scheduling",
     description:
-      "Get the most out of your scheduling workflow — batch content, best times, and more.",
+      "Batch content, prepare approvals, and keep scheduled publishing running smoothly.",
   },
   {
     icon: BarChart,
@@ -55,10 +55,10 @@ const CATEGORIES = [
   },
   {
     icon: PenTool,
-    title: "Content Creation",
+    title: "Content Operations",
     description:
-      "AI-assisted writing, caption formulas, and creative frameworks for every platform.",
-  },
+      "Caption review, asset handoff, and repeatable campaign processes for content teams.",
+    },
   {
     icon: Shield,
     title: "Compliance & Privacy",
@@ -69,10 +69,10 @@ const CATEGORIES = [
 
 const COMING_SOON = [
   {
-    category: "Growth Strategy",
-    title: "The 2026 Instagram Algorithm: What Actually Works Right Now",
+    category: "Publishing Workflows",
+    title: "How to Plan a Month of Content Without Losing Track of Reviews",
     excerpt:
-      "Instagram's algorithm has shifted significantly. We break down the signals that matter most — Reels, carousels, and why reach isn't dead.",
+      "A practical operating rhythm for planning, reviewing, and scheduling recurring content without spreadsheet chaos.",
     readTime: "7 min read",
   },
   {
@@ -84,9 +84,9 @@ const COMING_SOON = [
   },
   {
     category: "Agency Playbooks",
-    title: "Managing 20+ Client Accounts Without Losing Your Mind",
+    title: "Managing Multiple Brand Workspaces Without Losing Context",
     excerpt:
-      "The systems, naming conventions, and tooling we see top agencies using to stay organised across dozens of brands simultaneously.",
+      "The naming, review, and handoff patterns that help agencies stay organized across client workspaces.",
     readTime: "8 min read",
   },
 ];

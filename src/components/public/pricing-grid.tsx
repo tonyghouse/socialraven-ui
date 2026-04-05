@@ -79,7 +79,7 @@ export function PricingGrid() {
 
             <div className="mt-8">
               <Link href={ctaHref} className={ctaClasses(Boolean(plan.popular))}>
-                {isAgencyCustom ? "Contact sales" : "Start free trial"}
+                {isAgencyCustom ? "Contact sales" : "Create trial workspace"}
               </Link>
             </div>
           </PublicCard>

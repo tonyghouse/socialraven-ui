@@ -21,7 +21,7 @@ const ENTRIES = [
     badge: "New",
     items: [
       "Instagram, Twitter/X, LinkedIn, YouTube, and Facebook integrations",
-      "Smart scheduling with AI-powered timing recommendations",
+      "Shared scheduling workflows for planned publishing",
       "Multi-platform post creation (image, video, text)",
       "Analytics dashboard with reach, engagement, and post performance",
       "Multi-account management for agencies",

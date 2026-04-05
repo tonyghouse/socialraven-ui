@@ -70,11 +70,12 @@ export default function TermsOfServicePage() {
             <PublicCard id="introduction" className="space-y-4 p-8">
               <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">1. Introduction</h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Welcome to <strong>Social Raven</strong> (&quot;the Service&quot;, &quot;we&quot;, &quot;our&quot;, &quot;us&quot;).
+                Welcome to <strong>Social Raven</strong> (&quot;the Service&quot;, &quot;we&quot;, &quot;our&quot;, &quot;us&quot;),
+                operated by <strong>Kammullu Ghouse</strong>, a sole proprietor trading as Social Raven.
                 These Terms of Service (&quot;Terms&quot;) constitute a legally binding agreement between you
-                (&quot;User&quot;, &quot;you&quot;) and Social Raven governing your access to and use of our social media
-                scheduling and management platform, including all related tools, features, APIs, and
-                connected services.
+                (&quot;User&quot;, &quot;you&quot;) and Kammullu Ghouse trading as Social Raven governing your access to
+                and use of our social media scheduling and management platform, including all related
+                tools, features, APIs, and connected services.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                 By creating an account or otherwise using the Service, you confirm that you have read,
@@ -306,11 +307,13 @@ export default function TermsOfServicePage() {
                 applicable:
               </p>
               <ul className="list-disc space-y-2 pl-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                <li>Subscription fees are billed in advance on the billing cycle selected at the time of purchase and processed securely by Paddle;</li>
-                <li>Current plan prices are published on our <a href="/pricing" className="text-[hsl(var(--accent))] underline underline-offset-2">pricing page</a> and displayed at checkout inclusive of applicable taxes where required;</li>
+                <li>Trial access may be offered without payment details;</li>
+                <li>Current public plan prices are published on our <a href="/pricing" className="text-[hsl(var(--accent))] underline underline-offset-2">pricing page</a>;</li>
+                <li>Paid self-serve billing is not currently enabled. Once enabled, subscription fees will be billed in advance on the billing cycle selected at purchase and processed securely by Paddle;</li>
+                <li>When paid billing is enabled, applicable taxes will be displayed in the billing flow where required;</li>
                 <li>EU consumers have a statutory right of withdrawal within 14 days of purchase, unless the service has already commenced with your explicit consent;</li>
-                <li>Refund eligibility is governed by our <a href="/refund-policy" className="text-[hsl(var(--accent))] underline underline-offset-2">Refund Policy</a>, except where stricter consumer rights apply by law;</li>
-                <li>We reserve the right to change pricing with at least 30 days&apos; notice to existing subscribers.</li>
+                <li>Refund eligibility for paid charges is governed by our <a href="/refund-policy" className="text-[hsl(var(--accent))] underline underline-offset-2">Refund Policy</a>, except where stricter consumer rights apply by law;</li>
+                <li>We reserve the right to change pricing with at least 30 days&apos; notice to existing subscribers once paid billing is active.</li>
               </ul>
             </PublicCard>
 
