@@ -17,7 +17,7 @@ export function PricingGrid() {
       {PAID_PLANS.map((plan, index) => {
         const isAgencyCustom = plan.type === "AGENCY_CUSTOM";
         const ctaHref = isAgencyCustom
-          ? "mailto:sales@socialraven.io?subject=Agency%20Plan%20Enquiry"
+          ? "mailto:team+sales@socialraven.io?subject=Agency%20Plan%20Enquiry"
           : "/sign-up";
         const centeredLastRowClass =
           PAID_PLANS.length === 5 && index === 3
@@ -53,9 +53,14 @@ export function PricingGrid() {
 
             <div className="mt-6">
               {plan.customPricing ? (
-                <p className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
-                  Custom pricing
-                </p>
+                <div className="space-y-1">
+                  <p className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                    $399+
+                  </p>
+                  <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                    custom monthly pricing
+                  </p>
+                </div>
               ) : (
                 <div className="flex items-end gap-2">
                   <span className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">

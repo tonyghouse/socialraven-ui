@@ -126,6 +126,11 @@ const FAQ = [
       "Start with a trial workspace with no credit card required. Public paid self-serve billing is still being finalized, and current plan prices are listed on the pricing page.",
   },
   {
+    question: "Does SocialRaven generate images or videos?",
+    answer:
+      "No. SocialRaven is a scheduling and publishing platform. Users upload their own images or videos, write their own captions, and SocialRaven stores, schedules, and publishes that content through supported social platform APIs.",
+  },
+  {
     question: "Which social platforms are supported?",
     answer:
       "We currently support Instagram, Twitter/X, LinkedIn, YouTube, and Facebook. More platforms are on the way.",

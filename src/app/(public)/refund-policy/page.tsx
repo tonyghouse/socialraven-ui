@@ -13,7 +13,7 @@ import {
 export const metadata: Metadata = {
   title: "Refund Policy | Social Raven",
   description:
-    "Refund Policy for Social Raven subscriptions, including trial terms, future renewal charges, refund eligibility, and support contact details.",
+    "Refund Policy for Social Raven subscriptions, including the 14-day cancellation and refund window, renewal terms, and support contact details.",
 };
 
 const TOC = [
@@ -43,10 +43,10 @@ export default function RefundPolicyPage() {
         title="Refund Policy"
         meta={
           <>
-            Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 5, 2026</span>
+            Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 7, 2026</span>
           </>
         }
-        description="This Refund Policy explains how SocialRaven will handle subscription cancellations, renewal charges, and refund requests once paid billing is enabled."
+        description="This Refund Policy explains how SocialRaven will handle subscription cancellations, renewal charges, and the minimum 14-day refund window once paid billing is enabled."
       />
 
       <PublicSection>
@@ -62,9 +62,9 @@ export default function RefundPolicyPage() {
                 Ghouse, a sole proprietor trading as Social Raven.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Trial signup may be available before paid billing is launched. We aim to be clear and fair:
-                if a paid charge is taken incorrectly or a billing issue prevents access to a purchased
-                service, we will review the case promptly.
+                SocialRaven will offer a minimum 14-day cancellation and refund window for paid
+                subscription charges processed through Paddle. If you request a refund within 14 calendar
+                days of a paid charge, you do not need to give a reason.
               </p>
             </PublicCard>
 
@@ -90,8 +90,14 @@ export default function RefundPolicyPage() {
                 at checkout unless you cancel before the renewal date.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Once paid billing is active, cancelling a subscription stops future renewals. Access remains
-                active until the end of the current paid period unless we state otherwise in writing.
+                You may cancel a paid subscription at any time to stop future renewals. If you cancel
+                without requesting a refund, access remains active until the end of the current paid
+                period unless we state otherwise in writing.
+              </p>
+              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                If you request a refund within 14 calendar days of an initial paid subscription charge or
+                a renewal charge, we will treat that request as a cancellation of the relevant paid period
+                and issue a refund to the original payment method.
               </p>
             </PublicCard>
 
@@ -102,6 +108,7 @@ export default function RefundPolicyPage() {
               </p>
               <div className="grid gap-3">
                 {[
+                  "You request cancellation and a refund within 14 calendar days of an initial paid subscription charge or renewal charge, without needing to give a reason.",
                   "You were charged more than once for the same billing period.",
                   "You were charged after a valid cancellation or during an active trial.",
                   "A technical billing error or platform fault prevented initial access to the paid service.",
@@ -117,11 +124,11 @@ export default function RefundPolicyPage() {
             <PublicCard id="non-refundable" className="space-y-5 p-8">
               <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">5. Non-Refundable Cases</h2>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Unless required by law, refunds are generally not provided for the following paid billing cases:
+                After the 14-day refund window has passed, refunds are generally not provided for the
+                following paid billing cases unless required by law:
               </p>
               <ul className="list-disc space-y-2 pl-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                <li>Change-of-mind cancellations after a renewal charge has already been processed;</li>
-                <li>Unused time remaining in a monthly or annual billing period;</li>
+                <li>Unused time remaining in a monthly or annual billing period after the 14-day refund window;</li>
                 <li>Failure to cancel before the next renewal date;</li>
                 <li>Account suspension or termination due to Terms of Service violations.</li>
               </ul>
@@ -134,8 +141,8 @@ export default function RefundPolicyPage() {
                 law, including statutory withdrawal or cooling-off rights where they apply.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                If local law gives you a stronger refund entitlement than this policy, we will honor the
-                legal requirement.
+                If local law or Paddle&apos;s buyer-facing refund rules give you a stronger refund
+                entitlement than this policy, we will honor the higher standard.
               </p>
             </PublicCard>
 
@@ -155,8 +162,9 @@ export default function RefundPolicyPage() {
                 issue.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Sending the request within 14 days of the charge helps us resolve it faster, but we will
-                still review requests submitted later where appropriate.
+                Once Paddle billing is live, you may also use the Paddle receipt or subscription management
+                link to request cancellation or a refund. To use the standard 14-day refund window, submit
+                the request within 14 calendar days of the charge.
               </p>
             </PublicCard>
 
@@ -169,8 +177,8 @@ export default function RefundPolicyPage() {
                 approved refunds will be issued back to the original payment method through Paddle.
               </p>
               <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                Once processed, the time it takes for funds to appear depends on your bank, card issuer,
-                or payment method provider.
+                Once approved, refunds are generally processed within 14 days. The time it takes for funds
+                to appear depends on your bank, card issuer, or payment method provider.
               </p>
             </PublicCard>
           </div>

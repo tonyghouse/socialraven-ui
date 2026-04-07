@@ -17,7 +17,7 @@ import {
 export const metadata: Metadata = {
   title: "Pricing | Social Raven",
   description:
-    "Simple Social Raven pricing for creators, brands, and agencies. Compare plans, trial details, and current billing status.",
+    "Simple Social Raven pricing for creators, brands, and agencies. Compare plans, refund terms, and agency custom pricing guidance.",
 };
 
 const INCLUDED_WITH_EVERY_PLAN = [
@@ -46,7 +46,17 @@ const BILLING_NOTES = [
   {
     title: "Refunds",
     description:
-      "Our refund policy describes how paid subscription charges will be handled once paid billing is enabled, alongside any mandatory consumer rights that apply in your jurisdiction.",
+      "Once paid billing is enabled, SocialRaven will offer a minimum 14-day refund window on paid subscription charges processed through Paddle. After that window, cancellations stop future renewals and current-period charges are generally non-refundable unless law or a billing error requires otherwise.",
+  },
+  {
+    title: "Agency Custom pricing",
+    description:
+      "Agency Custom plans generally range from $399 to $999+ per month, depending on workspace count, posting volume, onboarding scope, SLA requirements, and support needs. Final quotes are confirmed before purchase.",
+  },
+  {
+    title: "Product scope",
+    description:
+      "SocialRaven is a scheduling and publishing platform. Customers upload their own images or videos and write their own captions; SocialRaven does not generate AI images or videos for customers.",
   },
 ];
 
@@ -66,7 +76,7 @@ export default function PricingPage() {
         title="Clear pricing for creators, teams, and agencies."
         meta={
           <>
-            Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 5, 2026</span>
+            Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 7, 2026</span>
           </>
         }
         description="Choose a plan based on how many brands, accounts, and campaigns you need to manage. Trial signup is available now; paid self-serve billing is still being finalized."
@@ -91,7 +101,7 @@ export default function PricingPage() {
                 "USD pricing",
                 "Trial signup available now",
                 "Paid self-serve billing in progress",
-                "Agency custom plans by email enquiry",
+                "Agency custom plans from $399 / month",
               ].map((item) => (
                 <PublicInsetCard key={item} className="px-4 py-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
                   {item}
@@ -126,7 +136,7 @@ export default function PricingPage() {
             14-day free trial available on standard plans
           </p>
           <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-            Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Custom agency plans start with a direct enquiry.
+            Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Agency Custom plans generally range from $399 to $999+ per month based on workspace count, volume, onboarding, and SLA requirements.
           </p>
         </div>
 

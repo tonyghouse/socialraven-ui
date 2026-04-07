@@ -57,7 +57,7 @@ export default function TermsOfServicePage() {
         title="Terms of Service"
         meta={
           <>
-            Last updated: <span className="font-medium text-[hsl(var(--foreground))]">February 2026</span>
+            Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 7, 2026</span>
           </>
         }
       />
@@ -311,8 +311,9 @@ export default function TermsOfServicePage() {
                 <li>Current public plan prices are published on our <a href="/pricing" className="text-[hsl(var(--accent))] underline underline-offset-2">pricing page</a>;</li>
                 <li>Paid self-serve billing is not currently enabled. Once enabled, subscription fees will be billed in advance on the billing cycle selected at purchase and processed securely by Paddle;</li>
                 <li>When paid billing is enabled, applicable taxes will be displayed in the billing flow where required;</li>
-                <li>EU consumers have a statutory right of withdrawal within 14 days of purchase, unless the service has already commenced with your explicit consent;</li>
-                <li>Refund eligibility for paid charges is governed by our <a href="/refund-policy" className="text-[hsl(var(--accent))] underline underline-offset-2">Refund Policy</a>, except where stricter consumer rights apply by law;</li>
+                <li>You may cancel a paid subscription at any time to stop future renewals at the end of the current billing period;</li>
+                <li>SocialRaven offers a minimum 14-day refund window on paid subscription charges processed through Paddle. Requests made within 14 calendar days of the charge do not require a reason;</li>
+                <li>Refund eligibility after that 14-day window is governed by our <a href="/refund-policy" className="text-[hsl(var(--accent))] underline underline-offset-2">Refund Policy</a>, except where stricter consumer rights apply by law;</li>
                 <li>We reserve the right to change pricing with at least 30 days&apos; notice to existing subscribers once paid billing is active.</li>
               </ul>
             </PublicCard>
