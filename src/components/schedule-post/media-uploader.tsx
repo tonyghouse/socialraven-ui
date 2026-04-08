@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { X, Plus, GripVertical, Upload } from "lucide-react";
 import { motion, AnimatePresence, Reorder } from "framer-motion";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 interface Props {
   files: File[];
@@ -14,6 +15,7 @@ interface Props {
   maxFiles?: number;
   /** Label shown next to the file count, e.g. "X / Twitter" */
   maxFilesLabel?: string;
+  appearance?: "default" | "geist";
 }
 
 export default function MediaUploader({
@@ -23,7 +25,9 @@ export default function MediaUploader({
   label = "Add Media",
   maxFiles = 10,
   maxFilesLabel,
+  appearance = "default",
 }: Props) {
+  const isGeist = appearance === "geist";
   const inputRef = useRef<HTMLInputElement>(null);
 
   function pickMedia() {
@@ -58,24 +62,42 @@ export default function MediaUploader({
         whileTap={{ scale: 0.995 }}
         className={`group relative w-full overflow-hidden rounded-xl border border-dashed transition-[border-color,background-color,box-shadow] duration-150
           ${files.length === 0
-            ? "border-border-subtle bg-surface py-8 hover:border-[hsl(var(--accent))]/25 hover:bg-surface-raised"
-            : "border-border-subtle bg-surface py-3 hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised"
+            ? isGeist
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-8 hover:border-[var(--ds-blue-200)] hover:bg-[var(--ds-gray-100)]"
+              : "border-border-subtle bg-surface py-8 hover:border-[hsl(var(--accent))]/25 hover:bg-surface-raised"
+            : isGeist
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-3 hover:border-[var(--ds-blue-200)] hover:bg-[var(--ds-gray-100)]"
+              : "border-border-subtle bg-surface py-3 hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised"
           }`}
       >
         <div className="flex items-center justify-center gap-3">
           <div className={`relative flex-shrink-0 ${files.length === 0 ? "w-10 h-10" : "w-8 h-8"}`}>
-            <div className="absolute inset-0 rounded-full bg-[hsl(var(--accent))]/10 blur-md transition-all group-hover:bg-[hsl(var(--accent))]/14" />
-            <div className="relative flex h-full w-full items-center justify-center rounded-full border border-[hsl(var(--accent))]/12 bg-[hsl(var(--accent))]/8 transition-colors">
+            <div
+              className={cn(
+                "absolute inset-0 rounded-full blur-md transition-all",
+                isGeist
+                  ? "bg-[var(--ds-blue-100)] group-hover:bg-[var(--ds-blue-200)]"
+                  : "bg-[hsl(var(--accent))]/10 group-hover:bg-[hsl(var(--accent))]/14"
+              )}
+            />
+            <div
+              className={cn(
+                "relative flex h-full w-full items-center justify-center rounded-full border transition-colors",
+                isGeist
+                  ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]"
+                  : "border-[hsl(var(--accent))]/12 bg-[hsl(var(--accent))]/8"
+              )}
+            >
               {files.length === 0
-                ? <Upload className="h-5 w-5 text-[hsl(var(--accent))]" />
-                : <Plus className="h-4 w-4 text-[hsl(var(--accent))]" />
+                ? <Upload className={cn("h-5 w-5", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
+                : <Plus className={cn("h-4 w-4", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
               }
             </div>
           </div>
           <div className="text-left">
-            <p className="text-sm font-semibold text-foreground">{label}</p>
+            <p className={cn(isGeist ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-semibold text-foreground")}>{label}</p>
             {files.length === 0 && (
-              <p className="mt-0.5 text-xs text-foreground-muted">
+              <p className={cn("mt-0.5", isGeist ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-foreground-muted")}>
                 Drag & drop or click to browse
                 {maxFiles === 1
                   ? " — 1 file only"
@@ -114,8 +136,15 @@ export default function MediaUploader({
                     whileTap={{ scale: 0.97 }}
                     className="relative group cursor-grab active:cursor-grabbing flex-shrink-0"
                   >
-                    <div className="relative h-28 w-28 overflow-hidden rounded-xl border border-border-subtle bg-surface shadow-sm transition-[border-color,box-shadow] group-hover:border-[hsl(var(--accent))]/15 group-hover:shadow-md">
-                      <div className="flex h-full w-full items-center justify-center bg-surface-raised">
+                    <div
+                      className={cn(
+                        "relative h-28 w-28 overflow-hidden rounded-xl border shadow-sm transition-[border-color,box-shadow]",
+                        isGeist
+                          ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] group-hover:border-[var(--ds-blue-200)] group-hover:shadow-md"
+                          : "border-border-subtle bg-surface group-hover:border-[hsl(var(--accent))]/15 group-hover:shadow-md"
+                      )}
+                    >
+                      <div className={cn("flex h-full w-full items-center justify-center", isGeist ? "bg-[var(--ds-gray-100)]" : "bg-surface-raised")}>
                         {file.type.startsWith("video/") ? (
                           <video
                             src={URL.createObjectURL(file)}
@@ -137,13 +166,25 @@ export default function MediaUploader({
                           onClick={() => remove(file)}
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.9 }}
-                          className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-border-subtle bg-surface shadow-md"
+                          className={cn(
+                            "absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border shadow-md",
+                            isGeist
+                              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
+                              : "border-border-subtle bg-surface"
+                          )}
                         >
-                          <X className="h-3 w-3 text-foreground-muted" strokeWidth={2.5} />
+                          <X className={cn("h-3 w-3", isGeist ? "text-[var(--ds-gray-900)]" : "text-foreground-muted")} strokeWidth={2.5} />
                         </motion.button>
 
-                        <div className="absolute bottom-1.5 left-1.5 rounded-full border border-border-subtle bg-surface px-1.5 py-0.5 shadow-sm">
-                          <GripVertical className="h-3 w-3 text-foreground-muted" strokeWidth={2.5} />
+                        <div
+                          className={cn(
+                            "absolute bottom-1.5 left-1.5 rounded-full border px-1.5 py-0.5 shadow-sm",
+                            isGeist
+                              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
+                              : "border-border-subtle bg-surface"
+                          )}
+                        >
+                          <GripVertical className={cn("h-3 w-3", isGeist ? "text-[var(--ds-gray-900)]" : "text-foreground-muted")} strokeWidth={2.5} />
                         </div>
                       </div>
                     </div>
@@ -153,7 +194,7 @@ export default function MediaUploader({
             </div>
 
             {files.length >= 1 && (
-              <p className="mt-2 text-xs text-foreground-muted">
+              <p className={cn("mt-2", isGeist ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-foreground-muted")}>
                 {files.length >= 2 ? "Drag to reorder · " : ""}
                 {files.length} / {maxFiles} file{maxFiles !== 1 ? "s" : ""} added
               </p>

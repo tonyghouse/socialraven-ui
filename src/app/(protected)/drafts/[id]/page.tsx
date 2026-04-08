@@ -1,8 +1,5 @@
 "use client";
 
-import AtlassianButton from "@atlaskit/button/new";
-import Lozenge from "@atlaskit/lozenge";
-import SectionMessage from "@atlaskit/section-message";
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -33,9 +30,6 @@ import {
 import { scheduleDraftCollectionApi } from "@/service/scheduleDraftCollectionApi";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
-import { Skeleton } from "@/components/ui/skeleton";
-import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker";
-import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
 import { localToUTC } from "@/lib/timeUtil";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -52,6 +46,18 @@ import {
   canDirectScheduleForMode,
   resolveWorkspaceApprovalMode,
 } from "@/lib/approval-workflow";
+import { DraftDateTimePicker } from "@/components/drafts/draft-date-time-picker";
+import { DraftDetailPageSkeleton } from "@/components/drafts/draft-detail-page-skeleton";
+import {
+  DraftDetailActionButton,
+  DraftDetailBadge,
+  DraftDetailNotice,
+  draftDetailBodyTextClassName,
+  draftDetailMetaTextClassName,
+  draftDetailPanelClassName,
+  draftDetailPanelHeaderClassName,
+  draftDetailSubtlePanelClassName,
+} from "@/components/drafts/draft-detail-primitives";
 
 const TYPE_CONFIG = {
   IMAGE: { label: "Image", Icon: ImageIcon },
@@ -59,6 +65,16 @@ const TYPE_CONFIG = {
   TEXT: { label: "Text", Icon: FileText },
 } as const;
 const DEFAULT_APPROVAL_OVERRIDE = "DEFAULT";
+
+const PLATFORM_ACCENT: Record<string, string> = {
+  instagram: "var(--chart-categorical-4)",
+  x: "var(--chart-neutral)",
+  linkedin: "var(--chart-categorical-2)",
+  facebook: "var(--chart-categorical-5)",
+  youtube: "var(--ds-red-600)",
+  threads: "var(--ds-gray-1000)",
+  tiktok: "var(--ds-gray-1000)",
+};
 
 function isDraftWorkflowStatus(status: PostCollectionResponse["overallStatus"]) {
   return (
@@ -69,16 +85,16 @@ function isDraftWorkflowStatus(status: PostCollectionResponse["overallStatus"]) 
   );
 }
 
-function getStatusAppearance(status: PostCollectionResponse["overallStatus"]) {
+function getStatusVariant(status: PostCollectionResponse["overallStatus"]) {
   switch (status) {
     case "IN_REVIEW":
-      return "inprogress";
+      return "warning";
     case "CHANGES_REQUESTED":
-      return "moved";
+      return "danger";
     case "APPROVED":
       return "success";
     default:
-      return "default";
+      return "neutral";
   }
 }
 
@@ -93,6 +109,20 @@ function getStatusLabel(status: PostCollectionResponse["overallStatus"]) {
     default:
       return "Draft";
   }
+}
+
+function platformAccent(platform: string | undefined) {
+  if (!platform) return "var(--ds-gray-1000)";
+  return PLATFORM_ACCENT[platform] ?? "var(--ds-gray-1000)";
+}
+
+function platformSurfaceStyle(platform: string | undefined, backgroundPercent = 10, borderPercent = 24) {
+  const accent = platformAccent(platform);
+
+  return {
+    backgroundColor: `color-mix(in srgb, ${accent} ${backgroundPercent}%, var(--ds-background-100))`,
+    borderColor: `color-mix(in srgb, ${accent} ${borderPercent}%, var(--ds-gray-400))`,
+  };
 }
 
 export default function DraftDetailPage() {
@@ -268,7 +298,7 @@ export default function DraftDetailPage() {
     }
   }
 
-  if (loading) return <CollectionDetailPageSkeleton />;
+  if (loading) return <DraftDetailPageSkeleton />;
   if (error || !collection) return <ErrorState error={error} onBack={() => router.push("/drafts")} />;
 
   const typeCfg = TYPE_CONFIG[collection.postCollectionType] ?? TYPE_CONFIG.TEXT;
@@ -332,6 +362,8 @@ export default function DraftDetailPage() {
     : autoScheduleAfterApproval
     ? "Approve & Schedule"
     : "Approve";
+  const selectClassName =
+    "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[var(--ds-blue-600)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]";
 
   return (
     <>
@@ -344,7 +376,7 @@ export default function DraftDetailPage() {
         onConfirm={doDelete}
         onCancel={() => setConfirmDeleteOpen(false)}
       />
-      <main className="min-h-screen bg-[hsl(var(--background))]">
+      <main className="min-h-screen bg-[var(--ds-background-200)]">
         <ProtectedPageHeader
           title={collection.description || "Untitled Draft"}
           description={
@@ -357,88 +389,89 @@ export default function DraftDetailPage() {
               : "Draft details and scheduling controls."
           }
           icon={<BookOpen className="h-4 w-4" />}
+          className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
           actions={
             <>
               {canEdit && (
-                <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}/edit`)}>
+                <DraftDetailActionButton onClick={() => router.push(`/drafts/${id}/edit`)}>
                   <span className="inline-flex items-center gap-1.5">
                     <Pencil className="h-3.5 w-3.5" />
                     <span>Edit</span>
                   </span>
-                </AtlassianButton>
+                </DraftDetailActionButton>
               )}
-              <AtlassianButton appearance="subtle" isDisabled={deleting} onClick={handleDelete}>
+              <DraftDetailActionButton tone="danger" disabled={deleting} onClick={handleDelete}>
                 <span className="inline-flex items-center gap-1.5">
                   {deleting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
                   <span>Delete</span>
                 </span>
-              </AtlassianButton>
+              </DraftDetailActionButton>
               {isInReview ? (
                 canRequestChanges || canApproveCurrentStage ? (
                   <>
                     {canRequestChanges && (
-                      <AtlassianButton appearance="subtle" isDisabled={requestingChanges} onClick={handleRequestChanges}>
+                      <DraftDetailActionButton disabled={requestingChanges} onClick={handleRequestChanges}>
                         <span className="inline-flex items-center gap-1.5">
                           {requestingChanges ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <AlertCircle className="h-3.5 w-3.5" />}
                           <span>Request Changes</span>
                         </span>
-                      </AtlassianButton>
+                      </DraftDetailActionButton>
                     )}
                     {canApproveCurrentStage && (
-                      <AtlassianButton appearance="primary" isDisabled={approving} onClick={handleApprove}>
+                      <DraftDetailActionButton tone="primary" disabled={approving} onClick={handleApprove}>
                         <span className="inline-flex items-center gap-1.5">
                           {approving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
                           <span>{approveActionLabel}</span>
                         </span>
-                      </AtlassianButton>
+                      </DraftDetailActionButton>
                     )}
                   </>
                 ) : null
               ) : isApprovedAwaitingSchedule ? (
                 canPublishPosts ? (
-                  <AtlassianButton appearance="primary" isDisabled={activatingSchedule} onClick={handleActivateApprovedSchedule}>
+                  <DraftDetailActionButton tone="primary" disabled={activatingSchedule} onClick={handleActivateApprovedSchedule}>
                     <span className="inline-flex items-center gap-1.5">
                       {activatingSchedule ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
                       <span>Activate Schedule</span>
                     </span>
-                  </AtlassianButton>
+                  </DraftDetailActionButton>
                 ) : null
               ) : (
-                <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel((v) => !v)}>
+                <DraftDetailActionButton tone="primary" onClick={() => setShowSchedulePanel((v) => !v)}>
                   <span className="inline-flex items-center gap-1.5">
                     <Send className="h-3.5 w-3.5" />
                     <span>{showSchedulePanel ? "Cancel" : primaryActionLabel}</span>
                   </span>
-                </AtlassianButton>
+                </DraftDetailActionButton>
               )}
             </>
           }
         />
 
-        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-2.5 sm:px-6">
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => router.push("/drafts")}
-              className="inline-flex items-center gap-1.5 text-sm font-medium leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+              className="inline-flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
             >
               <BookOpen className="h-3.5 w-3.5" />
               <span>Drafts</span>
             </button>
-            <ChevronRight className="h-3.5 w-3.5 text-[hsl(var(--foreground-subtle))]" />
-            <Lozenge appearance={getStatusAppearance(collection.overallStatus)}>
+            <ChevronRight className="h-3.5 w-3.5 text-[var(--ds-gray-800)]" />
+            <DraftDetailBadge variant={getStatusVariant(collection.overallStatus)}>
               {getStatusLabel(collection.overallStatus)}
-            </Lozenge>
-            <Lozenge appearance="new">{typeCfg.label}</Lozenge>
-            {scheduledLabel && <Lozenge appearance="inprogress">{scheduledLabel}</Lozenge>}
+            </DraftDetailBadge>
+            <DraftDetailBadge variant="subtle">{typeCfg.label}</DraftDetailBadge>
+            {scheduledLabel ? <DraftDetailBadge variant="accent">{scheduledLabel}</DraftDetailBadge> : null}
           </div>
         </div>
 
         <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8">
           <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
             <aside className="space-y-5">
-              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                  <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Platforms</p>
+              <section className={draftDetailPanelClassName}>
+                <div className={draftDetailPanelHeaderClassName}>
+                  <p className="text-title-16 text-[var(--ds-gray-1000)]">Platforms</p>
                 </div>
                 <div className="space-y-3 px-5 py-4">
                   {hasAccounts ? (
@@ -449,12 +482,15 @@ export default function DraftDetailPage() {
 
                       return (
                         <div key={platform} className="flex items-center gap-3">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
-                            {Icon && <Icon className="h-4 w-4" />}
+                          <div
+                            className="flex h-8 w-8 items-center justify-center rounded-md border"
+                            style={platformSurfaceStyle(platform)}
+                          >
+                            {Icon ? <Icon className="h-4 w-4" style={{ color: platformAccent(platform) }} /> : null}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="text-sm font-medium text-[hsl(var(--foreground))]">{label}</p>
-                            <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                            <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
+                            <p className={draftDetailMetaTextClassName}>
                               {count} acct{count !== 1 ? "s" : ""}
                             </p>
                           </div>
@@ -462,26 +498,26 @@ export default function DraftDetailPage() {
                       );
                     })
                   ) : (
-                    <SectionMessage appearance="warning" title="No accounts selected">
-                      <p className="text-sm">
+                    <DraftDetailNotice title="No accounts selected" variant="warning">
+                      <p>
                         Edit this draft to add connected accounts before scheduling.
                       </p>
-                    </SectionMessage>
+                    </DraftDetailNotice>
                   )}
                 </div>
               </section>
 
               {captionText && (
-                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                  <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                    <FileText className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-                    <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Caption</p>
+                <section className={draftDetailPanelClassName}>
+                  <div className={cn(draftDetailPanelHeaderClassName, "flex items-center gap-2")}>
+                    <FileText className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                    <p className="text-title-16 text-[var(--ds-gray-1000)]">Caption</p>
                   </div>
                   <div className="px-5 py-4">
-                    <p className="whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                    <p className="whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-900)]">
                       {captionText}
                     </p>
-                    <p className="mt-3 text-xs text-[hsl(var(--foreground-subtle))]">
+                    <p className={cn("mt-3", draftDetailMetaTextClassName)}>
                       {captionText.length} characters
                     </p>
                   </div>
@@ -489,12 +525,12 @@ export default function DraftDetailPage() {
               )}
 
               {collection.media.length > 0 && (
-                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                  <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                    <ImageIcon className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                <section className={draftDetailPanelClassName}>
+                  <div className={cn(draftDetailPanelHeaderClassName, "flex items-center gap-2")}>
+                    <ImageIcon className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                    <p className="text-title-16 text-[var(--ds-gray-1000)]">
                       Media
-                      <span className="ml-1 font-normal text-[hsl(var(--foreground-muted))]">
+                      <span className="ml-1 font-normal text-[var(--ds-gray-900)]">
                         · {collection.media.length}
                       </span>
                     </p>
@@ -507,35 +543,34 @@ export default function DraftDetailPage() {
             </aside>
 
             <div className="space-y-5">
-              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
+              <section className={draftDetailPanelClassName}>
+                <div className={draftDetailPanelHeaderClassName}>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
                         <CalendarClock className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{scheduleSectionTitle}</p>
-                        <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                        <p className="text-title-16 text-[var(--ds-gray-1000)]">{scheduleSectionTitle}</p>
+                        <p className={draftDetailBodyTextClassName}>
                           {scheduleSectionDescription}
                         </p>
                       </div>
                     </div>
                     {!isInReview && !isApprovedAwaitingSchedule && (
-                      <AtlassianButton appearance={showSchedulePanel ? "subtle" : "primary"} onClick={() => setShowSchedulePanel((v) => !v)}>
+                      <DraftDetailActionButton tone={showSchedulePanel ? "secondary" : "primary"} onClick={() => setShowSchedulePanel((v) => !v)}>
                         <span className="inline-flex items-center gap-1.5">
                           <Send className="h-3.5 w-3.5" />
                           <span>{showSchedulePanel ? "Cancel" : primaryActionLabel}</span>
                         </span>
-                      </AtlassianButton>
+                      </DraftDetailActionButton>
                     )}
                   </div>
                 </div>
 
                 <div className="px-5 py-5">
                   {isInReview && (
-                    <SectionMessage
-                      appearance="information"
+                    <DraftDetailNotice
                       title={
                         isAwaitingOwnerFinal
                           ? isOwner
@@ -546,7 +581,7 @@ export default function DraftDetailPage() {
                           : "Waiting for approver review"
                       }
                     >
-                      <p className="text-sm">
+                      <p>
                         {isAwaitingOwnerFinal
                           ? isOwner
                             ? "An internal approver completed the first review step. Final owner approval will schedule this content."
@@ -555,37 +590,36 @@ export default function DraftDetailPage() {
                           ? "Review the content, then approve it to move it forward or request changes to send it back to the creator."
                           : "This content is locked while it is in review. An approver can approve it or send it back with requested changes."}
                       </p>
-                    </SectionMessage>
+                    </DraftDetailNotice>
                   )}
 
                   {isApprovedAwaitingSchedule && (
-                    <SectionMessage
-                      appearance="information"
+                    <DraftDetailNotice
                       title={
                         canPublishPosts
                           ? "Approved and ready to queue"
                           : "Approved and awaiting publisher activation"
                       }
                     >
-                      <p className="text-sm">
+                      <p>
                         {canPublishPosts
                           ? "Final approval is complete. Activate the schedule to move this content into the publishing queue without reopening review."
                           : "Final approval is complete. A publisher must activate the schedule before this content enters the publishing queue."}
                       </p>
-                    </SectionMessage>
+                    </DraftDetailNotice>
                   )}
 
                   {collection.requiredApprovalSteps > 0 && (
-                    <div className="mt-4 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
-                      <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                    <div className={cn("mt-4 px-4 py-3", draftDetailSubtlePanelClassName)}>
+                      <p className="text-label-14 text-[var(--ds-gray-1000)]">
                         Approval progress
                       </p>
-                      <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                      <p className={cn("mt-1", draftDetailBodyTextClassName)}>
                         {collection.completedApprovalSteps} of {collection.requiredApprovalSteps} required approval step
                         {collection.requiredApprovalSteps === 1 ? "" : "s"} completed.
                       </p>
                       {collection.nextApprovalStage && (
-                        <p className="mt-1 text-xs text-[hsl(var(--foreground-subtle))]">
+                        <p className={cn("mt-1", draftDetailMetaTextClassName)}>
                           Next step: {collection.nextApprovalStage === "OWNER_FINAL" ? "Owner final sign-off" : "Approver review"}
                         </p>
                       )}
@@ -600,46 +634,47 @@ export default function DraftDetailPage() {
                           <div
                             key={platform}
                             title={platform}
-                            className="flex h-8 w-8 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
+                            className="flex h-8 w-8 items-center justify-center rounded-md border"
+                            style={platformSurfaceStyle(platform)}
                           >
-                            {Icon && <Icon className="h-4 w-4" />}
+                            {Icon ? <Icon className="h-4 w-4" style={{ color: platformAccent(platform) }} /> : null}
                           </div>
                         );
                       })}
                     </div>
                   ) : (
-                    <SectionMessage appearance="warning" title="No accounts selected">
-                      <p className="text-sm">
+                    <DraftDetailNotice title="No accounts selected" variant="warning">
+                      <p>
                         Edit this draft to add connected accounts before scheduling.
                       </p>
-                    </SectionMessage>
+                    </DraftDetailNotice>
                   )}
 
                   {showSchedulePanel && !isInReview && !isApprovedAwaitingSchedule && (
-                    <div className="mt-5 space-y-4 border-t border-[hsl(var(--border-subtle))] pt-5">
+                    <div className="mt-5 space-y-4 border-t border-[var(--ds-gray-400)] pt-5">
                       {!hasAccounts && (
-                        <SectionMessage appearance="warning" title="No accounts selected">
-                          <p className="text-sm">
+                        <DraftDetailNotice title="No accounts selected" variant="warning">
+                          <p>
                             Edit this draft to add connected accounts before scheduling.
                           </p>
-                        </SectionMessage>
+                        </DraftDetailNotice>
                       )}
-                      <ScheduleDateTimePicker
+                      <DraftDateTimePicker
                         date={scheduleDate}
                         setDate={setScheduleDate}
                         time={scheduleTime}
                         setTime={setScheduleTime}
                       />
-                      <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4">
-                        <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+                      <div className={cn(draftDetailSubtlePanelClassName, "p-4")}>
+                        <p className="text-label-14 text-[var(--ds-gray-1000)]">
                           Effective approval mode
                         </p>
-                        <p className="mt-1 text-xs leading-5 text-[hsl(var(--foreground-muted))]">
+                        <p className={cn("mt-1", draftDetailMetaTextClassName)}>
                           {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
                         </p>
                         {canManageApprovalRules ? (
                           <div className="mt-4 space-y-2">
-                            <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
+                            <label className="text-copy-12 uppercase tracking-wide text-[var(--ds-gray-900)]">
                               Campaign override
                             </label>
                             <select
@@ -649,7 +684,7 @@ export default function DraftDetailPage() {
                                   event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
                                 )
                               }
-                              className="flex h-10 w-full rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                              className={selectClassName}
                             >
                               <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
                               <option value="NONE">No approval required</option>
@@ -657,21 +692,21 @@ export default function DraftDetailPage() {
                               <option value="REQUIRED">Required approval</option>
                               <option value="MULTI_STEP">Multi-step approval</option>
                             </select>
-                            <p className="text-xs leading-5 text-[hsl(var(--foreground-muted))]">
+                            <p className={draftDetailMetaTextClassName}>
                               Campaign overrides beat account and content-type rules for this collection only.
                             </p>
                           </div>
                         ) : (
-                          <p className="mt-4 text-xs leading-5 text-[hsl(var(--foreground-muted))]">
+                          <p className={cn("mt-4", draftDetailMetaTextClassName)}>
                             Approval is resolved automatically from workspace policy, account rules, and content type.
                           </p>
                         )}
                       </div>
-                      <AtlassianButton
-                        appearance="primary"
+                      <DraftDetailActionButton
+                        tone="primary"
                         onClick={handleSchedule}
-                        isDisabled={scheduling || !scheduleDate || !scheduleTime || !hasAccounts}
-                        shouldFitContainer
+                        disabled={scheduling || !scheduleDate || !scheduleTime || !hasAccounts}
+                        fullWidth
                       >
                         <span className="inline-flex items-center justify-center gap-2">
                           {scheduling ? (
@@ -686,7 +721,7 @@ export default function DraftDetailPage() {
                             </>
                           )}
                         </span>
-                      </AtlassianButton>
+                      </DraftDetailActionButton>
                     </div>
                   )}
                 </div>
@@ -699,50 +734,50 @@ export default function DraftDetailPage() {
 
               <ClientReviewPanel collection={collection} />
 
-              <ApprovalSafetyPanel collection={collection} />
+              <ApprovalSafetyPanel collection={collection} appearance="geist" />
 
               {!hasAccounts && (
-                <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-10 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
-                    <BookOpen className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
+                <section className={cn(draftDetailPanelClassName, "px-6 py-10 text-center")}>
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                    <BookOpen className="h-5 w-5 text-[var(--ds-gray-900)]" />
                   </div>
-                  <p className="mt-4 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">No accounts connected yet</p>
-                  <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                  <p className="mt-4 text-title-16 text-[var(--ds-gray-1000)]">No accounts connected yet</p>
+                  <p className={cn("mt-1", draftDetailBodyTextClassName)}>
                     Add connected accounts to this draft before scheduling
                   </p>
                   <div className="mt-5 flex justify-center">
-                    <AtlassianButton appearance="primary" isDisabled={!canEdit} onClick={() => router.push(`/drafts/${id}/edit`)}>
+                    <DraftDetailActionButton tone="primary" disabled={!canEdit} onClick={() => router.push(`/drafts/${id}/edit`)}>
                       <span className="inline-flex items-center gap-1.5">
                         <Pencil className="h-3.5 w-3.5" />
                         <span>{canEdit ? "Edit Draft" : "Locked During Review"}</span>
                       </span>
-                    </AtlassianButton>
+                    </DraftDetailActionButton>
                   </div>
                 </section>
               )}
 
               <div className="grid gap-3 sm:hidden">
-                <AtlassianButton appearance="subtle" isDisabled={!canEdit} onClick={() => router.push(`/drafts/${id}/edit`)}>
+                <DraftDetailActionButton disabled={!canEdit} onClick={() => router.push(`/drafts/${id}/edit`)}>
                   <span className="inline-flex items-center gap-2">
                     <Pencil className="h-4 w-4" />
                     <span>Edit</span>
                   </span>
-                </AtlassianButton>
+                </DraftDetailActionButton>
                 {!isInReview && !isApprovedAwaitingSchedule && (
-                  <AtlassianButton appearance="primary" onClick={() => setShowSchedulePanel(true)}>
+                  <DraftDetailActionButton tone="primary" onClick={() => setShowSchedulePanel(true)}>
                     <span className="inline-flex items-center gap-2">
                       <Send className="h-4 w-4" />
                       <span>{primaryActionLabel}</span>
                     </span>
-                  </AtlassianButton>
+                  </DraftDetailActionButton>
                 )}
                 {isApprovedAwaitingSchedule && canPublishPosts && (
-                  <AtlassianButton appearance="primary" isDisabled={activatingSchedule} onClick={handleActivateApprovedSchedule}>
+                  <DraftDetailActionButton tone="primary" disabled={activatingSchedule} onClick={handleActivateApprovedSchedule}>
                     <span className="inline-flex items-center gap-2">
                       {activatingSchedule ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                       <span>Activate Schedule</span>
                     </span>
-                  </AtlassianButton>
+                  </DraftDetailActionButton>
                 )}
               </div>
             </div>
@@ -761,7 +796,7 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
 
   return (
     <div>
-      <div className="relative aspect-video max-h-48 w-full overflow-hidden rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+      <div className="relative aspect-video max-h-48 w-full overflow-hidden rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
         {isVideo ? (
           // eslint-disable-next-line jsx-a11y/media-has-caption
           <video src={current.fileUrl} className="h-full w-full object-contain" />
@@ -798,8 +833,8 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
               className={cn(
                 "rounded-full transition-all",
                 i === idx
-                  ? "h-1.5 w-4 bg-[hsl(var(--accent))]"
-                  : "h-1.5 w-1.5 bg-[hsl(var(--foreground-subtle))] hover:bg-[hsl(var(--foreground-muted))]"
+                  ? "h-1.5 w-4 bg-[var(--ds-blue-600)]"
+                  : "h-1.5 w-1.5 bg-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-700)]"
               )}
             />
           ))}
@@ -809,81 +844,23 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
   );
 }
 
-function LoadingSkeleton() {
-  return (
-    <main className="min-h-screen bg-[hsl(var(--background))]">
-      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
-        <div className="px-4 sm:px-6">
-          <div className="flex h-[60px] items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-10 w-10 rounded-lg" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-40 rounded" />
-                <Skeleton className="h-3 w-28 rounded" />
-              </div>
-            </div>
-            <div className="hidden gap-2 sm:flex">
-              <Skeleton className="h-8 w-16 rounded-lg" />
-              <Skeleton className="h-8 w-16 rounded-lg" />
-              <Skeleton className="h-8 w-24 rounded-lg" />
-            </div>
-          </div>
-        </div>
-      </header>
-      <div className="px-4 py-6 sm:px-6">
-        <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
-          <div className="space-y-5">
-            {[1, 2].map((i) => (
-              <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                  <Skeleton className="h-4 w-24 rounded" />
-                </div>
-                <div className="space-y-3 px-5 py-4">
-                  {[100, 88, 92].map((w, idx) => (
-                    <Skeleton key={idx} className="h-4 rounded" style={{ width: `${w}%` }} />
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-            <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-10 w-10 rounded-lg" />
-                <div className="flex-1 space-y-2">
-                  <Skeleton className="h-5 w-40 rounded" />
-                  <Skeleton className="h-4 w-56 rounded" />
-                </div>
-                <Skeleton className="h-8 w-28 rounded-lg" />
-              </div>
-            </div>
-            <div className="px-5 py-5">
-              <Skeleton className="h-8 w-48 rounded" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
 function ErrorState({ error, onBack }: { error: string | null; onBack: () => void }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-      <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
-          <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
+    <div className="flex min-h-screen items-center justify-center bg-[var(--ds-background-200)] p-6">
+      <div className="w-full max-w-sm rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-8 text-center shadow-sm">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[var(--ds-red-200)] bg-[var(--ds-red-100)]">
+          <AlertCircle className="h-7 w-7 text-[var(--ds-red-700)]" />
         </div>
-        <h3 className="mb-1 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Draft not found</h3>
-        <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+        <h3 className="mb-1 text-title-16 text-[var(--ds-gray-1000)]">Draft not found</h3>
+        <p className="mb-6 text-label-14 leading-6 text-[var(--ds-gray-900)]">
           {error ?? "This draft couldn't be loaded. It may have been deleted."}
         </p>
-        <AtlassianButton appearance="primary" onClick={onBack}>
+        <DraftDetailActionButton tone="primary" onClick={onBack}>
           <span className="inline-flex items-center gap-1.5">
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Drafts</span>
           </span>
-        </AtlassianButton>
+        </DraftDetailActionButton>
       </div>
     </div>
   );

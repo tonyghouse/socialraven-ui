@@ -105,20 +105,68 @@ const ROLE_ORDER: Record<WorkspaceRole, number> = {
 };
 
 const surfaceClass =
-  "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-sm";
+  "rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm";
 const raisedSurfaceClass =
-  "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] shadow-xs";
-const subtleTextClass = "text-[hsl(var(--foreground-muted))]";
-const dividerClass = "border-[hsl(var(--border))]";
-const accentTextClass = "text-[hsl(var(--accent))]";
+  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] shadow-none";
+const subtleTextClass = "text-[var(--ds-gray-900)]";
+const dividerClass = "border-[var(--ds-gray-400)]";
+const accentTextClass = "text-[var(--ds-blue-700)]";
 const sectionIconBadgeClass =
-  "border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]";
+  "border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
 const neutralIconBadgeClass =
-  "border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
+  "border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
 const dangerIconBadgeClass =
-  "border border-[#f5c2c7] bg-[#fff1f2] text-[#ae2e24] dark:border-[#5d1f1a] dark:bg-[#2b1917] dark:text-[#fd9891]";
+  "border border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]";
 const pillClass =
-  "inline-flex items-center gap-2 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-2.5 py-1.5 text-xs font-medium text-[hsl(var(--foreground-muted))]";
+  "inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1.5 text-copy-12 font-medium text-[var(--ds-gray-900)]";
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+const secondaryButtonClassName = cn(
+  "h-8 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] shadow-none transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:pointer-events-none disabled:opacity-50",
+  focusRingClassName
+);
+const primaryButtonClassName = cn(
+  "h-8 rounded-md border border-transparent bg-[var(--ds-blue-600)] px-3 text-label-14 text-white shadow-none transition-colors hover:bg-[var(--ds-blue-700)] disabled:pointer-events-none disabled:opacity-50",
+  focusRingClassName
+);
+const ghostButtonClassName = cn(
+  "h-8 rounded-md px-2.5 text-label-14 text-[var(--ds-gray-900)] shadow-none transition-colors hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)] disabled:pointer-events-none disabled:opacity-50",
+  focusRingClassName
+);
+const destructiveButtonClassName = cn(
+  "h-8 rounded-md border border-transparent bg-[var(--ds-red-600)] px-3 text-label-14 text-white shadow-none transition-colors hover:bg-[var(--ds-red-700)] disabled:pointer-events-none disabled:opacity-50",
+  focusRingClassName
+);
+const destructiveGhostButtonClassName = cn(
+  "h-8 rounded-md px-2.5 text-label-14 text-[var(--ds-gray-900)] shadow-none transition-colors hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)] disabled:pointer-events-none disabled:opacity-50",
+  focusRingClassName
+);
+const inputClassName = cn(
+  "h-9 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] shadow-none",
+  focusRingClassName,
+  "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+);
+const selectTriggerClassName = cn(
+  "rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none transition-colors hover:border-[var(--ds-gray-500)] data-[placeholder]:text-[var(--ds-gray-900)]",
+  focusRingClassName,
+  "focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+);
+const selectContentClassName =
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-lg shadow-black/[0.04]";
+const selectItemClassName =
+  "focus:bg-[var(--ds-gray-100)] focus:text-[var(--ds-gray-1000)]";
+const checkboxClassName =
+  "rounded-[6px] border-[var(--ds-gray-500)] bg-[var(--ds-background-100)] text-white focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] data-[state=checked]:border-[var(--ds-blue-600)] data-[state=checked]:bg-[var(--ds-blue-600)]";
+const subtlePanelClassName =
+  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-3";
+const dashedNoticeClassName =
+  "rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3 text-copy-12 text-[var(--ds-gray-900)]";
+const infoPanelClassName =
+  "rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-3";
+const warningPanelClassName =
+  "rounded-xl border border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] px-4 py-3";
+const dangerPanelClassName =
+  "rounded-xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)]";
 const DEFAULT_RULE_VALUE = "DEFAULT";
 
 function roleLabel(role: WorkspaceRole) {
@@ -150,13 +198,13 @@ function roleGroupLabel(role: WorkspaceRole) {
 function roleBadgeClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
+      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
     case "ADMIN":
-      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
+      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
     case "EDITOR":
-      return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
+      return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "READ_ONLY":
-      return "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
+      return "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
   }
 }
 
@@ -167,13 +215,13 @@ function approvalModeLabel(mode: WorkspaceApprovalMode) {
 function avatarToneClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "bg-[hsl(var(--accent)/0.12)] text-[hsl(var(--accent))]";
+      return "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
     case "ADMIN":
-      return "bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
+      return "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
     case "EDITOR":
-      return "bg-[#dcfff1] text-[#216e4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
+      return "bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "READ_ONLY":
-      return "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
+      return "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
   }
 }
 
@@ -384,7 +432,7 @@ function SectionHeader({
           <Icon size={17} />
         </div>
         <div className="space-y-1">
-          <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+          <h2 className="text-label-14 font-semibold leading-5 text-[var(--ds-gray-1000)]">
             {title}
           </h2>
           <p className={cn("text-xs leading-4", subtleTextClass)}>{description}</p>
@@ -405,11 +453,11 @@ function EmptyState({
   return (
     <div
       className={cn(
-        "rounded-xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-4 py-8 text-center",
+        "rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-8 text-center",
         dividerClass
       )}
     >
-      <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{title}</p>
+      <p className="text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">{title}</p>
       <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>{description}</p>
     </div>
   );
@@ -418,26 +466,26 @@ function EmptyState({
 function roleHeadingClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "text-[hsl(var(--accent))]";
+      return "text-[var(--ds-blue-700)]";
     case "ADMIN":
-      return "text-[hsl(var(--accent))]";
+      return "text-[var(--ds-blue-700)]";
     case "EDITOR":
-      return "text-[#216e4e] dark:text-[#7ee2b8]";
+      return "text-[var(--ds-green-700)]";
     case "READ_ONLY":
-      return "text-[hsl(var(--foreground-muted))]";
+      return "text-[var(--ds-gray-900)]";
   }
 }
 
 function roleContextAccentClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.08)] text-[hsl(var(--accent))]";
+      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
     case "ADMIN":
-      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
+      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
     case "EDITOR":
-      return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
+      return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "READ_ONLY":
-      return "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
+      return "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
   }
 }
 
@@ -878,7 +926,7 @@ export default function WorkspaceSettingsPage() {
           <div className="space-y-6">
           <div className="space-y-2">
             <p className={cn("text-xs", subtleTextClass)}>Workspace settings</p>
-            <h1 className="text-lg font-semibold leading-6 text-[hsl(var(--foreground))]">
+            <h1 className="text-title-20 leading-6 text-[var(--ds-gray-1000)]">
               No active workspace selected
             </h1>
             <p className={cn("max-w-2xl text-sm leading-5", subtleTextClass)}>
@@ -905,7 +953,7 @@ export default function WorkspaceSettingsPage() {
                     <div key={workspace.id} className={cn(raisedSurfaceClass, "p-4")}>
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-medium text-foreground dark:text-[#f3f4f6]">
+                          <p className="truncate text-label-14 font-medium text-[var(--ds-gray-1000)]">
                             {workspace.name}
                           </p>
                           <p className={cn("mt-1 text-sm", subtleTextClass)}>
@@ -917,7 +965,7 @@ export default function WorkspaceSettingsPage() {
                           variant="outline"
                           onClick={() => handleRestoreWorkspace(workspace)}
                           disabled={restoreBusyId === workspace.id}
-                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
+                          className={secondaryButtonClassName}
                         >
                           <ArchiveRestore size={16} />
                           {restoreBusyId === workspace.id ? "Restoring..." : "Restore"}
@@ -935,7 +983,11 @@ export default function WorkspaceSettingsPage() {
   }
 
   if (!activeWorkspace) {
-    return <div className="p-8 text-sm text-[hsl(var(--foreground-muted))]">Loading workspace settings...</div>;
+    return (
+      <div className="p-8 text-label-14 text-[var(--ds-gray-900)]">
+        Loading workspace settings...
+      </div>
+    );
   }
 
   return (
@@ -952,18 +1004,18 @@ export default function WorkspaceSettingsPage() {
 
       {deleteDialogOpen && activeWorkspace && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-lg">
+          <div className="w-full max-w-md rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-5 shadow-lg shadow-black/[0.06]">
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-destructive/10 text-destructive">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]">
                 <AlertTriangle size={18} />
               </div>
               <div className="space-y-1">
-                <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+                <h2 className="text-label-14 font-semibold leading-5 text-[var(--ds-gray-1000)]">
                   Delete workspace?
                 </h2>
                 <p className={cn("text-sm leading-5", subtleTextClass)}>
                   This removes access for the whole team immediately. Type{" "}
-                  <span className="font-medium text-[hsl(var(--foreground))]">
+                  <span className="font-medium text-[var(--ds-gray-1000)]">
                     {activeWorkspace.name}
                   </span>{" "}
                   to confirm.
@@ -977,7 +1029,7 @@ export default function WorkspaceSettingsPage() {
                 onChange={(e) => setDeleteConfirmValue(e.target.value)}
                 placeholder={activeWorkspace.name}
                 autoFocus
-                className="h-9"
+                className={inputClassName}
               />
               <p className={cn("text-xs", subtleTextClass)}>
                 The workspace moves to deleted workspaces and can be restored later by an
@@ -994,6 +1046,7 @@ export default function WorkspaceSettingsPage() {
                   setDeleteConfirmValue("");
                 }}
                 disabled={deleteBusy}
+                className={secondaryButtonClassName}
               >
                 Cancel
               </Button>
@@ -1002,6 +1055,7 @@ export default function WorkspaceSettingsPage() {
                 size="sm"
                 onClick={handleDeleteWorkspace}
                 disabled={deleteBusy || deleteConfirmValue.trim() !== activeWorkspace.name}
+                className={destructiveButtonClassName}
               >
                 {deleteBusy ? "Deleting..." : "Delete workspace"}
               </Button>
@@ -1020,13 +1074,13 @@ export default function WorkspaceSettingsPage() {
           <>
             <div
               className={cn(
-                "hidden items-center gap-2 rounded-md border bg-white/80 px-3 py-2 text-xs font-medium leading-4 shadow-sm backdrop-blur-sm md:inline-flex dark:bg-white/5",
+                "hidden items-center gap-2 rounded-md border bg-[var(--ds-background-100)] px-3 py-2 text-xs font-medium leading-4 shadow-sm md:inline-flex",
                 dividerClass
               )}
             >
               <span
                 className={cn(
-                  "h-2 w-2 rounded-full bg-[#1f845a]",
+                  "h-2 w-2 rounded-full bg-[var(--ds-green-600)]",
                   refreshing && "animate-pulse"
                 )}
               />
@@ -1039,7 +1093,7 @@ export default function WorkspaceSettingsPage() {
               size="sm"
               onClick={() => loadData({ silent: true, syncWorkspaceList: true })}
               disabled={loading || refreshing}
-              className="h-8 rounded-md border-slate-300 bg-white/80 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
+              className={secondaryButtonClassName}
             >
               <RefreshCw
                 size={16}
@@ -1054,7 +1108,7 @@ export default function WorkspaceSettingsPage() {
       <div className="w-full px-6 py-6 md:px-8 md:py-8">
         <div className="space-y-6">
           {error && (
-            <div className="rounded-xl border border-[#f5c2c7] bg-[#fff4f5] px-4 py-3 text-sm text-[#ae2e24] dark:border-[#5d1f1a] dark:bg-[#2b1917] dark:text-[#fd9891]">
+            <div className="rounded-xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)] px-4 py-3 text-label-14 text-[var(--ds-red-700)]">
               {error}
             </div>
           )}
@@ -1070,11 +1124,11 @@ export default function WorkspaceSettingsPage() {
                 <div className="space-y-3 p-4">
                   {isInfluencer ? (
                     <div className={cn(raisedSurfaceClass, "flex items-center gap-3 p-4")}>
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
                         <BriefcaseBusiness size={18} />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                        <p className="text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                           main
                         </p>
                         <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1089,13 +1143,14 @@ export default function WorkspaceSettingsPage() {
                           type="button"
                           onClick={() => setSwitcherOpen((open) => !open)}
                           className={cn(
-                            "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 text-sm transition-colors hover:bg-slate-50 dark:bg-[hsl(var(--surface-raised))] dark:hover:bg-white/5",
+                            "flex h-10 w-full items-center justify-between rounded-xl border bg-[var(--ds-background-100)] px-3 text-sm transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]",
                             dividerClass,
+                            focusRingClassName
                           )}
                         >
                           <span className="flex min-w-0 items-center gap-2">
                             <BriefcaseBusiness size={16} className={accentTextClass} />
-                            <span className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                            <span className="truncate text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                               {workspaceName}
                             </span>
                           </span>
@@ -1110,7 +1165,7 @@ export default function WorkspaceSettingsPage() {
                         </button>
 
                         {switcherOpen && (
-                          <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-xl border border-slate-200 bg-white p-1 shadow-[0_12px_32px_rgb(0 0 0 / 0.18)] dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:shadow-none">
+                          <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-1 shadow-lg shadow-black/[0.04]">
                             {workspaces.map((ws) => (
                               <button
                                 key={ws.id}
@@ -1119,14 +1174,17 @@ export default function WorkspaceSettingsPage() {
                                   switchWorkspace(ws);
                                   setSwitcherOpen(false);
                                 }}
-                                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
+                                className={cn(
+                                  "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 transition-colors hover:bg-[var(--ds-gray-100)]",
+                                  focusRingClassName
+                                )}
                               >
                                 <BriefcaseBusiness size={16} className={accentTextClass} />
-                                <span className="flex-1 truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                                <span className="flex-1 truncate text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                                   {ws.name}
                                 </span>
                                 {ws.id === activeWorkspace.id && (
-                                  <Check size={14} className="text-[hsl(var(--accent))]" />
+                                  <Check size={14} className="text-[var(--ds-blue-700)]" />
                                 )}
                               </button>
                             ))}
@@ -1142,7 +1200,7 @@ export default function WorkspaceSettingsPage() {
                             setShowCreateWorkspace((current) => !current);
                             setCreateWorkspaceError(null);
                           }}
-                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
+                          className={secondaryButtonClassName}
                         >
                           <Plus size={16} />
                           New workspace
@@ -1155,7 +1213,7 @@ export default function WorkspaceSettingsPage() {
                     <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                          <p className="text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                             Create workspace
                           </p>
                           <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1168,7 +1226,10 @@ export default function WorkspaceSettingsPage() {
                             setShowCreateWorkspace(false);
                             setNewWorkspaceName("");
                           }}
-                          className="rounded-md p-1 text-muted-foreground transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-white/10 dark:hover:text-white"
+                          className={cn(
+                            "rounded-md p-1 text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-gray-200)] hover:text-[var(--ds-gray-1000)]",
+                            focusRingClassName
+                          )}
                         >
                           <X size={16} />
                         </button>
@@ -1180,11 +1241,11 @@ export default function WorkspaceSettingsPage() {
                         onChange={(e) => setNewWorkspaceName(e.target.value)}
                         onKeyDown={(e) => e.key === "Enter" && handleCreateWorkspace()}
                         autoFocus
-                        className="h-9"
+                        className={inputClassName}
                       />
 
                       {createWorkspaceError && (
-                        <p className="text-sm text-destructive">{createWorkspaceError}</p>
+                        <p className="text-label-14 text-[var(--ds-red-700)]">{createWorkspaceError}</p>
                       )}
 
                       <div className="flex gap-2">
@@ -1192,6 +1253,7 @@ export default function WorkspaceSettingsPage() {
                           size="sm"
                           onClick={handleCreateWorkspace}
                           disabled={!newWorkspaceName.trim() || createWorkspaceBusy}
+                          className={primaryButtonClassName}
                         >
                           {createWorkspaceBusy ? "Creating..." : "Create"}
                         </Button>
@@ -1202,6 +1264,7 @@ export default function WorkspaceSettingsPage() {
                             setShowCreateWorkspace(false);
                             setNewWorkspaceName("");
                           }}
+                          className={ghostButtonClassName}
                         >
                           Cancel
                         </Button>
@@ -1213,7 +1276,7 @@ export default function WorkspaceSettingsPage() {
                     <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                          <p className="text-label-14 font-medium text-[var(--ds-gray-1000)]">
                             Display name
                           </p>
                           <p className={cn("text-sm", subtleTextClass)}>
@@ -1225,7 +1288,7 @@ export default function WorkspaceSettingsPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setIsEditingWorkspaceName(true)}
-                            className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
+                            className={secondaryButtonClassName}
                           >
                             <PencilLine size={16} />
                             Rename
@@ -1246,7 +1309,7 @@ export default function WorkspaceSettingsPage() {
                               }
                             }}
                             autoFocus
-                            className="h-9"
+                            className={inputClassName}
                           />
                           <div className="flex gap-2">
                             <Button
@@ -1257,6 +1320,7 @@ export default function WorkspaceSettingsPage() {
                                 renameWorkspaceBusy ||
                                 workspaceNameInput.trim() === activeWorkspace.name
                               }
+                              className={primaryButtonClassName}
                             >
                               {renameWorkspaceBusy ? "Saving..." : "Save changes"}
                             </Button>
@@ -1268,15 +1332,16 @@ export default function WorkspaceSettingsPage() {
                                 setIsEditingWorkspaceName(false);
                               }}
                               disabled={renameWorkspaceBusy}
+                              className={ghostButtonClassName}
                             >
                               Cancel
                             </Button>
                           </div>
                         </div>
                       ) : (
-                        <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                        <div className={subtlePanelClassName}>
                           <p className={cn("text-xs", subtleTextClass)}>Current name</p>
-                          <p className="mt-1 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                          <p className="mt-1 text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                             {activeWorkspace.name}
                           </p>
                         </div>
@@ -1286,7 +1351,7 @@ export default function WorkspaceSettingsPage() {
 
                   <div className={cn(raisedSurfaceClass, "space-y-4 p-4")}>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                      <p className="text-label-14 font-medium text-[var(--ds-gray-1000)]">
                         Approval workflow
                       </p>
                       <p className={cn("text-sm", subtleTextClass)}>
@@ -1304,12 +1369,16 @@ export default function WorkspaceSettingsPage() {
                             value={approvalModeInput}
                             onValueChange={(value) => setApprovalModeInput(value as WorkspaceApprovalMode)}
                           >
-                            <SelectTrigger className="h-10">
+                            <SelectTrigger className={cn(selectTriggerClassName, "h-10")}>
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className={selectContentClassName}>
                               {APPROVAL_MODE_OPTIONS.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
+                                <SelectItem
+                                  key={option.value}
+                                  value={option.value}
+                                  className={selectItemClassName}
+                                >
                                   {option.label}
                                 </SelectItem>
                               ))}
@@ -1320,10 +1389,10 @@ export default function WorkspaceSettingsPage() {
                           </p>
                         </div>
 
-                        <div className="rounded-xl border border-slate-200/80 bg-white px-4 py-4 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                        <div className={subtlePanelClassName}>
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div className="space-y-1">
-                              <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                              <p className="text-label-14 font-medium text-[var(--ds-gray-1000)]">
                                 Auto-schedule after final approval
                               </p>
                               <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1335,6 +1404,7 @@ export default function WorkspaceSettingsPage() {
                               onCheckedChange={(checked) =>
                                 setAutoScheduleAfterApprovalInput(checked === true)
                               }
+                              className={checkboxClassName}
                             />
                           </div>
                         </div>
@@ -1348,7 +1418,7 @@ export default function WorkspaceSettingsPage() {
                               defaultApproverMembers.map((member) => (
                                 <span key={member.userId} className={pillClass}>
                                   {memberDisplayLabel(member)}
-                                  <span className="text-[11px] text-slate-500 dark:text-[hsl(var(--foreground-subtle))]">
+                                  <span className="text-[11px] text-[var(--ds-gray-900)]">
                                     {roleLabel(member.role)}
                                   </span>
                                 </span>
@@ -1372,7 +1442,7 @@ export default function WorkspaceSettingsPage() {
                           </div>
 
                           {editorMembers.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-subtle))]">
+                            <div className={dashedNoticeClassName}>
                               Invite or assign editors first to grant extra approver capability.
                             </div>
                           ) : (
@@ -1387,8 +1457,8 @@ export default function WorkspaceSettingsPage() {
                                     className={cn(
                                       "flex items-start gap-3 rounded-xl border px-3 py-3 transition-colors",
                                       checked
-                                        ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.06)]"
-                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]"
+                                        ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]"
+                                        : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
                                     )}
                                   >
                                     <Checkbox
@@ -1402,10 +1472,10 @@ export default function WorkspaceSettingsPage() {
                                             : current.filter((value) => value !== member.userId)
                                         );
                                       }}
-                                      className="mt-0.5"
+                                      className={cn("mt-0.5", checkboxClassName)}
                                     />
                                     <div className="space-y-1">
-                                      <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                                      <p className="text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                                         {label}
                                       </p>
                                       <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1428,7 +1498,7 @@ export default function WorkspaceSettingsPage() {
                               defaultPublisherMembers.map((member) => (
                                 <span key={member.userId} className={pillClass}>
                                   {memberDisplayLabel(member)}
-                                  <span className="text-[11px] text-slate-500 dark:text-[hsl(var(--foreground-subtle))]">
+                                  <span className="text-[11px] text-[var(--ds-gray-900)]">
                                     {roleLabel(member.role)}
                                   </span>
                                 </span>
@@ -1452,7 +1522,7 @@ export default function WorkspaceSettingsPage() {
                           </div>
 
                           {editorMembers.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-subtle))]">
+                            <div className={dashedNoticeClassName}>
                               Invite or assign editors first to grant extra publisher capability.
                             </div>
                           ) : (
@@ -1467,8 +1537,8 @@ export default function WorkspaceSettingsPage() {
                                     className={cn(
                                       "flex items-start gap-3 rounded-xl border px-3 py-3 transition-colors",
                                       checked
-                                        ? "border-[#c6f0d3] bg-[#f2fcf6] dark:border-[#295f4e] dark:bg-[#1f2e28]"
-                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]"
+                                        ? "border-[var(--ds-green-200)] bg-[var(--ds-green-100)]"
+                                        : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
                                     )}
                                   >
                                     <Checkbox
@@ -1482,10 +1552,10 @@ export default function WorkspaceSettingsPage() {
                                             : current.filter((value) => value !== member.userId)
                                         );
                                       }}
-                                      className="mt-0.5"
+                                      className={cn("mt-0.5", checkboxClassName)}
                                     />
                                     <div className="space-y-1">
-                                      <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                                      <p className="text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                                         {label}
                                       </p>
                                       <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1512,10 +1582,10 @@ export default function WorkspaceSettingsPage() {
                             {CONTENT_TYPE_RULE_TYPES.map((contentType) => (
                               <div
                                 key={contentType}
-                                className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] sm:grid-cols-[130px_minmax(0,1fr)]"
+                                className="grid gap-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3 sm:grid-cols-[130px_minmax(0,1fr)]"
                               >
                                 <div>
-                                  <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                                  <p className="text-label-14 font-medium text-[var(--ds-gray-1000)]">
                                     {contentType.charAt(0) + contentType.slice(1).toLowerCase()}
                                   </p>
                                   <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1532,13 +1602,22 @@ export default function WorkspaceSettingsPage() {
                                       }))
                                     }
                                   >
-                                    <SelectTrigger className="h-10">
+                                    <SelectTrigger className={cn(selectTriggerClassName, "h-10")}>
                                       <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent>
-                                      <SelectItem value={DEFAULT_RULE_VALUE}>Use workspace default</SelectItem>
+                                    <SelectContent className={selectContentClassName}>
+                                      <SelectItem
+                                        value={DEFAULT_RULE_VALUE}
+                                        className={selectItemClassName}
+                                      >
+                                        Use workspace default
+                                      </SelectItem>
                                       {APPROVAL_MODE_OPTIONS.map((option) => (
-                                        <SelectItem key={option.value} value={option.value}>
+                                        <SelectItem
+                                          key={option.value}
+                                          value={option.value}
+                                          className={selectItemClassName}
+                                        >
                                           {option.label}
                                         </SelectItem>
                                       ))}
@@ -1568,7 +1647,7 @@ export default function WorkspaceSettingsPage() {
                           </div>
 
                           {sortedConnectedAccounts.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-subtle))]">
+                            <div className={dashedNoticeClassName}>
                               Connect at least one social account in this workspace before adding account-specific approval rules.
                             </div>
                           ) : (
@@ -1576,10 +1655,10 @@ export default function WorkspaceSettingsPage() {
                               {sortedConnectedAccounts.map((account) => (
                                 <div
                                   key={account.providerUserId}
-                                  className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] sm:grid-cols-[minmax(0,1fr)_220px]"
+                                  className="grid gap-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3 sm:grid-cols-[minmax(0,1fr)_220px]"
                                 >
                                   <div className="min-w-0 space-y-1">
-                                    <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
+                                    <p className="truncate text-label-14 font-medium text-[var(--ds-gray-1000)]">
                                       {account.username || account.providerUserId}
                                     </p>
                                     <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1596,13 +1675,22 @@ export default function WorkspaceSettingsPage() {
                                         }))
                                       }
                                     >
-                                      <SelectTrigger className="h-10">
+                                      <SelectTrigger className={cn(selectTriggerClassName, "h-10")}>
                                         <SelectValue />
                                       </SelectTrigger>
-                                      <SelectContent>
-                                        <SelectItem value={DEFAULT_RULE_VALUE}>Use workspace default</SelectItem>
+                                      <SelectContent className={selectContentClassName}>
+                                        <SelectItem
+                                          value={DEFAULT_RULE_VALUE}
+                                          className={selectItemClassName}
+                                        >
+                                          Use workspace default
+                                        </SelectItem>
                                         {APPROVAL_MODE_OPTIONS.map((option) => (
-                                          <SelectItem key={option.value} value={option.value}>
+                                          <SelectItem
+                                            key={option.value}
+                                            value={option.value}
+                                            className={selectItemClassName}
+                                          >
                                             {option.label}
                                           </SelectItem>
                                         ))}
@@ -1622,8 +1710,8 @@ export default function WorkspaceSettingsPage() {
                           )}
                         </div>
 
-                        <div className="rounded-xl border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.06)] px-4 py-3">
-                          <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                        <div className={infoPanelClassName}>
+                          <p className="text-label-14 font-medium text-[var(--ds-gray-1000)]">
                             Rule precedence
                           </p>
                           <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
@@ -1636,6 +1724,7 @@ export default function WorkspaceSettingsPage() {
                             size="sm"
                             onClick={handleSaveApprovalRules}
                             disabled={savingApprovalRules || !approvalRulesDirty}
+                            className={primaryButtonClassName}
                           >
                             {savingApprovalRules ? "Saving..." : "Save workflow"}
                           </Button>
@@ -1670,6 +1759,7 @@ export default function WorkspaceSettingsPage() {
                                 );
                               }}
                               disabled={savingApprovalRules}
+                              className={ghostButtonClassName}
                             >
                               Reset
                             </Button>
@@ -1678,18 +1768,18 @@ export default function WorkspaceSettingsPage() {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                        <div className={subtlePanelClassName}>
                           <p className={cn("text-xs", subtleTextClass)}>Current mode</p>
-                          <p className="mt-1 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                          <p className="mt-1 text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                             {approvalModeLabel(activeWorkspace.approvalMode)}
                           </p>
                           <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
                             {approvalModeDescription(activeWorkspace.approvalMode)}
                           </p>
                         </div>
-                        <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                        <div className={subtlePanelClassName}>
                           <p className={cn("text-xs", subtleTextClass)}>Auto-schedule policy</p>
-                          <p className="mt-1 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                          <p className="mt-1 text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                             {activeWorkspace.autoScheduleAfterApproval
                               ? "Approved content schedules automatically"
                               : "Approved content waits for a publisher to activate the schedule"}
@@ -1748,7 +1838,7 @@ export default function WorkspaceSettingsPage() {
                                 )
                                 .map((rule) => (
                                   <div key={rule.id} className={cn(raisedSurfaceClass, "px-3 py-3")}>
-                                    <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                                    <p className="text-label-14 font-medium text-[var(--ds-gray-1000)]">
                                       {rule.scopeType === "ACCOUNT"
                                         ? `Account: ${sortedConnectedAccounts.find(
                                             (account) => account.providerUserId === rule.scopeValue
@@ -1770,11 +1860,11 @@ export default function WorkspaceSettingsPage() {
                   {myRole && <RoleContextPanel role={myRole} />}
 
                   {isInfluencer && (
-                    <div className="rounded-xl border border-[hsl(var(--accent)/0.18)] bg-[linear-gradient(180deg,hsl(var(--surface))_0%,hsl(var(--accent)/0.08)_100%)] px-4 py-3">
+                    <div className={warningPanelClassName}>
                       <div className="flex items-start gap-3">
                         <Info size={16} className={cn("mt-0.5", accentTextClass)} />
                         <div className="space-y-1">
-                          <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                          <p className="text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                             Influencer plan
                           </p>
                           <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1795,7 +1885,7 @@ export default function WorkspaceSettingsPage() {
                 description="Members and invitations."
                 icon={Users}
                 action={
-                  <div className="inline-flex rounded-lg border border-slate-200 bg-[hsl(var(--surface-raised))] p-1 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                  <div className="inline-flex rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-1">
                     {(["team", ...(!isInfluencer ? ["invitations"] : [])] as Tab[]).map((item) => (
                       <button
                         key={item}
@@ -1804,8 +1894,12 @@ export default function WorkspaceSettingsPage() {
                         className={cn(
                           "rounded-md px-3 py-1.5 text-xs font-medium leading-4 transition-colors",
                           tab === item
-                            ? "bg-[hsl(var(--surface))] text-slate-900 shadow-sm dark:bg-[hsl(var(--surface))] dark:text-white"
-                            : cn(subtleTextClass, "hover:text-slate-900 dark:hover:text-white")
+                            ? "bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-sm"
+                            : cn(
+                                subtleTextClass,
+                                "hover:bg-[var(--ds-gray-200)] hover:text-[var(--ds-gray-1000)]"
+                              ),
+                          focusRingClassName
                         )}
                       >
                         {item === "team" ? "Team" : "Invitations"}
@@ -1820,7 +1914,7 @@ export default function WorkspaceSettingsPage() {
                   <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                        <p className="text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                           Invite teammate
                         </p>
                         <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1835,7 +1929,7 @@ export default function WorkspaceSettingsPage() {
                             setShowInviteForm(true);
                             setInviteSuccess(false);
                           }}
-                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
+                          className={secondaryButtonClassName}
                         >
                           <UserPlus size={16} />
                           Add teammate
@@ -1852,18 +1946,22 @@ export default function WorkspaceSettingsPage() {
                             onChange={(e) => setInviteEmail(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && handleInvite()}
                             autoFocus
-                            className="h-9"
+                            className={inputClassName}
                           />
                           <Select
                             value={inviteRole}
                             onValueChange={(value) => setInviteRole(value as WorkspaceRole)}
                           >
-                            <SelectTrigger className="h-9">
+                            <SelectTrigger className={cn(selectTriggerClassName, "h-9")}>
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className={selectContentClassName}>
                               {ROLE_OPTIONS.map((role) => (
-                                <SelectItem key={role} value={role}>
+                                <SelectItem
+                                  key={role}
+                                  value={role}
+                                  className={selectItemClassName}
+                                >
                                   {roleLabel(role)}
                                 </SelectItem>
                               ))}
@@ -1871,13 +1969,16 @@ export default function WorkspaceSettingsPage() {
                           </Select>
                         </div>
 
-                        {inviteError && <p className="text-sm text-destructive">{inviteError}</p>}
+                        {inviteError && (
+                          <p className="text-label-14 text-[var(--ds-red-700)]">{inviteError}</p>
+                        )}
 
                         <div className="flex gap-2">
                           <Button
                             size="sm"
                             onClick={handleInvite}
                             disabled={!inviteEmail.trim() || inviteBusy}
+                            className={primaryButtonClassName}
                           >
                             {inviteBusy ? "Sending..." : "Send invite"}
                           </Button>
@@ -1885,6 +1986,7 @@ export default function WorkspaceSettingsPage() {
                             size="sm"
                             variant="ghost"
                             onClick={() => setShowInviteForm(false)}
+                            className={ghostButtonClassName}
                           >
                             Cancel
                           </Button>
@@ -1893,7 +1995,7 @@ export default function WorkspaceSettingsPage() {
                     )}
 
                     {inviteSuccess && (
-                      <p className="text-sm text-[#216e4e] dark:text-[#7ee2b8]">
+                      <p className="text-label-14 text-[var(--ds-green-700)]">
                         Invitation sent.
                       </p>
                     )}
@@ -1906,7 +2008,7 @@ export default function WorkspaceSettingsPage() {
                       <div
                         key={item}
                         className={cn(
-                          "h-28 animate-pulse rounded-lg border bg-muted/50",
+                          "h-28 animate-pulse rounded-xl border bg-[var(--ds-gray-100)]",
                           dividerClass
                         )}
                       />
@@ -1968,9 +2070,9 @@ export default function WorkspaceSettingsPage() {
                                       <div className="min-w-0 space-y-1">
                                         <p
                                           className={cn(
-                                            "truncate text-sm leading-5",
+                                            "truncate text-label-14 leading-5",
                                             fullName
-                                              ? "font-medium text-[hsl(var(--foreground))]"
+                                              ? "font-medium text-[var(--ds-gray-1000)]"
                                               : subtleTextClass
                                           )}
                                         >
@@ -1995,12 +2097,18 @@ export default function WorkspaceSettingsPage() {
                                             handleRoleChange(member.userId, value as WorkspaceRole)
                                           }
                                         >
-                                          <SelectTrigger className="h-8 w-[132px] rounded-md border-slate-300 bg-white dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
+                                          <SelectTrigger
+                                            className={cn(selectTriggerClassName, "h-8 w-[132px]")}
+                                          >
                                             <SelectValue />
                                           </SelectTrigger>
-                                          <SelectContent>
+                                          <SelectContent className={selectContentClassName}>
                                             {ROLE_OPTIONS.map((roleOption) => (
-                                              <SelectItem key={roleOption} value={roleOption}>
+                                              <SelectItem
+                                                key={roleOption}
+                                                value={roleOption}
+                                                className={selectItemClassName}
+                                              >
                                                 {roleLabel(roleOption)}
                                               </SelectItem>
                                             ))}
@@ -2023,7 +2131,7 @@ export default function WorkspaceSettingsPage() {
                                           variant="ghost"
                                           size="sm"
                                           onClick={() => handleRemove(member.userId)}
-                                          className="h-8 rounded-md px-2.5 text-muted-foreground hover:bg-[#ffeceb] hover:text-[#ae2e24] dark:hover:bg-[#2b1917] dark:hover:text-[#fd9891]"
+                                          className={destructiveGhostButtonClassName}
                                         >
                                           <Trash size={16} />
                                           Remove
@@ -2055,11 +2163,11 @@ export default function WorkspaceSettingsPage() {
                         )}
                       >
                         <div className="flex min-w-0 flex-1 items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
                             <Mail size={18} />
                           </div>
                           <div className="min-w-0 space-y-1">
-                            <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                            <p className="truncate text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                               {invitation.invitedEmail}
                             </p>
                             <p className={cn("flex items-center gap-1 text-xs leading-4", subtleTextClass)}>
@@ -2090,7 +2198,7 @@ export default function WorkspaceSettingsPage() {
                               variant="ghost"
                               size="sm"
                               onClick={() => handleRevokeInvitation(invitation.token)}
-                              className="h-8 rounded-md px-2.5 text-muted-foreground hover:bg-[#ffeceb] hover:text-[#ae2e24] dark:hover:bg-[#2b1917] dark:hover:text-[#fd9891]"
+                              className={destructiveGhostButtonClassName}
                             >
                               <Trash size={16} />
                               Revoke
@@ -2128,7 +2236,7 @@ export default function WorkspaceSettingsPage() {
                         <div key={workspace.id} className={cn(raisedSurfaceClass, "p-4")}>
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                              <p className="truncate text-label-14 font-medium leading-5 text-[var(--ds-gray-1000)]">
                                 {workspace.name}
                               </p>
                               <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
@@ -2143,7 +2251,7 @@ export default function WorkspaceSettingsPage() {
                               variant="outline"
                               onClick={() => handleRestoreWorkspace(workspace)}
                               disabled={restoreBusyId === workspace.id}
-                              className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
+                              className={secondaryButtonClassName}
                             >
                               <ArchiveRestore size={16} />
                               {restoreBusyId === workspace.id ? "Restoring..." : "Restore"}
@@ -2157,7 +2265,7 @@ export default function WorkspaceSettingsPage() {
               </section>
 
               {canDeleteWorkspace && (
-                <section className="rounded-xl border border-[#f5c2c7] bg-[#fff7f7] dark:border-[#5d1f1a] dark:bg-[#241716]">
+                <section className={dangerPanelClassName}>
                   <SectionHeader
                     title="Danger zone"
                     description="Delete this workspace."
@@ -2168,6 +2276,7 @@ export default function WorkspaceSettingsPage() {
                         variant="destructive"
                         size="sm"
                         onClick={() => setDeleteDialogOpen(true)}
+                        className={destructiveButtonClassName}
                       >
                         <Trash size={16} />
                         Delete workspace

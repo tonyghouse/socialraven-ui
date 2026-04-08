@@ -70,13 +70,13 @@ const POST_TYPE_META: Record<PostType, { label: string; Icon: React.ElementType;
 // ── Platform badge colours ────────────────────────────────────────────────────
 
 const PLATFORM_BADGE_STYLES: Record<string, string> = {
-  facebook:  "bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/20",
-  instagram: "bg-pink-50 text-pink-600 border-pink-200",
-  x:         "bg-foreground/8 text-foreground border-border",
-  linkedin:  "bg-[#0A66C2]/10 text-[#0A66C2] border-[#0A66C2]/20",
-  youtube:   "bg-red-50 text-red-600 border-red-200",
-  threads:   "bg-foreground/8 text-foreground border-border",
-  tiktok:    "bg-foreground/8 text-foreground border-border",
+  facebook:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  instagram: "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
+  x:         "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  linkedin:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  youtube:   "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
+  threads:   "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  tiktok:    "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
 };
 
 const PLATFORM_LABELS: Record<string, string> = {
@@ -84,6 +84,11 @@ const PLATFORM_LABELS: Record<string, string> = {
   linkedin: "LinkedIn", youtube: "YouTube",    threads: "Threads", tiktok: "TikTok",
 };
 const DEFAULT_APPROVAL_OVERRIDE = "DEFAULT";
+const pageClassName = "min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]";
+const insetSurfaceClassName =
+  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 // ── Accordion step card ────────────────────────────────────────────────────────
 
@@ -113,14 +118,14 @@ function StepCard({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border bg-surface shadow-sm transition-[border-color,box-shadow,opacity] duration-200",
+        "overflow-hidden rounded-2xl border bg-[var(--ds-background-100)] shadow-sm transition-[border-color,box-shadow,opacity] duration-200",
         locked
-          ? "border-border-subtle opacity-55"
+          ? "border-[var(--ds-gray-400)] opacity-60"
           : complete && isOpen
-            ? "border-[hsl(var(--accent))]/30 shadow-md"
+            ? "border-[var(--ds-blue-200)] shadow-[0_0_0_1px_var(--ds-blue-200)]"
             : complete
-              ? "border-[hsl(var(--border))]"
-              : "border-border-subtle",
+              ? "border-[var(--ds-gray-500)]"
+              : "border-[var(--ds-gray-400)]",
       )}
     >
       {/* ── Header ── */}
@@ -129,23 +134,23 @@ function StepCard({
         disabled={!canToggle}
         onClick={canToggle ? onToggle : undefined}
         className={cn(
-          "w-full flex items-center gap-4 border-b border-border-subtle bg-surface-raised px-5 py-4 text-left transition-colors duration-150",
+          "flex w-full items-center gap-4 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-4 text-left transition-colors duration-150",
           canToggle
-            ? "cursor-pointer hover:bg-[hsl(var(--background))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-inset"
+            ? cn("cursor-pointer hover:bg-[var(--ds-gray-200)]", focusRingClassName)
             : "cursor-default",
         )}
       >
         {/* Step indicator */}
         <div
           className={cn(
-            "mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold transition-colors duration-200",
+            "mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border text-label-12 transition-colors duration-200",
             complete
-              ? "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-              : "border-border-subtle bg-surface text-foreground-muted",
+              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]",
           )}
         >
           {complete
-            ? <CheckCircle2 className="h-4 w-4 text-[hsl(var(--accent))]" />
+            ? <CheckCircle2 className="h-4 w-4 text-[var(--ds-blue-700)]" />
             : <span>{step}</span>
           }
         </div>
@@ -154,23 +159,23 @@ function StepCard({
         <div className="flex-1 min-w-0">
           {!isOpen && complete && summary ? (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{title}</span>
-              <span className="text-muted-foreground/40">·</span>
+              <span className="text-copy-12 text-[var(--ds-gray-900)]">{title}</span>
+              <span className="text-[var(--ds-gray-700)]">·</span>
               {summary}
             </div>
           ) : (
             <>
-              <h2 className="text-sm font-bold text-foreground">{title}</h2>
-              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{description}</p>
+              <h2 className="text-label-14 text-[var(--ds-gray-1000)]">{title}</h2>
+              <p className="mt-1 text-copy-12 leading-5 text-[var(--ds-gray-900)]">{description}</p>
             </>
           )}
         </div>
 
         {/* Edit hint + chevron */}
         {canToggle && (
-            <div className="flex-shrink-0 flex items-center gap-1.5 text-muted-foreground">
+            <div className="flex flex-shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)]">
               {!isOpen && (
-              <span className="hidden items-center gap-1 rounded-md border border-border-subtle bg-surface px-2 py-0.5 text-[10px] font-medium text-foreground-muted sm:flex">
+              <span className="hidden items-center gap-1 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-1000)] sm:flex">
                 <Pencil className="w-2.5 h-2.5" />
                 Edit
               </span>
@@ -204,17 +209,17 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
   label?: string;
 }) {
   return (
-    <div className="mt-4 flex justify-end">
+    <div className="mt-5 flex justify-end">
       <button
         type="button"
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          "flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-colors duration-150",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35",
+          "flex items-center gap-1.5 rounded-md border px-4 py-2 text-label-14 transition-colors duration-150",
+          focusRingClassName,
           disabled
-            ? "bg-muted text-muted-foreground cursor-not-allowed"
-            : "bg-primary text-primary-foreground shadow-sm hover:bg-[hsl(var(--accent-hover))]",
+            ? "cursor-not-allowed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
+            : "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]",
         )}
       >
         {label}
@@ -314,13 +319,7 @@ export default function ScheduledPostCollectionPage() {
         ? validateMediaSync([...files, ...pseudoLibraryFiles], selectedPlatforms, postType)
         : []
     ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      files.map((f) => f.name + f.size).join(","),
-      pseudoLibraryFiles.map((f) => f.name + f.size).join(","),
-      selectedPlatforms.join(","),
-      postType,
-    ],
+    [files, pseudoLibraryFiles, postType, selectedPlatforms],
   );
 
   useEffect(() => {
@@ -334,8 +333,7 @@ export default function ScheduledPostCollectionPage() {
       .then(({ errors }) => setMediaErrors(errors))
       .catch(() => setMediaErrors([]))
       .finally(() => setValidatingMedia(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files.map((f) => f.name + f.size).join(","), selectedPlatforms.join(","), postType]);
+  }, [files, postType, selectedPlatforms]);
 
   const allMediaErrors = mediaErrors.length > 0 ? mediaErrors : syncMediaErrors;
   const hasMediaErrors = allMediaErrors.length > 0;
@@ -366,19 +364,21 @@ export default function ScheduledPostCollectionPage() {
 
   // ── Load accounts ────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (isLoaded) loadData();
-  }, [isLoaded]);
+    if (!isLoaded) return;
 
-  async function loadData() {
-    try {
-      setAccountsLoading(true);
-      setConnectedAccounts(await fetchAllConnectedAccountsApi(getToken));
-    } catch (err: any) {
-      toast.error(err.message ?? "Failed to load accounts");
-    } finally {
-      setAccountsLoading(false);
+    async function loadData() {
+      try {
+        setAccountsLoading(true);
+        setConnectedAccounts(await fetchAllConnectedAccountsApi(getToken));
+      } catch (err: any) {
+        toast.error(err.message ?? "Failed to load accounts");
+      } finally {
+        setAccountsLoading(false);
+      }
     }
-  }
+
+    void loadData();
+  }, [getToken, isLoaded]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────────
   function handlePostTypeChange(type: PostType) {
@@ -647,9 +647,9 @@ export default function ScheduledPostCollectionPage() {
   )];
 
   const step1Summary = postType ? (
-    <span className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+    <span className="flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
       {React.createElement(POST_TYPE_META[postType].Icon, {
-        className: "w-3.5 h-3.5 text-primary",
+        className: "h-3.5 w-3.5 text-[var(--ds-blue-700)]",
       })}
       {POST_TYPE_META[postType].label}
     </span>
@@ -657,26 +657,33 @@ export default function ScheduledPostCollectionPage() {
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm font-semibold text-primary">{selectedCount}</span>
-      <span className="text-xs text-muted-foreground">{selectedCount === 1 ? "account" : "accounts"}</span>
+      <span className="text-label-14 text-[var(--ds-blue-700)]">{selectedCount}</span>
+      <span className="text-copy-12 text-[var(--ds-gray-900)]">{selectedCount === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
-        <span key={p} className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded-full border", PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border")}>
+        <span
+          key={p}
+          className={cn(
+            "rounded-full border px-1.5 py-0.5 text-label-12",
+            PLATFORM_BADGE_STYLES[p]
+            ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+          )}
+        >
           {PLATFORM_LABELS[p] ?? p}
         </span>
       ))}
       {selectedPlatformKeys.length > 3 && (
-        <span className="text-[10px] text-muted-foreground">+{selectedPlatformKeys.length - 3}</span>
+        <span className="text-copy-12 text-[var(--ds-gray-900)]">+{selectedPlatformKeys.length - 3}</span>
       )}
     </span>
   );
 
   const step3Summary = (
-    <span className="flex items-center gap-2 text-sm text-foreground">
-      <span className="font-medium truncate max-w-[160px] sm:max-w-[260px]">
+    <span className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)]">
+      <span className="truncate max-w-[160px] sm:max-w-[260px]">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
           {postType && postType !== "TEXT" && totalMediaCount > 0 && (
-        <span className="text-xs text-muted-foreground flex-shrink-0">
+        <span className="shrink-0 text-copy-12 text-[var(--ds-gray-900)]">
           · {totalMediaCount} {postType === "IMAGE" ? "image" : "video"}{totalMediaCount !== 1 ? "s" : ""}
         </span>
       )}
@@ -684,7 +691,7 @@ export default function ScheduledPostCollectionPage() {
   );
 
   const step4Summary = date && time ? (
-    <span className="text-sm font-medium text-foreground">
+    <span className="text-label-14 text-[var(--ds-gray-1000)]">
       {new Date(`${date}T${time}`).toLocaleString(undefined, {
         month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
       })}
@@ -692,7 +699,7 @@ export default function ScheduledPostCollectionPage() {
   ) : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={pageClassName}>
 
       <ProtectedPageHeader
         title="Schedule Post"
@@ -702,9 +709,10 @@ export default function ScheduledPostCollectionPage() {
             : "Create once and publish across connected platforms."
         }
         icon={<CalendarClock className="h-4 w-4" />}
+        className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
         actions={
           selectedCount > 0 ? (
-            <div className="flex flex-shrink-0 items-center gap-1.5 rounded-md border border-border-subtle bg-surface-raised px-3 py-1.5 text-xs font-semibold text-foreground">
+            <div className="flex flex-shrink-0 items-center gap-1.5 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-1.5 text-copy-12 text-[var(--ds-gray-1000)]">
               <Zap className="w-3 h-3" />
               {selectedCount} {selectedCount === 1 ? "account" : "accounts"}
             </div>
@@ -713,11 +721,18 @@ export default function ScheduledPostCollectionPage() {
       />
 
       {selectedPlatformKeys.length > 0 && (
-        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs text-foreground-muted">Posting to:</span>
+            <span className="text-copy-12 text-[var(--ds-gray-900)]">Posting to:</span>
             {selectedPlatformKeys.map((p) => (
-              <span key={p} className={cn("rounded-md border px-2 py-0.5 text-xs font-medium", PLATFORM_BADGE_STYLES[p] ?? "border-border-subtle bg-surface-raised text-foreground")}>
+              <span
+                key={p}
+                className={cn(
+                  "rounded-full border px-2 py-0.5 text-label-12",
+                  PLATFORM_BADGE_STYLES[p]
+                  ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                )}
+              >
                 {PLATFORM_LABELS[p] ?? p}
               </span>
             ))}
@@ -758,6 +773,7 @@ export default function ScheduledPostCollectionPage() {
             selectedAccountIds={selectedAccountIds}
             onChange={setSelectedAccountIds}
             loading={accountsLoading}
+            appearance="geist"
           />
           {selectedCount > 0 && (
             <ContinueBtn onClick={() => goToStep(3)} />
@@ -786,18 +802,23 @@ export default function ScheduledPostCollectionPage() {
               postType={postType}
               onApplyItem={handleApplyLibraryItem}
               onApplyBundle={handleApplyLibraryBundle}
+              appearance="geist"
             />
           </div>
 
           {/* Caption */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-foreground">
+              <label className="text-label-14 text-[var(--ds-gray-1000)]">
                 {postType === "TEXT" ? "Content" : "Caption"}
               </label>
               <span className={cn(
-                "text-xs font-mono tabular-nums transition-colors",
-                overLimit ? "text-red-500 font-semibold" : nearLimit ? "text-amber-500" : "text-muted-foreground",
+                "text-copy-12 font-mono tabular-nums transition-colors",
+                overLimit
+                  ? "font-semibold text-[var(--ds-red-700)]"
+                  : nearLimit
+                    ? "text-[var(--ds-amber-700)]"
+                    : "text-[var(--ds-gray-900)]",
               )}>
                 {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()}
               </span>
@@ -811,18 +832,18 @@ export default function ScheduledPostCollectionPage() {
                   : "Write your post caption here. You can use emoji, hashtags, and mentions."
               }
               className={cn(
-                "min-h-[160px] w-full resize-none rounded-lg border bg-surface px-4 py-3 text-sm leading-relaxed text-foreground transition-[border-color,box-shadow,background-color] duration-150",
-                "placeholder:text-foreground-subtle",
-                "focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))]/20",
+                "min-h-[160px] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] px-4 py-3 text-copy-14 leading-6 text-[var(--ds-gray-1000)] transition-[border-color,box-shadow,background-color] duration-150",
+                "placeholder:text-[var(--ds-gray-900)]",
+                focusRingClassName,
                 overLimit || platformCharErrors.length > 0
-                  ? "border-destructive/60 focus:border-destructive"
-                  : "border-border-subtle focus:border-[hsl(var(--accent))]",
+                  ? "border-[var(--ds-red-300)]"
+                  : "border-[var(--ds-gray-400)] focus:border-[var(--ds-blue-600)]",
               )}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
             {selectedPlatforms.length > 0 && (
-              <PlatformCharLimits platforms={selectedPlatforms} charCount={charCount} />
+              <PlatformCharLimits platforms={selectedPlatforms} charCount={charCount} appearance="geist" />
             )}
           </div>
 
@@ -850,9 +871,10 @@ export default function ScheduledPostCollectionPage() {
                     : postType === "IMAGE" ? "Add More Images" : "Add Another Video"}
                   maxFiles={availableUploadSlots}
                   maxFilesLabel={restrictivePlatformLabel}
+                  appearance="geist"
                 />
               ) : (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-copy-12 text-[var(--ds-gray-900)]">
                   Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove a library asset to upload more files.
                 </p>
               )}
@@ -863,6 +885,7 @@ export default function ScheduledPostCollectionPage() {
                     current.filter((asset) => asset.fileKey !== fileKey)
                   )
                 }
+                appearance="geist"
               />
               {selectedPlatforms.length > 0 && (
                 <MediaValidationPanel
@@ -871,6 +894,7 @@ export default function ScheduledPostCollectionPage() {
                   errors={allMediaErrors}
                   validating={validatingMedia}
                   hasFiles={totalMediaCount > 0}
+                  appearance="geist"
                 />
               )}
             </div>
@@ -880,13 +904,14 @@ export default function ScheduledPostCollectionPage() {
           {postType && selectedAccounts.length > 0 && (
             <div className="mt-6 border-t border-border-subtle pt-6">
               <PlatformConfigsPanel
-                selectedAccounts={selectedAccounts}
-                configs={platformConfigs}
-                onChange={setPlatformConfigs}
-                showErrors={showErrors}
-                postType={postType}
-              />
-            </div>
+              selectedAccounts={selectedAccounts}
+              configs={platformConfigs}
+              onChange={setPlatformConfigs}
+              showErrors={showErrors}
+              postType={postType}
+              appearance="geist"
+            />
+          </div>
           )}
 
           <ContinueBtn
@@ -907,19 +932,25 @@ export default function ScheduledPostCollectionPage() {
           onToggle={reachedStep >= 4 ? () => toggleStep(4) : undefined}
           summary={step4Summary ?? undefined}
         >
-          <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
+          <ScheduleDateTimePicker
+            date={date}
+            setDate={setDate}
+            time={time}
+            setTime={setTime}
+            appearance="geist"
+          />
 
-          <div className="mt-4 rounded-xl border border-border-subtle bg-surface-raised p-4">
+          <div className={cn(insetSurfaceClassName, "mt-4 p-4")}>
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-foreground">Effective approval mode</p>
-              <p className="text-xs leading-5 text-muted-foreground">
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">Effective approval mode</p>
+              <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
                 {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
               </p>
             </div>
 
             {canManageApprovalRules ? (
               <div className="mt-4 space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <label className="text-label-12 uppercase tracking-wide text-[var(--ds-gray-900)]">
                   Campaign override
                 </label>
                 <select
@@ -929,7 +960,10 @@ export default function ScheduledPostCollectionPage() {
                       event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
                     )
                   }
-                  className="flex h-10 w-full rounded-md border border-border-subtle bg-background px-3 text-sm text-foreground outline-none ring-0 transition-colors focus:border-primary"
+                  className={cn(
+                    "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] transition-colors",
+                    focusRingClassName
+                  )}
                 >
                   <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
                   <option value="NONE">No approval required</option>
@@ -937,12 +971,12 @@ export default function ScheduledPostCollectionPage() {
                   <option value="REQUIRED">Required approval</option>
                   <option value="MULTI_STEP">Multi-step approval</option>
                 </select>
-                <p className="text-xs leading-5 text-muted-foreground">
+                <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
                   Campaign overrides beat account and content-type rules for this collection only.
                 </p>
               </div>
             ) : (
-              <p className="mt-4 text-xs leading-5 text-muted-foreground">
+              <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
                 Approval is resolved automatically from workspace policy, account rules, and content type.
               </p>
             )}
@@ -953,7 +987,7 @@ export default function ScheduledPostCollectionPage() {
               onClick={saveDraft}
               disabled={draftLoading || submitLoading || hasAnyCharError || validatingMedia}
               variant="outline"
-              className="flex-1 h-11 font-semibold gap-2 text-sm"
+              className="h-11 flex-1 gap-2 border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-label-14 text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
               size="lg"
             >
               {draftLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
@@ -962,7 +996,7 @@ export default function ScheduledPostCollectionPage() {
             <Button
               onClick={submit}
               disabled={submitLoading || draftLoading || selectedAccountIds.length === 0 || hasAnyCharError || (postType !== "TEXT" && hasMediaErrors) || validatingMedia}
-              className="flex-1 h-11 font-semibold gap-2 text-sm"
+              className="h-11 flex-1 gap-2 border-transparent bg-[var(--ds-blue-600)] text-label-14 text-white shadow-none hover:bg-[var(--ds-blue-700)]"
               size="lg"
             >
               {submitLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
@@ -971,7 +1005,7 @@ export default function ScheduledPostCollectionPage() {
           </div>
 
           {selectedAccountIds.length === 0 && (
-            <p className="text-xs text-center text-muted-foreground mt-2">
+            <p className="mt-2 text-center text-copy-12 text-[var(--ds-gray-900)]">
               Select an account to {canDirectSchedule ? "schedule" : "submit for review"}, or save as draft to finish later.
             </p>
           )}

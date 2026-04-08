@@ -1,10 +1,7 @@
 "use client";
 
-import AtlassianButton from "@atlaskit/button/new";
-import Lozenge from "@atlaskit/lozenge";
-import SectionMessage from "@atlaskit/section-message";
 import Link from "next/link";
-import { type ComponentType, useEffect, useRef, useState } from "react";
+import { type ComponentType, type ReactNode, useEffect, useRef, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import {
   AlertTriangle,
@@ -15,7 +12,10 @@ import {
   Users2,
 } from "lucide-react";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { fetchAgencyOpsApi } from "@/service/agencyOps";
 import type {
@@ -28,8 +28,25 @@ import type {
 } from "@/model/AgencyOps";
 import { useRole } from "@/hooks/useRole";
 
+type Tone = "neutral" | "info" | "success" | "warning" | "danger";
+
+const pageClassName = "min-h-screen bg-[var(--ds-background-200)]";
 const surfaceClassName =
-  "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]";
+  "overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none";
+const dividerClassName = "border-[var(--ds-gray-400)]";
+const subtleButtonClassName =
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
+
+const toneClassNames: Record<Tone, string> = {
+  neutral:
+    "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
+  info: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  success:
+    "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
+  warning:
+    "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]",
+  danger: "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
+};
 
 function formatDateTime(value: string | null | undefined) {
   if (!value) return "Not set";
@@ -73,34 +90,92 @@ function detailHref(item: AgencyOpsQueueItem | AgencyOpsPublishRiskItem) {
 function toneForAttention(status: AgencyOpsQueueItem["attentionStatus"]) {
   switch (status) {
     case "ESCALATED":
-      return "border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]";
+      return "danger";
     case "OVERDUE":
-      return "border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]";
+      return "warning";
     default:
-      return "border-[hsl(var(--accent))]/15 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]";
+      return "info";
   }
 }
 
 function toneForSeverity(severity: AgencyOpsPublishRiskItem["severity"]) {
   switch (severity) {
     case "HIGH":
-      return "border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]";
+      return "danger";
     case "MEDIUM":
-      return "border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]";
+      return "warning";
     default:
-      return "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
+      return "neutral";
   }
 }
 
 function toneForHealth(status: AgencyOpsWorkspaceHealth["healthStatus"]) {
   switch (status) {
     case "CRITICAL":
-      return "border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]";
+      return "danger";
     case "WATCH":
-      return "border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]";
+      return "warning";
     default:
-      return "border-[hsl(var(--success))]/18 bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]";
+      return "success";
   }
+}
+
+function ToneBadge({
+  tone,
+  children,
+  className,
+}: {
+  tone: Tone;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "rounded-full px-2.5 py-1 text-label-12 font-medium shadow-none",
+        toneClassNames[tone],
+        className
+      )}
+    >
+      {children}
+    </Badge>
+  );
+}
+
+function InlineNotice({
+  tone,
+  title,
+  children,
+}: {
+  tone: "warning" | "error";
+  title: string;
+  children: ReactNode;
+}) {
+  const Icon = tone === "error" ? ShieldAlert : AlertTriangle;
+  const toneClassName =
+    tone === "error"
+      ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)]"
+      : "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)]";
+
+  return (
+    <section role="alert" className={cn("rounded-xl border p-4", toneClassName)}>
+      <div className="flex items-start gap-3">
+        <div
+          className={cn(
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
+            tone === "error" ? toneClassNames.danger : toneClassNames.warning
+          )}
+        >
+          <Icon className="h-4 w-4" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</p>
+          <div className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{children}</div>
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function StatCard({
@@ -114,24 +189,20 @@ function StatCard({
   value: number;
   detail: string;
   icon: ComponentType<{ className?: string }>;
-  tone: string;
+  tone: Tone;
 }) {
   return (
     <section className={cn(surfaceClassName, "p-4")}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
-            {title}
-          </p>
-          <p className="mt-2 text-3xl font-semibold tracking-[-0.03em] text-[hsl(var(--foreground))]">
-            {value}
-          </p>
-          <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{detail}</p>
+          <p className="text-label-12 text-[var(--ds-gray-900)]">{title}</p>
+          <p className="mt-2 text-heading-32 text-[var(--ds-gray-1000)]">{value}</p>
+          <p className="mt-1 text-copy-13 text-[var(--ds-gray-900)]">{detail}</p>
         </div>
         <div
           className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border",
-            tone
+            "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
+            toneClassNames[tone]
           )}
         >
           <Icon className="h-4 w-4" />
@@ -143,19 +214,75 @@ function StatCard({
 
 function PageSkeleton() {
   return (
-    <main className="min-h-screen bg-[hsl(var(--background))]">
+    <main className={pageClassName}>
       <div className="space-y-6 px-4 py-6 sm:px-6">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
-            <div key={index} className={cn(surfaceClassName, "h-32 animate-pulse bg-[hsl(var(--surface-raised))]")} />
+            <section key={index} className={cn(surfaceClassName, "p-4")}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-3 w-20 rounded-md bg-[var(--ds-gray-200)]" />
+                  <Skeleton className="h-8 w-16 rounded-lg bg-[var(--ds-gray-200)]" />
+                  <Skeleton className="h-4 w-32 rounded-md bg-[var(--ds-gray-200)]" />
+                </div>
+                <Skeleton className="h-10 w-10 rounded-xl bg-[var(--ds-gray-200)]" />
+              </div>
+            </section>
           ))}
         </div>
-        <div className={cn(surfaceClassName, "h-24 animate-pulse bg-[hsl(var(--surface-raised))]")} />
+
+        <section className={cn(surfaceClassName, "p-4")}>
+          <div className={cn("flex flex-wrap items-center gap-2 pb-4", "border-b", dividerClassName)}>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton key={index} className="h-6 w-28 rounded-full bg-[var(--ds-gray-200)]" />
+            ))}
+          </div>
+          <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton key={index} className="h-10 w-full rounded-md bg-[var(--ds-gray-200)]" />
+            ))}
+          </div>
+        </section>
+
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.7fr_1fr]">
-          <div className={cn(surfaceClassName, "h-[420px] animate-pulse bg-[hsl(var(--surface-raised))]")} />
+          <section className={surfaceClassName}>
+            <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
+              <Skeleton className="h-4 w-56 rounded-md bg-[var(--ds-gray-200)]" />
+              <Skeleton className="mt-2 h-4 w-72 rounded-md bg-[var(--ds-gray-200)]" />
+            </div>
+            <div className="space-y-4 p-5">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-56 rounded-md bg-[var(--ds-gray-200)]" />
+                      <Skeleton className="h-4 w-48 rounded-md bg-[var(--ds-gray-200)]" />
+                    </div>
+                    <Skeleton className="h-4 w-16 rounded-md bg-[var(--ds-gray-200)]" />
+                  </div>
+                  {index < 3 ? <div className={cn("h-px", dividerClassName)} /> : null}
+                </div>
+              ))}
+            </div>
+          </section>
+
           <div className="space-y-6">
-            <div className={cn(surfaceClassName, "h-52 animate-pulse bg-[hsl(var(--surface-raised))]")} />
-            <div className={cn(surfaceClassName, "h-52 animate-pulse bg-[hsl(var(--surface-raised))]")} />
+            {Array.from({ length: 2 }).map((_, index) => (
+              <section key={index} className={surfaceClassName}>
+                <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
+                  <Skeleton className="h-4 w-40 rounded-md bg-[var(--ds-gray-200)]" />
+                  <Skeleton className="mt-2 h-4 w-56 rounded-md bg-[var(--ds-gray-200)]" />
+                </div>
+                <div className="space-y-3 p-5">
+                  {Array.from({ length: 3 }).map((_, itemIndex) => (
+                    <Skeleton
+                      key={itemIndex}
+                      className="h-14 w-full rounded-xl bg-[var(--ds-gray-200)]"
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
       </div>
@@ -211,16 +338,16 @@ export default function AgencyOpsPage() {
 
   if (!canSeeAgencyOps) {
     return (
-      <main className="min-h-screen bg-[hsl(var(--background))]">
+      <main className={pageClassName}>
         <ProtectedPageHeader
           title="Agency Ops"
           description="Cross-workspace approvals, workload, and publish risk."
           icon={<BriefcaseBusiness className="h-4 w-4" />}
         />
         <div className="px-4 py-6 sm:px-6">
-          <SectionMessage appearance="warning" title="Approval workflow access required">
+          <InlineNotice tone="warning" title="Approval workflow access required">
             This portfolio view is only available to teammates who can work inside approval queues.
-          </SectionMessage>
+          </InlineNotice>
         </div>
       </main>
     );
@@ -240,32 +367,42 @@ export default function AgencyOpsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[hsl(var(--background))]">
+    <main className={pageClassName}>
       <ProtectedPageHeader
         title="Agency Ops"
         description="Run the full client portfolio from one queue instead of workspace by workspace."
         icon={<BriefcaseBusiness className="h-4 w-4" />}
         actions={
-          <AtlassianButton
-            appearance="subtle"
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
             onClick={() => load(true)}
-            isDisabled={refreshing}
+            disabled={refreshing}
+            aria-label="Refresh agency operations"
             title="Refresh"
+            className={cn("h-9 w-9 rounded-md", subtleButtonClassName)}
           >
             <RefreshCw className={cn("h-3.5 w-3.5", refreshing && "animate-spin")} />
-          </AtlassianButton>
+          </Button>
         }
       />
 
       <div className="space-y-6 px-4 py-6 pb-24 sm:px-6 sm:pb-10">
         {error && (
-          <SectionMessage appearance="error" title={error}>
+          <InlineNotice tone="error" title={error}>
             <div className="mt-3">
-              <AtlassianButton appearance="subtle" onClick={() => load()}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => load()}
+                className={cn("rounded-md", subtleButtonClassName)}
+              >
                 Retry
-              </AtlassianButton>
+              </Button>
             </div>
-          </SectionMessage>
+          </InlineNotice>
         )}
 
         {data && (
@@ -276,36 +413,36 @@ export default function AgencyOpsPage() {
                 value={data.summary.pendingApprovalCount}
                 detail={`${data.summary.workspaceCount} accessible workspaces in scope`}
                 icon={Clock3}
-                tone="border-[hsl(var(--accent))]/15 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]"
+                tone="info"
               />
               <StatCard
                 title="Overdue Reviews"
                 value={data.summary.overdueApprovalCount}
                 detail={`${data.overdueQueue.length} items need follow-up in this slice`}
                 icon={AlertTriangle}
-                tone="border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]"
+                tone="warning"
               />
               <StatCard
                 title="Escalations"
                 value={data.summary.escalatedApprovalCount}
                 detail="Filtered items already beyond reminder thresholds"
                 icon={ShieldAlert}
-                tone="border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]"
+                tone="danger"
               />
               <StatCard
                 title="Publish Risk"
                 value={data.summary.atRiskPublishCount}
                 detail="Upcoming delivery risk in the current portfolio slice"
                 icon={Users2}
-                tone="border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
+                tone="neutral"
               />
             </div>
 
             <section className={cn(surfaceClassName, "p-4")}>
-              <div className="flex flex-wrap items-center gap-2 border-b border-[hsl(var(--border-subtle))] pb-4">
-                <Lozenge appearance="inprogress">{data.queue.length} queue items</Lozenge>
-                <Lozenge appearance="new">{data.publishRisk.length} risk items</Lozenge>
-                <Lozenge appearance="moved">{data.summary.approverCount} active approvers</Lozenge>
+              <div className={cn("flex flex-wrap items-center gap-2 pb-4", "border-b", dividerClassName)}>
+                <ToneBadge tone="info">{data.queue.length} queue items</ToneBadge>
+                <ToneBadge tone="warning">{data.publishRisk.length} risk items</ToneBadge>
+                <ToneBadge tone="neutral">{data.summary.approverCount} active approvers</ToneBadge>
               </div>
 
               <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -363,10 +500,10 @@ export default function AgencyOpsPage() {
 
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.7fr_1fr]">
               <section className={surfaceClassName}>
-                <div className="flex items-center justify-between border-b border-[hsl(var(--border-subtle))] px-5 py-4">
+                <div className={cn("flex items-center justify-between px-5 py-4", "border-b", dividerClassName)}>
                   <div>
-                    <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">Cross-Workspace Approval Queue</h2>
-                    <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                    <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Cross-Workspace Approval Queue</h2>
+                    <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                       Filter by client, approver, due window, or escalation state without switching workspaces.
                     </p>
                   </div>
@@ -378,36 +515,31 @@ export default function AgencyOpsPage() {
                     description="Adjust the filters or refresh the snapshot to review a wider portfolio slice."
                   />
                 ) : (
-                  <div className="divide-y divide-[hsl(var(--border-subtle))]">
+                  <div className={cn("divide-y", dividerClassName)}>
                     {data.queue.map((item) => (
                       <Link
                         key={item.collectionId}
                         href={detailHref(item)}
-                        className="block px-5 py-4 transition-colors hover:bg-[hsl(var(--surface-raised))]/70"
+                        className="block px-5 py-4 transition-colors hover:bg-[var(--ds-gray-100)]"
                       >
                         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
-                              <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
+                              <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                                 {item.description || "Untitled content"}
                               </p>
-                              <span
-                                className={cn(
-                                  "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium",
-                                  toneForAttention(item.attentionStatus)
-                                )}
-                              >
+                              <ToneBadge tone={toneForAttention(item.attentionStatus)} className="px-2 py-0.5">
                                 {item.attentionStatus.toLowerCase()}
-                              </span>
+                              </ToneBadge>
                             </div>
 
-                            <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                            <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                               {item.workspaceName}
                               {item.companyName ? ` · ${item.companyName}` : ""} · {item.channelCount ?? 0} channel
                               {(item.channelCount ?? 0) === 1 ? "" : "s"}
                             </p>
 
-                            <div className="mt-2 flex flex-wrap gap-2 text-xs text-[hsl(var(--foreground-subtle))]">
+                            <div className="mt-2 flex flex-wrap gap-2 text-label-12 text-[var(--ds-gray-900)]">
                               <span>Scheduled: {formatDateTime(item.scheduledTime)}</span>
                               <span>Submitted: {formatDateTime(item.reviewSubmittedAt)}</span>
                               {item.nextApprovalStage && <span>Stage: {item.nextApprovalStage.replace("_", " ")}</span>}
@@ -415,7 +547,7 @@ export default function AgencyOpsPage() {
                             </div>
                           </div>
 
-                          <div className="shrink-0 text-sm text-[hsl(var(--foreground-muted))]">
+                          <div className="shrink-0 text-label-13 text-[var(--ds-gray-900)]">
                             {relativeScheduleLabel(item.scheduledTime)}
                           </div>
                         </div>
@@ -427,9 +559,9 @@ export default function AgencyOpsPage() {
 
               <div className="space-y-6">
                 <section className={surfaceClassName}>
-                  <div className="border-b border-[hsl(var(--border-subtle))] px-5 py-4">
-                    <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">Overdue Review Board</h2>
-                    <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                  <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
+                    <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Overdue Review Board</h2>
+                    <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                       Items already beyond reminder timing or already escalated.
                     </p>
                   </div>
@@ -437,30 +569,28 @@ export default function AgencyOpsPage() {
                   {data.overdueQueue.length === 0 ? (
                     <EmptyPanel title="No overdue reviews" description="Reminder and escalation thresholds are currently under control." compact />
                   ) : (
-                    <div className="divide-y divide-[hsl(var(--border-subtle))]">
+                    <div className={cn("divide-y", dividerClassName)}>
                       {data.overdueQueue.slice(0, 6).map((item) => (
                         <Link
                           key={item.collectionId}
                           href={detailHref(item)}
-                          className="block px-5 py-4 transition-colors hover:bg-[hsl(var(--surface-raised))]/70"
+                          className="block px-5 py-4 transition-colors hover:bg-[var(--ds-gray-100)]"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
+                              <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                                 {item.description || "Untitled content"}
                               </p>
-                              <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                              <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">
                                 {item.workspaceName} · {formatDateTime(item.scheduledTime)}
                               </p>
                             </div>
-                            <span
-                              className={cn(
-                                "inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11px] font-medium",
-                                toneForAttention(item.attentionStatus)
-                              )}
+                            <ToneBadge
+                              tone={toneForAttention(item.attentionStatus)}
+                              className="shrink-0 px-2 py-0.5 text-label-12"
                             >
                               {item.attentionStatus.toLowerCase()}
-                            </span>
+                            </ToneBadge>
                           </div>
                         </Link>
                       ))}
@@ -469,9 +599,9 @@ export default function AgencyOpsPage() {
                 </section>
 
                 <section className={surfaceClassName}>
-                  <div className="border-b border-[hsl(var(--border-subtle))] px-5 py-4">
-                    <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">Approver Workload</h2>
-                    <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                  <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
+                    <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Approver Workload</h2>
+                    <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                       Estimated review load per approver across the current portfolio snapshot.
                     </p>
                   </div>
@@ -479,31 +609,31 @@ export default function AgencyOpsPage() {
                   {data.workload.length === 0 ? (
                     <EmptyPanel title="No active review load" description="Eligible approvers have no pending work right now." compact />
                   ) : (
-                    <div className="divide-y divide-[hsl(var(--border-subtle))]">
+                    <div className={cn("divide-y", dividerClassName)}>
                       {data.workload.map((item) => (
                         <div key={item.userId} className="px-5 py-4">
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
+                              <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                                 {item.displayName}
                               </p>
-                              <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                              <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">
                                 {item.workspaceCount} workspaces · next due {formatDateTime(item.nextDueAt)}
                               </p>
                             </div>
-                            <div className="flex gap-2 text-[11px] font-medium">
-                              <span className="rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-[hsl(var(--foreground-muted))]">
+                            <div className="flex flex-wrap gap-2">
+                              <ToneBadge tone="neutral" className="px-2 py-0.5">
                                 {item.pendingApprovalCount} pending
-                              </span>
+                              </ToneBadge>
                               {item.overdueApprovalCount > 0 && (
-                                <span className="rounded-full border border-[hsl(var(--warning))]/20 bg-[hsl(var(--warning))]/10 px-2 py-0.5 text-[hsl(var(--warning))]">
+                                <ToneBadge tone="warning" className="px-2 py-0.5">
                                   {item.overdueApprovalCount} overdue
-                                </span>
+                                </ToneBadge>
                               )}
                               {item.escalatedApprovalCount > 0 && (
-                                <span className="rounded-full border border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/10 px-2 py-0.5 text-[hsl(var(--destructive))]">
+                                <ToneBadge tone="danger" className="px-2 py-0.5">
                                   {item.escalatedApprovalCount} escalated
-                                </span>
+                                </ToneBadge>
                               )}
                             </div>
                           </div>
@@ -516,9 +646,9 @@ export default function AgencyOpsPage() {
             </div>
 
             <section className={surfaceClassName}>
-              <div className="border-b border-[hsl(var(--border-subtle))] px-5 py-4">
-                <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">Upcoming Publish Risk</h2>
-                <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+              <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
+                <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Upcoming Publish Risk</h2>
+                <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                   Approval bottlenecks and delivery failures that could miss a client publish window.
                 </p>
               </div>
@@ -529,35 +659,30 @@ export default function AgencyOpsPage() {
                   description="The filtered portfolio slice does not show near-term approval or recovery risk."
                 />
               ) : (
-                <div className="divide-y divide-[hsl(var(--border-subtle))]">
+                <div className={cn("divide-y", dividerClassName)}>
                   {data.publishRisk.map((item) => (
                     <Link
                       key={`${item.riskType}-${item.collectionId}`}
                       href={detailHref(item)}
-                      className="block px-5 py-4 transition-colors hover:bg-[hsl(var(--surface-raised))]/70"
+                      className="block px-5 py-4 transition-colors hover:bg-[var(--ds-gray-100)]"
                     >
                       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="truncate text-sm font-semibold text-[hsl(var(--foreground))]">
+                            <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                               {item.description || "Untitled content"}
                             </p>
-                            <span
-                              className={cn(
-                                "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium",
-                                toneForSeverity(item.severity)
-                              )}
-                            >
+                            <ToneBadge tone={toneForSeverity(item.severity)} className="px-2 py-0.5">
                               {item.severity.toLowerCase()}
-                            </span>
+                            </ToneBadge>
                           </div>
-                          <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                             {item.workspaceName}
                             {item.companyName ? ` · ${item.companyName}` : ""} · {item.riskType.replaceAll("_", " ").toLowerCase()}
                           </p>
-                          <p className="mt-2 text-sm text-[hsl(var(--foreground))]">{item.reason}</p>
+                          <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">{item.reason}</p>
                         </div>
-                        <div className="shrink-0 text-sm text-[hsl(var(--foreground-muted))]">
+                        <div className="shrink-0 text-label-13 text-[var(--ds-gray-900)]">
                           {relativeScheduleLabel(item.scheduledTime)}
                         </div>
                       </div>
@@ -568,9 +693,9 @@ export default function AgencyOpsPage() {
             </section>
 
             <section className={surfaceClassName}>
-              <div className="border-b border-[hsl(var(--border-subtle))] px-5 py-4">
-                <h2 className="text-sm font-semibold text-[hsl(var(--foreground))]">Workspace Health</h2>
-                <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+              <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
+                <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Workspace Health</h2>
+                <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                   Portfolio roll-up by client workspace so overload and escalation hotspots are obvious.
                 </p>
               </div>
@@ -582,9 +707,9 @@ export default function AgencyOpsPage() {
                 />
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
+                  <table className="min-w-full">
                     <thead>
-                      <tr className="border-b border-[hsl(var(--border-subtle))] text-left text-[hsl(var(--foreground-subtle))]">
+                      <tr className={cn("border-b text-left", dividerClassName, "text-label-12 text-[var(--ds-gray-900)]")}>
                         <th className="px-5 py-3 font-medium">Workspace</th>
                         <th className="px-4 py-3 font-medium">Pending</th>
                         <th className="px-4 py-3 font-medium">Overdue</th>
@@ -598,30 +723,25 @@ export default function AgencyOpsPage() {
                       {data.workspaceHealth.map((item) => (
                         <tr
                           key={item.workspaceId}
-                          className="border-b border-[hsl(var(--border-subtle))] last:border-b-0"
+                          className={cn("border-b last:border-b-0", dividerClassName)}
                         >
                           <td className="px-5 py-4">
                             <div>
-                              <p className="font-medium text-[hsl(var(--foreground))]">{item.workspaceName}</p>
+                              <p className="text-label-14 text-[var(--ds-gray-1000)]">{item.workspaceName}</p>
                               {item.companyName && (
-                                <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">{item.companyName}</p>
+                                <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">{item.companyName}</p>
                               )}
                             </div>
                           </td>
-                          <td className="px-4 py-4 text-[hsl(var(--foreground))]">{item.pendingApprovalCount}</td>
-                          <td className="px-4 py-4 text-[hsl(var(--foreground))]">{item.overdueApprovalCount}</td>
-                          <td className="px-4 py-4 text-[hsl(var(--foreground))]">{item.escalatedApprovalCount}</td>
-                          <td className="px-4 py-4 text-[hsl(var(--foreground))]">{item.changesRequestedCount}</td>
-                          <td className="px-4 py-4 text-[hsl(var(--foreground))]">{item.atRiskPublishCount}</td>
+                          <td className="px-4 py-4 text-label-14 text-[var(--ds-gray-1000)]">{item.pendingApprovalCount}</td>
+                          <td className="px-4 py-4 text-label-14 text-[var(--ds-gray-1000)]">{item.overdueApprovalCount}</td>
+                          <td className="px-4 py-4 text-label-14 text-[var(--ds-gray-1000)]">{item.escalatedApprovalCount}</td>
+                          <td className="px-4 py-4 text-label-14 text-[var(--ds-gray-1000)]">{item.changesRequestedCount}</td>
+                          <td className="px-4 py-4 text-label-14 text-[var(--ds-gray-1000)]">{item.atRiskPublishCount}</td>
                           <td className="px-5 py-4">
-                            <span
-                              className={cn(
-                                "inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-medium",
-                                toneForHealth(item.healthStatus)
-                              )}
-                            >
+                            <ToneBadge tone={toneForHealth(item.healthStatus)} className="px-2 py-0.5">
                               {item.healthStatus.toLowerCase()}
-                            </span>
+                            </ToneBadge>
                           </td>
                         </tr>
                       ))}
@@ -650,16 +770,23 @@ function FilterSelect({
 }) {
   return (
     <div className="space-y-1.5">
-      <p className="text-xs font-medium uppercase tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
-        {label}
-      </p>
+      <p className="text-label-12 text-[var(--ds-gray-900)]">{label}</p>
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger className="h-10 bg-[hsl(var(--surface))]">
+        <SelectTrigger
+          className={cn(
+            "h-10 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] shadow-none",
+            "hover:border-[var(--ds-gray-500)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+          )}
+        >
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-lg">
           {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
+            <SelectItem
+              key={option.value}
+              value={option.value}
+              className="rounded-md text-label-14 focus:bg-[var(--ds-gray-100)] focus:text-[var(--ds-gray-1000)]"
+            >
               {option.label}
             </SelectItem>
           ))}
@@ -680,11 +807,11 @@ function EmptyPanel({
 }) {
   return (
     <div className={cn("px-5 text-center", compact ? "py-8" : "py-12")}>
-      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
-        <BriefcaseBusiness className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
+      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+        <BriefcaseBusiness className="h-4 w-4 text-[var(--ds-gray-900)]" />
       </div>
-      <p className="mt-4 text-sm font-semibold text-[hsl(var(--foreground))]">{title}</p>
-      <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">{description}</p>
+      <p className="mt-4 text-heading-16 text-[var(--ds-gray-1000)]">{title}</p>
+      <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
     </div>
   );
 }

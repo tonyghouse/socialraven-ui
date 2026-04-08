@@ -8,6 +8,7 @@ interface PaginationProps {
   totalPages: number;
   onPageChange: (page: number) => void;
   maxVisiblePages?: number;
+  appearance?: "default" | "geist";
 }
 
 export function Pagination({
@@ -15,7 +16,9 @@ export function Pagination({
   totalPages,
   onPageChange,
   maxVisiblePages = 7,
+  appearance = "default",
 }: PaginationProps) {
+  const isGeist = appearance === "geist";
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
 
@@ -73,7 +76,10 @@ export function Pagination({
     <nav
       role="navigation"
       aria-label="Pagination"
-      className="flex items-center justify-center gap-2"
+      className={cn(
+        "flex items-center justify-center gap-2",
+        isGeist && "text-[var(--ds-gray-1000)]"
+      )}
     >
       {/* First Page Button */}
       <button
@@ -81,14 +87,19 @@ export function Pagination({
         disabled={currentPage === 1}
         aria-label="Go to first page"
         className={cn(
-          "h-9 w-9 rounded-lg border border-border bg-card",
+          "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
-          "hover:bg-muted hover:border-primary/30 disabled:opacity-40",
-          "disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+          isGeist
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <ChevronsLeft className="h-4 w-4 text-muted-foreground" />
+        <ChevronsLeft
+          className={cn(
+            "h-4 w-4",
+            isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+          )}
+        />
       </button>
 
       {/* Previous Page Button */}
@@ -97,14 +108,19 @@ export function Pagination({
         disabled={currentPage === 1}
         aria-label="Go to previous page"
         className={cn(
-          "h-9 w-9 rounded-lg border border-border bg-card",
+          "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
-          "hover:bg-muted hover:border-primary/30 disabled:opacity-40",
-          "disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+          isGeist
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <ChevronLeft className="h-4 w-4 text-muted-foreground" />
+        <ChevronLeft
+          className={cn(
+            "h-4 w-4",
+            isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+          )}
+        />
       </button>
 
       {/* Page Numbers */}
@@ -114,7 +130,10 @@ export function Pagination({
             return (
               <span
                 key={`ellipsis-${index}`}
-                className="h-9 w-9 flex items-center justify-center text-muted-foreground"
+                className={cn(
+                  "h-9 w-9 flex items-center justify-center",
+                  isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+                )}
                 aria-hidden="true"
               >
                 •••
@@ -133,10 +152,16 @@ export function Pagination({
               className={cn(
                 "h-9 min-w-[2.25rem] px-3 rounded-lg border transition-all",
                 "flex items-center justify-center font-medium text-sm",
-                "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
+                isGeist
+                  ? "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+                  : "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                 isActive
-                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                  : "bg-card border-border text-foreground hover:bg-muted hover:border-primary/30"
+                  ? isGeist
+                    ? "border-[var(--ds-blue-600)] bg-[var(--ds-blue-600)] text-white shadow-none"
+                    : "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : isGeist
+                    ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+                    : "bg-card border-border text-foreground hover:bg-muted hover:border-primary/30"
               )}
             >
               {page}
@@ -151,14 +176,19 @@ export function Pagination({
         disabled={currentPage === totalPages}
         aria-label="Go to next page"
         className={cn(
-          "h-9 w-9 rounded-lg border border-border bg-card",
+          "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
-          "hover:bg-muted hover:border-primary/30 disabled:opacity-40",
-          "disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+          isGeist
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        <ChevronRight
+          className={cn(
+            "h-4 w-4",
+            isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+          )}
+        />
       </button>
 
       {/* Last Page Button */}
@@ -167,20 +197,46 @@ export function Pagination({
         disabled={currentPage === totalPages}
         aria-label="Go to last page"
         className={cn(
-          "h-9 w-9 rounded-lg border border-border bg-card",
+          "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
-          "hover:bg-muted hover:border-primary/30 disabled:opacity-40",
-          "disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border",
-          "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
+          isGeist
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
-        <ChevronsRight className="h-4 w-4 text-muted-foreground" />
+        <ChevronsRight
+          className={cn(
+            "h-4 w-4",
+            isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+          )}
+        />
       </button>
 
       {/* Page Info */}
-      <div className="ml-4 hidden sm:block text-sm text-muted-foreground">
-        Page <span className="font-medium text-foreground">{currentPage}</span> of{" "}
-        <span className="font-medium text-foreground">{totalPages}</span>
+      <div
+        className={cn(
+          "ml-4 hidden text-sm sm:block",
+          isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+        )}
+      >
+        Page{" "}
+        <span
+          className={cn(
+            "font-medium",
+            isGeist ? "text-[var(--ds-gray-1000)]" : "text-foreground"
+          )}
+        >
+          {currentPage}
+        </span>{" "}
+        of{" "}
+        <span
+          className={cn(
+            "font-medium",
+            isGeist ? "text-[var(--ds-gray-1000)]" : "text-foreground"
+          )}
+        >
+          {totalPages}
+        </span>
       </div>
     </nav>
   );

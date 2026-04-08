@@ -35,6 +35,18 @@ const PLATFORM_ICON_STYLES: Record<string, string> = {
   tiktok:    "bg-black text-white border-black/20",
 };
 
+const GEIST_PLATFORM_ICON_STYLES: Record<string, string> = {
+  facebook:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  instagram: "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
+  x:         "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  linkedin:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  youtube:   "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
+  threads:   "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  tiktok:    "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
+};
+
+type Appearance = "default" | "geist";
+
 // ── AccountChip ────────────────────────────────────────────────────────────────
 
 function AccountChip({
@@ -42,14 +54,17 @@ function AccountChip({
   isSelected,
   isAllowed,
   onToggle,
+  appearance = "default",
 }: {
   acc: ConnectedAccount;
   isSelected: boolean;
   isAllowed: boolean;
   onToggle: (id: string) => void;
+  appearance?: Appearance;
 }) {
   const [imgErr, setImgErr] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const isGeist = appearance === "geist";
   const Icon =
     PLATFORM_ICONS[acc.platform] ??
     PLATFORM_ICONS[(acc.platform as string)?.toUpperCase()];
@@ -58,8 +73,10 @@ function AccountChip({
   const label = `${acc.username} on ${platformLabel}`;
   const disabledReason = !isAllowed ? "Not supported for this post type" : undefined;
   const iconStyle =
-    PLATFORM_ICON_STYLES[acc.platform.toLowerCase()] ??
-    "bg-surface-raised text-foreground border-border-subtle";
+    (isGeist ? GEIST_PLATFORM_ICON_STYLES : PLATFORM_ICON_STYLES)[acc.platform.toLowerCase()] ??
+    (isGeist
+      ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+      : "bg-surface-raised text-foreground border-border-subtle");
 
   return (
     <div className="relative flex-shrink-0">
@@ -77,11 +94,17 @@ function AccountChip({
         onBlur={() => setShowTooltip(false)}
         className={cn(
           "relative flex flex-col items-center gap-1.5 rounded-xl border px-3 py-2.5 transition-[border-color,background-color,box-shadow] duration-150",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-offset-2",
+          isGeist
+            ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+            : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-offset-2",
           "w-[72px]",
           isSelected
-            ? "border-[hsl(var(--accent))]/30 bg-surface-raised shadow-sm"
-            : "border-border-subtle bg-surface hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised",
+            ? isGeist
+              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] shadow-sm"
+              : "border-[hsl(var(--accent))]/30 bg-surface-raised shadow-sm"
+            : isGeist
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-blue-200)] hover:bg-[var(--ds-gray-100)]"
+              : "border-border-subtle bg-surface hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised",
           !isAllowed && "opacity-40 cursor-not-allowed",
         )}
       >
@@ -89,7 +112,10 @@ function AccountChip({
         {isSelected && (
           <span
             aria-hidden="true"
-            className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[hsl(var(--accent))] shadow-sm"
+            className={cn(
+              "absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full shadow-sm",
+              isGeist ? "bg-[var(--ds-blue-700)]" : "bg-[hsl(var(--accent))]"
+            )}
           >
             <Check className="w-2.5 h-2.5 text-accent-foreground" strokeWidth={3} />
           </span>
@@ -101,7 +127,14 @@ function AccountChip({
             {url && !imgErr ? (
               <AvatarImage src={url} alt="" onError={() => setImgErr(true)} />
             ) : null}
-            <AvatarFallback className="bg-surface-raised text-[10px] font-semibold text-foreground">
+            <AvatarFallback
+              className={cn(
+                "text-[10px] font-semibold",
+                isGeist
+                  ? "bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                  : "bg-surface-raised text-foreground"
+              )}
+            >
               {getInitials(acc.username)}
             </AvatarFallback>
           </Avatar>
@@ -119,7 +152,12 @@ function AccountChip({
         </div>
 
         {/* Username */}
-        <span className="text-[10px] font-medium text-foreground leading-tight text-center w-full truncate">
+        <span
+          className={cn(
+            "w-full truncate text-center text-[10px] font-medium leading-tight",
+            isGeist ? "text-[var(--ds-gray-1000)]" : "text-foreground"
+          )}
+        >
           {acc.username}
         </span>
       </button>
@@ -135,7 +173,9 @@ function AccountChip({
         >
           <div className={cn(
             "flex items-center gap-2.5 px-3 py-2.5 rounded-xl shadow-xl",
-            "bg-popover border border-border-subtle text-popover-foreground",
+            isGeist
+              ? "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
+              : "bg-popover border border-border-subtle text-popover-foreground",
             "w-max min-w-[140px] max-w-[200px]",
           )}>
             {/* Profile image */}
@@ -144,7 +184,14 @@ function AccountChip({
                 {url && !imgErr ? (
                   <AvatarImage src={url} alt="" />
                 ) : null}
-                <AvatarFallback className="bg-surface-raised text-[10px] font-semibold text-foreground">
+                <AvatarFallback
+                  className={cn(
+                    "text-[10px] font-semibold",
+                    isGeist
+                      ? "bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                      : "bg-surface-raised text-foreground"
+                  )}
+                >
                   {getInitials(acc.username)}
                 </AvatarFallback>
               </Avatar>
@@ -164,14 +211,14 @@ function AccountChip({
 
             {/* Text */}
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-popover-foreground leading-tight truncate">
+              <p className={cn("truncate text-xs font-semibold leading-tight", isGeist ? "text-[var(--ds-gray-1000)]" : "text-popover-foreground")}>
                 {acc.username}
               </p>
-              <p className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+              <p className={cn("mt-0.5 text-[10px] leading-tight", isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
                 {platformLabel}
               </p>
               {disabledReason && (
-                <p className="text-[10px] text-destructive leading-tight mt-0.5">
+                <p className={cn("mt-0.5 text-[10px] leading-tight", isGeist ? "text-[var(--ds-red-700)]" : "text-destructive")}>
                   {disabledReason}
                 </p>
               )}
@@ -181,11 +228,17 @@ function AccountChip({
           {/* Caret */}
           <span
             aria-hidden="true"
-            className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-border"
+            className={cn(
+              "absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent",
+              isGeist ? "border-t-[var(--ds-gray-400)]" : "border-t-border"
+            )}
           />
           <span
             aria-hidden="true"
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-[-1px] border-[5px] border-transparent border-t-popover"
+            className={cn(
+              "absolute top-full left-1/2 -translate-x-1/2 mt-[-1px] border-[5px] border-transparent",
+              isGeist ? "border-t-[var(--ds-background-100)]" : "border-t-popover"
+            )}
           />
         </div>
       )}
@@ -201,6 +254,7 @@ export interface AccountSelectorProps {
   selectedAccountIds: string[];
   onChange: (ids: string[]) => void;
   loading: boolean;
+  appearance?: Appearance;
 }
 
 export function AccountSelector({
@@ -209,7 +263,9 @@ export function AccountSelector({
   selectedAccountIds,
   onChange,
   loading,
+  appearance = "default",
 }: AccountSelectorProps) {
+  const isGeist = appearance === "geist";
   const [search, setSearch] = useState("");
   const searchId = useId();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -252,8 +308,8 @@ export function AccountSelector({
             key={i}
             className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[72px] px-3 py-2.5"
           >
-            <Skeleton className="w-9 h-9 rounded-full" />
-            <Skeleton className="w-10 h-2.5 rounded" />
+            <Skeleton className={cn("w-9 h-9 rounded-full", isGeist && "bg-[var(--ds-gray-300)]")} />
+            <Skeleton className={cn("w-10 h-2.5 rounded", isGeist && "bg-[var(--ds-gray-300)]")} />
           </div>
         ))}
       </div>
@@ -264,9 +320,9 @@ export function AccountSelector({
 
   if (accounts.length === 0) {
     return (
-      <div className="flex items-center gap-3 py-4 text-muted-foreground">
+      <div className={cn("flex items-center gap-3 py-4", isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
         <Users className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-        <p className="text-sm">No connected accounts found.</p>
+        <p className={cn(isGeist ? "text-label-14" : "text-sm")}>No connected accounts found.</p>
       </div>
     );
   }
@@ -291,7 +347,12 @@ export function AccountSelector({
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search accounts…"
           autoComplete="off"
-          className="h-9 border-border-subtle bg-surface pl-9 pr-9 text-sm focus-visible:border-[hsl(var(--accent))] focus-visible:bg-background"
+          className={cn(
+            "h-9 pl-9 pr-9 text-sm",
+            isGeist
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+              : "border-border-subtle bg-surface focus-visible:border-[hsl(var(--accent))] focus-visible:bg-background"
+          )}
         />
         {search && (
           <button
@@ -311,7 +372,10 @@ export function AccountSelector({
         role="group"
         aria-label={`Select accounts — ${selectedCount} selected`}
         className={cn(
-          "flex gap-2 overflow-x-auto rounded-xl border border-border-subtle bg-surface p-3 pb-2",
+          "flex gap-2 overflow-x-auto rounded-xl p-3 pb-2",
+          isGeist
+            ? "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
+            : "border border-border-subtle bg-surface",
           // thin, cross-browser scrollbar
           "scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent",
           // hide scrollbar on touch devices (still scrollable)
@@ -332,6 +396,7 @@ export function AccountSelector({
               isSelected={selectedAccountIds.includes(acc.providerUserId)}
               isAllowed={postType ? !!acc.allowedFormats?.includes(postType) : false}
               onToggle={toggleAccount}
+              appearance={appearance}
             />
           ))
         )}
@@ -340,14 +405,19 @@ export function AccountSelector({
       {/* Selection summary */}
       {selectedCount > 0 && (
         <div className="flex items-center justify-between pt-0.5" aria-live="polite" aria-atomic="true">
-          <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">{selectedCount}</span>{" "}
+          <p className={cn("text-xs", isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
+            <span className={cn("font-semibold", isGeist ? "text-[var(--ds-gray-1000)]" : "text-foreground")}>{selectedCount}</span>{" "}
             {selectedCount === 1 ? "account" : "accounts"} selected
           </p>
           <button
             type="button"
             onClick={() => onChange([])}
-            className="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+            className={cn(
+              "rounded underline-offset-2 transition-colors focus-visible:outline-none hover:underline",
+              isGeist
+                ? "text-xs text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]"
+                : "text-xs text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            )}
           >
             Clear all
           </button>

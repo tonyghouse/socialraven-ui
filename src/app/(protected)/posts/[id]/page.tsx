@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import {
@@ -22,10 +22,9 @@ import Image from "next/image";
 import type { PostResponse } from "@/model/PostResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { MediaPreview } from "@/components/generic/media-preview";
-import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { PostDetailPageSkeleton } from "@/components/posts/post-detail-page-skeleton";
 import { fetchPostByIdApi } from "@/service/getPost";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 
@@ -47,13 +46,25 @@ const getInitials = (username: string) => {
     .slice(0, 2);
 };
 
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+
+const surfaceClassName =
+  "rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm";
+
+const previewCardClassName =
+  "overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-sm";
+
+const actionButtonClassName =
+  "inline-flex items-center gap-2 rounded-md border px-4 py-2 text-label-14 transition-colors disabled:pointer-events-none disabled:opacity-50";
+
 /* ─── Profile Avatar ──────────────────────────────────────── */
 
 function ProfileAvatar({
   src,
   username,
   size = "md",
-  fallbackClass = "bg-neutral-800",
+  fallbackClass = "bg-[var(--ds-gray-700)]",
 }: {
   src: string | null;
   username: string;
@@ -82,29 +93,54 @@ function ProfileAvatar({
   );
 }
 
+function ToneBadge({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-label-12",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 /* ─── Platform Previews ───────────────────────────────────── */
 
 function InstagramPreview({ post }: { post: PostResponse }) {
   const src = getImageUrl(post.connectedAccount?.profilePicLink);
   const username = post.connectedAccount?.username || "username";
   return (
-    <div className="bg-white rounded-xl border border-border/60 overflow-hidden text-sm">
-      <div className="flex items-center gap-2.5 p-3 border-b border-border/30">
+    <div className={previewCardClassName}>
+      <div className="flex items-center gap-2.5 border-b border-[var(--ds-gray-400)] p-3">
         <ProfileAvatar
           src={src}
           username={username}
           fallbackClass="bg-gradient-to-br from-pink-500 to-purple-600"
         />
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[13px]">{username}</p>
-          <p className="text-[11px] text-muted-foreground">Original Audio</p>
+          <p className="text-label-14 text-[var(--ds-gray-1000)]">{username}</p>
+          <p className="text-copy-12 text-[var(--ds-gray-900)]">Original Audio</p>
         </div>
-        <button className="text-[11px] font-bold text-blue-500 flex-shrink-0">
+        <button
+          type="button"
+          className={cn(
+            "shrink-0 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-3 py-1 text-copy-12 text-[var(--ds-blue-700)]",
+            focusRingClassName
+          )}
+        >
           Follow
         </button>
       </div>
       {post.media?.[0] && (
-        <div className="aspect-square bg-muted">
+        <div className="aspect-square bg-[var(--ds-gray-100)]">
           <MediaPreview
             media={mapMediaResponseToMedia(post.media[0])}
             className="w-full h-full"
@@ -114,12 +150,12 @@ function InstagramPreview({ post }: { post: PostResponse }) {
       )}
       <div className="p-3 space-y-1">
         {post.description && (
-          <p className="text-[13px] leading-snug">
+          <p className="text-label-14 leading-6 text-[var(--ds-gray-1000)]">
             <span className="font-semibold">{username}</span>{" "}
-            <span className="text-card-foreground">{post.description}</span>
+            <span>{post.description}</span>
           </p>
         )}
-        <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
+        <p className="text-copy-12 uppercase tracking-wide text-[var(--ds-gray-900)]">
           Just now
         </p>
       </div>
@@ -131,7 +167,7 @@ function YouTubePreview({ post }: { post: PostResponse }) {
   const src = getImageUrl(post.connectedAccount?.profilePicLink);
   const username = post.connectedAccount?.username || "Channel";
   return (
-    <div className="bg-white rounded-xl border border-border/60 overflow-hidden text-sm">
+    <div className={previewCardClassName}>
       {post.media?.[0] && (
         <div className="aspect-video bg-black">
           <MediaPreview
@@ -144,10 +180,10 @@ function YouTubePreview({ post }: { post: PostResponse }) {
       <div className="p-3 flex gap-2.5">
         <ProfileAvatar src={src} username={username} fallbackClass="bg-red-600" />
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[13px] line-clamp-2 leading-snug">
+          <p className="line-clamp-2 text-label-14 leading-6 text-[var(--ds-gray-1000)]">
             {post.description}
           </p>
-          <p className="text-[11px] text-muted-foreground mt-0.5">
+          <p className="mt-0.5 text-copy-12 text-[var(--ds-gray-900)]">
             {username} · Just now
           </p>
         </div>
@@ -160,7 +196,7 @@ function FacebookPreview({ post }: { post: PostResponse }) {
   const src = getImageUrl(post.connectedAccount?.profilePicLink);
   const username = post.connectedAccount?.username || "Page";
   return (
-    <div className="bg-white rounded-xl border border-border/60 overflow-hidden text-sm">
+    <div className={previewCardClassName}>
       <div className="flex items-center gap-2.5 p-3">
         <ProfileAvatar
           src={src}
@@ -168,17 +204,17 @@ function FacebookPreview({ post }: { post: PostResponse }) {
           fallbackClass="bg-blue-600"
         />
         <div>
-          <p className="font-semibold text-[13px]">{username}</p>
-          <p className="text-[11px] text-muted-foreground">Just now · 🌐</p>
+          <p className="text-label-14 text-[var(--ds-gray-1000)]">{username}</p>
+          <p className="text-copy-12 text-[var(--ds-gray-900)]">Just now · 🌐</p>
         </div>
       </div>
       {post.description && (
-        <p className="px-3 pb-2 text-[13px] text-card-foreground leading-snug">
+        <p className="px-3 pb-2 text-label-14 leading-6 text-[var(--ds-gray-1000)]">
           {post.description}
         </p>
       )}
       {post.media?.[0] && (
-        <div className="aspect-video bg-muted">
+        <div className="aspect-video bg-[var(--ds-gray-100)]">
           <MediaPreview
             media={mapMediaResponseToMedia(post.media[0])}
             className="w-full h-full"
@@ -194,7 +230,7 @@ function LinkedInPreview({ post }: { post: PostResponse }) {
   const src = getImageUrl(post.connectedAccount?.profilePicLink);
   const username = post.connectedAccount?.username || "Professional";
   return (
-    <div className="bg-white rounded-xl border border-border/60 overflow-hidden text-sm">
+    <div className={previewCardClassName}>
       <div className="flex items-start gap-2.5 p-3">
         <ProfileAvatar
           src={src}
@@ -203,22 +239,28 @@ function LinkedInPreview({ post }: { post: PostResponse }) {
           fallbackClass="bg-sky-600"
         />
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-[13px]">{username}</p>
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-label-14 text-[var(--ds-gray-1000)]">{username}</p>
+          <p className="text-copy-12 text-[var(--ds-gray-900)]">
             1st · Just now · 🌐
           </p>
         </div>
-        <button className="text-sky-600 border border-sky-600 rounded-full px-3 py-0.5 text-[11px] font-semibold flex-shrink-0">
+        <button
+          type="button"
+          className={cn(
+            "shrink-0 rounded-full border border-[#0A66C2]/20 bg-[#0A66C2]/10 px-3 py-1 text-copy-12 text-[#0A66C2]",
+            focusRingClassName
+          )}
+        >
           + Follow
         </button>
       </div>
       {post.description && (
-        <p className="px-3 pb-2 text-[13px] text-card-foreground leading-relaxed line-clamp-4">
+        <p className="line-clamp-4 px-3 pb-2 text-label-14 leading-6 text-[var(--ds-gray-1000)]">
           {post.description}
         </p>
       )}
       {post.media?.[0] && (
-        <div className="aspect-video bg-muted">
+        <div className="aspect-video bg-[var(--ds-gray-100)]">
           <MediaPreview
             media={mapMediaResponseToMedia(post.media[0])}
             className="w-full h-full"
@@ -234,7 +276,7 @@ function XPreview({ post }: { post: PostResponse }) {
   const src = getImageUrl(post.connectedAccount?.profilePicLink);
   const username = post.connectedAccount?.username || "User";
   return (
-    <div className="bg-white rounded-xl border border-border/60 overflow-hidden text-sm">
+    <div className={previewCardClassName}>
       <div className="p-3 flex gap-2.5">
         <ProfileAvatar
           src={src}
@@ -244,16 +286,16 @@ function XPreview({ post }: { post: PostResponse }) {
         />
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1">
-            <p className="font-bold text-[13px]">{username}</p>
-            <p className="text-[12px] text-muted-foreground">· Just now</p>
+            <p className="text-label-14 text-[var(--ds-gray-1000)]">{username}</p>
+            <p className="text-copy-12 text-[var(--ds-gray-900)]">· Just now</p>
           </div>
           {post.description && (
-            <p className="text-[13px] text-card-foreground mb-2 whitespace-pre-wrap leading-snug">
+            <p className="mb-2 whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-1000)]">
               {post.description}
             </p>
           )}
           {post.media?.[0] && (
-            <div className="rounded-xl border border-border/40 overflow-hidden aspect-video">
+            <div className="aspect-video overflow-hidden rounded-xl border border-[var(--ds-gray-400)]">
               <MediaPreview
                 media={mapMediaResponseToMedia(post.media[0])}
                 className="w-full h-full"
@@ -281,20 +323,20 @@ const statusConfig: Record<
   SCHEDULED: {
     label: "Scheduled",
     Icon: Clock,
-    className: "text-blue-700 bg-blue-50 border-blue-200",
-    barClass: "from-blue-400 to-blue-500",
+    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    barClass: "from-[var(--ds-blue-400)] to-[var(--ds-blue-600)]",
   },
   PUBLISHED: {
     label: "Published",
     Icon: CheckCircle2,
-    className: "text-emerald-700 bg-emerald-50 border-emerald-200",
-    barClass: "from-emerald-400 to-emerald-500",
+    className: "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
+    barClass: "from-[var(--ds-green-400)] to-[var(--ds-green-600)]",
   },
   FAILED: {
     label: "Failed",
     Icon: XCircle,
-    className: "text-red-700 bg-red-50 border-red-200",
-    barClass: "from-red-400 to-red-500",
+    className: "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
+    barClass: "from-[var(--ds-red-400)] to-[var(--ds-red-600)]",
   },
 };
 
@@ -304,28 +346,28 @@ const platformMeta: Record<
 > = {
   YOUTUBE: {
     name: "YouTube",
-    iconColor: "text-red-600 bg-red-50 border-red-100",
-    headerBg: "from-red-50/60 to-transparent",
+    iconColor: "border-[#FF0000]/20 bg-[#FF0000]/10 text-[#FF0000]",
+    headerBg: "from-[#FF0000]/8 via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
   },
   INSTAGRAM: {
     name: "Instagram",
-    iconColor: "text-pink-600 bg-pink-50 border-pink-100",
-    headerBg: "from-pink-50/60 to-transparent",
+    iconColor: "border-[#C13584]/20 bg-[#C13584]/10 text-[#A62E69]",
+    headerBg: "from-[#C13584]/8 via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
   },
   FACEBOOK: {
     name: "Facebook",
-    iconColor: "text-blue-600 bg-blue-50 border-blue-100",
-    headerBg: "from-blue-50/60 to-transparent",
+    iconColor: "border-[#1877F2]/20 bg-[#1877F2]/10 text-[#1877F2]",
+    headerBg: "from-[#1877F2]/8 via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
   },
   LINKEDIN: {
     name: "LinkedIn",
-    iconColor: "text-sky-600 bg-sky-50 border-sky-100",
-    headerBg: "from-sky-50/60 to-transparent",
+    iconColor: "border-[#0A66C2]/20 bg-[#0A66C2]/10 text-[#0A66C2]",
+    headerBg: "from-[#0A66C2]/8 via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
   },
   X: {
     name: "X (Twitter)",
-    iconColor: "text-neutral-800 bg-neutral-50 border-neutral-200",
-    headerBg: "from-neutral-50/60 to-transparent",
+    iconColor: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+    headerBg: "from-[var(--ds-gray-100)] via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
   },
 };
 
@@ -356,29 +398,33 @@ export default function PostDetailPage() {
   }, [postId, getToken]);
 
   if (loading) {
-    return <CollectionDetailPageSkeleton />;
+    return <PostDetailPageSkeleton />;
   }
 
   if (!post || error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-6">
-        <div className="max-w-sm w-full rounded-2xl bg-card border border-border/60 p-8 shadow-sm text-center">
-          <div className="h-14 w-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="h-7 w-7 text-red-500" />
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ds-background-200)] p-6">
+        <div className="w-full max-w-sm rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-8 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)]">
+            <AlertCircle className="h-7 w-7 text-[var(--ds-red-700)]" />
           </div>
-          <h3 className="font-semibold text-foreground mb-1">Post not found</h3>
-          <p className="text-sm text-muted-foreground mb-6">
+          <h3 className="mb-1 text-title-18 text-[var(--ds-gray-1000)]">Post not found</h3>
+          <p className="mb-6 text-label-14 leading-6 text-[var(--ds-gray-900)]">
             This post couldn&apos;t be loaded or no longer exists.
           </p>
           <button
             onClick={() => router.back()}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:opacity-90 transition-opacity"
+            className={cn(
+              actionButtonClassName,
+              "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]",
+              focusRingClassName
+            )}
           >
             <ArrowLeft className="h-4 w-4" />
             Go back
           </button>
         </div>
-      </div>
+      </main>
     );
   }
 
@@ -438,29 +484,27 @@ export default function PostDetailPage() {
   const extraMedia = hasMedia && post.media.length > 1 ? post.media.slice(1) : [];
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]">
       <ProtectedPageHeader
         title={post.description}
         description="Post preview and platform-specific details."
         icon={<Layers className="h-4 w-4" />}
         actions={
-          <span
-            className={cn(
-              "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border flex-shrink-0",
-              status.className
-            )}
-          >
+          <ToneBadge className={cn("shrink-0", status.className)}>
             <StatusIcon className="h-3 w-3" />
             {status.label}
-          </span>
+          </ToneBadge>
         }
       />
 
-      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
-        <nav className="flex items-center gap-1.5 text-sm min-w-0">
+      <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-6">
+        <nav className="flex min-w-0 items-center gap-1.5 text-label-14">
           <button
             onClick={() => router.push("/scheduled-posts")}
-            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+            className={cn(
+              "flex shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]",
+              focusRingClassName
+            )}
           >
             <Layers className="h-3.5 w-3.5" />
             <span className="hidden sm:inline font-medium">
@@ -470,20 +514,23 @@ export default function PostDetailPage() {
 
           {post.postCollectionId && (
             <>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-700)]" />
               <button
                 onClick={() =>
                   router.push(`/scheduled-posts/${post.postCollectionId}`)
                 }
-                className="hidden sm:block text-muted-foreground hover:text-foreground transition-colors font-medium flex-shrink-0"
+                className={cn(
+                  "hidden shrink-0 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)] sm:block",
+                  focusRingClassName
+                )}
               >
                 Collection
               </button>
             </>
           )}
 
-          <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-          <span className="font-medium text-foreground truncate">
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-700)]" />
+          <span className="truncate text-label-14 text-[var(--ds-gray-1000)]">
             {post.description}
           </span>
         </nav>
@@ -497,7 +544,7 @@ export default function PostDetailPage() {
           <div className="lg:col-span-3 space-y-5">
 
             {/* Platform preview — hero */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
+            <div className={cn(surfaceClassName, "overflow-hidden")}>
               <div className={cn("h-0.5 w-full bg-gradient-to-r", status.barClass)} />
               <div className="p-5">
                 <div className="flex items-center justify-between mb-4">
@@ -505,42 +552,47 @@ export default function PostDetailPage() {
                     {Icon && (
                       <div
                         className={cn(
-                          "h-6 w-6 rounded-lg border flex items-center justify-center",
+                          "flex h-6 w-6 items-center justify-center rounded-lg border",
                           meta?.iconColor
                         )}
                       >
                         <Icon className="h-3.5 w-3.5" />
                       </div>
                     )}
-                    <h2 className="text-sm font-semibold text-foreground">
+                    <h2 className="text-label-14 text-[var(--ds-gray-1000)]">
                       {meta?.name ?? post.provider} Preview
                     </h2>
                   </div>
-                  <span className="text-[11px] text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full border border-border/30 font-medium">
+                  <ToneBadge className="border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
                     Approximate
-                  </span>
+                  </ToneBadge>
                 </div>
 
                 {preview ? (
-                  <div className="bg-gradient-to-br from-muted/30 to-muted/50 rounded-xl p-4 border border-border/30">
+                  <div
+                    className={cn(
+                      "rounded-xl border border-[var(--ds-gray-400)] bg-gradient-to-br p-4",
+                      meta?.headerBg ?? "from-[var(--ds-gray-100)] to-[var(--ds-background-100)]"
+                    )}
+                  >
                     {preview}
                   </div>
                 ) : (
-                  <div className="rounded-xl bg-muted/30 border border-border/30 p-6">
+                  <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-6">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="h-10 w-10 rounded-full bg-muted/80 border border-border/40 flex-shrink-0" />
+                      <div className="h-10 w-10 shrink-0 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-200)]" />
                       <div className="space-y-1.5 flex-1">
-                        <div className="h-3.5 bg-muted/80 rounded w-32" />
-                        <div className="h-3 bg-muted/60 rounded w-20" />
+                        <div className="h-3.5 w-32 rounded bg-[var(--ds-gray-300)]" />
+                        <div className="h-3 w-20 rounded bg-[var(--ds-gray-300)]" />
                       </div>
                     </div>
                     <div className="space-y-2.5 mb-4">
                       {[100, 88, 72].map((w, i) => (
-                        <div key={i} className="h-3 bg-muted/70 rounded" style={{ width: `${w}%` }} />
+                        <div key={i} className="h-3 rounded bg-[var(--ds-gray-300)]" style={{ width: `${w}%` }} />
                       ))}
                     </div>
-                    <div className="aspect-video rounded-lg bg-muted/60 border border-border/30" />
-                    <p className="text-xs text-muted-foreground/50 mt-4 text-center italic">
+                    <div className="aspect-video rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-200)]" />
+                    <p className="mt-4 text-center text-copy-12 italic text-[var(--ds-gray-900)]">
                       Preview not available for this platform
                     </p>
                   </div>
@@ -550,12 +602,14 @@ export default function PostDetailPage() {
 
             {/* Caption — compact, below preview */}
             {post.description && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+              <div className={cn(surfaceClassName, "p-5")}>
                 <div className="flex items-center gap-2 mb-3">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
-                  <h2 className="text-sm font-semibold text-foreground">Caption</h2>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                    <FileText className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                  </div>
+                  <h2 className="text-label-14 text-[var(--ds-gray-1000)]">Caption</h2>
                 </div>
-                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
+                <p className="whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-1000)]">
                   {post.description}
                 </p>
               </div>
@@ -563,15 +617,17 @@ export default function PostDetailPage() {
 
             {/* Extra media files (beyond the first, which is shown in preview) */}
             {extraMedia.length > 0 && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+              <div className={cn(surfaceClassName, "p-5")}>
                 <div className="flex items-center gap-2 mb-4">
-                  <FileImage className="h-4 w-4 text-muted-foreground" />
-                  <h2 className="text-sm font-semibold text-foreground">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                    <FileImage className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                  </div>
+                  <h2 className="text-label-14 text-[var(--ds-gray-1000)]">
                     Additional Media
                   </h2>
-                  <span className="ml-auto text-xs font-medium text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full border border-border/30">
+                  <ToneBadge className="ml-auto border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
                     {extraMedia.length} {extraMedia.length === 1 ? "file" : "files"}
-                  </span>
+                  </ToneBadge>
                 </div>
                 <div
                   className={cn(
@@ -582,7 +638,7 @@ export default function PostDetailPage() {
                   {extraMedia.map((m, i) => (
                     <div
                       key={m.id ?? i}
-                      className="rounded-xl overflow-hidden border border-border/40 shadow-sm hover:shadow-md transition-shadow"
+                      className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] shadow-sm transition-shadow hover:shadow-md"
                     >
                       <MediaPreview
                         media={mapMediaResponseToMedia(m)}
@@ -600,18 +656,18 @@ export default function PostDetailPage() {
 
             {/* Account card — top of sidebar */}
             {post.connectedAccount && (
-              <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+              <div className={cn(surfaceClassName, "p-5")}>
                 <div className="flex items-center gap-2.5 mb-4">
-                  <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center">
-                    <User className="h-4 w-4 text-muted-foreground" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                    <User className="h-4 w-4 text-[var(--ds-gray-900)]" />
                   </div>
-                  <h3 className="text-sm font-semibold text-foreground">
+                  <h3 className="text-label-14 text-[var(--ds-gray-1000)]">
                     Scheduled For
                   </h3>
                 </div>
 
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
-                  <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-border/50 shadow-sm flex-shrink-0">
+                <div className="flex items-center gap-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-3">
+                  <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-[var(--ds-gray-400)] shadow-sm">
                     {profileImageSrc ? (
                       <Image
                         src={profileImageSrc}
@@ -621,27 +677,27 @@ export default function PostDetailPage() {
                         className="object-cover"
                       />
                     ) : (
-                      <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                        <User className="h-5 w-5 text-muted-foreground" />
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[var(--ds-gray-200)] to-[var(--ds-gray-100)]">
+                        <User className="h-5 w-5 text-[var(--ds-gray-900)]" />
                       </div>
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-foreground truncate">
+                    <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                       {post.connectedAccount.username}
                     </p>
                     <div className="flex items-center gap-1.5 mt-1">
                       {Icon && (
                         <div
                           className={cn(
-                            "h-4 w-4 rounded border flex items-center justify-center",
+                            "flex h-4 w-4 items-center justify-center rounded border",
                             meta?.iconColor
                           )}
                         >
                           <Icon className="h-2.5 w-2.5" />
                         </div>
                       )}
-                      <p className="text-xs text-muted-foreground font-medium">
+                      <p className="text-copy-12 text-[var(--ds-gray-900)]">
                         {meta?.name ?? post.provider}
                       </p>
                     </div>
@@ -651,30 +707,30 @@ export default function PostDetailPage() {
             )}
 
             {/* Schedule card */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+            <div className={cn(surfaceClassName, "p-5")}>
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="h-8 w-8 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <Calendar className="h-4 w-4 text-primary" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]">
+                  <Calendar className="h-4 w-4 text-[var(--ds-blue-700)]" />
                 </div>
-                <h3 className="text-sm font-semibold text-foreground">
+                <h3 className="text-label-14 text-[var(--ds-gray-1000)]">
                   Schedule
                 </h3>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                  <p className="mb-1 text-copy-12 font-semibold uppercase tracking-[0.08em] text-[var(--ds-gray-900)]">
                     Date &amp; Time
                   </p>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-label-14 text-[var(--ds-gray-1000)]">
                     {formattedDate}
                   </p>
-                  <p className="text-sm text-muted-foreground">{formattedTime}</p>
+                  <p className="text-label-14 text-[var(--ds-gray-900)]">{formattedTime}</p>
                 </div>
 
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted/50 border border-border/30">
-                  <Clock className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                  <span className="text-xs text-muted-foreground font-medium">
+                <div className="flex items-center gap-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2">
+                  <Clock className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-900)]" />
+                  <span className="text-copy-12 text-[var(--ds-gray-900)]">
                     {isPast ? "Published" : "Publishes"} {relativeLabel}
                   </span>
                 </div>
@@ -682,45 +738,40 @@ export default function PostDetailPage() {
             </div>
 
             {/* Post stats card */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
+            <div className={cn(surfaceClassName, "p-5")}>
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center">
-                  <FileText className="h-4 w-4 text-muted-foreground" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                  <FileText className="h-4 w-4 text-[var(--ds-gray-900)]" />
                 </div>
-                <h3 className="text-sm font-semibold text-foreground">
+                <h3 className="text-label-14 text-[var(--ds-gray-1000)]">
                   Post Details
                 </h3>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center justify-between py-2 border-b border-border/30">
-                  <span className="text-xs text-muted-foreground font-medium">
+                <div className="flex items-center justify-between border-b border-[var(--ds-gray-400)] py-2">
+                  <span className="text-copy-12 text-[var(--ds-gray-900)]">
                     Platform
                   </span>
-                  <span className="text-xs font-semibold text-foreground">
+                  <span className="text-copy-12 font-semibold text-[var(--ds-gray-1000)]">
                     {meta?.name ?? post.provider}
                   </span>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b border-border/30">
-                  <span className="text-xs text-muted-foreground font-medium">
+                <div className="flex items-center justify-between border-b border-[var(--ds-gray-400)] py-2">
+                  <span className="text-copy-12 text-[var(--ds-gray-900)]">
                     Media files
                   </span>
-                  <span className="text-xs font-semibold text-foreground tabular-nums">
+                  <span className="text-copy-12 font-semibold tabular-nums text-[var(--ds-gray-1000)]">
                     {post.media?.length ?? 0}
                   </span>
                 </div>
                 <div className="flex items-center justify-between py-2">
-                  <span className="text-xs text-muted-foreground font-medium">
+                  <span className="text-copy-12 text-[var(--ds-gray-900)]">
                     Status
                   </span>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border",
-                      status.className
-                    )}
-                  >
+                  <ToneBadge className={status.className}>
                     <StatusIcon className="h-2.5 w-2.5" />
                     {status.label}
-                  </span>
+                  </ToneBadge>
                 </div>
               </div>
             </div>
@@ -731,161 +782,29 @@ export default function PostDetailPage() {
                 onClick={() =>
                   router.push(`/scheduled-posts/${post.postCollectionId}`)
                 }
-                className="w-full rounded-2xl bg-card border border-border/60 shadow-sm p-5 text-left hover:border-primary/30 hover:shadow-md transition-all group"
+                className={cn(
+                  "group w-full p-5 text-left transition-all hover:border-[var(--ds-blue-300)] hover:shadow-md",
+                  surfaceClassName,
+                  focusRingClassName
+                )}
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="h-8 w-8 rounded-xl bg-muted/60 flex items-center justify-center group-hover:bg-accent/10 transition-colors flex-shrink-0">
-                    <Layers className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] transition-colors group-hover:border-[var(--ds-blue-200)] group-hover:bg-[var(--ds-blue-100)]">
+                    <Layers className="h-4 w-4 text-[var(--ds-gray-900)] transition-colors group-hover:text-[var(--ds-blue-700)]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    <p className="text-label-14 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
                       View Collection
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-copy-12 text-[var(--ds-gray-900)]">
                       See all posts in this campaign
                     </p>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground/0 group-hover:text-primary/70 transition-all flex-shrink-0" />
+                  <ExternalLink className="h-4 w-4 shrink-0 text-[var(--ds-gray-700)] transition-colors group-hover:text-[var(--ds-blue-700)]" />
                 </div>
               </button>
             )}
 
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-/* ─── Skeleton ────────────────────────────────────────────── */
-
-function SkeletonPostPage() {
-  return (
-    <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
-        <div className="px-4 sm:px-6 h-[60px] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-28 rounded hidden sm:block" />
-            <Skeleton className="h-4 w-4 rounded hidden sm:block" />
-            <Skeleton className="h-4 w-20 rounded hidden sm:block" />
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-36 rounded" />
-          </div>
-          <Skeleton className="h-6 w-24 rounded-full" />
-        </div>
-      </header>
-
-      <div className="px-4 sm:px-6 py-8">
-        <div className="grid lg:grid-cols-5 gap-6">
-          {/* Left column skeleton */}
-          <div className="lg:col-span-3 space-y-5">
-            {/* Platform preview */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <Skeleton className="h-0.5 w-full rounded-none" />
-              <div className="p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-6 w-6 rounded-lg" />
-                    <Skeleton className="h-4 w-36 rounded" />
-                  </div>
-                  <Skeleton className="h-5 w-20 rounded-full" />
-                </div>
-                <div className="rounded-xl bg-muted/30 border border-border/30 p-4 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
-                    <div className="space-y-1.5 flex-1">
-                      <Skeleton className="h-4 w-28 rounded" />
-                      <Skeleton className="h-3 w-20 rounded" />
-                    </div>
-                  </div>
-                  <Skeleton className="aspect-video w-full rounded-lg" />
-                  <div className="space-y-2">
-                    {[100, 82, 60].map((w, i) => (
-                      <Skeleton key={i} className="h-3 rounded" style={{ width: `${w}%` }} />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Caption */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <Skeleton className="h-4 w-4 rounded" />
-                <Skeleton className="h-4 w-16 rounded" />
-              </div>
-              <div className="space-y-2.5">
-                {[100, 93, 86, 97, 79].map((w, i) => (
-                  <Skeleton key={i} className="h-3.5 rounded-md" style={{ width: `${w}%` }} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right sidebar skeleton */}
-          <div className="lg:col-span-2 space-y-4">
-            {/* Account */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <div className="flex items-center gap-2.5 mb-4">
-                <Skeleton className="h-8 w-8 rounded-xl" />
-                <Skeleton className="h-4 w-24 rounded" />
-              </div>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-muted/30 border border-border/30">
-                <Skeleton className="h-12 w-12 rounded-full flex-shrink-0" />
-                <div className="space-y-2 flex-1">
-                  <Skeleton className="h-4 w-28 rounded" />
-                  <Skeleton className="h-3 w-20 rounded" />
-                </div>
-              </div>
-            </div>
-
-            {/* Schedule */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <div className="flex items-center gap-2.5 mb-4">
-                <Skeleton className="h-8 w-8 rounded-xl" />
-                <Skeleton className="h-4 w-20 rounded" />
-              </div>
-              <div className="space-y-3">
-                <div className="space-y-1.5">
-                  <Skeleton className="h-3 w-16 rounded" />
-                  <Skeleton className="h-4 w-44 rounded" />
-                  <Skeleton className="h-4 w-24 rounded" />
-                </div>
-                <Skeleton className="h-9 w-full rounded-xl" />
-              </div>
-            </div>
-
-            {/* Post details */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <div className="flex items-center gap-2.5 mb-4">
-                <Skeleton className="h-8 w-8 rounded-xl" />
-                <Skeleton className="h-4 w-24 rounded" />
-              </div>
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between py-2 border-b border-border/30 last:border-b-0"
-                  >
-                    <Skeleton className="h-3 w-16 rounded" />
-                    <Skeleton className="h-3 w-20 rounded" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Collection link */}
-            <div className="rounded-2xl bg-card border border-border/60 shadow-sm p-5">
-              <div className="flex items-center gap-2.5">
-                <Skeleton className="h-8 w-8 rounded-xl flex-shrink-0" />
-                <div className="flex-1 space-y-1.5">
-                  <Skeleton className="h-4 w-28 rounded" />
-                  <Skeleton className="h-3 w-40 rounded" />
-                </div>
-                <Skeleton className="h-4 w-4 rounded" />
-              </div>
-            </div>
           </div>
         </div>
       </div>

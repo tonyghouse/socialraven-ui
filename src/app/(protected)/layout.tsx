@@ -134,8 +134,8 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
   ]);
 
   if (!gateOpen) {
-    // Minimal blank state while checking — avoids flash of protected content
-    return null;
+    // Keep the shell visually stable while access and workspace state resolve.
+    return <div aria-hidden="true" className="min-h-screen bg-[var(--ds-background-100)]" />;
   }
 
   return <>{children}</>;
@@ -144,12 +144,16 @@ function WorkspaceGate({ children }: { children: React.ReactNode }) {
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
   const pathname = usePathname();
+  const isFullscreenWorkspacePage =
+    pathname === "/workspace-select" || pathname === "/no-workspace";
 
   // These pages get a full-screen layout without sidebar/nav
-  if (pathname === "/workspace-select" || pathname === "/no-workspace") {
+  if (isFullscreenWorkspacePage) {
     return (
       <WorkspaceGate>
-        <main>{children}</main>
+        <main className="min-h-screen bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
+          {children}
+        </main>
       </WorkspaceGate>
     );
   }
@@ -157,14 +161,18 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <WorkspaceGate>
       {isMobile ? (
-        <div className="pb-16 page-bg min-h-screen">
-          <main>{children}</main>
+        <div className="min-h-screen bg-[var(--ds-background-100)] pb-16 text-[var(--ds-gray-1000)]">
+          <main className="min-h-screen bg-[var(--ds-background-200)]">
+            {children}
+          </main>
           <MobileBottomBar />
         </div>
       ) : (
-        <div className="flex h-screen w-full">
+        <div className="flex h-screen w-full bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
           <AppSidebar />
-          <main className="flex-1 overflow-auto page-bg">{children}</main>
+          <main className="flex-1 overflow-auto bg-[var(--ds-background-200)]">
+            {children}
+          </main>
         </div>
       )}
     </WorkspaceGate>

@@ -13,9 +13,15 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useRole } from "@/hooks/useRole";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import {
+  ConnectButton,
+  connectBodyClassName,
+  connectInsetCardClassName,
+  connectMetaClassName,
+  connectPageClassName,
+  connectTitleClassName,
+} from "@/components/connect-accounts/connect-accounts-primitives";
 
 export default function ManageAccountsPage() {
   const { canWrite } = useRole();
@@ -43,16 +49,17 @@ export default function ManageAccountsPage() {
   }, [params, router]);
 
   return (
-    <div className="min-h-screen w-full bg-[hsl(var(--background))]">
+    <div className={connectPageClassName}>
       <ProtectedPageHeader
         title="Connect Accounts"
         description="Manage channel access for this workspace."
         icon={<Link2 size={16} />}
+        className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
         actions={
           canWrite ? (
-            <Button
-              size="sm"
-              className="hidden rounded-lg px-3.5 sm:inline-flex"
+            <ConnectButton
+              tone="primary"
+              className="hidden sm:inline-flex"
               onClick={() =>
                 document
                   .getElementById("connect-platforms")
@@ -61,48 +68,48 @@ export default function ManageAccountsPage() {
             >
               <PlugZap size={15} />
               Add account
-            </Button>
+            </ConnectButton>
           ) : undefined
         }
       />
 
       <main className="px-4 py-6 sm:px-6 sm:py-8">
         <section className="space-y-6">
-          <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-5">
+          <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-5 py-5 shadow-sm">
             <div className="flex flex-col gap-4">
               <div className="space-y-2">
-                <h2 className="max-w-2xl text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+                <h2 className="max-w-2xl text-heading-20 text-[var(--ds-gray-1000)]">
                   Keep every publishing channel connected from one workspace.
                 </h2>
-                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <p className={connectBodyClassName}>
                   Add new platforms, review active connections, and keep publishing access stable without jumping between provider dashboards.
                 </p>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
-                <div className="flex items-start gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-4">
-                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                <div className={connectInsetCardClassName + " flex items-start gap-3 px-4 py-4"}>
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]">
                     <ShieldCheck size={15} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
+                    <p className={connectMetaClassName}>
                       Security
                     </p>
-                    <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground))]">
+                    <p className={"mt-1 " + connectTitleClassName}>
                       Access tokens stay encrypted and can be removed the moment credentials change.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-4">
-                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                <div className={connectInsetCardClassName + " flex items-start gap-3 px-4 py-4"}>
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]">
                     <RefreshCw size={15} />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
+                    <p className={connectMetaClassName}>
                       Reliability
                     </p>
-                    <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground))]">
+                    <p className={"mt-1 " + connectTitleClassName}>
                       Refresh active connections and reconnect expired channels without leaving the workspace.
                     </p>
                   </div>
@@ -126,7 +133,7 @@ export default function ManageAccountsPage() {
               canWrite={canWrite}
               header={
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                  <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+                  <p className={connectTitleClassName}>
                     Active connections
                   </p>
                 </div>

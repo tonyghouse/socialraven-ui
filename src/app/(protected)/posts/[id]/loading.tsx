@@ -1,5 +1,5 @@
-import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
+import { PostDetailPageSkeleton } from "@/components/posts/post-detail-page-skeleton";
 
 export default function Loading() {
-  return <CollectionDetailPageSkeleton />;
+  return <PostDetailPageSkeleton />;
 }

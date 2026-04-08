@@ -3,14 +3,18 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
-import AppleSkeleton from "../generic/AppleSkelton";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import ConnectedAccountsGrid from "./connect-accounts-grid";
 import { deleteConnectedAccountApi } from "@/service/deleteConnectedAccountApi";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ConnectButton,
+  connectSectionHeaderClassName,
+  connectSurfaceClassName,
+} from "@/components/connect-accounts/connect-accounts-primitives";
 
 interface PendingConfirm {
   description: string;
@@ -105,16 +109,15 @@ export default function ConnectedAccountsSection({
         onConfirm={() => pendingConfirm?.onConfirm()}
         onCancel={() => setPendingConfirm(null)}
       />
-      <section className="overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
-        <div className="flex flex-col gap-3 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-3 sm:px-5">
+      <section className={connectSurfaceClassName}>
+        <div className={connectSectionHeaderClassName}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             {header ? <div className="min-w-0 flex-1">{header}</div> : <div />}
-            <Button
+            <ConnectButton
               type="button"
-              variant="outline"
-              size="sm"
+              compact
               onClick={handleRefresh}
-              className="h-7 shrink-0 rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2.5 text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+              className="shrink-0"
               title="Refresh accounts"
               aria-label="Refresh accounts"
               disabled={refreshing}
@@ -124,17 +127,19 @@ export default function ConnectedAccountsSection({
                 className={refreshing ? "animate-spin" : ""}
               />
               <span>Refresh</span>
-            </Button>
+            </ConnectButton>
           </div>
 
         </div>
 
         {loading ? (
           <div className="grid gap-3 p-3 sm:p-4 xl:grid-cols-2">
-            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
-            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
-            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
-            <AppleSkeleton className="h-[208px] w-full rounded-lg" />
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton
+                key={index}
+                className="h-[208px] w-full rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-300)]"
+              />
+            ))}
           </div>
         ) : (
           <div className="p-3 sm:p-4">

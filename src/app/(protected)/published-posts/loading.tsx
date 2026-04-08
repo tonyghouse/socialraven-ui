@@ -1,11 +1,5 @@
-import { CollectionListPageSkeleton } from "@/components/posts/collection-page-skeletons";
+import { PublishedPostsPageSkeleton } from "@/components/posts/published-posts-page-skeleton";
 
 export default function Loading() {
-  return (
-    <CollectionListPageSkeleton
-      titleWidth="w-32"
-      descriptionWidth="w-80"
-      tone="success"
-    />
-  );
+  return <PublishedPostsPageSkeleton />;
 }

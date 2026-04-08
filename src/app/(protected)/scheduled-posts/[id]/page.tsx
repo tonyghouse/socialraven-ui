@@ -1,9 +1,6 @@
 "use client";
 
-import AtlassianButton from "@atlaskit/button/new";
-import Lozenge from "@atlaskit/lozenge";
-import SectionMessage from "@atlaskit/section-message";
-import Tag from "@atlaskit/tag";
+import type { ButtonHTMLAttributes, ReactNode } from "react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -47,7 +44,6 @@ import {
   RefreshCcw,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { toast } from "sonner";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
@@ -73,8 +69,7 @@ import type { PostResponse } from "@/model/PostResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PlatformConfigs } from "@/model/PostCollection";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
-import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ScheduledPostDetailPageSkeleton } from "@/components/posts/scheduled-post-detail-page-skeleton";
 import { getImageUrl } from "@/service/getImageUrl";
 import { MediaPreview } from "@/components/generic/media-preview";
 import { mapMediaResponseToMedia } from "@/lib/media-mapper";
@@ -109,26 +104,22 @@ const statusConfig: Record<
   SCHEDULED: {
     label: "Scheduled",
     Icon: Clock,
-    className:
-      "text-blue-700 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-500/10 dark:border-blue-500/20",
+    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   PUBLISHED: {
     label: "Completed",
     Icon: CheckCircle2,
-    className:
-      "text-emerald-700 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-500/10 dark:border-emerald-500/20",
+    className: "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
   },
   PARTIAL_SUCCESS: {
     label: "Partially Completed",
     Icon: AlertTriangle,
-    className:
-      "text-amber-700 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-500/10 dark:border-amber-500/20",
+    className: "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]",
   },
   FAILED: {
     label: "Failed",
     Icon: XCircle,
-    className:
-      "text-red-700 bg-red-50 border-red-200 dark:text-red-400 dark:bg-red-500/10 dark:border-red-500/20",
+    className: "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   },
 };
 
@@ -139,20 +130,17 @@ const typeConfig: Record<
   IMAGE: {
     label: "Image",
     Icon: ImageIcon,
-    className:
-      "text-violet-600 bg-violet-50 border-violet-200 dark:text-violet-400 dark:bg-violet-500/10 dark:border-violet-500/20",
+    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   VIDEO: {
     label: "Video",
     Icon: Video,
-    className:
-      "text-rose-600 bg-rose-50 border-rose-200 dark:text-rose-400 dark:bg-rose-500/10 dark:border-rose-500/20",
+    className: "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
   },
   TEXT: {
     label: "Text",
     Icon: FileText,
-    className:
-      "text-slate-600 bg-slate-50 border-slate-200 dark:text-slate-400 dark:bg-slate-500/10 dark:border-slate-500/20",
+    className: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
   },
 };
 
@@ -168,18 +156,18 @@ const platformDisplayName: Record<string, string> = {
 
 const platformIconStyle: Record<string, string> = {
   YOUTUBE:
-    "text-red-600 bg-red-50 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
+    "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   INSTAGRAM:
-    "text-pink-600 bg-pink-50 border-pink-100 dark:bg-pink-900/20 dark:text-pink-400 dark:border-pink-800/30",
+    "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   FACEBOOK:
-    "text-blue-600 bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30",
+    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   LINKEDIN:
-    "text-sky-600 bg-sky-50 border-sky-100 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800/30",
-  X: "text-neutral-800 bg-neutral-50 border-neutral-200 dark:bg-neutral-800/30 dark:text-neutral-300 dark:border-neutral-700/30",
+    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  X: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   THREADS:
-    "text-neutral-700 bg-neutral-50 border-neutral-200 dark:bg-neutral-800/30 dark:text-neutral-300 dark:border-neutral-700/30",
+    "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   TIKTOK:
-    "text-neutral-900 bg-neutral-50 border-neutral-200 dark:bg-neutral-800/30 dark:text-neutral-200 dark:border-neutral-700/30",
+    "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
 };
 
 /* Platform-specific accent tokens for the circle cards */
@@ -193,76 +181,72 @@ const platformAccent: Record<
   }
 > = {
   INSTAGRAM: {
-    bar: "linear-gradient(90deg,#f9ce34 0%,#ee2a7b 45%,#6228d7 100%)",
-    cardBg:
-      "bg-gradient-to-br from-pink-50/70 to-purple-50/40 dark:from-pink-950/30 dark:to-purple-950/20",
-    cardBorder: "border-pink-200/70 dark:border-pink-800/30",
+    bar: "linear-gradient(90deg,var(--ds-amber-600) 0%,var(--ds-pink-700) 50%,var(--ds-purple-700) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-amber-400 via-pink-500 to-purple-600 border-transparent text-white shadow-md shadow-pink-500/25",
+      "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   },
   X: {
-    bar: "linear-gradient(90deg,#000 0%,#3a3a3a 50%,#000 100%)",
-    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
-    cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
+    bar: "linear-gradient(90deg,var(--ds-gray-900) 0%,var(--ds-gray-1000) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-neutral-900 dark:bg-neutral-100 border-transparent text-white dark:text-neutral-900 shadow-md shadow-neutral-900/20",
+      "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   },
   LINKEDIN: {
-    bar: "linear-gradient(90deg,#0077b5 0%,#00a0dc 100%)",
-    cardBg:
-      "bg-gradient-to-br from-sky-50/70 to-blue-50/40 dark:from-sky-950/30 dark:to-blue-950/20",
-    cardBorder: "border-sky-200/70 dark:border-sky-800/30",
+    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-600) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-sky-400 to-blue-700 border-transparent text-white shadow-md shadow-sky-500/25",
+      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   YOUTUBE: {
-    bar: "linear-gradient(90deg,#ff0000 0%,#ff5252 50%,#cc0000 100%)",
-    cardBg:
-      "bg-gradient-to-br from-red-50/70 to-rose-50/40 dark:from-red-950/30 dark:to-rose-950/20",
-    cardBorder: "border-red-200/70 dark:border-red-800/30",
+    bar: "linear-gradient(90deg,var(--ds-red-700) 0%,var(--ds-red-600) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-red-500 to-red-700 border-transparent text-white shadow-md shadow-red-500/25",
+      "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   },
   FACEBOOK: {
-    bar: "linear-gradient(90deg,#1877f2 0%,#42a5f5 100%)",
-    cardBg:
-      "bg-gradient-to-br from-blue-50/70 to-indigo-50/40 dark:from-blue-950/30 dark:to-indigo-950/20",
-    cardBorder: "border-blue-200/70 dark:border-blue-800/30",
+    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-500) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-blue-500 to-blue-700 border-transparent text-white shadow-md shadow-blue-500/25",
+      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   TIKTOK: {
-    bar: "linear-gradient(90deg,#010101 0%,#ff0050 50%,#00f2ea 100%)",
-    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
-    cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
+    bar: "linear-gradient(90deg,var(--ds-gray-1000) 0%,var(--ds-red-600) 55%,var(--ds-teal-600) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-neutral-900 border-transparent text-white shadow-md shadow-neutral-900/20",
+      "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
   },
   THREADS: {
-    bar: "linear-gradient(90deg,#101010 0%,#606060 50%,#101010 100%)",
-    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
-    cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
+    bar: "linear-gradient(90deg,var(--ds-gray-900) 0%,var(--ds-gray-1000) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-neutral-900 dark:bg-neutral-700 border-transparent text-white shadow-md shadow-neutral-900/20",
+      "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   },
 };
 
 const platformAccentFallback = {
   bar: "linear-gradient(90deg,#6b7280,#9ca3af)",
-  cardBg: "bg-muted/30",
-  cardBorder: "border-border/60",
-  iconClass: "bg-muted border-border/60 text-muted-foreground",
+  cardBg: "bg-[var(--ds-background-100)]",
+  cardBorder: "border-[var(--ds-gray-400)]",
+  iconClass: "bg-[var(--ds-gray-100)] border-[var(--ds-gray-400)] text-[var(--ds-gray-900)]",
 };
 
 /* Platform badge styles for edit mode header */
 const PLATFORM_BADGE_STYLES: Record<string, string> = {
-  facebook: "bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/20",
-  instagram: "bg-pink-50 text-pink-600 border-pink-200",
-  x: "bg-foreground/8 text-foreground border-border",
-  linkedin: "bg-[#0A66C2]/10 text-[#0A66C2] border-[#0A66C2]/20",
-  youtube: "bg-red-50 text-red-600 border-red-200",
-  threads: "bg-foreground/8 text-foreground border-border",
-  tiktok: "bg-foreground/8 text-foreground border-border",
+  facebook: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  instagram: "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
+  x: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  linkedin: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  youtube: "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
+  threads: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  tiktok: "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
 };
 
 const PLATFORM_LABELS: Record<string, string> = {
@@ -275,6 +259,128 @@ const PLATFORM_LABELS: Record<string, string> = {
   tiktok: "TikTok",
 };
 
+const pageClassName = "min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]";
+const surfaceClassName =
+  "overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm";
+const surfaceHeaderClassName =
+  "flex items-center gap-2.5 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-3.5";
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+
+const ActionButton = React.forwardRef<
+  HTMLButtonElement,
+  ButtonHTMLAttributes<HTMLButtonElement> & {
+    tone?: "primary" | "secondary" | "danger";
+    compact?: boolean;
+    iconOnly?: boolean;
+    fullWidth?: boolean;
+  }
+>(function ActionButton(
+  {
+    tone = "secondary",
+    compact = false,
+    iconOnly = false,
+    fullWidth = false,
+    className,
+    children,
+    type = "button",
+    ...props
+  },
+  ref
+) {
+  const toneClassName =
+    tone === "primary"
+      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      : tone === "danger"
+        ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)] hover:border-[var(--ds-red-300)] hover:bg-[var(--ds-red-200)]"
+        : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
+
+  const sizeClassName = iconOnly
+    ? compact
+      ? "h-8 w-8 px-0"
+      : "h-9 w-9 px-0"
+    : compact
+      ? "h-8 px-3 text-copy-12"
+      : "h-9 px-3.5 text-label-14";
+
+  return (
+    <button
+      ref={ref}
+      type={type}
+      className={cn(
+        "inline-flex items-center justify-center gap-2 rounded-md border transition-colors disabled:pointer-events-none disabled:opacity-50",
+        toneClassName,
+        sizeClassName,
+        focusRingClassName,
+        fullWidth && "w-full",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+});
+
+function ToneBadge({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className: string;
+}) {
+  return (
+    <span className={cn("inline-flex min-h-6 items-center gap-1.5 rounded-full border px-2.5 py-1 text-label-12", className)}>
+      {children}
+    </span>
+  );
+}
+
+function InlinePill({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-2 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2 text-copy-12 text-[var(--ds-gray-900)]",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+function Notice({
+  title,
+  variant = "info",
+  children,
+}: {
+  title: ReactNode;
+  variant?: "info" | "warning" | "error";
+  children: ReactNode;
+}) {
+  const variantClassName =
+    variant === "warning"
+      ? "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]"
+      : variant === "error"
+        ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]"
+        : "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+
+  return (
+    <div className={cn("rounded-xl border p-4 shadow-sm", variantClassName)}>
+      <div className="space-y-1">
+        <p className="text-label-14">{title}</p>
+        <div className="text-label-14 leading-6">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Helpers ─────────────────────────────────────────────── */
 
 function getCountdown(target: Date): string | null {
@@ -286,32 +392,6 @@ function getCountdown(target: Date): string | null {
   if (days > 0) return `${days}d ${hours}h`;
   if (hours > 0) return `${hours}h ${mins}m`;
   return `${mins}m`;
-}
-
-function getStatusLozengeAppearance(status: string) {
-  switch (status) {
-    case "PUBLISHED":
-      return "success";
-    case "PARTIAL_SUCCESS":
-      return "moved";
-    case "FAILED":
-      return "removed";
-    case "SCHEDULED":
-    default:
-      return "inprogress";
-  }
-}
-
-function getTypeLozengeAppearance(type: string) {
-  switch (type) {
-    case "VIDEO":
-      return "new";
-    case "TEXT":
-      return "default";
-    case "IMAGE":
-    default:
-      return "information";
-  }
 }
 
 /* ─── Helper functions ────────────────────────────────────── */
@@ -344,88 +424,88 @@ function StepCard({
   step: number;
   title: string;
   description: string;
-  children: React.ReactNode;
+  children: ReactNode;
   complete?: boolean;
   locked?: boolean;
   isOpen: boolean;
   onToggle?: () => void;
-  summary?: React.ReactNode;
+  summary?: ReactNode;
 }) {
   const canToggle = !!onToggle && !locked;
 
   return (
     <div
       className={cn(
-        "bg-card border rounded-2xl shadow-sm overflow-hidden transition-all duration-300",
-        locked      ? "border-border opacity-50"
-        : complete && isOpen ? "border-primary/40"
-        : complete  ? "border-primary/20"
-        :             "border-border",
+        "overflow-hidden rounded-2xl border bg-[var(--ds-background-100)] shadow-sm transition-colors",
+        locked
+          ? "border-[var(--ds-gray-400)] opacity-60"
+          : complete && isOpen
+            ? "border-[var(--ds-blue-300)]"
+            : complete
+              ? "border-[var(--ds-blue-200)]"
+              : "border-[var(--ds-gray-400)]",
       )}
     >
-      {/* ── Header ── */}
       <button
         type="button"
         disabled={!canToggle}
         onClick={canToggle ? onToggle : undefined}
         className={cn(
-          "w-full flex items-center gap-4 px-6 py-4 text-left transition-colors duration-200",
-          "border-b border-border/60 bg-muted/20",
+          "flex w-full items-center gap-4 border-b px-6 py-4 text-left transition-colors",
+          "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]",
           canToggle
-            ? "cursor-pointer hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset"
+            ? cn("cursor-pointer hover:bg-[var(--ds-gray-200)]", focusRingClassName)
             : "cursor-default",
         )}
       >
-        {/* Step indicator */}
         <div
           className={cn(
-            "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center mt-0.5 transition-all duration-300",
-            complete ? "bg-primary/15" : "bg-muted border border-border/60",
+            "mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border text-copy-12 transition-colors",
+            complete
+              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]",
           )}
         >
           {complete
-            ? <CheckCircle2 className="w-4 h-4 text-primary" />
-            : <span className="text-xs font-medium leading-4 text-muted-foreground">{step}</span>
+            ? <CheckCircle2 className="h-4 w-4" />
+            : <span>{step}</span>
           }
         </div>
 
-        {/* Title / summary */}
         <div className="flex-1 min-w-0">
           {!isOpen && complete && summary ? (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-medium leading-4 text-muted-foreground">{title}</span>
-              <span className="text-muted-foreground/40">·</span>
+              <span className="text-copy-12 text-[var(--ds-gray-900)]">{title}</span>
+              <span className="text-[var(--ds-gray-700)]">·</span>
               {summary}
             </div>
           ) : (
             <>
-              <h2 className="text-sm font-semibold leading-5 text-foreground">{title}</h2>
-              <p className="mt-0.5 text-xs leading-4 text-muted-foreground">{description}</p>
+              <h2 className="text-label-14 text-[var(--ds-gray-1000)]">{title}</h2>
+              <p className="mt-0.5 text-copy-12 leading-5 text-[var(--ds-gray-900)]">{description}</p>
             </>
           )}
         </div>
 
-        {/* Edit hint + chevron */}
         {canToggle && (
-          <div className="flex-shrink-0 flex items-center gap-1.5 text-muted-foreground">
+          <div className="flex shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)]">
             {!isOpen && (
-              <span className="hidden sm:flex items-center gap-1 text-xs font-medium leading-4 text-primary/70 bg-primary/8 px-2 py-0.5 rounded-full border border-primary/15">
-                <Pencil className="w-2.5 h-2.5" />
+              <span className="hidden items-center gap-1 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2 py-0.5 text-copy-12 text-[var(--ds-blue-700)] sm:flex">
+                <Pencil className="h-2.5 w-2.5" />
                 Edit
               </span>
             )}
             {isOpen
-              ? <ChevronUp  className="w-4 h-4" />
-              : <ChevronDown className="w-4 h-4" />
+              ? <ChevronUp className="h-4 w-4" />
+              : <ChevronDown className="h-4 w-4" />
             }
           </div>
         )}
       </button>
 
-      {/* ── Body ── */}
       <div
         className={cn(
-          "transition-all duration-300 ease-in-out overflow-hidden",
+          "overflow-hidden transition-all duration-300 ease-in-out",
           isOpen ? "max-h-[9999px] opacity-100" : "max-h-0 opacity-0 pointer-events-none",
         )}
       >
@@ -444,21 +524,14 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
 }) {
   return (
     <div className="mt-4 flex justify-end">
-      <button
-        type="button"
+      <ActionButton
         onClick={onClick}
         disabled={disabled}
-        className={cn(
-          "flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium leading-5 transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
-          disabled
-            ? "bg-muted text-muted-foreground cursor-not-allowed"
-            : "bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm",
-        )}
+        tone="primary"
       >
         {label}
-        <ChevronDown className="w-3.5 h-3.5" />
-      </button>
+        <ChevronDown className="h-3.5 w-3.5" />
+      </ActionButton>
     </div>
   );
 }
@@ -503,18 +576,16 @@ function DeleteModal({
         onClick={onCancel}
       />
 
-      {/* Panel */}
-      <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_8px_24px_rgb(0 0 0 / 0.24)] animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-[0_8px_24px_rgb(0_0_0_/_0.16)] animate-in fade-in zoom-in-95 duration-200">
         <div className="p-6">
-          {/* Icon + heading */}
-          <div className="flex items-start gap-4 mb-5">
-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
-              <Trash2 className="h-5 w-5 text-[hsl(var(--destructive))]" />
+          <div className="mb-5 flex items-start gap-4">
+            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--ds-red-200)] bg-[var(--ds-red-100)]">
+              <Trash2 className="h-5 w-5 text-[var(--ds-red-700)]" />
             </div>
             <div>
               <h2
                 id="delete-modal-title"
-                className="text-sm font-semibold leading-5 text-foreground"
+                className="text-title-16 text-[var(--ds-gray-1000)]"
               >
                 Delete this collection?
               </h2>
@@ -522,25 +593,24 @@ function DeleteModal({
           </div>
 
           <div className="mb-5">
-            <SectionMessage appearance="error" title="This action cannot be undone.">
+            <Notice title="This action cannot be undone." variant="error">
               This will permanently remove the scheduled collection and its posts.
-            </SectionMessage>
+            </Notice>
           </div>
 
-          {/* Collection preview card */}
-          <div className="mb-5 space-y-3 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] p-4">
+          <div className="mb-5 space-y-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4">
             <div>
-              <p className="mb-1 text-xs font-medium leading-4 text-muted-foreground">
+              <p className="mb-1 text-copy-12 text-[var(--ds-gray-900)]">
                 Collection
               </p>
-              <p className="text-sm font-medium leading-5 text-foreground truncate">
+              <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                 {collection.description}
               </p>
             </div>
 
             <div className="flex items-center gap-1.5">
-              <Calendar className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-              <p className="text-xs text-muted-foreground">
+              <Calendar className="h-3.5 w-3.5 flex-shrink-0 text-[var(--ds-gray-900)]" />
+              <p className="text-copy-12 text-[var(--ds-gray-900)]">
                 {scheduledDate.toLocaleDateString("en-US", {
                   weekday: "short",
                   month: "short",
@@ -564,17 +634,17 @@ function DeleteModal({
                   <div key={platform} className="flex items-center gap-2">
                     <span
                       className={cn(
-                        "h-6 w-6 rounded-lg border flex items-center justify-center flex-shrink-0",
+                        "flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-lg border",
                         platformIconStyle[platform] ??
-                          "text-muted-foreground bg-muted/50 border-border/60"
+                          "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]"
                       )}
                     >
                       {Icon ? <Icon className="h-3.5 w-3.5" /> : null}
                     </span>
-                    <span className="text-xs font-medium text-foreground">
+                    <span className="text-copy-12 text-[var(--ds-gray-1000)]">
                       {platformDisplayName[platform] ?? platform}
                     </span>
-                    <span className="text-xs text-muted-foreground ml-auto">
+                    <span className="ml-auto text-copy-12 text-[var(--ds-gray-900)]">
                       {posts.length} account{posts.length !== 1 ? "s" : ""}
                     </span>
                   </div>
@@ -582,13 +652,13 @@ function DeleteModal({
               })}
             </div>
 
-            <div className="pt-1 border-t border-border/30 flex items-center gap-4">
-              <span className="text-xs text-muted-foreground">
-                  <span className="font-medium text-foreground tabular-nums">
+            <div className="flex items-center gap-4 border-t border-[var(--ds-gray-400)] pt-1">
+              <span className="text-copy-12 text-[var(--ds-gray-900)]">
+                <span className="font-medium tabular-nums text-[var(--ds-gray-1000)]">
                   {collection.posts.length}
                 </span>{" "}
                 post{collection.posts.length !== 1 ? "s" : ""} across{" "}
-                <span className="font-medium text-foreground tabular-nums">
+                <span className="font-medium tabular-nums text-[var(--ds-gray-1000)]">
                   {Object.keys(groupedPosts).length}
                 </span>{" "}
                 platform{Object.keys(groupedPosts).length !== 1 ? "s" : ""}
@@ -600,10 +670,10 @@ function DeleteModal({
           <div className="mb-5">
             <label
               htmlFor="delete-confirm-input"
-              className="block text-xs font-medium text-muted-foreground mb-2"
+              className="mb-2 block text-copy-12 text-[var(--ds-gray-900)]"
             >
               Type{" "}
-              <span className="font-mono font-bold text-red-600 dark:text-red-400">
+              <span className="font-mono font-bold text-[var(--ds-red-700)]">
                 {confirmWord}
               </span>{" "}
               to confirm
@@ -614,24 +684,24 @@ function DeleteModal({
               value={typed}
               onChange={(e) => setTyped(e.target.value.toUpperCase())}
               placeholder={confirmWord}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-border/60 bg-background text-sm font-mono text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-2 focus:ring-red-500/30 focus:border-red-400 transition-all"
+              className="w-full rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3.5 py-2.5 text-label-14 font-mono text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] focus:border-[var(--ds-red-300)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-red-300)]"
             />
           </div>
 
-          {/* Actions */}
           <div className="flex gap-2.5">
-            <button
+            <ActionButton
               ref={cancelRef}
               onClick={onCancel}
               disabled={isDeleting}
-              className="flex-1 px-4 py-2.5 rounded-xl border border-border/60 text-sm font-medium leading-5 text-foreground hover:bg-muted/50 transition-colors disabled:opacity-50"
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
+            </ActionButton>
+            <ActionButton
               onClick={onConfirm}
               disabled={!canDelete || isDeleting}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-600 text-white text-sm font-medium leading-5 hover:bg-red-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              tone="danger"
+              className="flex-1"
             >
               {isDeleting ? (
                 <>
@@ -644,7 +714,7 @@ function DeleteModal({
                   Delete forever
                 </>
               )}
-            </button>
+            </ActionButton>
           </div>
         </div>
       </div>
@@ -729,7 +799,7 @@ export default function ScheduledCollectionDetailPage() {
         setAccountsLoading(false);
       }
     })();
-  }, [isLoaded]);
+  }, [getToken, isLoaded]);
 
   /* ── Auto-dismiss toast ── */
   useEffect(() => {
@@ -788,20 +858,20 @@ export default function ScheduledCollectionDetailPage() {
 
   /* ── Loading / error states ── */
   if (loading) {
-    return <CollectionDetailPageSkeleton />;
+    return <ScheduledPostDetailPageSkeleton />;
   }
 
   if (error || !collection) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-        <div className="w-full max-w-md rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-          <SectionMessage appearance="error" title="Collection not found">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--ds-background-200)] p-6">
+        <div className="w-full max-w-md rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-6 shadow-sm">
+          <Notice title="Collection not found" variant="error">
             <div className="mt-3">
-              <AtlassianButton appearance="primary" onClick={() => router.push("/scheduled-posts")}>
+              <ActionButton tone="primary" onClick={() => router.push("/scheduled-posts")}>
                 Back to Scheduled Posts
-              </AtlassianButton>
+              </ActionButton>
             </div>
-          </SectionMessage>
+          </Notice>
         </div>
       </div>
     );
@@ -811,9 +881,15 @@ export default function ScheduledCollectionDetailPage() {
   const scheduledDate = new Date(collection.scheduledTime ?? "");
   const status = statusConfig[collection.overallStatus] ?? statusConfig.SCHEDULED;
   const type = typeConfig[collection.postCollectionType] ?? typeConfig.TEXT;
+  const StatusIcon = status.Icon;
+  const TypeIcon = type.Icon;
   const isScheduled = collection.overallStatus === "SCHEDULED";
   const recoveryBadge = collection.failureState === "RECOVERED"
-    ? { appearance: "success", label: "Recovered" }
+    ? {
+        label: "Recovered",
+        className:
+          "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
+      }
     : null;
   const canOpenChannelRecovery = collection.overallStatus === "PARTIAL_SUCCESS"
     && (collection.failedChannelCount ?? 0) > 0
@@ -856,27 +932,25 @@ export default function ScheduledCollectionDetailPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-[hsl(var(--background))]">
-      {/* Toast */}
+    <main className={pageClassName}>
       {toast && (
         <div
           className={cn(
-            "fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-sm font-medium animate-in slide-in-from-bottom-3 duration-300",
+            "fixed bottom-6 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2.5 rounded-xl border px-4 py-3 text-label-14 shadow-lg animate-in slide-in-from-bottom-3 duration-300",
             toast.type === "success"
-              ? "bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/20 text-emerald-800 dark:text-emerald-300"
-              : "bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20 text-red-800 dark:text-red-300"
+              ? "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]"
+              : "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]"
           )}
         >
           {toast.type === "success" ? (
-            <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
           ) : (
-            <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <AlertCircle className="h-4 w-4 shrink-0" />
           )}
           {toast.message}
         </div>
       )}
 
-      {/* Delete Modal */}
       {showDeleteModal && (
         <DeleteModal
           collection={collection}
@@ -911,206 +985,218 @@ export default function ScheduledCollectionDetailPage() {
             title={collection.description}
             description="Scheduled post details."
             icon={<Layers className="h-4 w-4" />}
+            className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
             actions={
               <>
                 {isScheduled && (
-                  <div className="hidden sm:inline-flex">
-                    <AtlassianButton appearance="subtle" onClick={enterEditMode}>
-                      <Pencil className="mr-1 h-3.5 w-3.5" />
+                  <div className="hidden sm:block">
+                    <ActionButton onClick={enterEditMode}>
+                      <Pencil className="h-3.5 w-3.5" />
                       Edit
-                    </AtlassianButton>
+                    </ActionButton>
                   </div>
                 )}
 
-                <div className="hidden sm:inline-flex">
-                  <AtlassianButton
-                    appearance="danger"
-                    onClick={() => setShowDeleteModal(true)}
-                  >
-                    <Trash2 className="mr-1 h-3.5 w-3.5" />
+                <div className="hidden sm:block">
+                  <ActionButton tone="danger" onClick={() => setShowDeleteModal(true)}>
+                    <Trash2 className="h-3.5 w-3.5" />
                     Delete
-                  </AtlassianButton>
+                  </ActionButton>
                 </div>
 
-                <div className="hidden sm:inline-flex">
-                  <AtlassianButton
-                    appearance="primary"
-                    onClick={() => router.push("/schedule-post")}
-                  >
-                    <Plus className="mr-1 h-3.5 w-3.5" />
+                <div className="hidden sm:block">
+                  <ActionButton tone="primary" onClick={() => router.push("/schedule-post")}>
+                    <Plus className="h-3.5 w-3.5" />
                     New Post
-                  </AtlassianButton>
+                  </ActionButton>
                 </div>
               </>
             }
           />
 
-          <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
-            <nav className="flex min-w-0 items-center gap-1.5 text-sm">
-              <AtlassianButton
-                appearance="subtle"
+          <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-6">
+            <nav className="flex min-w-0 items-center gap-1.5 text-label-14">
+              <button
                 onClick={() => router.push("/scheduled-posts")}
-                spacing="compact"
+                className={cn(
+                  "flex shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]",
+                  focusRingClassName
+                )}
               >
                 <Layers className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Scheduled Posts</span>
-              </AtlassianButton>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40 flex-shrink-0" />
-              <span className="font-medium text-foreground truncate">
+                <span className="hidden font-medium sm:inline">Scheduled Posts</span>
+              </button>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-700)]" />
+              <span className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                 {collection.description}
               </span>
             </nav>
           </div>
 
-          <div className="px-4 py-6 space-y-5 sm:px-6">
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="border-b border-[hsl(var(--border-subtle))] px-6 py-5">
-                <div className="mb-3 flex flex-wrap items-start gap-3">
-                  <h1 className="min-w-0 flex-1 text-xl font-semibold leading-7 text-[hsl(var(--foreground))]">
+          <div className="space-y-5 px-4 py-6 pb-24 sm:px-6 sm:pb-8">
+            <div className={surfaceClassName}>
+              <div className="h-[3px] w-full bg-[var(--ds-blue-600)]" />
+              <div className="px-6 pt-6 pb-5">
+                <div className="mb-4 flex flex-wrap items-start gap-x-4 gap-y-3">
+                  <h1 className="min-w-0 flex-1 text-title-20 text-[var(--ds-gray-1000)]">
                     {collection.description}
                   </h1>
-                  <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                    <Lozenge appearance={getTypeLozengeAppearance(collection.postCollectionType)}>
+                  <div className="flex shrink-0 flex-wrap items-center gap-2">
+                    <ToneBadge className={type.className}>
+                      <TypeIcon className="h-3.5 w-3.5" />
                       {type.label}
-                    </Lozenge>
-                    <Lozenge appearance={getStatusLozengeAppearance(collection.overallStatus)} isBold>
+                    </ToneBadge>
+                    <ToneBadge className={status.className}>
+                      <StatusIcon className="h-3.5 w-3.5" />
                       {status.label}
-                    </Lozenge>
+                    </ToneBadge>
                     {recoveryBadge && (
-                      <Lozenge appearance={recoveryBadge.appearance as "success"}>
+                      <ToneBadge className={recoveryBadge.className}>
                         {recoveryBadge.label}
-                      </Lozenge>
+                      </ToneBadge>
                     )}
                     <div className="flex items-center gap-1.5 sm:hidden">
                       {isScheduled && (
-                        <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
+                        <ActionButton compact iconOnly onClick={enterEditMode} aria-label="Edit collection">
                           <Pencil className="h-3.5 w-3.5" />
-                        </AtlassianButton>
+                        </ActionButton>
                       )}
-                      <AtlassianButton appearance="danger" onClick={() => setShowDeleteModal(true)} spacing="compact">
+                      <ActionButton compact iconOnly tone="danger" onClick={() => setShowDeleteModal(true)} aria-label="Delete collection">
                         <Trash2 className="h-3.5 w-3.5" />
-                      </AtlassianButton>
+                      </ActionButton>
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Tag text={`${formattedDate} · ${formattedTime}`} />
-                  <Tag text={`${collection.posts.length} post${collection.posts.length !== 1 ? "s" : ""}`} />
-                  <Tag text={`${platformCount} platform${platformCount !== 1 ? "s" : ""}`} />
+                <div className="flex flex-wrap items-center gap-3">
+                  <InlinePill>
+                    <Calendar className="h-3.5 w-3.5" />
+                    <span>{formattedDate} · {formattedTime}</span>
+                  </InlinePill>
+                  <InlinePill>{collection.posts.length} post{collection.posts.length !== 1 ? "s" : ""}</InlinePill>
+                  <InlinePill>{platformCount} platform{platformCount !== 1 ? "s" : ""}</InlinePill>
                   {canOpenChannelRecovery && (
-                    <button
-                      type="button"
-                      onClick={() => router.push(`/recovery-drafts/${collection.id}`)}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-medium leading-4 text-amber-800 transition-colors hover:bg-amber-100"
-                    >
-                      <RefreshCcw className="h-3 w-3" />
+                    <ActionButton compact tone="primary" onClick={() => router.push(`/recovery-drafts/${collection.id}`)}>
+                      <RefreshCcw className="h-3.5 w-3.5" />
                       Recover Failed Channels
-                    </button>
+                    </ActionButton>
                   )}
-                  {Object.keys(groupedPosts).map((plat) => (
-                    <Tag
-                      key={plat}
-                      text={platformDisplayName[plat.toUpperCase()] ?? plat}
-                    />
-                  ))}
+                  <div className="flex items-center gap-1.5">
+                    {Object.keys(groupedPosts).map((plat) => {
+                      const platUpper = plat.toUpperCase();
+                      const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
+                      return (
+                        <div
+                          key={plat}
+                          title={platformDisplayName[platUpper] ?? plat}
+                          className={cn(
+                            "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border",
+                            platformIconStyle[platUpper] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                          )}
+                        >
+                          {PlatIcon ? <PlatIcon className="h-3.5 w-3.5" /> : null}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
+                {captionText && (
+                  <div className="mt-4 border-t border-[var(--ds-gray-400)] pt-4">
+                    <p className="whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-900)]">
+                      {captionText}
+                    </p>
+                  </div>
+                )}
               </div>
-              {captionText && (
-                <div className="px-6 py-4">
-                  <p className="whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
-                    {captionText}
-                  </p>
-                </div>
-              )}
             </div>
 
             {canOpenChannelRecovery && (
-              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <div className="flex flex-wrap items-start justify-between gap-3 px-6 py-4">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold leading-5 text-amber-900">Failed channels still need attention</p>
-                    <p className="mt-1 text-sm leading-5 text-amber-800">
-                      {collection.failedChannelCount} channel{collection.failedChannelCount === 1 ? "" : "s"} did not publish successfully. Create a recovery draft to correct and reschedule only those failed channels.
-                    </p>
-                  </div>
-                  <AtlassianButton appearance="primary" spacing="compact" onClick={() => router.push(`/recovery-drafts/${collection.id}`)}>
-                    <span className="inline-flex items-center gap-1.5">
-                      <RefreshCcw className="h-3.5 w-3.5" />
-                      <span>Open Channel Recovery</span>
-                    </span>
-                  </AtlassianButton>
+              <Notice title="Failed channels still need attention" variant="warning">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <p>
+                    {collection.failedChannelCount} channel{collection.failedChannelCount === 1 ? "" : "s"} did not publish successfully. Create a recovery draft to correct and reschedule only those failed channels.
+                  </p>
+                  <ActionButton compact tone="primary" onClick={() => router.push(`/recovery-drafts/${collection.id}`)}>
+                    <RefreshCcw className="h-3.5 w-3.5" />
+                    Open Channel Recovery
+                  </ActionButton>
                 </div>
-              </div>
+              </Notice>
             )}
 
-            <ApprovalSafetyPanel collection={collection} />
+            <ApprovalSafetyPanel collection={collection} appearance="geist" />
 
-            <div className="flex flex-col lg:flex-row gap-5 items-start">
-              <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
-                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
-                    <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <p className="text-sm font-semibold leading-5 text-foreground flex-1">Schedule</p>
+            <div className="grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
+              <div className="space-y-4">
+                <div className={surfaceClassName}>
+                  <div className={surfaceHeaderClassName}>
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]">
+                      <Calendar className="h-4 w-4 text-[var(--ds-blue-700)]" />
+                    </div>
+                    <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">Schedule</p>
                     {isScheduled && (
-                      <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
+                      <ActionButton compact iconOnly onClick={enterEditMode} aria-label="Edit schedule">
                         <Pencil className="h-3.5 w-3.5" />
-                      </AtlassianButton>
+                      </ActionButton>
                     )}
                   </div>
-                  <div className="p-5 space-y-4">
+                  <div className="space-y-4 p-5">
                     {isScheduled && getCountdown(scheduledDate) && (
-                      <div className="rounded-lg border border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 px-4 py-4">
-                        <p className="text-xs font-medium leading-4 text-muted-foreground">Publishing in</p>
-                        <p className="mt-1 text-[26px] font-bold leading-8 text-[hsl(var(--accent))] tabular-nums">{getCountdown(scheduledDate)}</p>
+                      <div className="rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-4">
+                        <p className="text-copy-12 text-[var(--ds-blue-700)]">Publishing in</p>
+                        <p className="mt-1 text-[26px] font-bold leading-8 tabular-nums text-[var(--ds-blue-700)]">{getCountdown(scheduledDate)}</p>
                       </div>
                     )}
                     <div className="space-y-2.5">
-                      <div className="flex items-center gap-2.5 text-sm">
-                        <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                        <span className="text-foreground font-medium">{formattedDate}</span>
+                      <div className="flex items-center gap-2.5 text-label-14">
+                        <Calendar className="h-4 w-4 shrink-0 text-[var(--ds-gray-900)]" />
+                        <span className="text-[var(--ds-gray-1000)]">{formattedDate}</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-sm">
-                        <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                        <span className="text-foreground font-medium">{formattedTime}</span>
+                      <div className="flex items-center gap-2.5 text-label-14">
+                        <Clock className="h-4 w-4 shrink-0 text-[var(--ds-gray-900)]" />
+                        <span className="text-[var(--ds-gray-1000)]">{formattedTime}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                  <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
-                    <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <p className="text-sm font-semibold leading-5 text-foreground flex-1">Caption</p>
+                <div className={surfaceClassName}>
+                  <div className={surfaceHeaderClassName}>
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                      <FileText className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                    </div>
+                    <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">Caption</p>
                     {isScheduled && (
-                      <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
+                      <ActionButton compact iconOnly onClick={enterEditMode} aria-label="Edit caption">
                         <Pencil className="h-3.5 w-3.5" />
-                      </AtlassianButton>
+                      </ActionButton>
                     )}
                   </div>
                   <div className="p-5">
                     {captionText ? (
-                      <p className="text-sm text-foreground/80 leading-relaxed line-clamp-10 whitespace-pre-wrap">{captionText}</p>
+                      <p className="line-clamp-10 whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-1000)]">{captionText}</p>
                     ) : (
-                      <p className="text-sm text-muted-foreground/50 italic">No caption</p>
+                      <p className="text-copy-12 italic text-[var(--ds-gray-900)]">No caption</p>
                     )}
                     {captionText && (
-                      <p className="text-xs text-muted-foreground/40 tabular-nums mt-3">{captionText.length} characters</p>
+                      <p className="mt-3 text-copy-12 tabular-nums text-[var(--ds-gray-900)]">{captionText.length} characters</p>
                     )}
                   </div>
                 </div>
 
                 {/* Media carousel */}
                 {collection.media.length > 0 && (
-                  <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                    <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
-                      <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      <p className="text-sm font-semibold leading-5 text-foreground flex-1">
-                        Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
+                  <div className={surfaceClassName}>
+                    <div className={surfaceHeaderClassName}>
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                        <ImageIcon className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                      </div>
+                      <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">
+                        Media <span className="font-normal text-[var(--ds-gray-900)]">· {collection.media.length}</span>
                       </p>
                       {isScheduled && collection.postCollectionType !== "TEXT" && (
-                        <AtlassianButton appearance="subtle" onClick={enterEditMode} spacing="compact">
+                        <ActionButton compact iconOnly onClick={enterEditMode} aria-label="Edit media">
                           <Pencil className="h-3.5 w-3.5" />
-                        </AtlassianButton>
+                        </ActionButton>
                       )}
                     </div>
                     <div className="p-4">
@@ -1119,28 +1205,28 @@ export default function ScheduledCollectionDetailPage() {
                   </div>
                 )}
 
-                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                  <div className="px-5 py-4 flex items-center divide-x divide-border/40">
-                    <div className="flex-1 text-center pr-4">
-                      <p className="text-2xl font-semibold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
-                      <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Posts</p>
+                <div className={surfaceClassName}>
+                  <div className="flex items-center divide-x divide-[var(--ds-gray-400)] px-5 py-4">
+                    <div className="flex-1 pr-4 text-center">
+                      <p className="text-[24px] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">{collection.posts.length}</p>
+                      <p className="mt-1.5 text-copy-12 text-[var(--ds-gray-900)]">Posts</p>
                     </div>
-                    <div className="flex-1 text-center pl-4">
-                      <p className="text-2xl font-semibold text-foreground tabular-nums leading-none">{platformCount}</p>
-                      <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Platforms</p>
+                    <div className="flex-1 pl-4 text-center">
+                      <p className="text-[24px] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">{platformCount}</p>
+                      <p className="mt-1.5 text-copy-12 text-[var(--ds-gray-900)]">Platforms</p>
                     </div>
                   </div>
-                  <div className="px-5 pb-4 border-t border-border/30 pt-4 space-y-3">
+                  <div className="space-y-3 border-t border-[var(--ds-gray-400)] px-5 pt-4 pb-4">
                     {Object.entries(groupedPosts).map(([plat, platPosts]) => {
                       const platUpper = plat.toUpperCase();
                       const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
                       return (
                         <div key={plat} className="flex items-center gap-2.5">
-                          <div className={cn("h-6 w-6 rounded-lg border flex items-center justify-center flex-shrink-0", platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60")}>
+                          <div className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border", platformIconStyle[platUpper] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]")}>
                             {PlatIcon ? <PlatIcon className="h-3.5 w-3.5" /> : null}
                           </div>
-                          <span className="text-sm font-medium text-foreground flex-1 truncate">{platformDisplayName[platUpper] ?? plat}</span>
-                          <span className="text-xs text-muted-foreground tabular-nums">{platPosts.length} acct{platPosts.length !== 1 ? "s" : ""}</span>
+                          <span className="flex-1 truncate text-label-14 text-[var(--ds-gray-1000)]">{platformDisplayName[platUpper] ?? plat}</span>
+                          <span className="text-copy-12 tabular-nums text-[var(--ds-gray-900)]">{platPosts.length} acct{platPosts.length !== 1 ? "s" : ""}</span>
                         </div>
                       );
                     })}
@@ -1150,11 +1236,9 @@ export default function ScheduledCollectionDetailPage() {
 
               <div className="flex-1 min-w-0 space-y-4">
                 {collection.posts.length === 0 ? (
-                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                    <SectionMessage appearance="information" title="No posts in this collection">
-                      Add posts to this collection to preview them here by platform.
-                    </SectionMessage>
-                  </div>
+                  <Notice title="No posts in this collection">
+                    Add posts to this collection to preview them here by platform.
+                  </Notice>
                 ) : (
                   Object.entries(groupedPosts).map(([platform, posts]) => (
                     <PlatformSection
@@ -1169,17 +1253,17 @@ export default function ScheduledCollectionDetailPage() {
               </div>
             </div>
 
-            <div className="sm:hidden flex gap-3 pt-1 pb-6">
+            <div className="grid gap-3 sm:hidden">
               {isScheduled && (
-                <AtlassianButton appearance="subtle" onClick={enterEditMode} shouldFitContainer>
-                  <Pencil className="mr-1 h-4 w-4" />
+                <ActionButton fullWidth onClick={enterEditMode}>
+                  <Pencil className="h-4 w-4" />
                   Edit
-                </AtlassianButton>
+                </ActionButton>
               )}
-              <AtlassianButton appearance="danger" onClick={() => setShowDeleteModal(true)} shouldFitContainer>
-                <Trash2 className="mr-1 h-4 w-4" />
+              <ActionButton fullWidth tone="danger" onClick={() => setShowDeleteModal(true)}>
+                <Trash2 className="h-4 w-4" />
                 Delete
-              </AtlassianButton>
+              </ActionButton>
             </div>
           </div>
         </>
@@ -1305,13 +1389,7 @@ function EditModePanel({
             postType as "IMAGE" | "VIDEO"
           )
         : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      newFiles.map((f) => f.name + f.size).join(","),
-      pseudoLibraryFiles.map((f) => f.name + f.size).join(","),
-      selectedPlatforms.join(","),
-      postType,
-    ],
+    [newFiles, pseudoLibraryFiles, selectedPlatforms, postType],
   );
 
   useEffect(() => {
@@ -1323,8 +1401,7 @@ function EditModePanel({
       .then(({ errors }) => setMediaErrors(errors))
       .catch(() => setMediaErrors([]))
       .finally(() => setValidatingMedia(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newFiles.map((f) => f.name + f.size).join(","), selectedPlatforms.join(","), postType]);
+  }, [newFiles, postType, selectedPlatforms]);
 
   const allMediaErrors = mediaErrors.length > 0 ? mediaErrors : syncMediaErrors;
 
@@ -1341,34 +1418,34 @@ function EditModePanel({
   const EditTypeIcon = editType.Icon;
 
   const step1Summary = (
-    <span className="flex items-center gap-1.5 text-sm font-medium leading-5 text-foreground">
-      <EditTypeIcon className="w-3.5 h-3.5 text-primary" />
+    <span className="flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
+      <EditTypeIcon className="h-3.5 w-3.5 text-[var(--ds-blue-700)]" />
       {editType.label}
     </span>
   );
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm font-medium leading-5 text-primary">{selectedAccountIds.length}</span>
-      <span className="text-xs leading-4 text-muted-foreground">{selectedAccountIds.length === 1 ? "account" : "accounts"}</span>
+      <span className="text-label-14 text-[var(--ds-blue-700)]">{selectedAccountIds.length}</span>
+      <span className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">{selectedAccountIds.length === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
-        <span key={p} className={cn("text-xs font-medium leading-4 px-1.5 py-0.5 rounded-full border", PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border")}>
+        <span key={p} className={cn("rounded-full border px-1.5 py-0.5 text-copy-12", PLATFORM_BADGE_STYLES[p] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]")}>
           {PLATFORM_LABELS[p] ?? p}
         </span>
       ))}
       {selectedPlatformKeys.length > 3 && (
-        <span className="text-xs leading-4 text-muted-foreground">+{selectedPlatformKeys.length - 3}</span>
+        <span className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">+{selectedPlatformKeys.length - 3}</span>
       )}
     </span>
   );
 
   const step3Summary = (
-    <span className="flex items-center gap-2 text-sm text-foreground">
+    <span className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)]">
       <span className="font-medium truncate max-w-[160px] sm:max-w-[260px]">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
       {postType !== "TEXT" && (keptCount + newFiles.length + selectedLibraryAssets.length) > 0 && (
-        <span className="text-xs text-muted-foreground flex-shrink-0">
+        <span className="shrink-0 text-copy-12 text-[var(--ds-gray-900)]">
           · {keptCount + newFiles.length + selectedLibraryAssets.length} {postType === "IMAGE" ? "image" : "video"}{(keptCount + newFiles.length + selectedLibraryAssets.length) !== 1 ? "s" : ""}
         </span>
       )}
@@ -1376,7 +1453,7 @@ function EditModePanel({
   );
 
   const step4Summary = date && time ? (
-    <span className="text-sm font-medium text-foreground">
+    <span className="text-label-14 text-[var(--ds-gray-1000)]">
       {new Date(`${date}T${time}`).toLocaleString(undefined, {
         month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
       })}
@@ -1550,25 +1627,28 @@ function EditModePanel({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-      {/* ── Sticky header ── */}
+    <div className={pageClassName}>
       <ProtectedPageHeader
         title="Edit Collection"
         description={collection.description}
         icon={<Pencil className="h-4 w-4" />}
+        className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
         leading={
           <button
             onClick={onCancel}
-            className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+            className={cn(
+              "flex shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]",
+              focusRingClassName
+            )}
           >
             <ArrowLeft className="h-4 w-4" />
-            <span className="text-sm font-medium leading-5 hidden sm:inline">Back</span>
+            <span className="hidden text-label-14 sm:inline">Back</span>
           </button>
         }
         actions={
           selectedAccountIds.length > 0 ? (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 rounded-full text-xs font-medium leading-4 text-primary flex-shrink-0 border border-primary/20">
-              <Zap className="w-3 h-3" />
+            <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-3 py-1.5 text-copy-12 text-[var(--ds-blue-700)]">
+              <Zap className="h-3 w-3" />
               {selectedAccountIds.length}{" "}
               {selectedAccountIds.length === 1 ? "account" : "accounts"}
             </div>
@@ -1577,15 +1657,15 @@ function EditModePanel({
       />
 
       {selectedPlatformKeys.length > 0 && (
-        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-xs text-muted-foreground">Posting to:</span>
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-2.5 sm:px-6">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-copy-12 text-[var(--ds-gray-900)]">Posting to:</span>
             {selectedPlatformKeys.map((p) => (
               <span
                 key={p}
                 className={cn(
-                  "text-xs font-medium px-2 py-0.5 rounded-full border",
-                  PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border"
+                  "rounded-full border px-2 py-0.5 text-copy-12",
+                  PLATFORM_BADGE_STYLES[p] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                 )}
               >
                 {PLATFORM_LABELS[p] ?? p}
@@ -1595,15 +1675,14 @@ function EditModePanel({
         </div>
       )}
 
-      {/* ── Steps ── */}
-      <div className="px-4 sm:px-6 py-6 space-y-4">
+      <div className="space-y-4 px-4 py-6 sm:px-6">
         {collection.approvalLocked && (
-          <SectionMessage appearance="warning" title="Approval lock acknowledged">
-            <p className="text-sm">
+          <Notice title="Approval lock acknowledged" variant="warning">
+            <p>
               Saving material edits will remove this collection from the publishing queue and send it back into
               the approval workflow.
             </p>
-          </SectionMessage>
+          </Notice>
         )}
 
         {/* ── Step 1: Content Type (toggleable, starts collapsed) ── */}
@@ -1616,20 +1695,20 @@ function EditModePanel({
           onToggle={() => toggleStep(1)}
           summary={step1Summary}
         >
-          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/40 border border-border/40">
+          <div className="flex items-center gap-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3">
             <div
               className={cn(
-                "h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0",
+                "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border",
                 editType.className
               )}
             >
               <EditTypeIcon className="h-4 w-4" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold leading-5 text-foreground">{editType.label} Post</p>
-              <p className="text-xs leading-4 text-muted-foreground">Format is fixed for this collection</p>
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">{editType.label} Post</p>
+              <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">Format is fixed for this collection</p>
             </div>
-            <div className="flex items-center gap-1.5 text-xs font-medium leading-4 text-muted-foreground bg-muted border border-border/50 px-2.5 py-1 rounded-lg">
+            <div className="flex items-center gap-1.5 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-gray-900)]">
               <Lock className="h-3 w-3" />
               Locked
             </div>
@@ -1653,6 +1732,7 @@ function EditModePanel({
             selectedAccountIds={selectedAccountIds}
             onChange={setSelectedAccountIds}
             loading={accountsLoading}
+            appearance="geist"
           />
           {selectedAccountIds.length > 0 && (
             <ContinueBtn onClick={() => goToStep(3)} />
@@ -1681,18 +1761,19 @@ function EditModePanel({
               postType={postType as "IMAGE" | "VIDEO" | "TEXT"}
               onApplyItem={handleApplyLibraryItem}
               onApplyBundle={handleApplyLibraryBundle}
+              appearance="geist"
             />
           </div>
 
           {/* Caption */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium leading-5 text-foreground">
+              <label className="text-label-14 text-[var(--ds-gray-1000)]">
                 {postType === "TEXT" ? "Content" : "Caption"}
               </label>
               <span className={cn(
-                "text-xs font-mono tabular-nums transition-colors",
-                overLimit ? "text-red-500 font-medium" : nearLimit ? "text-amber-500" : "text-muted-foreground",
+                "text-copy-12 font-mono tabular-nums transition-colors",
+                overLimit ? "font-medium text-[var(--ds-red-700)]" : nearLimit ? "text-[var(--ds-amber-700)]" : "text-[var(--ds-gray-900)]",
               )}>
                 {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()}
               </span>
@@ -1706,19 +1787,18 @@ function EditModePanel({
                   : "Write your post caption here. You can use emoji, hashtags, and mentions."
               }
               className={cn(
-                "w-full p-4 rounded-xl border text-sm bg-background text-foreground leading-relaxed",
-                "resize-none min-h-[140px] transition-all duration-200",
-                "placeholder:text-muted-foreground/60",
-                "focus:outline-none focus:ring-2 focus:ring-primary/20",
+                "min-h-[140px] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] p-4 text-label-14 leading-relaxed text-[var(--ds-gray-1000)] transition-all duration-200",
+                "placeholder:text-[var(--ds-gray-900)]",
+                "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]",
                 overLimit || platformCharErrors.length > 0
-                  ? "border-red-400 focus:border-red-400"
-                  : "border-border focus:border-primary",
+                  ? "border-[var(--ds-red-300)]"
+                  : "border-[var(--ds-gray-400)] focus:border-[var(--ds-blue-600)]",
               )}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
             {selectedPlatforms.length > 0 && (
-              <PlatformCharLimits platforms={selectedPlatforms} charCount={charCount} />
+              <PlatformCharLimits platforms={selectedPlatforms} charCount={charCount} appearance="geist" />
             )}
           </div>
 
@@ -1726,11 +1806,11 @@ function EditModePanel({
           {postType !== "TEXT" && (
             <div className="space-y-2 mt-6">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium leading-5 text-foreground">
+                <label className="text-label-14 text-[var(--ds-gray-1000)]">
                   {postType === "IMAGE" ? "Images" : "Video"}
                 </label>
                 {selectedPlatforms.length > 0 && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-copy-12 text-[var(--ds-gray-900)]">
                     Max {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""}
                     {restrictivePlatformLabel ? ` (${restrictivePlatformLabel} limit)` : ""}
                   </span>
@@ -1740,15 +1820,15 @@ function EditModePanel({
               {/* Existing kept media thumbnails */}
               {keptMedia.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-xs font-medium leading-4 text-muted-foreground flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-copy-12 text-[var(--ds-gray-900)]">
                     <CloudUpload className="w-3.5 h-3.5" />
                     Existing media — click × to remove
                   </p>
-                  <div className="flex gap-2.5 flex-wrap">
+                  <div className="flex flex-wrap gap-2.5">
                     {keptMedia.map((m) => (
                       <div
                         key={m.fileKey}
-                        className="relative group w-28 h-28 rounded-xl border border-border bg-card overflow-hidden shadow-sm"
+                        className="group relative h-28 w-28 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm"
                       >
                         {m.mimeType.startsWith("video/") ? (
                           <video
@@ -1768,9 +1848,9 @@ function EditModePanel({
                           <button
                             type="button"
                             onClick={() => setKeepMediaKeys((prev) => prev.filter((k) => k !== m.fileKey))}
-                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/95 shadow-md flex items-center justify-center border border-black/10 hover:bg-red-50"
+                            className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-md transition-colors hover:border-[var(--ds-red-200)] hover:bg-[var(--ds-red-100)]"
                           >
-                            <X className="w-3 h-3 text-gray-700" strokeWidth={2.5} />
+                            <X className="h-3 w-3 text-[var(--ds-gray-900)]" strokeWidth={2.5} />
                           </button>
                         </div>
                       </div>
@@ -1790,6 +1870,7 @@ function EditModePanel({
                     : postType === "IMAGE" ? "Add More Images" : "Add Another Video"}
                   maxFiles={slotsForNew}
                   maxFilesLabel={restrictivePlatformLabel}
+                  appearance="geist"
                 />
               )}
               <SelectedLibraryAssets
@@ -1799,9 +1880,10 @@ function EditModePanel({
                     current.filter((asset) => asset.fileKey !== fileKey)
                   )
                 }
+                appearance="geist"
               />
               {slotsForNew === 0 && newFiles.length === 0 && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-copy-12 text-[var(--ds-gray-900)]">
                   Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove an existing file to add new ones.
                 </p>
               )}
@@ -1813,6 +1895,7 @@ function EditModePanel({
                   errors={allMediaErrors}
                   validating={validatingMedia}
                   hasFiles={hasMedia}
+                  appearance="geist"
                 />
               )}
             </div>
@@ -1820,13 +1903,14 @@ function EditModePanel({
 
           {/* Platform configs */}
           {selectedAccounts.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-border/60">
+            <div className="mt-6 border-t border-[var(--ds-gray-400)] pt-6">
               <PlatformConfigsPanel
                 selectedAccounts={selectedAccounts}
                 configs={platformConfigs}
                 onChange={setPlatformConfigs}
                 showErrors={showErrors}
                 postType={postType as "IMAGE" | "VIDEO" | "TEXT"}
+                appearance="geist"
               />
             </div>
           )}
@@ -1849,27 +1933,28 @@ function EditModePanel({
           onToggle={reachedStep >= 4 ? () => toggleStep(4) : undefined}
           summary={step4Summary ?? undefined}
         >
-          <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
+          <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} appearance="geist" />
 
           <div className="mt-6">
-            <Button
+            <ActionButton
               onClick={save}
               disabled={saving || selectedAccountIds.length === 0 || hasAnyCharError || validatingMedia}
-              className="w-full h-11 font-medium gap-2 text-sm"
-              size="lg"
+              tone="primary"
+              className="h-11 w-full"
+              fullWidth
             >
               {saving ? (
                 <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Saving Changes...
                 </>
               ) : (
                 <>
-                  <Save className="w-4 h-4" />
+                  <Save className="h-4 w-4" />
                   Save Changes
                 </>
               )}
-            </Button>
+            </ActionButton>
           </div>
         </StepCard>
 
@@ -1884,13 +1969,13 @@ function EditModePanel({
 function AccountAvatar({ src, name, size = 8 }: { src: string | null; name: string; size?: number }) {
   const dim = `h-${size} w-${size}`;
   return (
-    <div className={cn("rounded-full overflow-hidden bg-muted flex-shrink-0 border border-white/20", dim)}>
+    <div className={cn("overflow-hidden rounded-full border border-white/20 bg-[var(--ds-gray-100)] flex-shrink-0", dim)}>
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={name} className="w-full h-full object-cover" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-muted">
-          <User className="h-3 w-3 text-muted-foreground" />
+        <div className="flex h-full w-full items-center justify-center bg-[var(--ds-gray-100)]">
+          <User className="h-3 w-3 text-[var(--ds-gray-900)]" />
         </div>
       )}
     </div>
@@ -2267,7 +2352,7 @@ function MediaCarousel({
 
   return (
     <div>
-      <div className="relative aspect-video w-full max-h-40 rounded-xl overflow-hidden bg-neutral-950 border border-border/40">
+      <div className="relative aspect-video w-full max-h-40 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-neutral-950">
         {isVideo ? (
           // eslint-disable-next-line jsx-a11y/media-has-caption
           <video src={current.fileUrl} className="w-full h-full object-contain" />
@@ -2304,8 +2389,8 @@ function MediaCarousel({
               className={cn(
                 "rounded-full transition-all",
                 i === idx
-                  ? "w-4 h-1.5 bg-foreground"
-                  : "w-1.5 h-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+                  ? "h-1.5 w-4 bg-[var(--ds-gray-1000)]"
+                  : "h-1.5 w-1.5 bg-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-700)]"
               )}
             />
           ))}
@@ -2345,21 +2430,21 @@ function PlatformSection({
       <div className="h-[3px] w-full" style={{ background: accent.bar }} />
 
       {/* Platform header row */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
-        <div className={cn("h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0", accent.iconClass)}>
+      <div className="flex items-center gap-3 border-b border-[var(--ds-gray-400)] px-5 py-4">
+        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border", accent.iconClass)}>
           {Icon ? <Icon className="h-4.5 w-4.5" /> : null}
         </div>
-        <p className="text-sm font-semibold leading-5 text-foreground flex-1">
+        <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">
           {platformDisplayName[p] ?? platformDisplayName[platform] ?? platform}
         </p>
-        <span className="text-xs font-medium leading-4 text-muted-foreground">
+        <span className="text-copy-12 text-[var(--ds-gray-900)]">
           {posts.length} account{posts.length !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Platform-specific post preview */}
-      <div className="px-4 py-3 border-b border-border/30">
-        <div className="max-w-xs mx-auto sm:max-w-sm">
+      <div className="border-b border-[var(--ds-gray-400)] px-4 py-3">
+        <div className="mx-auto max-w-xs sm:max-w-sm">
           {p === "X" && <XPreview {...previewProps} />}
           {p === "INSTAGRAM" && <InstagramPreview {...previewProps} />}
           {p === "LINKEDIN" && <LinkedInPreview {...previewProps} />}
@@ -2368,8 +2453,8 @@ function PlatformSection({
           {p === "TIKTOK" && <TikTokPreview {...previewProps} />}
           {p === "THREADS" && <ThreadsPreview {...previewProps} />}
           {!["X","INSTAGRAM","LINKEDIN","FACEBOOK","YOUTUBE","TIKTOK","THREADS"].includes(p) && (
-            <div className="rounded-lg bg-muted/40 border border-border/40 p-3">
-              {caption && <p className="text-xs text-foreground/80 leading-relaxed line-clamp-4 whitespace-pre-wrap">{caption}</p>}
+            <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-3">
+              {caption && <p className="line-clamp-4 whitespace-pre-wrap text-copy-12 leading-relaxed text-[var(--ds-gray-1000)]">{caption}</p>}
               {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
             </div>
           )}
@@ -2377,24 +2462,24 @@ function PlatformSection({
       </div>
 
       {/* Account list */}
-      <div className="p-4 flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 p-4">
         {posts.map((post) => {
           const src = getImageUrl(post.connectedAccount?.profilePicLink);
           return (
             <div
               key={post.id}
-              className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full bg-background/70 border border-border/50 shadow-sm"
+              className="flex items-center gap-2 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-1.5 pl-1.5 pr-3 shadow-sm"
             >
-              <div className="relative h-6 w-6 rounded-full overflow-hidden flex-shrink-0 bg-muted border border-border/30">
+              <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
                 {src ? (
                   <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="20px" className="object-cover" />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center">
-                    <User className="h-2.5 w-2.5 text-muted-foreground" />
+                    <User className="h-2.5 w-2.5 text-[var(--ds-gray-900)]" />
                   </div>
                 )}
               </div>
-              <span className="text-xs font-medium text-foreground/75 max-w-[140px] truncate leading-none">
+              <span className="max-w-[140px] truncate text-copy-12 leading-none text-[var(--ds-gray-1000)]">
                 {post.connectedAccount?.username ?? "Account"}
               </span>
               <div className={cn(
@@ -2406,102 +2491,6 @@ function PlatformSection({
             </div>
           );
         })}
-      </div>
-    </div>
-  );
-}
-
-
-
-/* ─── Skeleton ────────────────────────────────────────────── */
-
-function SkeletonDetailPage() {
-  return (
-    <main className="min-h-screen bg-background">
-      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
-        <div className="px-4 sm:px-6 h-[60px] flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-32 rounded hidden sm:block" />
-            <Skeleton className="h-4 w-4 rounded" />
-            <Skeleton className="h-4 w-44 rounded" />
-          </div>
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-8 w-16 rounded-lg hidden sm:block" />
-            <Skeleton className="h-8 w-20 rounded-lg hidden sm:block" />
-            <Skeleton className="h-8 w-24 rounded-lg hidden sm:block" />
-          </div>
-        </div>
-      </header>
-
-      <div className="px-4 sm:px-6 py-4 space-y-3">
-        {/* Hero strip skeleton */}
-        <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-          <Skeleton className="h-1 w-full rounded-none" />
-          <div className="px-5 py-3 flex items-center gap-4">
-            <Skeleton className="h-6 rounded-lg flex-1" />
-            <div className="flex gap-2">
-              <Skeleton className="h-5 w-16 rounded-md" />
-              <Skeleton className="h-5 w-20 rounded-full" />
-              <Skeleton className="h-5 w-40 rounded-lg hidden sm:block" />
-            </div>
-          </div>
-        </div>
-
-        {/* Main layout skeleton */}
-        <div className="flex flex-col lg:flex-row gap-3 items-start">
-          {/* Sidebar skeleton */}
-          <div className="w-full lg:w-64 xl:w-72 flex-shrink-0 space-y-3">
-            <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border/40 bg-muted/20">
-                <Skeleton className="h-3.5 w-3.5 rounded flex-shrink-0" />
-                <Skeleton className="h-4 w-20 rounded flex-1" />
-              </div>
-              <div className="p-4 space-y-2">
-                {[100, 91, 83, 97, 76, 88].map((w, i) => (
-                  <Skeleton key={i} className="h-2.5 rounded" style={{ width: `${w}%` }} />
-                ))}
-              </div>
-            </div>
-            <div className="rounded-xl bg-card border border-border/60 shadow-sm px-4 py-3 flex items-center divide-x divide-border/40">
-              <div className="flex-1 text-center pr-3 space-y-1">
-                <Skeleton className="h-6 w-8 rounded mx-auto" />
-                <Skeleton className="h-2.5 w-10 rounded mx-auto" />
-              </div>
-              <div className="flex-1 text-center pl-3 space-y-1">
-                <Skeleton className="h-6 w-8 rounded mx-auto" />
-                <Skeleton className="h-2.5 w-14 rounded mx-auto" />
-              </div>
-            </div>
-          </div>
-
-          {/* Platform sections skeleton */}
-          <div className="flex-1 min-w-0 space-y-2.5">
-            {[0, 1, 2].map((i) => (
-              <SkeletonPlatformSection key={i} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function SkeletonPlatformSection() {
-  return (
-    <div className="rounded-xl bg-card border border-border/60 shadow-sm overflow-hidden">
-      <Skeleton className="h-[3px] w-full rounded-none" />
-      <div className="p-4">
-        <div className="flex items-center gap-2.5 mb-3">
-          <Skeleton className="h-8 w-8 rounded-lg flex-shrink-0" />
-          <Skeleton className="h-4 w-24 rounded flex-1" />
-          <Skeleton className="h-3 w-16 rounded" />
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {[80, 100, 90, 110, 85, 95].map((w, i) => (
-            <Skeleton key={i} className="h-7 rounded-full" style={{ width: `${w}px` }} />
-          ))}
-        </div>
       </div>
     </div>
   );

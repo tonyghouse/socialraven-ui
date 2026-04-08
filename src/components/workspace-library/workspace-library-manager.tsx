@@ -6,7 +6,6 @@ import Link from "next/link";
 import {
   Boxes,
   CalendarClock,
-  Film,
   FileImage,
   FileText,
   FolderOpen,
@@ -60,6 +59,49 @@ const ITEM_STATUSES: WorkspaceLibraryItemStatus[] = ["DRAFT", "APPROVED", "ARCHI
 const POST_COLLECTION_TYPES: WorkspaceLibraryPostCollectionType[] = ["IMAGE", "VIDEO", "TEXT"];
 const SNIPPET_TARGETS: WorkspaceLibrarySnippetTarget[] = ["CAPTION", "FIRST_COMMENT"];
 const FILTER_ALL = "ALL";
+
+const pageClassName = "min-h-screen bg-[var(--ds-background-200)]";
+const sectionCardClassName =
+  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none";
+const sectionHeaderClassName = "border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3";
+const nestedCardClassName = "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
+const nestedPanelClassName = "rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]";
+const dashedPanelClassName =
+  "rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
+const emptyStateClassName =
+  "rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-6 text-copy-14 text-[var(--ds-gray-900)]";
+const noticeClassName = "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-4";
+const sectionTitleClassName = "text-heading-16 text-[var(--ds-gray-1000)]";
+const sectionDescriptionClassName = "mt-1 text-copy-13 text-[var(--ds-gray-900)]";
+const labelClassName = "text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]";
+const itemTitleClassName = "text-label-14 text-[var(--ds-gray-1000)]";
+const bodyTextClassName = "text-copy-14 text-[var(--ds-gray-900)]";
+const quietTextClassName = "text-copy-12 text-[var(--ds-gray-900)]";
+const buttonFocusClassName =
+  "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+const outlineButtonClassName =
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
+const primaryButtonClassName =
+  "bg-[var(--ds-blue-600)] text-white shadow-none hover:bg-[var(--ds-blue-700)]";
+const ghostButtonClassName =
+  "text-[var(--ds-gray-900)] shadow-none hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]";
+const destructiveButtonClassName =
+  "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)] shadow-none hover:border-[var(--ds-red-300)] hover:bg-[var(--ds-red-100)]";
+const tabsListClassName =
+  "grid w-full max-w-md grid-cols-2 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-1 text-[var(--ds-gray-900)]";
+const tabsTriggerClassName =
+  "rounded-md text-label-14 text-[var(--ds-gray-900)] data-[state=active]:bg-[var(--ds-background-100)] data-[state=active]:text-[var(--ds-gray-1000)] data-[state=active]:shadow-none";
+const inputClassName =
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] shadow-none focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+const selectClassName =
+  "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-sm text-[var(--ds-gray-1000)] shadow-none outline-none transition-[border-color,box-shadow,background-color] focus:border-[var(--ds-blue-600)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]";
+const checkboxClassName =
+  "border-[var(--ds-gray-500)] data-[state=checked]:border-[var(--ds-blue-600)] data-[state=checked]:bg-[var(--ds-blue-600)] data-[state=checked]:text-white";
+const searchIconClassName =
+  "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ds-gray-900)]";
+const iconBadgeClassName =
+  "flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]";
+const listRowClassName = "flex cursor-pointer items-start gap-3 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3";
 
 interface ItemEditorState {
   itemType: WorkspaceLibraryItemType;
@@ -190,14 +232,39 @@ function canShowMedia(editor: ItemEditorState): boolean {
   return editor.itemType === "MEDIA_ASSET";
 }
 
-function usableBadgeVariant(item: WorkspaceLibraryItem): "default" | "outline" | "destructive" {
+function badgeToneClassName(tone: "neutral" | "blue" | "green" | "amber" | "red"): string {
+  switch (tone) {
+    case "blue":
+      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+    case "green":
+      return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
+    case "amber":
+      return "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]";
+    case "red":
+      return "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]";
+    default:
+      return "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
+  }
+}
+
+function statusBadgeClassName(status: WorkspaceLibraryItemStatus): string {
+  if (status === "APPROVED") {
+    return badgeToneClassName("green");
+  }
+  if (status === "ARCHIVED") {
+    return badgeToneClassName("red");
+  }
+  return badgeToneClassName("neutral");
+}
+
+function usableBadgeClassName(item: WorkspaceLibraryItem): string {
   if (item.usable) {
-    return "default";
+    return badgeToneClassName("blue");
   }
   if (item.status === "ARCHIVED" || item.expired) {
-    return "destructive";
+    return badgeToneClassName("red");
   }
-  return "outline";
+  return badgeToneClassName("amber");
 }
 
 function itemMatchesQuery(item: WorkspaceLibraryItem, query: string): boolean {
@@ -559,18 +626,25 @@ export function WorkspaceLibraryManager() {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))]">
+    <div className={pageClassName}>
       <ProtectedPageHeader
         title="Asset Library"
         description="Manage reusable assets, snippets, templates, tags, expiry dates, and campaign bundles for this workspace."
         icon={<LibraryBig className="h-4 w-4" />}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => void loadLibrary(true)} disabled={refreshing}>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => void loadLibrary(true)}
+              disabled={refreshing}
+              className={cn(outlineButtonClassName, buttonFocusClassName)}
+            >
               <RefreshCw className={cn("mr-1.5 h-3.5 w-3.5", refreshing && "animate-spin")} />
               Refresh
             </Button>
-            <Button asChild size="sm">
+            <Button asChild size="sm" className={cn(primaryButtonClassName, buttonFocusClassName)}>
               <Link href="/schedule-post">
                 <Sparkles className="mr-1.5 h-3.5 w-3.5" />
                 Use In Composer
@@ -582,8 +656,8 @@ export function WorkspaceLibraryManager() {
 
       <div className="space-y-6 px-4 py-6 sm:px-6">
         {!canManageAssetLibrary && (
-          <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4 text-sm text-[hsl(var(--foreground-muted))]">
-            <p className="font-medium text-[hsl(var(--foreground))]">Browse-only access</p>
+          <div className={cn(noticeClassName, bodyTextClassName)}>
+            <p className="text-heading-16 text-[var(--ds-gray-1000)]">Browse-only access</p>
             <p className="mt-1">
               You can search approved assets, snippets, templates, and bundles here. Creating or editing library
               content requires the `MANAGE_ASSET_LIBRARY` capability.
@@ -592,21 +666,25 @@ export function WorkspaceLibraryManager() {
         )}
 
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="items">Items</TabsTrigger>
-            <TabsTrigger value="bundles">Bundles</TabsTrigger>
+          <TabsList className={tabsListClassName}>
+            <TabsTrigger value="items" className={cn(tabsTriggerClassName, buttonFocusClassName)}>
+              Items
+            </TabsTrigger>
+            <TabsTrigger value="bundles" className={cn(tabsTriggerClassName, buttonFocusClassName)}>
+              Bundles
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="items" className="space-y-6">
             {canManageAssetLibrary && (
-              <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
+              <section className={sectionCardClassName}>
+                <div className={sectionHeaderClassName}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                      <p className={sectionTitleClassName}>
                         {editingItemId === null ? "Create Library Item" : "Edit Library Item"}
                       </p>
-                      <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                      <p className={sectionDescriptionClassName}>
                         Build reusable media assets, snippets, and templates with approval status, tags, and expiry.
                       </p>
                     </div>
@@ -615,15 +693,27 @@ export function WorkspaceLibraryManager() {
                         <Button
                           key={type}
                           type="button"
-                          variant={itemEditor.itemType === type ? "default" : "outline"}
+                          variant="outline"
                           size="sm"
                           onClick={() => updateItemEditor("itemType", type)}
+                          className={cn(
+                            itemEditor.itemType === type
+                              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)] shadow-none hover:bg-[var(--ds-blue-100)] hover:text-[var(--ds-blue-700)]"
+                              : outlineButtonClassName,
+                            buttonFocusClassName
+                          )}
                         >
                           {type === "MEDIA_ASSET" ? "Asset" : type === "SNIPPET" ? "Snippet" : "Template"}
                         </Button>
                       ))}
                       {(editingItemId !== null || itemEditor.name || itemEditor.description || itemEditor.body) && (
-                        <Button type="button" variant="ghost" size="sm" onClick={() => resetItemEditor()}>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => resetItemEditor()}
+                          className={cn(ghostButtonClassName, buttonFocusClassName)}
+                        >
                           <X className="mr-1.5 h-3.5 w-3.5" />
                           Reset
                         </Button>
@@ -634,35 +724,31 @@ export function WorkspaceLibraryManager() {
 
                 <div className="grid gap-4 px-4 py-4 lg:grid-cols-2">
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Name
-                    </span>
+                    <span className={labelClassName}>Name</span>
                     <Input
                       value={itemEditor.name}
                       onChange={(event) => updateItemEditor("name", event.target.value)}
                       placeholder="Quarterly launch image set"
+                      className={inputClassName}
                     />
                   </label>
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Folder
-                    </span>
+                    <span className={labelClassName}>Folder</span>
                     <Input
                       value={itemEditor.folderName}
                       onChange={(event) => updateItemEditor("folderName", event.target.value)}
                       placeholder="Brand / Q2"
+                      className={inputClassName}
                     />
                   </label>
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Status
-                    </span>
+                    <span className={labelClassName}>Status</span>
                     <select
                       value={itemEditor.status}
                       onChange={(event) =>
                         updateItemEditor("status", event.target.value as WorkspaceLibraryItemStatus)
                       }
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                      className={selectClassName}
                     >
                       {ITEM_STATUSES.map((status) => (
                         <option key={status} value={status}>
@@ -673,9 +759,7 @@ export function WorkspaceLibraryManager() {
                   </label>
                   {canShowPostType(itemEditor) && (
                     <label className="space-y-2">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                        Content Type
-                      </span>
+                      <span className={labelClassName}>Content Type</span>
                       <select
                         value={itemEditor.postCollectionType}
                         onChange={(event) =>
@@ -684,7 +768,7 @@ export function WorkspaceLibraryManager() {
                             event.target.value as WorkspaceLibraryPostCollectionType
                           )
                         }
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        className={selectClassName}
                       >
                         {POST_COLLECTION_TYPES.filter((type) =>
                           itemEditor.itemType === "MEDIA_ASSET" ? type !== "TEXT" : true
@@ -698,15 +782,13 @@ export function WorkspaceLibraryManager() {
                   )}
                   {canShowSnippetTarget(itemEditor) && (
                     <label className="space-y-2">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                        Snippet Target
-                      </span>
+                      <span className={labelClassName}>Snippet Target</span>
                       <select
                         value={itemEditor.snippetTarget}
                         onChange={(event) =>
                           updateItemEditor("snippetTarget", event.target.value as WorkspaceLibrarySnippetTarget)
                         }
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                        className={selectClassName}
                       >
                         {SNIPPET_TARGETS.map((target) => (
                           <option key={target} value={target}>
@@ -717,20 +799,17 @@ export function WorkspaceLibraryManager() {
                     </label>
                   )}
                   <label className="space-y-2 lg:col-span-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Description
-                    </span>
+                    <span className={labelClassName}>Description</span>
                     <Textarea
                       value={itemEditor.description}
                       onChange={(event) => updateItemEditor("description", event.target.value)}
                       placeholder="How this library item should be used"
+                      className={inputClassName}
                     />
                   </label>
                   {itemEditor.itemType !== "MEDIA_ASSET" && (
                     <label className="space-y-2 lg:col-span-2">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                        Body Content
-                      </span>
+                      <span className={labelClassName}>Body Content</span>
                       <Textarea
                         value={itemEditor.body}
                         onChange={(event) => updateItemEditor("body", event.target.value)}
@@ -739,30 +818,26 @@ export function WorkspaceLibraryManager() {
                             ? "Enter the reusable snippet text"
                             : "Enter the default caption or template body"
                         }
-                        className="min-h-[140px]"
+                        className={cn("min-h-[140px]", inputClassName)}
                       />
                     </label>
                   )}
                   {canShowTemplatePlatformConfigs(itemEditor) && (
                     <label className="space-y-2 lg:col-span-2">
-                      <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                        Platform Settings JSON
-                      </span>
+                      <span className={labelClassName}>Platform Settings JSON</span>
                       <Textarea
                         value={itemEditor.platformConfigsText}
                         onChange={(event) => updateItemEditor("platformConfigsText", event.target.value)}
                         placeholder='{"instagram":{"firstComment":"Comment text"}}'
-                        className="min-h-[140px] font-mono"
+                        className={cn("min-h-[140px] font-mono", inputClassName)}
                       />
                     </label>
                   )}
                   {canShowMedia(itemEditor) && (
                     <div className="space-y-3 lg:col-span-2">
                       <div>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                          Media Files
-                        </p>
-                        <p className="mt-1 text-xs text-[hsl(var(--foreground-subtle))]">
+                        <p className={labelClassName}>Media Files</p>
+                        <p className={cn("mt-1", quietTextClassName)}>
                           Upload reusable approved {itemEditor.postCollectionType.toLowerCase()} files for the workspace.
                         </p>
                       </div>
@@ -770,29 +845,22 @@ export function WorkspaceLibraryManager() {
                       {existingMedia.length > 0 && (
                         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                           {existingMedia.map((media) => (
-                            <div
-                              key={media.fileKey}
-                              className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]"
-                            >
-                              <div className="relative h-36 bg-[hsl(var(--surface))]">
+                            <div key={media.fileKey} className={cn("overflow-hidden", nestedCardClassName)}>
+                              <div className="relative h-36 bg-[var(--ds-background-100)]">
                                 {media.mimeType.startsWith("video/") ? (
                                   <video src={media.fileUrl ?? undefined} className="h-full w-full object-contain" muted />
                                 ) : media.fileUrl ? (
                                   <Image src={media.fileUrl} alt={media.fileName} fill className="object-contain" />
                                 ) : (
                                   <div className="flex h-full items-center justify-center">
-                                    <FileImage className="h-6 w-6 text-[hsl(var(--foreground-subtle))]" />
+                                    <FileImage className="h-6 w-6 text-[var(--ds-gray-900)]" />
                                   </div>
                                 )}
                               </div>
                               <div className="flex items-start justify-between gap-2 px-3 py-3">
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
-                                    {media.fileName}
-                                  </p>
-                                  <p className="truncate text-xs text-[hsl(var(--foreground-muted))]">
-                                    {media.mimeType}
-                                  </p>
+                                  <p className={cn("truncate", itemTitleClassName)}>{media.fileName}</p>
+                                  <p className={cn("truncate", quietTextClassName)}>{media.mimeType}</p>
                                 </div>
                                 <Button
                                   type="button"
@@ -803,6 +871,7 @@ export function WorkspaceLibraryManager() {
                                       current.filter((entry) => entry.fileKey !== media.fileKey)
                                     )
                                   }
+                                  className={cn(ghostButtonClassName, buttonFocusClassName)}
                                 >
                                   <X className="h-4 w-4" />
                                 </Button>
@@ -812,7 +881,7 @@ export function WorkspaceLibraryManager() {
                         </div>
                       )}
 
-                      <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4">
+                      <div className={cn("px-4 py-4", dashedPanelClassName)}>
                         <label className="flex cursor-pointer flex-col items-center justify-center gap-2 text-center">
                           <input
                             type="file"
@@ -829,12 +898,12 @@ export function WorkspaceLibraryManager() {
                               event.currentTarget.value = "";
                             }}
                           />
-                          <Plus className="h-5 w-5 text-[hsl(var(--accent))]" />
-                          <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                          <Plus className="h-5 w-5 text-[var(--ds-blue-700)]" />
+                          <p className="text-label-14 text-[var(--ds-gray-1000)]">
                             Upload {itemEditor.postCollectionType === "VIDEO" ? "video" : "image"} asset
                             {itemEditor.postCollectionType === "VIDEO" ? "" : "s"}
                           </p>
-                          <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                          <p className={quietTextClassName}>
                             Files are uploaded to secure workspace storage and become reusable once approved.
                           </p>
                         </label>
@@ -844,13 +913,11 @@ export function WorkspaceLibraryManager() {
                             {newMediaFiles.map((file) => (
                               <div
                                 key={`${file.name}-${file.size}`}
-                                className="flex items-center justify-between rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-2"
+                                className={cn("flex items-center justify-between px-3 py-2", nestedPanelClassName)}
                               >
                                 <div className="min-w-0">
-                                  <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
-                                    {file.name}
-                                  </p>
-                                  <p className="text-xs text-[hsl(var(--foreground-muted))]">{file.type}</p>
+                                  <p className={cn("truncate", itemTitleClassName)}>{file.name}</p>
+                                  <p className={quietTextClassName}>{file.type}</p>
                                 </div>
                                 <Button
                                   type="button"
@@ -861,6 +928,7 @@ export function WorkspaceLibraryManager() {
                                       current.filter((entry) => entry !== file)
                                     )
                                   }
+                                  className={cn(ghostButtonClassName, buttonFocusClassName)}
                                 >
                                   <X className="h-4 w-4" />
                                 </Button>
@@ -872,76 +940,100 @@ export function WorkspaceLibraryManager() {
                     </div>
                   )}
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Tags
-                    </span>
+                    <span className={labelClassName}>Tags</span>
                     <Input
                       value={itemEditor.tagsInput}
                       onChange={(event) => updateItemEditor("tagsInput", event.target.value)}
                       placeholder="approved, q2, evergreen"
+                      className={inputClassName}
                     />
                   </label>
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Expires At
-                    </span>
+                    <span className={labelClassName}>Expires At</span>
                     <Input
                       type="datetime-local"
                       value={itemEditor.expiresAtInput}
                       onChange={(event) => updateItemEditor("expiresAtInput", event.target.value)}
+                      className={inputClassName}
                     />
                   </label>
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Usage Notes
-                    </span>
+                    <span className={labelClassName}>Usage Notes</span>
                     <Textarea
                       value={itemEditor.usageNotes}
                       onChange={(event) => updateItemEditor("usageNotes", event.target.value)}
                       placeholder="Client-safe usage notes"
+                      className={inputClassName}
                     />
                   </label>
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Internal Notes
-                    </span>
+                    <span className={labelClassName}>Internal Notes</span>
                     <Textarea
                       value={itemEditor.internalNotes}
                       onChange={(event) => updateItemEditor("internalNotes", event.target.value)}
                       placeholder="Internal review notes"
+                      className={inputClassName}
                     />
                   </label>
                 </div>
 
-                <div className="flex flex-wrap justify-end gap-2 border-t border-[hsl(var(--border-subtle))] px-4 py-3">
-                  <Button type="button" variant="outline" onClick={() => resetItemEditor()}>
+                <div className="flex flex-wrap justify-end gap-2 border-t border-[var(--ds-gray-400)] px-4 py-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => resetItemEditor()}
+                    className={cn(outlineButtonClassName, buttonFocusClassName)}
+                  >
                     Cancel
                   </Button>
-                  <Button type="button" onClick={() => void submitItem()} disabled={savingItem}>
+                  <Button
+                    type="button"
+                    onClick={() => void submitItem()}
+                    disabled={savingItem}
+                    className={cn(primaryButtonClassName, buttonFocusClassName)}
+                  >
                     {savingItem ? "Saving..." : editingItemId === null ? "Create Item" : "Save Changes"}
                   </Button>
                 </div>
               </section>
             )}
 
-            <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
+            <section className={sectionCardClassName}>
+              <div className={sectionHeaderClassName}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Search Library Items</p>
-                    <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                    <p className={sectionTitleClassName}>Search Library Items</p>
+                    <p className={sectionDescriptionClassName}>
                       Filter by type, approval state, tags, notes, or usability.
                     </p>
                   </div>
                   {canManageAssetLibrary && (
                     <div className="flex flex-wrap gap-2">
-                      <Button type="button" variant="outline" size="sm" onClick={() => resetItemEditor("MEDIA_ASSET")}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => resetItemEditor("MEDIA_ASSET")}
+                        className={cn(outlineButtonClassName, buttonFocusClassName)}
+                      >
                         New Asset
                       </Button>
-                      <Button type="button" variant="outline" size="sm" onClick={() => resetItemEditor("SNIPPET")}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => resetItemEditor("SNIPPET")}
+                        className={cn(outlineButtonClassName, buttonFocusClassName)}
+                      >
                         New Snippet
                       </Button>
-                      <Button type="button" variant="outline" size="sm" onClick={() => resetItemEditor("TEMPLATE")}>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => resetItemEditor("TEMPLATE")}
+                        className={cn(outlineButtonClassName, buttonFocusClassName)}
+                      >
                         New Template
                       </Button>
                     </div>
@@ -950,18 +1042,18 @@ export function WorkspaceLibraryManager() {
               </div>
               <div className="grid gap-3 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--foreground-subtle))]" />
+                  <Search className={searchIconClassName} />
                   <Input
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="Search item names, tags, notes, or content"
-                    className="pl-9"
+                    className={cn("pl-9", inputClassName)}
                   />
                 </div>
                 <select
                   value={itemTypeFilter}
                   onChange={(event) => setItemTypeFilter(event.target.value)}
-                  className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  className={selectClassName}
                 >
                   <option value={FILTER_ALL}>All types</option>
                   {ITEM_TYPES.map((type) => (
@@ -973,7 +1065,7 @@ export function WorkspaceLibraryManager() {
                 <select
                   value={itemStatusFilter}
                   onChange={(event) => setItemStatusFilter(event.target.value)}
-                  className="flex h-10 rounded-md border border-input bg-background px-3 text-sm"
+                  className={selectClassName}
                 >
                   <option value={FILTER_ALL}>All statuses</option>
                   {ITEM_STATUSES.map((status) => (
@@ -982,105 +1074,95 @@ export function WorkspaceLibraryManager() {
                     </option>
                   ))}
                 </select>
-                <label className="flex items-center gap-2 rounded-md border border-input bg-background px-3 text-sm">
-                  <Checkbox checked={usableOnly} onCheckedChange={(checked) => setUsableOnly(Boolean(checked))} />
+                <label className="flex items-center gap-2 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-copy-14 text-[var(--ds-gray-1000)]">
+                  <Checkbox
+                    checked={usableOnly}
+                    onCheckedChange={(checked) => setUsableOnly(Boolean(checked))}
+                    className={cn(checkboxClassName, buttonFocusClassName)}
+                  />
                   <span>Usable only</span>
                 </label>
               </div>
 
               <div className="space-y-4 px-4 pb-4">
                 {loading ? (
-                  <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-6 text-sm text-[hsl(var(--foreground-muted))]">
-                    Loading library items...
-                  </div>
+                  <div className={emptyStateClassName}>Loading library items...</div>
                 ) : filteredItems.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-6 text-sm text-[hsl(var(--foreground-muted))]">
-                    No library items match the current filters.
-                  </div>
+                  <div className={emptyStateClassName}>No library items match the current filters.</div>
                 ) : (
                   filteredItems.map((item) => {
                     const Icon = itemTypeIcon(item);
                     return (
-                      <div
-                        key={item.id}
-                        className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4"
-                      >
+                      <div key={item.id} className={cn("px-4 py-4", nestedCardClassName)}>
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div className="space-y-3">
                             <div className="flex flex-wrap items-center gap-2">
-                              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
-                                <Icon className="h-4 w-4 text-[hsl(var(--accent))]" />
+                              <div className={iconBadgeClassName}>
+                                <Icon className="h-4 w-4 text-[var(--ds-blue-700)]" />
                               </div>
                               <div>
-                                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{item.name}</p>
-                                <p className="text-xs text-[hsl(var(--foreground-muted))]">{prettyItemType(item)}</p>
+                                <p className={itemTitleClassName}>{item.name}</p>
+                                <p className={quietTextClassName}>{prettyItemType(item)}</p>
                               </div>
-                              <Badge variant="outline">{item.status}</Badge>
-                              <Badge variant={usableBadgeVariant(item)}>
+                              <Badge variant="outline" className={statusBadgeClassName(item.status)}>
+                                {item.status}
+                              </Badge>
+                              <Badge variant="outline" className={usableBadgeClassName(item)}>
                                 {item.usable ? "Usable" : item.expired ? "Expired" : "Not usable"}
                               </Badge>
                             </div>
 
                             <div className="flex flex-wrap gap-2">
                               {item.folderName && (
-                                <Badge variant="outline">
+                                <Badge variant="outline" className={badgeToneClassName("neutral")}>
                                   <FolderOpen className="mr-1 h-3 w-3" />
                                   {item.folderName}
                                 </Badge>
                               )}
                               {item.tags.map((tag) => (
-                                <Badge key={tag} variant="outline">
+                                <Badge key={tag} variant="outline" className={badgeToneClassName("neutral")}>
                                   {tag}
                                 </Badge>
                               ))}
                             </div>
 
                             {item.description && (
-                              <p className="text-sm text-[hsl(var(--foreground-muted))]">{item.description}</p>
+                              <p className={bodyTextClassName}>{item.description}</p>
                             )}
 
                             {item.body && (
-                              <p className="whitespace-pre-wrap text-sm text-[hsl(var(--foreground-muted))]">
-                                {item.body}
-                              </p>
+                              <p className={cn("whitespace-pre-wrap", bodyTextClassName)}>{item.body}</p>
                             )}
 
                             {item.itemType === "MEDIA_ASSET" && item.media.length > 0 && (
                               <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                                 {item.media.slice(0, 3).map((media) => (
-                                  <div
-                                    key={media.fileKey}
-                                    className="overflow-hidden rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]"
-                                  >
-                                    <div className="relative h-28 bg-[hsl(var(--surface-raised))]">
+                                  <div key={media.fileKey} className={cn("overflow-hidden", nestedPanelClassName)}>
+                                    <div className="relative h-28 bg-[var(--ds-gray-100)]">
                                       {media.mimeType.startsWith("video/") ? (
                                         <video
                                           src={media.fileUrl ?? undefined}
                                           className="h-full w-full object-contain"
                                           muted
                                         />
-                                      ) : media.fileUrl ? (
-                                        <Image src={media.fileUrl} alt={media.fileName} fill className="object-contain" />
-                                      ) : (
-                                        <div className="flex h-full items-center justify-center">
-                                          <FileImage className="h-5 w-5 text-[hsl(var(--foreground-subtle))]" />
+                                        ) : media.fileUrl ? (
+                                          <Image src={media.fileUrl} alt={media.fileName} fill className="object-contain" />
+                                        ) : (
+                                          <div className="flex h-full items-center justify-center">
+                                          <FileImage className="h-5 w-5 text-[var(--ds-gray-900)]" />
                                         </div>
                                       )}
                                     </div>
                                     <div className="px-3 py-2">
-                                      <p className="truncate text-xs font-medium text-[hsl(var(--foreground))]">
-                                        {media.fileName}
-                                      </p>
-                                      <p className="truncate text-xs text-[hsl(var(--foreground-muted))]">
-                                        {media.mimeType}
-                                      </p>
+                                      <p className={cn("truncate", quietTextClassName)}>{media.fileName}</p>
+                                      <p className={cn("truncate", quietTextClassName)}>{media.mimeType}</p>
                                     </div>
                                   </div>
                                 ))}
                               </div>
                             )}
 
-                            <div className="flex flex-wrap gap-4 text-xs text-[hsl(var(--foreground-subtle))]">
+                            <div className={cn("flex flex-wrap gap-4", quietTextClassName)}>
                               <span>Updated {formatTimestamp(item.updatedAt)}</span>
                               {item.expiresAt && (
                                 <span className="inline-flex items-center gap-1">
@@ -1093,7 +1175,13 @@ export function WorkspaceLibraryManager() {
 
                           {canManageAssetLibrary && (
                             <div className="flex flex-wrap gap-2">
-                              <Button type="button" variant="outline" size="sm" onClick={() => startEditItem(item)}>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => startEditItem(item)}
+                                className={cn(outlineButtonClassName, buttonFocusClassName)}
+                              >
                                 Edit
                               </Button>
                               <Button
@@ -1101,6 +1189,7 @@ export function WorkspaceLibraryManager() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() => void deleteItem(item)}
+                                className={cn(destructiveButtonClassName, buttonFocusClassName)}
                               >
                                 <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                                 Delete
@@ -1118,19 +1207,25 @@ export function WorkspaceLibraryManager() {
 
           <TabsContent value="bundles" className="space-y-6">
             {canManageAssetLibrary && (
-              <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
+              <section className={sectionCardClassName}>
+                <div className={sectionHeaderClassName}>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                      <p className={sectionTitleClassName}>
                         {editingBundleId === null ? "Create Bundle" : "Edit Bundle"}
                       </p>
-                      <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                      <p className={sectionDescriptionClassName}>
                         Group related snippets, templates, and media into campaign-ready bundles.
                       </p>
                     </div>
                     {(editingBundleId !== null || bundleEditor.name || bundleEditor.description) && (
-                      <Button type="button" variant="ghost" size="sm" onClick={() => resetBundleEditor()}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => resetBundleEditor()}
+                        className={cn(ghostButtonClassName, buttonFocusClassName)}
+                      >
                         <X className="mr-1.5 h-3.5 w-3.5" />
                         Reset
                       </Button>
@@ -1140,57 +1235,49 @@ export function WorkspaceLibraryManager() {
 
                 <div className="grid gap-4 px-4 py-4 lg:grid-cols-2">
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Name
-                    </span>
+                    <span className={labelClassName}>Name</span>
                     <Input
                       value={bundleEditor.name}
                       onChange={(event) =>
                         setBundleEditor((current) => ({ ...current, name: event.target.value }))
                       }
                       placeholder="Spring product launch kit"
+                      className={inputClassName}
                     />
                   </label>
                   <label className="space-y-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Campaign Label
-                    </span>
+                    <span className={labelClassName}>Campaign Label</span>
                     <Input
                       value={bundleEditor.campaignLabel}
                       onChange={(event) =>
                         setBundleEditor((current) => ({ ...current, campaignLabel: event.target.value }))
                       }
                       placeholder="Spring Launch"
+                      className={inputClassName}
                     />
                   </label>
                   <label className="space-y-2 lg:col-span-2">
-                    <span className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                      Description
-                    </span>
+                    <span className={labelClassName}>Description</span>
                     <Textarea
                       value={bundleEditor.description}
                       onChange={(event) =>
                         setBundleEditor((current) => ({ ...current, description: event.target.value }))
                       }
                       placeholder="What this bundle is for and when it should be used"
+                      className={inputClassName}
                     />
                   </label>
                   <div className="space-y-2 lg:col-span-2">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
-                        Bundle Items
-                      </p>
-                      <p className="mt-1 text-xs text-[hsl(var(--foreground-subtle))]">
+                      <p className={labelClassName}>Bundle Items</p>
+                      <p className={cn("mt-1", quietTextClassName)}>
                         Choose snippets, templates, and assets that belong together for a reusable campaign package.
                       </p>
                     </div>
-                    <ScrollArea className="h-72 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
+                    <ScrollArea className="h-72 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
                       <div className="space-y-2 p-3">
                         {(library?.items ?? []).map((item) => (
-                          <label
-                            key={item.id}
-                            className="flex cursor-pointer items-start gap-3 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-3"
-                          >
+                          <label key={item.id} className={listRowClassName}>
                             <Checkbox
                               checked={bundleEditor.itemIds.includes(item.id)}
                               onCheckedChange={(checked) =>
@@ -1201,13 +1288,16 @@ export function WorkspaceLibraryManager() {
                                     : current.itemIds.filter((value) => value !== item.id),
                                 }))
                               }
+                              className={cn(checkboxClassName, buttonFocusClassName)}
                             />
                             <div className="min-w-0">
-                              <p className="text-sm font-medium text-[hsl(var(--foreground))]">{item.name}</p>
-                              <p className="text-xs text-[hsl(var(--foreground-muted))]">{prettyItemType(item)}</p>
+                              <p className={itemTitleClassName}>{item.name}</p>
+                              <p className={quietTextClassName}>{prettyItemType(item)}</p>
                               <div className="mt-2 flex flex-wrap gap-2">
-                                <Badge variant="outline">{item.status}</Badge>
-                                <Badge variant={usableBadgeVariant(item)}>
+                                <Badge variant="outline" className={statusBadgeClassName(item.status)}>
+                                  {item.status}
+                                </Badge>
+                                <Badge variant="outline" className={usableBadgeClassName(item)}>
                                   {item.usable ? "Usable" : item.expired ? "Expired" : "Not usable"}
                                 </Badge>
                               </div>
@@ -1219,28 +1309,44 @@ export function WorkspaceLibraryManager() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap justify-end gap-2 border-t border-[hsl(var(--border-subtle))] px-4 py-3">
-                  <Button type="button" variant="outline" onClick={() => resetBundleEditor()}>
+                <div className="flex flex-wrap justify-end gap-2 border-t border-[var(--ds-gray-400)] px-4 py-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => resetBundleEditor()}
+                    className={cn(outlineButtonClassName, buttonFocusClassName)}
+                  >
                     Cancel
                   </Button>
-                  <Button type="button" onClick={() => void submitBundle()} disabled={savingBundle}>
+                  <Button
+                    type="button"
+                    onClick={() => void submitBundle()}
+                    disabled={savingBundle}
+                    className={cn(primaryButtonClassName, buttonFocusClassName)}
+                  >
                     {savingBundle ? "Saving..." : editingBundleId === null ? "Create Bundle" : "Save Changes"}
                   </Button>
                 </div>
               </section>
             )}
 
-            <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
+            <section className={sectionCardClassName}>
+              <div className={sectionHeaderClassName}>
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Search Bundles</p>
-                    <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+                    <p className={sectionTitleClassName}>Search Bundles</p>
+                    <p className={sectionDescriptionClassName}>
                       Browse campaign bundles by label, contents, or related tags.
                     </p>
                   </div>
                   {canManageAssetLibrary && (
-                    <Button type="button" variant="outline" size="sm" onClick={() => resetBundleEditor()}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => resetBundleEditor()}
+                      className={cn(outlineButtonClassName, buttonFocusClassName)}
+                    >
                       New Bundle
                     </Button>
                   )}
@@ -1248,66 +1354,69 @@ export function WorkspaceLibraryManager() {
               </div>
               <div className="px-4 py-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[hsl(var(--foreground-subtle))]" />
+                  <Search className={searchIconClassName} />
                   <Input
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)}
                     placeholder="Search bundle names, labels, items, or tags"
-                    className="pl-9"
+                    className={cn("pl-9", inputClassName)}
                   />
                 </div>
               </div>
 
               <div className="space-y-4 px-4 pb-4">
                 {loading ? (
-                  <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-6 text-sm text-[hsl(var(--foreground-muted))]">
-                    Loading bundles...
-                  </div>
+                  <div className={emptyStateClassName}>Loading bundles...</div>
                 ) : filteredBundles.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-6 text-sm text-[hsl(var(--foreground-muted))]">
-                    No bundles match the current search.
-                  </div>
+                  <div className={emptyStateClassName}>No bundles match the current search.</div>
                 ) : (
                   filteredBundles.map((bundle) => (
-                    <div
-                      key={bundle.id}
-                      className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4"
-                    >
+                    <div key={bundle.id} className={cn("px-4 py-4", nestedCardClassName)}>
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="space-y-3">
                           <div className="flex flex-wrap items-center gap-2">
-                            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
-                              <Boxes className="h-4 w-4 text-[hsl(var(--accent))]" />
+                            <div className={iconBadgeClassName}>
+                              <Boxes className="h-4 w-4 text-[var(--ds-blue-700)]" />
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{bundle.name}</p>
-                              <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                              <p className={itemTitleClassName}>{bundle.name}</p>
+                              <p className={quietTextClassName}>
                                 {bundle.items.length} library item{bundle.items.length === 1 ? "" : "s"}
                               </p>
                             </div>
-                            {bundle.campaignLabel && <Badge variant="outline">{bundle.campaignLabel}</Badge>}
+                            {bundle.campaignLabel && (
+                              <Badge variant="outline" className={badgeToneClassName("neutral")}>
+                                {bundle.campaignLabel}
+                              </Badge>
+                            )}
                           </div>
 
                           {bundle.description && (
-                            <p className="text-sm text-[hsl(var(--foreground-muted))]">{bundle.description}</p>
+                            <p className={bodyTextClassName}>{bundle.description}</p>
                           )}
 
                           <div className="flex flex-wrap gap-2">
                             {bundle.items.map((item) => (
-                              <Badge key={item.id} variant="outline">
+                              <Badge key={item.id} variant="outline" className={badgeToneClassName("neutral")}>
                                 {item.name}
                               </Badge>
                             ))}
                           </div>
 
-                          <div className="flex flex-wrap gap-4 text-xs text-[hsl(var(--foreground-subtle))]">
+                          <div className={cn("flex flex-wrap gap-4", quietTextClassName)}>
                             <span>Updated {formatTimestamp(bundle.updatedAt)}</span>
                           </div>
                         </div>
 
                         {canManageAssetLibrary && (
                           <div className="flex flex-wrap gap-2">
-                            <Button type="button" variant="outline" size="sm" onClick={() => startEditBundle(bundle)}>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => startEditBundle(bundle)}
+                              className={cn(outlineButtonClassName, buttonFocusClassName)}
+                            >
                               Edit
                             </Button>
                             <Button
@@ -1315,6 +1424,7 @@ export function WorkspaceLibraryManager() {
                               variant="outline"
                               size="sm"
                               onClick={() => void deleteBundle(bundle)}
+                              className={cn(destructiveButtonClassName, buttonFocusClassName)}
                             >
                               <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                               Delete
@@ -1331,7 +1441,7 @@ export function WorkspaceLibraryManager() {
         </Tabs>
 
         {!canWrite && !canManageAssetLibrary && (
-          <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4 text-sm text-[hsl(var(--foreground-muted))]">
+          <div className={cn(noticeClassName, bodyTextClassName)}>
             The composer integration for library assets is available to members who can create or edit content.
           </div>
         )}

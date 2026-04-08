@@ -74,11 +74,14 @@ export function LibraryComposerPanel({
   postType,
   onApplyItem,
   onApplyBundle,
+  appearance = "default",
 }: {
   postType: PostType | null;
   onApplyItem: (item: WorkspaceLibraryItem) => Promise<void> | void;
   onApplyBundle: (bundle: WorkspaceLibraryBundle) => Promise<void> | void;
+  appearance?: "default" | "geist";
 }) {
+  const isGeist = appearance === "geist";
   const { getToken } = useAuth();
   const [library, setLibrary] = useState<WorkspaceLibraryResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -151,12 +154,12 @@ export function LibraryComposerPanel({
   }
 
   return (
-    <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
+    <section className={cn("rounded-xl border shadow-sm", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]")}>
+      <div className={cn("border-b px-4 py-3", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]")}>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Use The Asset Library</p>
-            <p className="mt-1 text-xs text-[hsl(var(--foreground-muted))]">
+            <p className={cn(isGeist ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-semibold text-[hsl(var(--foreground))]")}>Use The Asset Library</p>
+            <p className={cn("mt-1", isGeist ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-[hsl(var(--foreground-muted))]")}>
               Apply approved snippets, templates, reusable assets, and campaign bundles directly into this post.
             </p>
           </div>
@@ -166,6 +169,7 @@ export function LibraryComposerPanel({
             size="sm"
             onClick={() => void loadLibrary(true)}
             disabled={refreshing}
+            className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]")}
           >
             <RefreshCw className={cn("mr-1.5 h-3.5 w-3.5", refreshing && "animate-spin")} />
             Refresh
@@ -180,28 +184,28 @@ export function LibraryComposerPanel({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search templates, snippets, tags, bundles, or campaign labels"
-            className="pl-9"
+            className={cn("pl-9", isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]")}
           />
         </div>
 
         {loading ? (
-          <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-6 text-sm text-[hsl(var(--foreground-muted))]">
+          <div className={cn("rounded-lg border border-dashed px-4 py-6", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-copy-14 text-[var(--ds-gray-900)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-sm text-[hsl(var(--foreground-muted))]")}>
             Loading approved library items...
           </div>
         ) : error ? (
-          <div className="rounded-lg border border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/5 px-4 py-4 text-sm text-[hsl(var(--destructive))]">
+          <div className={cn("rounded-lg border px-4 py-4", isGeist ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-copy-14 text-[var(--ds-red-700)]" : "border-[hsl(var(--destructive))]/20 bg-[hsl(var(--destructive))]/5 text-sm text-[hsl(var(--destructive))]")}>
             {error}
           </div>
         ) : (
           <Tabs defaultValue="items">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="items">Items ({filteredItems.length})</TabsTrigger>
-              <TabsTrigger value="bundles">Bundles ({filteredBundles.length})</TabsTrigger>
+            <TabsList className={cn("grid w-full grid-cols-2", isGeist && "bg-[var(--ds-gray-100)]")}>
+              <TabsTrigger value="items" className={cn(isGeist && "data-[state=active]:bg-[var(--ds-background-100)] data-[state=active]:text-[var(--ds-gray-1000)]")}>Items ({filteredItems.length})</TabsTrigger>
+              <TabsTrigger value="bundles" className={cn(isGeist && "data-[state=active]:bg-[var(--ds-background-100)] data-[state=active]:text-[var(--ds-gray-1000)]")}>Bundles ({filteredBundles.length})</TabsTrigger>
             </TabsList>
 
             <TabsContent value="items" className="space-y-3">
               {filteredItems.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-6 text-sm text-[hsl(var(--foreground-muted))]">
+                <div className={cn("rounded-lg border border-dashed px-4 py-6", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-copy-14 text-[var(--ds-gray-900)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-sm text-[hsl(var(--foreground-muted))]")}>
                   No approved library items match this post type and search.
                 </div>
               ) : (
@@ -211,42 +215,42 @@ export function LibraryComposerPanel({
                   return (
                     <div
                       key={item.id}
-                      className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4"
+                      className={cn("rounded-lg border px-4 py-4", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]")}
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
-                              <Icon className="h-4 w-4 text-[hsl(var(--accent))]" />
+                            <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg border", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]")}>
+                              <Icon className={cn("h-4 w-4", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{item.name}</p>
-                              <p className="text-xs text-[hsl(var(--foreground-muted))]">{itemTypeLabel(item)}</p>
+                              <p className={cn(isGeist ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-semibold text-[hsl(var(--foreground))]")}>{item.name}</p>
+                              <p className={cn(isGeist ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-[hsl(var(--foreground-muted))]")}>{itemTypeLabel(item)}</p>
                             </div>
                           </div>
 
                           <div className="flex flex-wrap gap-2">
-                            {item.folderName && <Badge variant="outline">{item.folderName}</Badge>}
+                            {item.folderName && <Badge variant="outline" className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]")}>{item.folderName}</Badge>}
                             {item.tags.slice(0, 3).map((tag) => (
-                              <Badge key={tag} variant="outline">
+                              <Badge key={tag} variant="outline" className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]")}>
                                 {tag}
                               </Badge>
                             ))}
-                            {item.tags.length > 3 && <Badge variant="outline">+{item.tags.length - 3} tags</Badge>}
+                            {item.tags.length > 3 && <Badge variant="outline" className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]")}>+{item.tags.length - 3} tags</Badge>}
                           </div>
 
                           {item.description && (
-                            <p className="text-sm text-[hsl(var(--foreground-muted))]">{item.description}</p>
+                            <p className={cn(isGeist ? "text-copy-14 text-[var(--ds-gray-900)]" : "text-sm text-[hsl(var(--foreground-muted))]")}>{item.description}</p>
                           )}
 
                           {item.body && (
-                            <p className="line-clamp-3 whitespace-pre-wrap text-sm text-[hsl(var(--foreground-muted))]">
+                            <p className={cn("line-clamp-3 whitespace-pre-wrap", isGeist ? "text-copy-14 text-[var(--ds-gray-900)]" : "text-sm text-[hsl(var(--foreground-muted))]")}>
                               {item.body}
                             </p>
                           )}
 
                           {item.itemType === "MEDIA_ASSET" && item.media.length > 0 && (
-                            <p className="text-xs text-[hsl(var(--foreground-subtle))]">
+                            <p className={cn(isGeist ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-[hsl(var(--foreground-subtle))]")}>
                               {item.media.length} reusable {item.postCollectionType?.toLowerCase()} file
                               {item.media.length === 1 ? "" : "s"} ready to apply
                             </p>
@@ -259,6 +263,7 @@ export function LibraryComposerPanel({
                           size="sm"
                           onClick={() => void handleApplyItem(item)}
                           disabled={applyingKey === applyKey}
+                          className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-background-100)]")}
                         >
                           {applyingKey === applyKey ? "Applying..." : "Apply"}
                         </Button>
@@ -271,7 +276,7 @@ export function LibraryComposerPanel({
 
             <TabsContent value="bundles" className="space-y-3">
               {filteredBundles.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-6 text-sm text-[hsl(var(--foreground-muted))]">
+                <div className={cn("rounded-lg border border-dashed px-4 py-6", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-copy-14 text-[var(--ds-gray-900)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-sm text-[hsl(var(--foreground-muted))]")}>
                   No approved bundles match this post type and search.
                 </div>
               ) : (
@@ -281,36 +286,36 @@ export function LibraryComposerPanel({
                   return (
                     <div
                       key={bundle.id}
-                      className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-4"
+                      className={cn("rounded-lg border px-4 py-4", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]")}
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
-                              <Boxes className="h-4 w-4 text-[hsl(var(--accent))]" />
+                            <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg border", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]")}>
+                              <Boxes className={cn("h-4 w-4", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{bundle.name}</p>
-                              <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                              <p className={cn(isGeist ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-semibold text-[hsl(var(--foreground))]")}>{bundle.name}</p>
+                              <p className={cn(isGeist ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-[hsl(var(--foreground-muted))]")}>
                                 {relevantItems.length} relevant approved item{relevantItems.length === 1 ? "" : "s"}
                               </p>
                             </div>
                           </div>
 
                           <div className="flex flex-wrap gap-2">
-                            {bundle.campaignLabel && <Badge variant="outline">{bundle.campaignLabel}</Badge>}
+                            {bundle.campaignLabel && <Badge variant="outline" className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]")}>{bundle.campaignLabel}</Badge>}
                             {relevantItems.slice(0, 3).map((item) => (
-                              <Badge key={item.id} variant="outline">
+                              <Badge key={item.id} variant="outline" className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]")}>
                                 {item.name}
                               </Badge>
                             ))}
                             {relevantItems.length > 3 && (
-                              <Badge variant="outline">+{relevantItems.length - 3} more</Badge>
+                              <Badge variant="outline" className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]")}>+{relevantItems.length - 3} more</Badge>
                             )}
                           </div>
 
                           {bundle.description && (
-                            <p className="text-sm text-[hsl(var(--foreground-muted))]">{bundle.description}</p>
+                            <p className={cn(isGeist ? "text-copy-14 text-[var(--ds-gray-900)]" : "text-sm text-[hsl(var(--foreground-muted))]")}>{bundle.description}</p>
                           )}
                         </div>
 
@@ -320,6 +325,7 @@ export function LibraryComposerPanel({
                           size="sm"
                           onClick={() => void handleApplyBundle(bundle)}
                           disabled={applyingKey === applyKey}
+                          className={cn(isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-background-100)]")}
                         >
                           {applyingKey === applyKey ? "Applying..." : "Apply Bundle"}
                         </Button>
@@ -333,7 +339,7 @@ export function LibraryComposerPanel({
         )}
 
         {!loading && !error && (
-          <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-3 text-xs text-[hsl(var(--foreground-subtle))]">
+          <div className={cn("rounded-lg border border-dashed px-4 py-3", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-copy-12 text-[var(--ds-gray-900)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] text-xs text-[hsl(var(--foreground-subtle))]")}>
             <div className="flex items-start gap-2">
               <LibraryBig className="mt-0.5 h-3.5 w-3.5 shrink-0" />
               <p>

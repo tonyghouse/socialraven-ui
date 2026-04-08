@@ -8,16 +8,22 @@ interface Props {
   /** Lowercase platform names that are currently selected */
   platforms: string[];
   charCount: number;
+  appearance?: "default" | "geist";
 }
 
-export default function PlatformCharLimits({ platforms, charCount }: Props) {
+export default function PlatformCharLimits({
+  platforms,
+  charCount,
+  appearance = "default",
+}: Props) {
+  const isGeist = appearance === "geist";
   const relevant = platforms.filter((p) => PLATFORM_CHAR_LIMITS[p] !== undefined);
   if (relevant.length === 0) return null;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border-subtle bg-surface">
-      <div className="border-b border-border-subtle bg-surface-raised px-3 py-2">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-foreground-muted">
+    <div className={cn("overflow-hidden rounded-xl border", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-border-subtle bg-surface")}>
+      <div className={cn("border-b px-3 py-2", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]" : "border-border-subtle bg-surface-raised")}>
+        <p className={cn("text-[10px] font-semibold uppercase tracking-[0.08em]", isGeist ? "text-[var(--ds-gray-900)]" : "text-foreground-muted")}>
           Character limits by platform
         </p>
       </div>
@@ -38,20 +44,26 @@ export default function PlatformCharLimits({ platforms, charCount }: Props) {
                     <Icon
                       className={cn(
                         "w-3 h-3 flex-shrink-0",
-                        over ? "text-destructive" : near ? "text-warning" : "text-foreground-muted"
+                        over
+                          ? isGeist ? "text-[var(--ds-red-700)]" : "text-destructive"
+                          : near
+                            ? isGeist ? "text-[var(--ds-amber-700)]" : "text-warning"
+                            : isGeist ? "text-[var(--ds-gray-900)]" : "text-foreground-muted"
                       )}
                     />
                   )}
                   <span
                     className={cn(
                       "text-xs font-medium truncate",
-                      over ? "text-destructive" : "text-foreground"
+                      over
+                        ? isGeist ? "text-[var(--ds-red-700)]" : "text-destructive"
+                        : isGeist ? "text-[var(--ds-gray-1000)]" : "text-foreground"
                     )}
                   >
                     {PLATFORM_DISPLAY_NAMES[platform] ?? platform}
                   </span>
                   {over && (
-                    <span className="flex-shrink-0 rounded border border-destructive/20 bg-destructive/10 px-1 py-px text-[9px] font-bold uppercase leading-none tracking-wide text-destructive">
+                    <span className={cn("flex-shrink-0 rounded border px-1 py-px text-[9px] font-bold uppercase leading-none tracking-wide", isGeist ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
                       Over limit
                     </span>
                   )}
@@ -59,7 +71,11 @@ export default function PlatformCharLimits({ platforms, charCount }: Props) {
                 <span
                   className={cn(
                     "text-[11px] tabular-nums font-mono flex-shrink-0",
-                    over ? "font-semibold text-destructive" : near ? "text-warning" : "text-foreground-muted"
+                    over
+                      ? isGeist ? "font-semibold text-[var(--ds-red-700)]" : "font-semibold text-destructive"
+                      : near
+                        ? isGeist ? "text-[var(--ds-amber-700)]" : "text-warning"
+                        : isGeist ? "text-[var(--ds-gray-900)]" : "text-foreground-muted"
                   )}
                 >
                   {over
@@ -67,11 +83,15 @@ export default function PlatformCharLimits({ platforms, charCount }: Props) {
                     : `${remaining.toLocaleString()} left`}
                 </span>
               </div>
-              <div className="h-1 overflow-hidden rounded-full bg-surface-raised">
+              <div className={cn("h-1 overflow-hidden rounded-full", isGeist ? "bg-[var(--ds-gray-200)]" : "bg-surface-raised")}>
                 <div
                   className={cn(
                     "h-full rounded-full transition-all duration-200",
-                    over ? "bg-destructive" : near ? "bg-warning" : "bg-[hsl(var(--accent))]"
+                    over
+                      ? isGeist ? "bg-[var(--ds-red-600)]" : "bg-destructive"
+                      : near
+                        ? isGeist ? "bg-[var(--ds-amber-600)]" : "bg-warning"
+                        : isGeist ? "bg-[var(--ds-blue-600)]" : "bg-[hsl(var(--accent))]"
                   )}
                   style={{ width: `${pct}%` }}
                 />

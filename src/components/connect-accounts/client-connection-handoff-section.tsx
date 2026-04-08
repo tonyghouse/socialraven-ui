@@ -13,8 +13,6 @@ import {
   Trash2,
   UserRound,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import type {
   ClientConnectPlatform,
@@ -26,6 +24,21 @@ import {
   revokeClientConnectionSessionApi,
 } from "@/service/clientConnections";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { cn } from "@/lib/utils";
+import {
+  ConnectBadge,
+  ConnectButton,
+  connectBodyClassName,
+  connectEmptyStateClassName,
+  connectEyebrowClassName,
+  connectInputClassName,
+  connectInsetCardClassName,
+  connectSectionHeaderClassName,
+  connectSoftCardClassName,
+  connectSurfaceClassName,
+  connectTextareaClassName,
+  connectTitleClassName,
+} from "@/components/connect-accounts/connect-accounts-primitives";
 
 const PLATFORM_OPTIONS: Array<{
   value: ClientConnectPlatform;
@@ -43,6 +56,9 @@ const EXPIRY_OPTIONS = [
   { label: "14 days", value: 14 },
   { label: "30 days", value: 30 },
 ] as const;
+
+const selectionChipClassName =
+  "rounded-full border px-3 py-1.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 function formatTimestamp(value: string | null) {
   if (!value) return "Not available";
@@ -217,44 +233,37 @@ export default function ClientConnectionHandoffSection() {
         onCancel={() => setPendingRevoke(null)}
       />
 
-      <section className="overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
-        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-4 py-4 sm:px-5">
+      <section className={connectSurfaceClassName}>
+        <div className={cn(connectSectionHeaderClassName, "py-4")}>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-[hsl(var(--accent))]" />
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
-                  Secure client connection handoff
-                </p>
+                <ShieldCheck className="h-4 w-4 text-[var(--ds-blue-700)]" />
+                <p className={connectTitleClassName}>Secure client connection handoff</p>
               </div>
-              <p className="max-w-2xl text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              <p className={cn("max-w-2xl", connectBodyClassName)}>
                 Send a branded handoff page to the client contact so they can connect
                 their own channels without sharing passwords or entering the main
                 workspace.
               </p>
             </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
+            <ConnectButton
+              compact
               onClick={refresh}
               disabled={refreshing}
-              className="rounded-lg"
             >
               <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
               Refresh
-            </Button>
+            </ConnectButton>
           </div>
         </div>
 
         <div className="grid gap-6 p-4 sm:p-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
-          <div className="space-y-4 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
+          <div className={cn(connectInsetCardClassName, "space-y-4 p-4")}>
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
-                Create client handoff
-              </p>
-              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              <p className={connectTitleClassName}>Create client handoff</p>
+              <p className={connectBodyClassName}>
                 Tie the handoff to a specific client email so reconnects remain
                 attributable and controlled.
               </p>
@@ -262,67 +271,67 @@ export default function ClientConnectionHandoffSection() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="space-y-1.5">
-                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                <span className={connectEyebrowClassName}>
                   Recipient name
                 </span>
                 <input
                   value={recipientName}
                   onChange={(event) => setRecipientName(event.target.value)}
-                  className="h-10 w-full rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--accent))]"
+                  className={connectInputClassName}
                   placeholder="Ava Client"
                 />
               </label>
 
               <label className="space-y-1.5">
-                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                <span className={connectEyebrowClassName}>
                   Recipient email
                 </span>
                 <input
                   type="email"
                   value={recipientEmail}
                   onChange={(event) => setRecipientEmail(event.target.value)}
-                  className="h-10 w-full rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--accent))]"
+                  className={connectInputClassName}
                   placeholder="client@example.com"
                 />
               </label>
 
               <label className="space-y-1.5">
-                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                <span className={connectEyebrowClassName}>
                   Client label
                 </span>
                 <input
                   value={clientLabel}
                   onChange={(event) => setClientLabel(event.target.value)}
-                  className="h-10 w-full rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--accent))]"
+                  className={connectInputClassName}
                 />
               </label>
 
               <label className="space-y-1.5">
-                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                <span className={connectEyebrowClassName}>
                   Agency label
                 </span>
                 <input
                   value={agencyLabel}
                   onChange={(event) => setAgencyLabel(event.target.value)}
-                  className="h-10 w-full rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--accent))]"
+                  className={connectInputClassName}
                 />
               </label>
             </div>
 
             <label className="space-y-1.5">
-              <span className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+              <span className={connectEyebrowClassName}>
                 Message
               </span>
               <textarea
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 rows={4}
-                className="w-full rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-2.5 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--accent))]"
+                className={connectTextareaClassName}
               />
             </label>
 
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+              <p className={connectEyebrowClassName}>
                 Allowed platforms
               </p>
               <div className="flex flex-wrap gap-2">
@@ -333,11 +342,12 @@ export default function ClientConnectionHandoffSection() {
                       key={platform.value}
                       type="button"
                       onClick={() => togglePlatform(platform.value)}
-                      className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                      className={cn(
+                        selectionChipClassName,
                         selected
-                          ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent-soft))] text-[hsl(var(--foreground))]"
-                          : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
-                      }`}
+                          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                          : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+                      )}
                     >
                       {platform.label}
                     </button>
@@ -347,7 +357,7 @@ export default function ClientConnectionHandoffSection() {
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+              <p className={connectEyebrowClassName}>
                 Link expiry
               </p>
               <div className="flex flex-wrap gap-2">
@@ -356,11 +366,12 @@ export default function ClientConnectionHandoffSection() {
                     key={option.value}
                     type="button"
                     onClick={() => setExpiryDays(option.value)}
-                    className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                    className={cn(
+                      selectionChipClassName,
                       expiryDays === option.value
-                        ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent-soft))] text-[hsl(var(--foreground))]"
-                        : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
-                    }`}
+                        ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+                    )}
                   >
                     {option.label}
                   </button>
@@ -368,16 +379,16 @@ export default function ClientConnectionHandoffSection() {
               </div>
             </div>
 
-            <div className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-3 text-sm text-[hsl(var(--foreground-muted))]">
+            <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3 text-label-14 text-[var(--ds-gray-900)]">
               The handoff page is restricted to the invited email and records who
               connected or reconnected each account.
             </div>
 
-            <Button
-              type="button"
+            <ConnectButton
+              tone="primary"
               onClick={handleCreate}
               disabled={creating}
-              className="w-full rounded-lg"
+              className="w-full"
             >
               {creating ? (
                 <>
@@ -390,35 +401,33 @@ export default function ClientConnectionHandoffSection() {
                   Create and Copy Handoff Link
                 </>
               )}
-            </Button>
+            </ConnectButton>
           </div>
 
-          <div className="space-y-4 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
+          <div className={cn(connectInsetCardClassName, "space-y-4 p-4")}>
             <div className="flex items-start justify-between gap-3">
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
-                  Live handoff links
-                </p>
-                <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                <p className={connectTitleClassName}>Live handoff links</p>
+                <p className={connectBodyClassName}>
                   {sessionCountLabel}. Track last access, connection activity, and
                   revoke any link immediately.
                 </p>
               </div>
-              <Badge variant="outline" className="rounded-full">
+              <ConnectBadge>
                 {sessions.filter((item) => item.active).length} active
-              </Badge>
+              </ConnectBadge>
             </div>
 
             {loading ? (
               <div className="flex min-h-[220px] items-center justify-center">
-                <Loader2 className="h-5 w-5 animate-spin text-[hsl(var(--foreground-muted))]" />
+                <Loader2 className="h-5 w-5 animate-spin text-[var(--ds-gray-900)]" />
               </div>
             ) : sessions.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] px-4 py-10 text-center">
-                <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+              <div className={cn(connectEmptyStateClassName, "py-10")}>
+                <p className={connectTitleClassName}>
                   No handoff links yet
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                <p className={cn("mt-2", connectBodyClassName)}>
                   Create the first secure client handoff to keep account connection
                   out of email threads and password sharing.
                 </p>
@@ -428,27 +437,24 @@ export default function ClientConnectionHandoffSection() {
                 {sessions.map((session) => (
                   <article
                     key={session.id}
-                    className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-4"
+                    className={cn(connectSoftCardClassName, "p-4")}
                   >
                     <div className="flex flex-col gap-4">
                       <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                         <div className="space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                            <p className={connectTitleClassName}>
                               {session.clientLabel || activeWorkspace?.name}
                             </p>
-                            <Badge
-                              variant={session.active ? "default" : "secondary"}
-                              className="rounded-full"
-                            >
+                            <ConnectBadge tone={session.active ? "success" : "danger"}>
                               {session.active ? "Active" : "Closed"}
-                            </Badge>
-                            <Badge variant="outline" className="rounded-full">
+                            </ConnectBadge>
+                            <ConnectBadge>
                               {session.connectionCount} events
-                            </Badge>
+                            </ConnectBadge>
                           </div>
 
-                          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-[hsl(var(--foreground-muted))]">
+                          <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-2", connectBodyClassName)}>
                             <span className="inline-flex items-center gap-1.5">
                               <Mail className="h-3.5 w-3.5" />
                               {session.recipientEmail}
@@ -458,80 +464,72 @@ export default function ClientConnectionHandoffSection() {
                                 <UserRound className="h-3.5 w-3.5" />
                                 {session.recipientName}
                               </span>
-                            ) : null}
+                              ) : null}
                           </div>
 
-                          <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                          <p className={connectBodyClassName}>
                             Expires {formatTimestamp(session.expiresAt)}. Last opened{" "}
                             {formatTimestamp(session.lastAccessedAt)}.
                           </p>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="rounded-lg"
-                            onClick={() => handleCopy(session)}
-                          >
+                          <ConnectButton compact onClick={() => handleCopy(session)}>
                             <Copy className="h-4 w-4" />
                             Copy link
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="rounded-lg text-[hsl(var(--destructive))]"
+                          </ConnectButton>
+                          <ConnectButton
+                            compact
+                            tone="danger"
                             onClick={() => setPendingRevoke(session)}
                             disabled={!!session.revokedAt || actingSessionId === session.id}
                           >
                             <Trash2 className="h-4 w-4" />
                             Revoke
-                          </Button>
+                          </ConnectButton>
                         </div>
                       </div>
 
                       <div className="flex flex-wrap gap-2">
                         {session.allowedPlatforms.map((platform) => (
-                          <Badge key={platform} variant="secondary" className="rounded-full">
+                          <ConnectBadge key={platform}>
                             {platform}
-                          </Badge>
+                          </ConnectBadge>
                         ))}
                       </div>
 
                       {session.message ? (
-                        <p className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-3 py-3 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                        <p className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-3 text-label-14 leading-6 text-[var(--ds-gray-900)]">
                           {session.message}
                         </p>
                       ) : null}
 
                       {session.recentActivity.length > 0 ? (
                         <div className="space-y-2">
-                          <p className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                          <p className={connectEyebrowClassName}>
                             Recent activity
                           </p>
                           <div className="space-y-2">
                             {session.recentActivity.map((activity) => (
                               <div
                                 key={`${session.id}-${activity.platform}-${activity.createdAt}`}
-                                className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] px-3 py-3 text-sm"
+                                className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-3 text-label-14"
                               >
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <Badge variant="outline" className="rounded-full">
+                                  <ConnectBadge>
                                     {activity.platform}
-                                  </Badge>
-                                  <Badge variant="secondary" className="rounded-full">
+                                  </ConnectBadge>
+                                  <ConnectBadge tone={activity.eventType === "RECONNECTED" ? "warning" : "info"}>
                                     {activity.eventType === "RECONNECTED"
                                       ? "Reconnected"
                                       : "Connected"}
-                                  </Badge>
+                                  </ConnectBadge>
                                 </div>
-                                <p className="mt-2 text-[hsl(var(--foreground))]">
+                                <p className="mt-2 text-label-14 text-[var(--ds-gray-1000)]">
                                   {activity.actorDisplayName} connected{" "}
                                   <span className="font-medium">{activity.providerUserId}</span>
                                 </p>
-                                <p className="mt-1 text-[hsl(var(--foreground-muted))]">
+                                <p className="mt-1 text-copy-12 text-[var(--ds-gray-900)]">
                                   {activity.actorEmail} · {formatTimestamp(activity.createdAt)}
                                 </p>
                               </div>
@@ -539,7 +537,7 @@ export default function ClientConnectionHandoffSection() {
                           </div>
                         </div>
                       ) : (
-                        <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] px-3 py-5 text-sm text-[hsl(var(--foreground-muted))]">
+                        <div className="rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-5 text-label-14 text-[var(--ds-gray-900)]">
                           No client activity yet. Once the client connects or reconnects an
                           account, the audit trail will show up here.
                         </div>

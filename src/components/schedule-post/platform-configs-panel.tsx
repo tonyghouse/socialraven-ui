@@ -70,6 +70,16 @@ const PLATFORM_STYLES: Record<string, { bg: string; text: string; border: string
   tiktok:    { bg: "bg-surface-raised", text: "text-foreground", border: "border-border-subtle", dot: "bg-foreground" },
 };
 
+const GEIST_PLATFORM_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
+  facebook:  { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-blue-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-blue-600)]" },
+  instagram: { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-pink-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-pink-600)]" },
+  x:         { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-gray-1000)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-gray-1000)]" },
+  linkedin:  { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-blue-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-blue-600)]" },
+  youtube:   { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-red-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-red-600)]" },
+  threads:   { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-gray-1000)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-gray-1000)]" },
+  tiktok:    { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-teal-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-teal-600)]" },
+};
+
 const PLATFORM_NAMES: Record<string, string> = {
   facebook:  "Facebook",
   instagram: "Instagram",
@@ -80,9 +90,31 @@ const PLATFORM_NAMES: Record<string, string> = {
   tiktok:    "TikTok",
 };
 
+type Appearance = "default" | "geist";
+
+function fieldClassName(appearance: Appearance) {
+  return appearance === "geist"
+    ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+    : "";
+}
+
+function textareaClassName(appearance: Appearance) {
+  return appearance === "geist"
+    ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+    : "";
+}
+
 // ── Reusable sub-components ───────────────────────────────────────────────────
 
-function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+function Toggle({
+  checked,
+  onChange,
+  appearance = "default",
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  appearance?: Appearance;
+}) {
   return (
     <button
       type="button"
@@ -90,8 +122,17 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       className={cn(
-        "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35",
-        checked ? "bg-[hsl(var(--accent))]" : "bg-surface-raised"
+        "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2",
+        appearance === "geist"
+          ? "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+          : "focus-visible:ring-[hsl(var(--accent))]/35",
+        checked
+          ? appearance === "geist"
+            ? "bg-[var(--ds-blue-600)]"
+            : "bg-[hsl(var(--accent))]"
+          : appearance === "geist"
+            ? "bg-[var(--ds-gray-300)]"
+            : "bg-surface-raised"
       )}
     >
       <span
@@ -109,19 +150,21 @@ function ToggleRow({
   description,
   checked,
   onChange,
+  appearance = "default",
 }: {
   label: string;
   description?: string;
   checked: boolean;
   onChange: (v: boolean) => void;
+  appearance?: Appearance;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-border-subtle py-2.5 last:border-0">
+    <div className={cn("flex items-center justify-between border-b py-2.5 last:border-0", appearance === "geist" ? "border-[var(--ds-gray-400)]" : "border-border-subtle")}>
       <div className="flex-1 min-w-0 pr-4">
-        <p className="text-sm font-medium text-foreground">{label}</p>
-        {description && <p className="mt-0.5 text-xs text-foreground-muted">{description}</p>}
+        <p className={cn(appearance === "geist" ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-medium text-foreground")}>{label}</p>
+        {description && <p className={cn("mt-0.5", appearance === "geist" ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-foreground-muted")}>{description}</p>}
       </div>
-      <Toggle checked={checked} onChange={onChange} />
+      <Toggle checked={checked} onChange={onChange} appearance={appearance} />
     </div>
   );
 }
@@ -130,10 +173,12 @@ function RadioPills<T extends string>({
   value,
   options,
   onChange,
+  appearance = "default",
 }: {
   value?: T;
   options: { value: T; label: string }[];
   onChange: (v: T) => void;
+  appearance?: Appearance;
 }) {
   return (
     <div className="flex flex-wrap gap-2">
@@ -145,8 +190,12 @@ function RadioPills<T extends string>({
           className={cn(
             "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors duration-150",
             value === opt.value
-              ? "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-              : "border-border-subtle bg-surface text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground"
+              ? appearance === "geist"
+                ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                : "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+              : appearance === "geist"
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-blue-200)] hover:text-[var(--ds-gray-1000)]"
+                : "border-border-subtle bg-surface text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground"
           )}
         >
           {opt.label}
@@ -156,10 +205,18 @@ function RadioPills<T extends string>({
   );
 }
 
-function ConfigRow({ label, children }: { label: string; children: React.ReactNode }) {
+function ConfigRow({
+  label,
+  children,
+  appearance = "default",
+}: {
+  label: string;
+  children: React.ReactNode;
+  appearance?: Appearance;
+}) {
   return (
     <div className="space-y-2">
-      <Label className="text-xs font-semibold uppercase tracking-[0.08em] text-foreground-muted">{label}</Label>
+      <Label className={cn("text-xs font-semibold uppercase tracking-[0.08em]", appearance === "geist" ? "text-[var(--ds-gray-900)]" : "text-foreground-muted")}>{label}</Label>
       {children}
     </div>
   );
@@ -167,10 +224,18 @@ function ConfigRow({ label, children }: { label: string; children: React.ReactNo
 
 // ── Per-platform config panels ────────────────────────────────────────────────
 
-function FacebookPanel({ config, onChange }: { config: FacebookConfig; onChange: (c: FacebookConfig) => void }) {
+function FacebookPanel({
+  config,
+  onChange,
+  appearance = "default",
+}: {
+  config: FacebookConfig;
+  onChange: (c: FacebookConfig) => void;
+  appearance?: Appearance;
+}) {
   return (
     <div className="space-y-4">
-      <ConfigRow label="Audience">
+      <ConfigRow label="Audience" appearance={appearance}>
         <RadioPills
           value={config.audience}
           options={[
@@ -180,14 +245,15 @@ function FacebookPanel({ config, onChange }: { config: FacebookConfig; onChange:
             { value: "SELF",               label: "Only Me" },
           ]}
           onChange={(v) => onChange({ ...config, audience: v })}
+          appearance={appearance}
         />
       </ConfigRow>
-      <ConfigRow label="First Comment">
+      <ConfigRow label="First Comment" appearance={appearance}>
         <Textarea
           placeholder="Add a first comment (great for hashtags or CTAs)..."
           value={config.firstComment ?? ""}
           onChange={(e) => onChange({ ...config, firstComment: e.target.value })}
-          className="min-h-[72px] text-sm resize-none"
+          className={cn("min-h-[72px] text-sm resize-none", textareaClassName(appearance))}
         />
       </ConfigRow>
     </div>
@@ -199,11 +265,13 @@ function InstagramPanel({
   onChange,
   files,
   onReplaceFiles,
+  appearance = "default",
 }: {
   config: InstagramConfig;
   onChange: (c: InstagramConfig) => void;
   files?: File[];
   onReplaceFiles?: (files: File[]) => void;
+  appearance?: Appearance;
 }) {
   // "Original" (null) is the default — no cropping applied
   const [selectedRatio, setSelectedRatio] = useState<number | null | "original">("original");
@@ -234,7 +302,7 @@ function InstagramPanel({
     <div className="space-y-4">
       {/* Aspect ratio crop — only shown when images are attached */}
       {imageFiles.length > 0 && (
-        <ConfigRow label="Aspect Ratio">
+        <ConfigRow label="Aspect Ratio" appearance={appearance}>
           <div className="flex gap-2">
             {CROP_PRESETS.map(({ label, ratio, pw, ph }) => {
               const isSelected = selectedRatio === (ratio === null ? "original" : ratio);
@@ -246,8 +314,12 @@ function InstagramPanel({
                   className={cn(
                     "flex flex-1 flex-col items-center gap-1.5 rounded-lg border px-1 py-2.5 transition-colors",
                     isSelected
-                      ? "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                      : "border-border-subtle text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground",
+                      ? appearance === "geist"
+                        ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        : "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                      : appearance === "geist"
+                        ? "border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:border-[var(--ds-blue-200)] hover:text-[var(--ds-gray-1000)]"
+                        : "border-border-subtle text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground",
                   )}
                 >
                   {/* Visual ratio preview */}
@@ -255,7 +327,9 @@ function InstagramPanel({
                     style={{ width: pw, height: ph }}
                     className={cn(
                       "rounded-sm border-2 flex-shrink-0",
-                      isSelected ? "border-[hsl(var(--accent))]" : "border-current"
+                      isSelected
+                        ? appearance === "geist" ? "border-[var(--ds-blue-700)]" : "border-[hsl(var(--accent))]"
+                        : "border-current"
                     )}
                   />
                   <span className="text-[10px] font-semibold leading-none">{label}</span>
@@ -269,7 +343,12 @@ function InstagramPanel({
               type="button"
               onClick={applyToAll}
               disabled={applying}
-              className="mt-2 w-full rounded-lg border border-[hsl(var(--accent))]/20 py-1.5 text-xs font-semibold text-[hsl(var(--accent))] transition-colors hover:bg-[hsl(var(--accent))]/8 disabled:opacity-50"
+              className={cn(
+                "mt-2 w-full rounded-lg border py-1.5 text-xs font-semibold transition-colors disabled:opacity-50",
+                appearance === "geist"
+                  ? "border-[var(--ds-blue-200)] text-[var(--ds-blue-700)] hover:bg-[var(--ds-blue-100)]"
+                  : "border-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))]/8"
+              )}
             >
               {applying
                 ? "Cropping…"
@@ -285,7 +364,12 @@ function InstagramPanel({
                   key={file.name + file.size}
                   type="button"
                   onClick={() => setCropTarget(file)}
-                  className="group relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border border-border-subtle transition-colors hover:border-[hsl(var(--accent))]/25"
+                  className={cn(
+                    "group relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border transition-colors",
+                    appearance === "geist"
+                      ? "border-[var(--ds-gray-400)] hover:border-[var(--ds-blue-200)]"
+                      : "border-border-subtle hover:border-[hsl(var(--accent))]/25"
+                  )}
                   title={`Crop ${file.name} individually`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -304,20 +388,20 @@ function InstagramPanel({
         </ConfigRow>
       )}
 
-      <ConfigRow label="Alt Text (Accessibility)">
+      <ConfigRow label="Alt Text (Accessibility)" appearance={appearance}>
         <Input
           placeholder="Describe your image for screen readers..."
           value={config.altText ?? ""}
           onChange={(e) => onChange({ ...config, altText: e.target.value })}
-          className="text-sm"
+          className={cn("text-sm", fieldClassName(appearance))}
         />
       </ConfigRow>
-      <ConfigRow label="First Comment">
+      <ConfigRow label="First Comment" appearance={appearance}>
         <Textarea
           placeholder="Add hashtags in the first comment to keep captions clean..."
           value={config.firstComment ?? ""}
           onChange={(e) => onChange({ ...config, firstComment: e.target.value })}
-          className="min-h-[72px] text-sm resize-none"
+          className={cn("min-h-[72px] text-sm resize-none", textareaClassName(appearance))}
         />
       </ConfigRow>
       <ToggleRow
@@ -325,6 +409,7 @@ function InstagramPanel({
         description="Prevent others from commenting on this post"
         checked={config.disableComments ?? false}
         onChange={(v) => onChange({ ...config, disableComments: v })}
+        appearance={appearance}
       />
 
       <ImageCropDialog
@@ -341,10 +426,10 @@ function InstagramPanel({
   );
 }
 
-function XPanel({ config, onChange }: { config: XConfig; onChange: (c: XConfig) => void }) {
+function XPanel({ config, onChange, appearance = "default" }: { config: XConfig; onChange: (c: XConfig) => void; appearance?: Appearance }) {
   return (
     <div className="space-y-4">
-      <ConfigRow label="Who Can Reply">
+      <ConfigRow label="Who Can Reply" appearance={appearance}>
         <RadioPills
           value={config.replySettings}
           options={[
@@ -353,6 +438,7 @@ function XPanel({ config, onChange }: { config: XConfig; onChange: (c: XConfig) 
             { value: "MENTIONED",  label: "Mentioned only" },
           ]}
           onChange={(v) => onChange({ ...config, replySettings: v })}
+          appearance={appearance}
         />
       </ConfigRow>
     </div>
@@ -364,11 +450,13 @@ function YouTubePanel({
   onChange,
   showErrors,
   postType,
+  appearance = "default",
 }: {
   config: YouTubeConfig;
   onChange: (c: YouTubeConfig) => void;
   showErrors?: boolean;
   postType?: PostType;
+  appearance?: Appearance;
 }) {
   const [tagInput, setTagInput] = useState("");
   const titleError = showErrors && postType === "VIDEO" && !config.videoTitle?.trim();
@@ -386,7 +474,7 @@ function YouTubePanel({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        <Label className={cn("text-xs font-semibold uppercase tracking-wider", appearance === "geist" ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
           Video Title
           {postType === "VIDEO" && (
             <span className="ml-1.5 text-red-500 font-bold">*</span>
@@ -399,18 +487,22 @@ function YouTubePanel({
           className={cn(
             "text-sm",
             titleError
-              ? "border-destructive/60 focus-visible:ring-destructive/20"
-              : "border-border-subtle"
+              ? appearance === "geist"
+                ? "border-[var(--ds-red-300)] focus-visible:ring-[var(--ds-red-200)]"
+                : "border-destructive/60 focus-visible:ring-destructive/20"
+              : appearance === "geist"
+                ? fieldClassName(appearance)
+                : "border-border-subtle"
           )}
         />
         {titleError && (
-          <p className="flex items-center gap-1.5 text-xs text-destructive">
+          <p className={cn("flex items-center gap-1.5 text-xs", appearance === "geist" ? "text-[var(--ds-red-700)]" : "text-destructive")}>
             <AlertCircle className="w-3 h-3 flex-shrink-0" />
             Video title is required for YouTube
           </p>
         )}
       </div>
-      <ConfigRow label="Privacy">
+      <ConfigRow label="Privacy" appearance={appearance}>
         <RadioPills
           value={config.privacy}
           options={[
@@ -419,21 +511,27 @@ function YouTubePanel({
             { value: "PRIVATE",  label: "Private" },
           ]}
           onChange={(v) => onChange({ ...config, privacy: v })}
+          appearance={appearance}
         />
       </ConfigRow>
-      <ConfigRow label="Tags">
+      <ConfigRow label="Tags" appearance={appearance}>
         <div className="flex gap-2">
           <Input
             placeholder="Type a tag and press Enter..."
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTag(); } }}
-            className="text-sm flex-1"
+            className={cn("text-sm flex-1", fieldClassName(appearance))}
           />
           <button
             type="button"
             onClick={addTag}
-            className="flex-shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-[hsl(var(--accent-hover))]"
+            className={cn(
+              "flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
+              appearance === "geist"
+                ? "bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+                : "bg-primary text-primary-foreground hover:bg-[hsl(var(--accent-hover))]"
+            )}
           >
             Add
           </button>
@@ -441,12 +539,12 @@ function YouTubePanel({
         {(config.tags ?? []).length > 0 && (
           <div className="flex flex-wrap gap-1.5 mt-2">
             {(config.tags ?? []).map((tag) => (
-              <span key={tag} className="inline-flex items-center gap-1 rounded-md border border-border-subtle bg-surface-raised px-2.5 py-1 text-xs font-medium">
+              <span key={tag} className={cn("inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium", appearance === "geist" ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]" : "border-border-subtle bg-surface-raised")}>
                 {tag}
                 <button
                   type="button"
                   onClick={() => onChange({ ...config, tags: (config.tags ?? []).filter((t) => t !== tag) })}
-                  className="ml-0.5 leading-none text-foreground-muted hover:text-foreground"
+                  className={cn("ml-0.5 leading-none", appearance === "geist" ? "text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]" : "text-foreground-muted hover:text-foreground")}
                   aria-label={`Remove tag ${tag}`}
                 >
                   ×
@@ -462,22 +560,24 @@ function YouTubePanel({
           description="This video is directed at children (required by COPPA)"
           checked={config.madeForKids ?? false}
           onChange={(v) => onChange({ ...config, madeForKids: v })}
+          appearance={appearance}
         />
         <ToggleRow
           label="Notify Subscribers"
           description="Send a notification to your subscribers when published"
           checked={config.notifySubscribers ?? true}
           onChange={(v) => onChange({ ...config, notifySubscribers: v })}
+          appearance={appearance}
         />
       </div>
     </div>
   );
 }
 
-function ThreadsPanel({ config, onChange }: { config: ThreadsConfig; onChange: (c: ThreadsConfig) => void }) {
+function ThreadsPanel({ config, onChange, appearance = "default" }: { config: ThreadsConfig; onChange: (c: ThreadsConfig) => void; appearance?: Appearance }) {
   return (
     <div className="space-y-4">
-      <ConfigRow label="Who Can Reply">
+      <ConfigRow label="Who Can Reply" appearance={appearance}>
         <RadioPills
           value={config.replyControl}
           options={[
@@ -486,16 +586,17 @@ function ThreadsPanel({ config, onChange }: { config: ThreadsConfig; onChange: (
             { value: "MENTIONED_ONLY",       label: "Mentioned only" },
           ]}
           onChange={(v) => onChange({ ...config, replyControl: v })}
+          appearance={appearance}
         />
       </ConfigRow>
     </div>
   );
 }
 
-function TikTokPanel({ config, onChange }: { config: TikTokConfig; onChange: (c: TikTokConfig) => void }) {
+function TikTokPanel({ config, onChange, appearance = "default" }: { config: TikTokConfig; onChange: (c: TikTokConfig) => void; appearance?: Appearance }) {
   return (
     <div className="space-y-4">
-      <ConfigRow label="Visibility">
+      <ConfigRow label="Visibility" appearance={appearance}>
         <RadioPills
           value={config.privacyLevel}
           options={[
@@ -505,6 +606,7 @@ function TikTokPanel({ config, onChange }: { config: TikTokConfig; onChange: (c:
             { value: "SELF_ONLY",            label: "Only Me" },
           ]}
           onChange={(v) => onChange({ ...config, privacyLevel: v })}
+          appearance={appearance}
         />
       </ConfigRow>
       <div className="pt-1 space-y-0">
@@ -513,34 +615,38 @@ function TikTokPanel({ config, onChange }: { config: TikTokConfig; onChange: (c:
           description="Let viewers comment on this video"
           checked={config.allowComment ?? true}
           onChange={(v) => onChange({ ...config, allowComment: v })}
+          appearance={appearance}
         />
         <ToggleRow
           label="Allow Duet"
           description="Allow others to create side-by-side videos"
           checked={config.allowDuet ?? true}
           onChange={(v) => onChange({ ...config, allowDuet: v })}
+          appearance={appearance}
         />
         <ToggleRow
           label="Allow Stitch"
           description="Allow others to clip and use this video"
           checked={config.allowStitch ?? true}
           onChange={(v) => onChange({ ...config, allowStitch: v })}
+          appearance={appearance}
         />
         <ToggleRow
           label="Branded Content"
           description="Disclose paid partnerships or promotions"
           checked={config.brandContentToggle ?? false}
           onChange={(v) => onChange({ ...config, brandContentToggle: v })}
+          appearance={appearance}
         />
       </div>
     </div>
   );
 }
 
-function LinkedInPanel({ config, onChange }: { config: LinkedInConfig; onChange: (c: LinkedInConfig) => void }) {
+function LinkedInPanel({ config, onChange, appearance = "default" }: { config: LinkedInConfig; onChange: (c: LinkedInConfig) => void; appearance?: Appearance }) {
   return (
     <div className="space-y-4">
-      <ConfigRow label="Visibility">
+      <ConfigRow label="Visibility" appearance={appearance}>
         <RadioPills
           value={config.visibility}
           options={[
@@ -548,6 +654,7 @@ function LinkedInPanel({ config, onChange }: { config: LinkedInConfig; onChange:
             { value: "CONNECTIONS", label: "Connections only" },
           ]}
           onChange={(v) => onChange({ ...config, visibility: v })}
+          appearance={appearance}
         />
       </ConfigRow>
     </div>
@@ -564,6 +671,7 @@ function PlatformAccordionCard({
   postType,
   files,
   onReplaceFiles,
+  appearance = "default",
 }: {
   platform: string;
   config: any;
@@ -572,9 +680,12 @@ function PlatformAccordionCard({
   postType?: PostType;
   files?: File[];
   onReplaceFiles?: (files: File[]) => void;
+  appearance?: Appearance;
 }) {
   const [open, setOpen] = useState(true);
-  const styles = PLATFORM_STYLES[platform] ?? PLATFORM_STYLES["x"];
+  const styles =
+    (appearance === "geist" ? GEIST_PLATFORM_STYLES : PLATFORM_STYLES)[platform]
+    ?? (appearance === "geist" ? GEIST_PLATFORM_STYLES.x : PLATFORM_STYLES.x);
   const Icon   = PLATFORM_ICONS[platform];
   const name   = PLATFORM_NAMES[platform] ?? platform;
 
@@ -587,13 +698,13 @@ function PlatformAccordionCard({
 
   function renderPanel() {
     switch (platform) {
-      case "facebook":  return <FacebookPanel  config={config ?? {}} onChange={onChange} />;
-      case "instagram": return <InstagramPanel config={config ?? {}} onChange={onChange} files={files} onReplaceFiles={onReplaceFiles} />;
-      case "x":         return <XPanel         config={config ?? {}} onChange={onChange} />;
-      case "youtube":   return <YouTubePanel   config={config ?? {}} onChange={onChange} showErrors={showErrors} postType={postType} />;
-      case "threads":   return <ThreadsPanel   config={config ?? {}} onChange={onChange} />;
-      case "tiktok":    return <TikTokPanel    config={config ?? {}} onChange={onChange} />;
-      case "linkedin":  return <LinkedInPanel  config={config ?? {}} onChange={onChange} />;
+      case "facebook":  return <FacebookPanel  config={config ?? {}} onChange={onChange} appearance={appearance} />;
+      case "instagram": return <InstagramPanel config={config ?? {}} onChange={onChange} files={files} onReplaceFiles={onReplaceFiles} appearance={appearance} />;
+      case "x":         return <XPanel         config={config ?? {}} onChange={onChange} appearance={appearance} />;
+      case "youtube":   return <YouTubePanel   config={config ?? {}} onChange={onChange} showErrors={showErrors} postType={postType} appearance={appearance} />;
+      case "threads":   return <ThreadsPanel   config={config ?? {}} onChange={onChange} appearance={appearance} />;
+      case "tiktok":    return <TikTokPanel    config={config ?? {}} onChange={onChange} appearance={appearance} />;
+      case "linkedin":  return <LinkedInPanel  config={config ?? {}} onChange={onChange} appearance={appearance} />;
       default: return null;
     }
   }
@@ -604,7 +715,8 @@ function PlatformAccordionCard({
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          "flex w-full items-center justify-between px-4 py-3 transition-colors hover:bg-[hsl(var(--background))]",
+          "flex w-full items-center justify-between px-4 py-3 transition-colors",
+          appearance === "geist" ? "hover:bg-[var(--ds-gray-200)]" : "hover:bg-[hsl(var(--background))]",
           styles.bg
         )}
       >
@@ -615,22 +727,22 @@ function PlatformAccordionCard({
             <div className={cn("w-2 h-2 rounded-full flex-shrink-0", styles.dot)} />
           )}
           {Icon && <Icon className={cn("w-4 h-4 flex-shrink-0", styles.text)} />}
-          <span className={cn("text-sm font-semibold", styles.text)}>{name}</span>
+          <span className={cn(appearance === "geist" ? "text-label-14" : "text-sm font-semibold", styles.text)}>{name}</span>
           {hasError && (
-            <span className="flex items-center gap-1 rounded-md border border-destructive/20 bg-destructive/10 px-2 py-px text-[10px] font-semibold text-destructive">
+            <span className={cn("flex items-center gap-1 rounded-md border px-2 py-px text-[10px] font-semibold", appearance === "geist" ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
               <AlertCircle className="w-2.5 h-2.5" />
               Required field missing
             </span>
           )}
         </div>
         {open
-          ? <ChevronUp   className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-          : <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          ? <ChevronUp   className={cn("w-4 h-4 flex-shrink-0", appearance === "geist" ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")} />
+          : <ChevronDown className={cn("w-4 h-4 flex-shrink-0", appearance === "geist" ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")} />
         }
       </button>
 
       {open && (
-        <div className="border-t border-border-subtle bg-surface px-4 py-4">
+        <div className={cn("border-t px-4 py-4", appearance === "geist" ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-border-subtle bg-surface")}>
           {renderPanel()}
         </div>
       )}
@@ -648,9 +760,19 @@ interface Props {
   postType?: PostType;
   files?: File[];
   onReplaceFiles?: (files: File[]) => void;
+  appearance?: Appearance;
 }
 
-export default function PlatformConfigsPanel({ selectedAccounts, configs, onChange, showErrors, postType, files, onReplaceFiles }: Props) {
+export default function PlatformConfigsPanel({
+  selectedAccounts,
+  configs,
+  onChange,
+  showErrors,
+  postType,
+  files,
+  onReplaceFiles,
+  appearance = "default",
+}: Props) {
   const platforms = useMemo(() => {
     const seen = new Set<string>();
     return selectedAccounts
@@ -667,12 +789,12 @@ export default function PlatformConfigsPanel({ selectedAccounts, configs, onChan
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border-subtle bg-surface-raised text-[hsl(var(--accent))]">
+        <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg border", appearance === "geist" ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]" : "border-border-subtle bg-surface-raised text-[hsl(var(--accent))]")}>
           <Settings2 className="h-4 w-4" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-foreground">Platform Settings</h3>
-          <p className="text-xs text-foreground-muted">Customize how your post appears on each platform</p>
+          <h3 className={cn(appearance === "geist" ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-semibold text-foreground")}>Platform Settings</h3>
+          <p className={cn(appearance === "geist" ? "text-copy-12 text-[var(--ds-gray-900)]" : "text-xs text-foreground-muted")}>Customize how your post appears on each platform</p>
         </div>
       </div>
       <div className="space-y-2">
@@ -686,6 +808,7 @@ export default function PlatformConfigsPanel({ selectedAccounts, configs, onChan
             postType={postType}
             files={platform === "instagram" ? files : undefined}
             onReplaceFiles={platform === "instagram" ? onReplaceFiles : undefined}
+            appearance={appearance}
           />
         ))}
       </div>

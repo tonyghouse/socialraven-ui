@@ -1,173 +1,194 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { type ElementType, useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
 import {
-  Eye,
-  Users,
-  Heart,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  RefreshCw,
-  BarChart2,
-  FileText,
-  Clock,
-  MessageCircle,
-  Share2,
-  MousePointerClick,
-  Video,
-  Star,
   AlertCircle,
+  BarChart2,
   ChevronRight,
+  Clock,
+  Eye,
+  FileText,
+  Heart,
+  MessageCircle,
+  Minus,
+  MousePointerClick,
+  RefreshCw,
+  Share2,
+  Star,
+  TrendingDown,
+  TrendingUp,
+  Users,
+  Video,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+
+import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { ConnectedAccount } from "@/model/ConnectedAccount";
+import { useRole } from "@/hooks/useRole";
 import { fetchConnectedAccountsApi } from "@/service/connectedAccounts";
 import {
   fetchAnalyticsOverviewApi,
+  fetchBestTimesApi,
+  fetchEngagementTimelineApi,
   fetchPlatformStatsApi,
   fetchTopPostsApi,
-  fetchEngagementTimelineApi,
-  fetchBestTimesApi,
-  type DateRange,
-  type SnapshotType,
   type AnalyticsOverview,
-  type PlatformStats,
-  type TopPost,
-  type TimelineChartRow,
+  type DateRange,
   type HeatmapCell,
+  type PlatformStats,
+  type SnapshotType,
+  type TimelineChartRow,
+  type TopPost,
 } from "@/service/analytics";
-import type { ConnectedAccount } from "@/model/ConnectedAccount";
-import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
-import { useRole } from "@/hooks/useRole";
 
-// ─── Platform meta ────────────────────────────────────────────────────────────
-
-const PLATFORM_META: Record<
-  string,
-  { label: string; chartColor: string }
-> = {
-  youtube:  { label: "YouTube", chartColor: "hsl(var(--chart-1))" },
-  linkedin: { label: "LinkedIn", chartColor: "hsl(var(--chart-2))" },
-  x:        { label: "X / Twitter", chartColor: "hsl(var(--chart-5))" },
-  instagram:{ label: "Instagram", chartColor: "hsl(var(--chart-3))" },
-  facebook: { label: "Facebook", chartColor: "hsl(var(--chart-4))" },
+const PLATFORM_META: Record<string, { label: string; chartColor: string }> = {
+  youtube: { label: "YouTube", chartColor: "var(--chart-categorical-1)" },
+  linkedin: { label: "LinkedIn", chartColor: "var(--chart-categorical-2)" },
+  x: { label: "X / Twitter", chartColor: "var(--chart-categorical-3)" },
+  instagram: { label: "Instagram", chartColor: "var(--chart-categorical-4)" },
+  facebook: { label: "Facebook", chartColor: "var(--chart-categorical-5)" },
+  tiktok: { label: "TikTok", chartColor: "var(--chart-categorical-6)" },
+  threads: { label: "Threads", chartColor: "var(--chart-neutral)" },
 };
+
+const ACTIVE_PROVIDERS = ["youtube", "linkedin", "x"] as const;
+const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const PROXY_DOMAINS = ["linkedin.com", "licdn.com"];
+
+const pageClassName = "min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]";
+const surfaceClassName =
+  "overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none";
+const dividerClassName = "border-[var(--ds-gray-400)]";
+const subtleButtonClassName =
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-[var(--ds-background-100)]";
+const segmentedControlClassName =
+  "flex items-center gap-1 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-1";
+const segmentedButtonClassName =
+  "rounded-md px-3 py-1.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]";
 
 function meta(provider: string) {
   return PLATFORM_META[provider.toLowerCase()] ?? {
-    label: provider, chartColor: "hsl(var(--foreground-subtle))",
+    label: provider,
+    chartColor: "var(--chart-neutral)",
   };
 }
 
-const ACTIVE_PROVIDERS = ["youtube", "linkedin", "x"];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
 function fmt(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000)     return `${(n / 1_000).toFixed(1)}K`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
   return String(n);
 }
 
 function fmtDate(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
-function daysFromRange(r: DateRange) {
-  return r === "7d" ? 7 : r === "30d" ? 30 : 90;
-}
-
-const PROXY_DOMAINS = ["linkedin.com", "licdn.com"];
 function proxyImg(url?: string | null): string | null {
   if (!url) return null;
-  return PROXY_DOMAINS.some((d) => url.toLowerCase().includes(d))
+  return PROXY_DOMAINS.some((domain) => url.toLowerCase().includes(domain))
     ? `/api/proxy-image?url=${encodeURIComponent(url)}`
     : url;
 }
+
 function initials(name?: string) {
-  return (name ?? "?").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  return (name ?? "?")
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
-const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
+function heatmapCellColor(intensity: number) {
+  if (intensity <= 0) return "var(--ds-gray-100)";
+  if (intensity <= 0.2) return "var(--ds-blue-100)";
+  if (intensity <= 0.4) return "var(--ds-blue-200)";
+  if (intensity <= 0.6) return "var(--ds-blue-300)";
+  if (intensity <= 0.8) return "var(--ds-blue-400)";
+  return "var(--ds-blue-500)";
+}
 
 function Sk({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse rounded-xl bg-foreground/[0.06]", className)} />;
+  return (
+    <div
+      className={cn("animate-pulse rounded-md bg-[var(--ds-gray-200)]", className)}
+    />
+  );
 }
-
-// ─── Trend badge ──────────────────────────────────────────────────────────────
 
 function Trend({ value }: { value: number | null }) {
   if (value === null) return null;
-  if (value > 0)
+
+  if (value > 0) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--success))]">
+      <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-green-200)] bg-[var(--ds-green-100)] px-2.5 py-1 text-label-12 text-[var(--ds-green-700)]">
         <TrendingUp className="h-3 w-3" />+{value.toFixed(1)}%
       </span>
     );
-  if (value < 0)
+  }
+
+  if (value < 0) {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--destructive))]">
-        <TrendingDown className="h-3 w-3" />{value.toFixed(1)}%
+      <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-red-200)] bg-[var(--ds-red-100)] px-2.5 py-1 text-label-12 text-[var(--ds-red-700)]">
+        <TrendingDown className="h-3 w-3" />
+        {value.toFixed(1)}%
       </span>
     );
+  }
+
   return (
-    <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+    <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
       <Minus className="h-3 w-3" />0%
     </span>
   );
 }
-
-// ─── KPI card ─────────────────────────────────────────────────────────────────
 
 function KpiCard({
   icon: Icon,
   label,
   value,
   trend,
-  loading,
 }: {
-  icon: React.ElementType;
+  icon: ElementType;
   label: string;
   value: string;
   trend?: number | null;
-  loading: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-4 shadow-sm">
-      <div className="flex items-center justify-between">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
+    <section className={cn(surfaceClassName, "p-4")}>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
           <Icon className="h-4 w-4" />
         </div>
-        {trend !== undefined && <Trend value={trend ?? null} />}
+        {trend !== undefined ? <Trend value={trend ?? null} /> : null}
       </div>
-      <div>
-        <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">{label}</p>
-        {loading
-          ? <Sk className="mt-2 h-7 w-20" />
-          : <p className="mt-1 text-[28px] font-bold leading-8 text-[hsl(var(--foreground))]">{value}</p>
-        }
+
+      <div className="mt-3">
+        <p className="text-label-12 text-[var(--ds-gray-900)]">{label}</p>
+        <p className="mt-1 text-heading-32 text-[var(--ds-gray-1000)]">{value}</p>
       </div>
-    </div>
+    </section>
   );
 }
-
-// ─── Account chip (small, for the accounts row) ───────────────────────────────
 
 function AccountChip({
   account,
@@ -180,274 +201,328 @@ function AccountChip({
 }) {
   const [imgErr, setImgErr] = useState(false);
   const src = proxyImg(account.profilePicLink);
-  const m = meta(account.platform);
+  const platformMeta = meta(account.platform);
 
   return (
     <button
+      type="button"
       onClick={onClick}
       className={cn(
-        "shrink-0 rounded-lg border px-2.5 py-2 transition-colors",
+        "flex shrink-0 items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left transition-colors",
         isSelected
-          ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent))]/[0.08]"
-          : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] hover:border-[hsl(var(--border))] hover:bg-[hsl(var(--surface-raised))]"
+          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]"
+          : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
       )}
     >
       <Avatar className="h-6 w-6 shrink-0">
-        {!imgErr && src
-          ? <AvatarImage src={src} alt={account.username} onError={() => setImgErr(true)} />
-          : <AvatarFallback className="bg-[hsl(var(--surface-raised))] text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
-              {initials(account.username)}
-            </AvatarFallback>
-        }
+        {!imgErr && src ? (
+          <AvatarImage
+            src={src}
+            alt={account.username}
+            onError={() => setImgErr(true)}
+          />
+        ) : (
+          <AvatarFallback className="bg-[var(--ds-gray-200)] text-label-12 text-[var(--ds-gray-900)]">
+            {initials(account.username)}
+          </AvatarFallback>
+        )}
       </Avatar>
-      <div className="min-w-0 text-left">
-        <p className={cn("max-w-[120px] truncate text-sm font-medium leading-5", isSelected ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground))]")}>
+
+      <div className="min-w-0">
+        <p
+          className={cn(
+            "max-w-[120px] truncate text-label-14",
+            isSelected
+              ? "text-[var(--ds-blue-700)]"
+              : "text-[var(--ds-gray-1000)]"
+          )}
+        >
           {account.username}
         </p>
       </div>
-      <span className="rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
-        {m.label}
+
+      <span
+        className={cn(
+          "rounded-full border px-2 py-0.5 text-label-12",
+          isSelected
+            ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+            : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
+        )}
+      >
+        {platformMeta.label}
       </span>
     </button>
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// Page
-// ═══════════════════════════════════════════════════════════════════════════════
-
 export default function AnalyticsPage() {
   const { getToken } = useAuth();
   const { canExportClientReports } = useRole();
 
-  // ── Filters ──────────────────────────────────────────────────────────────
-  const [dateRange, setDateRange]         = useState<DateRange>("30d");
-  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null); // providerUserId
-  const [snapshotType, setSnapshotType]   = useState<SnapshotType>("T30D");
+  const [dateRange, setDateRange] = useState<DateRange>("30d");
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
+  const [snapshotType, setSnapshotType] = useState<SnapshotType>("T30D");
 
-  // ── Account data ──────────────────────────────────────────────────────────
-  const [accounts, setAccounts]   = useState<ConnectedAccount[]>([]);
+  const [accounts, setAccounts] = useState<ConnectedAccount[]>([]);
   const [acctLoading, setAcctLoading] = useState(true);
 
-  // ── Analytics data ────────────────────────────────────────────────────────
-  const [overview, setOverview]       = useState<AnalyticsOverview | null>(null);
-  const [platStats, setPlatStats]     = useState<PlatformStats[]>([]);
-  const [topPosts, setTopPosts]       = useState<TopPost[]>([]);
-  const [timeline, setTimeline]       = useState<TimelineChartRow[]>([]);
-  const [heatmap, setHeatmap]         = useState<HeatmapCell[]>([]);
+  const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [platStats, setPlatStats] = useState<PlatformStats[]>([]);
+  const [topPosts, setTopPosts] = useState<TopPost[]>([]);
+  const [timeline, setTimeline] = useState<TimelineChartRow[]>([]);
+  const [heatmap, setHeatmap] = useState<HeatmapCell[]>([]);
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
-  const [error, setError]             = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
-  // ── Load accounts ─────────────────────────────────────────────────────────
   useEffect(() => {
-    async function load() {
+    async function loadAccounts() {
       try {
-        const accts = await fetchConnectedAccountsApi(getToken, null);
-        setAccounts(accts);
-      } catch (e) {
-        console.error(e);
+        const connectedAccounts = await fetchConnectedAccountsApi(getToken, null);
+        setAccounts(connectedAccounts);
+      } catch (loadError) {
+        console.error(loadError);
       } finally {
         setAcctLoading(false);
       }
     }
-    load();
+
+    void loadAccounts();
   }, [getToken]);
 
-  // ── Selected account object ───────────────────────────────────────────────
   const selectedAccount = useMemo(
-    () => accounts.find((a) => a.providerUserId === selectedAccountId) ?? null,
+    () => accounts.find((account) => account.providerUserId === selectedAccountId) ?? null,
     [accounts, selectedAccountId]
   );
 
-  // ── Active provider filter (from selected account) ────────────────────────
   const activeProvider = selectedAccount?.platform.toLowerCase() ?? null;
 
-  // ── Fetch analytics ───────────────────────────────────────────────────────
   const fetchAnalytics = useCallback(async () => {
     setAnalyticsLoading(true);
     setError(null);
+
     try {
-      const [ov, ps, tp, tl, hm] = await Promise.all([
-        fetchAnalyticsOverviewApi(getToken, dateRange),
-        fetchPlatformStatsApi(getToken, dateRange),
-        fetchTopPostsApi(getToken, dateRange, snapshotType),
-        fetchEngagementTimelineApi(getToken, dateRange),
-        fetchBestTimesApi(getToken),
-      ]);
-      setOverview(ov);
-      setPlatStats(ps);
-      setTopPosts(tp);
-      setTimeline(tl);
-      setHeatmap(hm);
+      const [nextOverview, nextPlatformStats, nextTopPosts, nextTimeline, nextHeatmap] =
+        await Promise.all([
+          fetchAnalyticsOverviewApi(getToken, dateRange),
+          fetchPlatformStatsApi(getToken, dateRange),
+          fetchTopPostsApi(getToken, dateRange, snapshotType),
+          fetchEngagementTimelineApi(getToken, dateRange),
+          fetchBestTimesApi(getToken),
+        ]);
+
+      setOverview(nextOverview);
+      setPlatStats(nextPlatformStats);
+      setTopPosts(nextTopPosts);
+      setTimeline(nextTimeline);
+      setHeatmap(nextHeatmap);
       setLastRefreshed(new Date());
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Failed to load analytics");
+    } catch (loadError: unknown) {
+      setError(loadError instanceof Error ? loadError.message : "Failed to load analytics");
     } finally {
       setAnalyticsLoading(false);
     }
-  }, [getToken, dateRange, snapshotType]);
+  }, [dateRange, getToken, snapshotType]);
 
-  useEffect(() => { fetchAnalytics(); }, [fetchAnalytics]);
+  useEffect(() => {
+    void fetchAnalytics();
+  }, [fetchAnalytics]);
 
-  // ── Derived: filtered by active provider ─────────────────────────────────
   const filteredPlatStats = activeProvider
-    ? platStats.filter((s) => s.provider.toLowerCase() === activeProvider)
+    ? platStats.filter((stat) => stat.provider.toLowerCase() === activeProvider)
     : platStats;
 
   const filteredTopPosts = activeProvider
-    ? topPosts.filter((p) => p.provider.toLowerCase() === activeProvider)
+    ? topPosts.filter((post) => post.provider.toLowerCase() === activeProvider)
     : topPosts;
 
   const filteredTimeline = useMemo(() => {
     if (!activeProvider) return timeline;
-    return timeline.map((row) => {
-      const next: TimelineChartRow = { date: row.date, youtube: 0, linkedin: 0, x: 0 };
-      if (activeProvider === "youtube")  next.youtube  = row.youtube;
-      if (activeProvider === "linkedin") next.linkedin = row.linkedin;
-      if (activeProvider === "x")        next.x        = row.x;
-      return next;
-    });
-  }, [timeline, activeProvider]);
 
-  // ── Computed overview from platform stats when single provider ────────────
+    return timeline.map((row) => {
+      const nextRow: TimelineChartRow = {
+        date: row.date,
+        youtube: 0,
+        linkedin: 0,
+        x: 0,
+      };
+
+      if (activeProvider === "youtube") nextRow.youtube = row.youtube;
+      if (activeProvider === "linkedin") nextRow.linkedin = row.linkedin;
+      if (activeProvider === "x") nextRow.x = row.x;
+
+      return nextRow;
+    });
+  }, [activeProvider, timeline]);
+
   const displayOverview = useMemo(() => {
     if (!activeProvider || filteredPlatStats.length === 0) return overview;
-    const s = filteredPlatStats[0];
+
+    const stat = filteredPlatStats[0];
     return {
-      totalImpressions:  s.impressions,
-      totalReach:        s.reach,
-      totalLikes:        s.likes,
-      totalComments:     s.comments,
-      totalShares:       s.shares,
-      totalVideoViews:   s.videoViews,
-      followerGrowth:    s.followerGrowth,
-      totalPosts:        s.postsPublished,
-      avgEngagementRate: s.engagementRate,
+      totalImpressions: stat.impressions,
+      totalReach: stat.reach,
+      totalLikes: stat.likes,
+      totalComments: stat.comments,
+      totalShares: stat.shares,
+      totalVideoViews: stat.videoViews,
+      followerGrowth: stat.followerGrowth,
+      totalPosts: stat.postsPublished,
+      avgEngagementRate: stat.engagementRate,
     } satisfies AnalyticsOverview;
   }, [activeProvider, filteredPlatStats, overview]);
 
   const hasData = !!displayOverview && (
-    displayOverview.totalImpressions + displayOverview.totalReach + displayOverview.totalPosts > 0
+    displayOverview.totalImpressions +
+      displayOverview.totalReach +
+      displayOverview.totalPosts >
+    0
   );
 
-  const rangeLabel = dateRange === "7d" ? "Last 7 days" : dateRange === "30d" ? "Last 30 days" : "Last 90 days";
+  const rangeLabel =
+    dateRange === "7d"
+      ? "Last 7 days"
+      : dateRange === "30d"
+      ? "Last 30 days"
+      : "Last 90 days";
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col min-h-screen page-bg">
-
+    <div className={pageClassName}>
       <ProtectedPageHeader
         title="Analytics"
         description="Performance overview across connected social channels."
         icon={<BarChart2 className="h-4 w-4" />}
         actions={
           <>
-            <div className="flex items-center gap-1 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-1">
-              {(["7d", "30d", "90d"] as DateRange[]).map((r) => (
+            <div className={segmentedControlClassName}>
+              {(["7d", "30d", "90d"] as DateRange[]).map((range) => (
                 <button
-                  key={r}
-                  onClick={() => setDateRange(r)}
+                  key={range}
+                  type="button"
+                  onClick={() => setDateRange(range)}
                   className={cn(
-                    "rounded-md px-3 py-1.5 text-sm font-medium leading-5 transition-colors",
-                    dateRange === r
-                      ? "bg-[hsl(var(--surface))] text-[hsl(var(--foreground))] shadow-sm"
-                      : "text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]"
+                    segmentedButtonClassName,
+                    dateRange === range
+                      ? "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
+                      : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-gray-1000)]"
                   )}
                 >
-                  {r}
+                  {range}
                 </button>
               ))}
             </div>
 
-            {canExportClientReports && (
-              <Link
-                href="/client-reports"
-                className="inline-flex h-9 items-center gap-2 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm font-medium text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+            {canExportClientReports ? (
+              <Button
+                asChild
+                type="button"
+                variant="outline"
+                size="sm"
+                className={cn("h-9 rounded-md", subtleButtonClassName)}
               >
-                <FileText className="h-4 w-4" />
-                <span>Client Reports</span>
-              </Link>
-            )}
+                <Link href="/client-reports">
+                  <FileText className="h-4 w-4" />
+                  <span>Client Reports</span>
+                </Link>
+              </Button>
+            ) : null}
 
-            <button
-              onClick={fetchAnalytics}
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              onClick={() => void fetchAnalytics()}
               disabled={analyticsLoading}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
               aria-label="Refresh analytics"
+              className={cn("h-9 w-9 rounded-md", subtleButtonClassName)}
             >
-              <RefreshCw className={cn("h-4 w-4", analyticsLoading && "animate-spin")} />
-            </button>
+              <RefreshCw
+                className={cn("h-4 w-4", analyticsLoading && "animate-spin")}
+              />
+            </Button>
           </>
         }
       />
 
-      <main className="flex-1 w-full space-y-6 px-4 py-6 sm:px-6">
-        <section className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-4 shadow-sm">
+      <main className="w-full space-y-6 px-4 py-6 sm:px-6">
+        <section className={cn(surfaceClassName, "p-4")}>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-1">
-              <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Overview</p>
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+              <p className="text-heading-16 text-[var(--ds-gray-1000)]">Overview</p>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 {activeProvider && selectedAccount
                   ? `Showing ${meta(activeProvider).label} analytics for ${selectedAccount.username}.`
                   : "Showing analytics across all connected accounts."}
               </p>
             </div>
+
             <div className="space-y-1 text-right">
-              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">{rangeLabel}</p>
-              <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">
-                {lastRefreshed ? `Updated ${lastRefreshed.toLocaleTimeString()}` : "Waiting for first refresh"}
+              <p className="text-label-12 text-[var(--ds-gray-900)]">{rangeLabel}</p>
+              <p className="text-label-12 text-[var(--ds-gray-900)]">
+                {lastRefreshed
+                  ? `Updated ${lastRefreshed.toLocaleTimeString()}`
+                  : "Waiting for first refresh"}
               </p>
             </div>
           </div>
         </section>
 
-        {/* ── Error banner ──────────────────────────────────────────────── */}
-        {error && (
-          <div className="flex items-center gap-2.5 rounded-xl border border-[hsl(var(--destructive))]/25 bg-[hsl(var(--destructive))]/10 px-4 py-3 text-sm leading-5 text-[hsl(var(--destructive))]">
+        {error ? (
+          <div className="flex items-center gap-2.5 rounded-xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)] px-4 py-3 text-label-14 text-[var(--ds-red-700)]">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span className="flex-1">{error}</span>
-            <button onClick={fetchAnalytics} className="text-xs font-medium leading-4 underline underline-offset-2">Retry</button>
+            <button
+              type="button"
+              onClick={() => void fetchAnalytics()}
+              className="text-label-12 underline underline-offset-2"
+            >
+              Retry
+            </button>
           </div>
-        )}
+        ) : null}
 
-        {/* ─────────────────────────────────────────────────────────────────
-            ACCOUNT GROUPS + ACCOUNTS SELECTOR
-        ───────────────────────────────────────────────────────────────── */}
-        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
-
-          {/* Connected Accounts */}
+        <section className={surfaceClassName}>
           <div className="px-4 py-4">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Connected Accounts</p>
-                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                  {selectedAccount
-                    ? `Viewing analytics for ${selectedAccount.username}.`
-                    : "Select an account to filter the analytics view."}
-                </p>
-              </div>
+            <div className="mb-3">
+              <p className="text-heading-16 text-[var(--ds-gray-1000)]">
+                Connected Accounts
+              </p>
+              <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+                {selectedAccount
+                  ? `Viewing analytics for ${selectedAccount.username}.`
+                  : "Select an account to filter the analytics view."}
+              </p>
             </div>
 
             {acctLoading ? (
               <div className="flex flex-wrap items-center gap-2">
-                {Array.from({ length: 4 }).map((_, i) => <Sk key={i} className="h-9 w-36" />)}
+                {Array.from({ length: 4 }).map((_, index) => (
+                  <Sk key={index} className="h-10 w-36 rounded-lg" />
+                ))}
               </div>
             ) : accounts.length === 0 ? (
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 No connected accounts. Go to{" "}
-                <a href="/connect-accounts" className="text-[hsl(var(--accent))] underline underline-offset-2">Connect Accounts</a>.
+                <Link
+                  href="/connect-accounts"
+                  className="text-[var(--ds-blue-700)] underline underline-offset-2"
+                >
+                  Connect Accounts
+                </Link>
+                .
               </p>
             ) : (
               <div className="flex flex-wrap items-center gap-2">
-                {accounts.map((a) => (
+                {accounts.map((account) => (
                   <AccountChip
-                    key={a.providerUserId}
-                    account={a}
-                    isSelected={selectedAccountId === a.providerUserId}
+                    key={account.providerUserId}
+                    account={account}
+                    isSelected={selectedAccountId === account.providerUserId}
                     onClick={() =>
                       setSelectedAccountId(
-                        selectedAccountId === a.providerUserId ? null : a.providerUserId
+                        selectedAccountId === account.providerUserId
+                          ? null
+                          : account.providerUserId
                       )
                     }
                   />
@@ -457,72 +532,145 @@ export default function AnalyticsPage() {
           </div>
         </section>
 
-        {/* ─────────────────────────────────────────────────────────────────
-            KPI CARDS
-        ───────────────────────────────────────────────────────────────── */}
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {analyticsLoading
-            ? Array.from({ length: 6 }).map((_, i) => <Sk key={i} className="h-[100px]" />)
-            : (
-              <>
-                <KpiCard icon={Eye}        label="Impressions"    value={hasData ? fmt(displayOverview!.totalImpressions) : "—"} loading={false} />
-                <KpiCard icon={Users}      label="Reach"          value={hasData ? fmt(displayOverview!.totalReach) : "—"}        loading={false} />
-                <KpiCard icon={Heart}      label="Engagements"    value={hasData ? fmt(displayOverview!.totalLikes + displayOverview!.totalComments + displayOverview!.totalShares) : "—"} loading={false} />
-                <KpiCard icon={TrendingUp} label="Eng. Rate"      value={hasData ? `${displayOverview!.avgEngagementRate.toFixed(1)}%` : "—"} loading={false} />
-                <KpiCard icon={Users}      label="Follower Growth" value={hasData ? fmt(displayOverview!.followerGrowth) : "—"}   loading={false} />
-                <KpiCard icon={BarChart2}  label="Posts Published" value={hasData ? String(displayOverview!.totalPosts) : "—"}    loading={false} />
-              </>
-            )
-          }
+          {analyticsLoading ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <Sk key={index} className="h-[112px] rounded-xl" />
+            ))
+          ) : (
+            <>
+              <KpiCard
+                icon={Eye}
+                label="Impressions"
+                value={hasData ? fmt(displayOverview!.totalImpressions) : "—"}
+              />
+              <KpiCard
+                icon={Users}
+                label="Reach"
+                value={hasData ? fmt(displayOverview!.totalReach) : "—"}
+              />
+              <KpiCard
+                icon={Heart}
+                label="Engagements"
+                value={
+                  hasData
+                    ? fmt(
+                        displayOverview!.totalLikes +
+                          displayOverview!.totalComments +
+                          displayOverview!.totalShares
+                      )
+                    : "—"
+                }
+              />
+              <KpiCard
+                icon={TrendingUp}
+                label="Eng. Rate"
+                value={
+                  hasData
+                    ? `${displayOverview!.avgEngagementRate.toFixed(1)}%`
+                    : "—"
+                }
+              />
+              <KpiCard
+                icon={Users}
+                label="Follower Growth"
+                value={hasData ? fmt(displayOverview!.followerGrowth) : "—"}
+              />
+              <KpiCard
+                icon={BarChart2}
+                label="Posts Published"
+                value={hasData ? String(displayOverview!.totalPosts) : "—"}
+              />
+            </>
+          )}
         </div>
 
-        {/* ─────────────────────────────────────────────────────────────────
-            PLATFORM BREAKDOWN
-        ───────────────────────────────────────────────────────────────── */}
-        {!activeProvider && (
-          <section className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+        {!activeProvider ? (
+          <section className={surfaceClassName}>
             <SectionHeader icon={BarChart2} title="Platform Breakdown" />
 
             {analyticsLoading ? (
-              <div className="p-5 space-y-3">{Array.from({ length: 3 }).map((_, i) => <Sk key={i} className="h-14" />)}</div>
+              <div className="space-y-3 p-5">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Sk key={index} className="h-14 rounded-xl" />
+                ))}
+              </div>
             ) : platStats.length === 0 ? (
               <EmptyState text="No analytics data yet. Publish some posts to see platform metrics." />
             ) : (
-              <div className="divide-y divide-[hsl(var(--border-subtle))]">
-                {platStats.map((s) => {
-                  const m = meta(s.provider);
-                  const PlatIcon = PLATFORM_ICONS[s.provider.toLowerCase()] ?? BarChart2;
-                  const engagements = s.likes + s.comments + s.shares;
-                  const maxImp = Math.max(...platStats.map((p) => p.impressions), 1);
+              <div className={cn("divide-y", dividerClassName)}>
+                {platStats.map((stat) => {
+                  const platformMeta = meta(stat.provider);
+                  const PlatformIcon =
+                    PLATFORM_ICONS[stat.provider.toLowerCase()] ?? BarChart2;
+                  const engagements =
+                    stat.likes + stat.comments + stat.shares;
+                  const maxImpressions = Math.max(
+                    ...platStats.map((item) => item.impressions),
+                    1
+                  );
 
                   return (
-                    <div key={s.provider} className="px-5 py-4">
-                      <div className="flex items-center gap-3 mb-2">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
-                          <PlatIcon className="h-4 w-4" />
+                    <div key={stat.provider} className="px-5 py-4">
+                      <div className="mb-2 flex items-center gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
+                          <PlatformIcon className="h-4 w-4" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between mb-1.5">
-                            <span className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{m.label}</span>
-                            <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{fmt(s.impressions)} impressions</span>
+
+                        <div className="min-w-0 flex-1">
+                          <div className="mb-1.5 flex items-center justify-between gap-3">
+                            <span className="text-label-14 text-[var(--ds-gray-1000)]">
+                              {platformMeta.label}
+                            </span>
+                            <span className="text-label-12 text-[var(--ds-gray-900)]">
+                              {fmt(stat.impressions)} impressions
+                            </span>
                           </div>
-                          <div className="h-1.5 overflow-hidden rounded-full bg-[hsl(var(--surface-raised))]">
+
+                          <div className="h-1.5 overflow-hidden rounded-full bg-[var(--ds-gray-100)]">
                             <div
                               className="h-full rounded-full transition-all duration-700"
-                              style={{ width: `${(s.impressions / maxImp) * 100}%`, backgroundColor: m.chartColor }}
+                              style={{
+                                width: `${(stat.impressions / maxImpressions) * 100}%`,
+                                backgroundColor: platformMeta.chartColor,
+                              }}
                             />
                           </div>
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-4 pl-11 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
-                        <span className="flex items-center gap-1"><Heart className="h-3 w-3" />{fmt(s.likes)} likes</span>
-                        <span className="flex items-center gap-1"><MessageCircle className="h-3 w-3" />{fmt(s.comments)} comments</span>
-                        <span className="flex items-center gap-1"><Share2 className="h-3 w-3" />{fmt(s.shares)} shares</span>
-                        <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3" />{fmt(engagements)} total</span>
-                        {s.videoViews > 0 && <span className="flex items-center gap-1"><Video className="h-3 w-3" />{fmt(s.videoViews)} views</span>}
-                        {s.clicks > 0 && <span className="flex items-center gap-1"><MousePointerClick className="h-3 w-3" />{fmt(s.clicks)} clicks</span>}
-                        <span className="ml-auto font-medium text-[hsl(var(--foreground))]">{s.engagementRate.toFixed(1)}% eng. rate</span>
+                      <div className="flex flex-wrap items-center gap-4 pl-11 text-label-12 text-[var(--ds-gray-900)]">
+                        <span className="flex items-center gap-1">
+                          <Heart className="h-3 w-3" />
+                          {fmt(stat.likes)} likes
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <MessageCircle className="h-3 w-3" />
+                          {fmt(stat.comments)} comments
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Share2 className="h-3 w-3" />
+                          {fmt(stat.shares)} shares
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <TrendingUp className="h-3 w-3" />
+                          {fmt(engagements)} total
+                        </span>
+                        {stat.videoViews > 0 ? (
+                          <span className="flex items-center gap-1">
+                            <Video className="h-3 w-3" />
+                            {fmt(stat.videoViews)} views
+                          </span>
+                        ) : null}
+                        {stat.clicks > 0 ? (
+                          <span className="flex items-center gap-1">
+                            <MousePointerClick className="h-3 w-3" />
+                            {fmt(stat.clicks)} clicks
+                          </span>
+                        ) : null}
+                        <span className="ml-auto text-label-13 text-[var(--ds-gray-1000)]">
+                          {stat.engagementRate.toFixed(1)}% eng. rate
+                        </span>
                       </div>
                     </div>
                   );
@@ -530,12 +678,9 @@ export default function AnalyticsPage() {
               </div>
             )}
           </section>
-        )}
+        ) : null}
 
-        {/* ─────────────────────────────────────────────────────────────────
-            ENGAGEMENT TIMELINE
-        ───────────────────────────────────────────────────────────────── */}
-        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+        <section className={surfaceClassName}>
           <SectionHeader
             icon={TrendingUp}
             title="Engagement Timeline"
@@ -544,53 +689,97 @@ export default function AnalyticsPage() {
 
           <div className="p-5">
             {analyticsLoading ? (
-              <Sk className="h-[200px]" />
+              <Sk className="h-[220px] rounded-xl" />
             ) : filteredTimeline.length === 0 ? (
               <EmptyState text="No engagement data yet for the selected period." />
             ) : (
               <ResponsiveContainer width="100%" height={220}>
-                <AreaChart data={filteredTimeline} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                <AreaChart
+                  data={filteredTimeline}
+                  margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
+                >
                   <defs>
-                    {ACTIVE_PROVIDERS.map((p) => (
-                      <linearGradient key={p} id={`grad-${p}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%"  stopColor={meta(p).chartColor} stopOpacity={0.18} />
-                        <stop offset="95%" stopColor={meta(p).chartColor} stopOpacity={0}    />
+                    {ACTIVE_PROVIDERS.map((provider) => (
+                      <linearGradient
+                        key={provider}
+                        id={`grad-${provider}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor={meta(provider).chartColor}
+                          stopOpacity={0.18}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor={meta(provider).chartColor}
+                          stopOpacity={0}
+                        />
                       </linearGradient>
                     ))}
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border-subtle))" vertical={false} />
+
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="var(--ds-gray-400)"
+                    vertical={false}
+                  />
                   <XAxis
                     dataKey="date"
-                    tick={{ fontSize: 10, fill: "hsl(var(--foreground-subtle))" }}
-                    tickLine={false} axisLine={false}
-                    tickFormatter={(v: string) => new Date(v).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                    tick={{ fontSize: 10, fill: "var(--ds-gray-900)" }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value: string) =>
+                      new Date(value).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                      })
+                    }
                     interval="preserveStartEnd"
                   />
                   <YAxis
-                    tick={{ fontSize: 10, fill: "hsl(var(--foreground-subtle))" }}
-                    tickLine={false} axisLine={false}
-                    tickFormatter={(v: number) => fmt(v)}
+                    tick={{ fontSize: 10, fill: "var(--ds-gray-900)" }}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value: number) => fmt(value)}
                   />
                   <Tooltip
                     contentStyle={{
-                      background: "hsl(var(--surface))",
-                      border: "1px solid hsl(var(--border))",
+                      background: "var(--ds-background-100)",
+                      border: "1px solid var(--ds-gray-400)",
                       borderRadius: 8,
                       fontSize: 12,
-                      color: "hsl(var(--foreground))",
+                      color: "var(--ds-gray-1000)",
                     }}
-                    cursor={{ stroke: "hsl(var(--border))", strokeDasharray: "3 3" }}
-                    labelFormatter={(v: string) => new Date(v).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}
-                    formatter={(value: number, name: string) => [fmt(value), meta(name).label]}
+                    cursor={{
+                      stroke: "var(--ds-gray-400)",
+                      strokeDasharray: "3 3",
+                    }}
+                    labelFormatter={(value: string) =>
+                      new Date(value).toLocaleDateString("en-GB", {
+                        weekday: "short",
+                        day: "numeric",
+                        month: "short",
+                      })
+                    }
+                    formatter={(value: number, name: string) => [
+                      fmt(value),
+                      meta(name).label,
+                    ]}
                   />
-                  {ACTIVE_PROVIDERS.filter((p) => !activeProvider || p === activeProvider).map((p) => (
+                  {ACTIVE_PROVIDERS.filter(
+                    (provider) => !activeProvider || provider === activeProvider
+                  ).map((provider) => (
                     <Area
-                      key={p}
+                      key={provider}
                       type="monotone"
-                      dataKey={p}
-                      stroke={meta(p).chartColor}
+                      dataKey={provider}
+                      stroke={meta(provider).chartColor}
                       strokeWidth={2}
-                      fill={`url(#grad-${p})`}
+                      fill={`url(#grad-${provider})`}
                       dot={false}
                       activeDot={{ r: 4 }}
                     />
@@ -601,81 +790,102 @@ export default function AnalyticsPage() {
           </div>
         </section>
 
-        {/* ─────────────────────────────────────────────────────────────────
-            TOP POSTS
-        ───────────────────────────────────────────────────────────────── */}
-        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
+        <section className={surfaceClassName}>
+          <div
+            className={cn(
+              "flex flex-wrap items-center justify-between gap-3 px-5 py-4",
+              "border-b",
+              dividerClassName
+            )}
+          >
             <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+              <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
                 <Star className="h-3.5 w-3.5" />
               </div>
-              <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Top Posts</h2>
+              <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">
+                Top Posts
+              </h2>
             </div>
-            <div className="flex items-center gap-1 rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-1">
-              {(["T24H", "T7D", "T30D", "T90D"] as SnapshotType[]).map((t) => (
+
+            <div className={segmentedControlClassName}>
+              {(["T24H", "T7D", "T30D", "T90D"] as SnapshotType[]).map((snapshot) => (
                 <button
-                  key={t}
-                  onClick={() => setSnapshotType(t)}
+                  key={snapshot}
+                  type="button"
+                  onClick={() => setSnapshotType(snapshot)}
                   className={cn(
-                    "rounded-md px-2.5 py-1 text-xs font-medium leading-4 transition-colors",
-                    snapshotType === t
-                      ? "bg-[hsl(var(--surface))] text-[hsl(var(--foreground))] shadow-sm"
-                      : "text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]"
+                    "rounded-md px-2.5 py-1 text-label-12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]",
+                    snapshotType === snapshot
+                      ? "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
+                      : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-gray-1000)]"
                   )}
                 >
-                  {t}
+                  {snapshot}
                 </button>
               ))}
             </div>
           </div>
 
           {analyticsLoading ? (
-            <div className="p-5 space-y-3">{Array.from({ length: 3 }).map((_, i) => <Sk key={i} className="h-16" />)}</div>
+            <div className="space-y-3 p-5">
+              {Array.from({ length: 3 }).map((_, index) => (
+                <Sk key={index} className="h-16 rounded-xl" />
+              ))}
+            </div>
           ) : filteredTopPosts.length === 0 ? (
             <EmptyState text="No posts found for this snapshot window. Analytics are collected after posts are published." />
           ) : (
-            <div className="divide-y divide-[hsl(var(--border-subtle))]">
-              {filteredTopPosts.slice(0, 10).map((post, idx) => {
-                const m = meta(post.provider);
-                const PlatIcon = PLATFORM_ICONS[post.provider.toLowerCase()] ?? BarChart2;
+            <div className={cn("divide-y", dividerClassName)}>
+              {filteredTopPosts.slice(0, 10).map((post, index) => {
+                const platformMeta = meta(post.provider);
+                const PlatformIcon =
+                  PLATFORM_ICONS[post.provider.toLowerCase()] ?? BarChart2;
                 const engagements = post.likes + post.comments + post.shares;
 
                 return (
                   <div
                     key={`${post.postId}-${post.provider}`}
-                    className="flex items-start gap-4 px-5 py-4 transition-colors hover:bg-[hsl(var(--surface-raised))]"
+                    className="flex items-start gap-4 px-5 py-4 transition-colors hover:bg-[var(--ds-gray-100)]"
                   >
-                    <span className="mt-0.5 w-5 shrink-0 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">{idx + 1}</span>
+                    <span className="mt-0.5 w-5 shrink-0 text-label-12 text-[var(--ds-gray-900)]">
+                      {index + 1}
+                    </span>
 
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
-                      <PlatIcon className="h-4 w-4" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
+                      <PlatformIcon className="h-4 w-4" />
                     </div>
 
-                    <div className="flex-1 min-w-0">
-                      <p className="line-clamp-2 text-sm leading-5 text-[hsl(var(--foreground))]">
+                    <div className="min-w-0 flex-1">
+                      <p className="line-clamp-2 text-copy-14 text-[var(--ds-gray-1000)]">
                         {post.content ?? "(No preview)"}
                       </p>
-                      <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
-                        {fmtDate(post.publishedAt)} · {m.label}
+                      <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">
+                        {fmtDate(post.publishedAt)} · {platformMeta.label}
                       </p>
                     </div>
 
-                    <div className="hidden sm:grid grid-cols-4 gap-x-5 text-right shrink-0">
+                    <div className="hidden shrink-0 grid-cols-4 gap-x-5 text-right sm:grid">
                       {[
-                        { label: "Impressions", value: fmt(post.impressions)   },
-                        { label: "Reach",       value: fmt(post.reach)         },
-                        { label: "Engag.",      value: fmt(engagements)        },
-                        { label: "Eng. Rate",   value: `${post.engagementRate.toFixed(1)}%` },
-                      ].map((col) => (
-                        <div key={col.label}>
-                          <p className="text-xs leading-4 text-[hsl(var(--foreground-subtle))]">{col.label}</p>
-                          <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground))]">{col.value}</p>
+                        { label: "Impressions", value: fmt(post.impressions) },
+                        { label: "Reach", value: fmt(post.reach) },
+                        { label: "Engag.", value: fmt(engagements) },
+                        {
+                          label: "Eng. Rate",
+                          value: `${post.engagementRate.toFixed(1)}%`,
+                        },
+                      ].map((column) => (
+                        <div key={column.label}>
+                          <p className="text-label-12 text-[var(--ds-gray-900)]">
+                            {column.label}
+                          </p>
+                          <p className="text-label-12 text-[var(--ds-gray-1000)]">
+                            {column.value}
+                          </p>
                         </div>
                       ))}
                     </div>
 
-                    <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-[hsl(var(--foreground-subtle))]" />
+                    <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-[var(--ds-gray-900)]" />
                   </div>
                 );
               })}
@@ -683,46 +893,66 @@ export default function AnalyticsPage() {
           )}
         </section>
 
-        {/* ─────────────────────────────────────────────────────────────────
-            BEST TIME TO POST — HEATMAP
-        ───────────────────────────────────────────────────────────────── */}
-        {(analyticsLoading || heatmap.length > 0) && (
-          <section className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
-            <SectionHeader icon={Clock} title="Best Time to Post" sub="based on your published post performance" />
+        {analyticsLoading || heatmap.length > 0 ? (
+          <section className={surfaceClassName}>
+            <SectionHeader
+              icon={Clock}
+              title="Best Time to Post"
+              sub="based on your published post performance"
+            />
 
-            <div className="p-5 overflow-x-auto">
+            <div className="overflow-x-auto p-5">
               {analyticsLoading ? (
-                <Sk className="h-40" />
+                <Sk className="h-40 rounded-xl" />
               ) : (
                 <div className="min-w-[560px]">
-                  {/* Hour axis */}
-                  <div className="flex items-center mb-1">
+                  <div className="mb-1 flex items-center">
                     <div className="w-10 shrink-0" />
-                    {Array.from({ length: 24 }).map((_, h) => (
-                      <div key={h} className="flex-1 text-center text-xs leading-4 text-[hsl(var(--foreground-subtle))]">
-                        {h % 3 === 0 ? `${h}h` : ""}
+                    {Array.from({ length: 24 }).map((_, hour) => (
+                      <div
+                        key={hour}
+                        className="flex-1 text-center text-label-12 text-[var(--ds-gray-900)]"
+                      >
+                        {hour % 3 === 0 ? `${hour}h` : ""}
                       </div>
                     ))}
                   </div>
 
-                  {DAY_LABELS.map((day, di) => {
-                    const isoDay = di + 1;
+                  {DAY_LABELS.map((day, dayIndex) => {
+                    const isoDay = dayIndex + 1;
+                    const maxAverage = Math.max(
+                      ...heatmap.map((cell) => cell.avgEngagement),
+                      1
+                    );
+
                     return (
-                      <div key={day} className="flex items-center mb-0.5">
-                        <div className="w-10 shrink-0 pr-2 text-right text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">{day}</div>
+                      <div key={day} className="mb-0.5 flex items-center">
+                        <div className="w-10 shrink-0 pr-2 text-right text-label-12 text-[var(--ds-gray-900)]">
+                          {day}
+                        </div>
+
                         {Array.from({ length: 24 }).map((_, hour) => {
-                          const cell = heatmap.find((c) => c.dayOfWeek === isoDay && c.hourOfDay === hour);
-                          const maxAvg = Math.max(...heatmap.map((c) => c.avgEngagement), 1);
-                          const intensity = cell ? cell.avgEngagement / maxAvg : 0;
+                          const cell = heatmap.find(
+                            (entry) =>
+                              entry.dayOfWeek === isoDay &&
+                              entry.hourOfDay === hour
+                          );
+                          const intensity = cell
+                            ? cell.avgEngagement / maxAverage
+                            : 0;
+
                           return (
                             <div
                               key={hour}
-                              title={cell
-                                ? `${day} ${hour}:00 — avg ${Math.round(cell.avgEngagement)} eng (${cell.postCount} posts)`
-                                : `${day} ${hour}:00 — no data`
+                              title={
+                                cell
+                                  ? `${day} ${hour}:00 — avg ${Math.round(cell.avgEngagement)} eng (${cell.postCount} posts)`
+                                  : `${day} ${hour}:00 — no data`
                               }
-                              className="flex-1 h-6 rounded-sm mx-[1px]"
-                              style={{ backgroundColor: cell ? `hsl(var(--chart-1) / ${0.08 + intensity * 0.72})` : "hsl(var(--surface-raised))" }}
+                              className="mx-[1px] h-6 flex-1 rounded-sm border border-transparent"
+                              style={{
+                                backgroundColor: heatmapCellColor(intensity),
+                              }}
                             />
                           );
                         })}
@@ -730,45 +960,70 @@ export default function AnalyticsPage() {
                     );
                   })}
 
-                  <div className="flex items-center gap-2 mt-3 justify-end">
-                    <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">Less</span>
-                    {[0.1, 0.3, 0.5, 0.7, 0.9].map((v) => (
-                      <div key={v} className="h-3.5 w-6 rounded-sm border border-[hsl(var(--border-subtle))]" style={{ backgroundColor: `hsl(var(--chart-1) / ${0.08 + v * 0.72})` }} />
+                  <div className="mt-3 flex items-center justify-end gap-2">
+                    <span className="text-label-12 text-[var(--ds-gray-900)]">
+                      Less
+                    </span>
+                    {[0.1, 0.3, 0.5, 0.7, 0.9].map((value) => (
+                      <div
+                        key={value}
+                        className="h-3.5 w-6 rounded-sm border border-[var(--ds-gray-400)]"
+                        style={{ backgroundColor: heatmapCellColor(value) }}
+                      />
                     ))}
-                    <span className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">More</span>
+                    <span className="text-label-12 text-[var(--ds-gray-900)]">
+                      More
+                    </span>
                   </div>
                 </div>
               )}
             </div>
           </section>
-        )}
+        ) : null}
 
-        {/* ─────────────────────────────────────────────────────────────────
-            COMING SOON
-        ───────────────────────────────────────────────────────────────── */}
         <section>
           <div className="mb-3 flex items-center gap-3">
-            <span className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">Coming Soon</span>
-            <div className="h-px flex-1 bg-[hsl(var(--border-subtle))]" />
+            <span className="text-label-12 text-[var(--ds-gray-900)]">
+              Coming Soon
+            </span>
+            <div className="h-px flex-1 bg-[var(--ds-gray-400)]" />
           </div>
+
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { id: "instagram", grad: "from-pink-500 via-rose-500 to-orange-400", desc: "Reels views, story reach, saves" },
-              { id: "facebook",  grad: "from-blue-500 to-blue-700",               desc: "Page insights, reach & growth"  },
-              { id: "threads",   grad: "from-slate-700 to-slate-900",             desc: "Views, reposts, replies"        },
-              { id: "tiktok",    grad: "from-slate-800 via-pink-500 to-cyan-400", desc: "Views, shares, completion rate" },
-            ].map((p) => {
-              const m = meta(p.id);
-              const PlatIcon = PLATFORM_ICONS[p.id] ?? BarChart2;
+              {
+                id: "instagram",
+                desc: "Reels views, story reach, saves",
+              },
+              {
+                id: "facebook",
+                desc: "Page insights, reach & growth",
+              },
+              {
+                id: "threads",
+                desc: "Views, reposts, replies",
+              },
+              {
+                id: "tiktok",
+                desc: "Views, shares, completion rate",
+              },
+            ].map((platform) => {
+              const platformMeta = meta(platform.id);
+              const PlatformIcon = PLATFORM_ICONS[platform.id] ?? BarChart2;
+
               return (
-                <div key={p.id} className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]">
+                <div key={platform.id} className={surfaceClassName}>
                   <div className="flex flex-col gap-2 p-4">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]">
-                      <PlatIcon className="h-4 w-4" />
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
+                      <PlatformIcon className="h-4 w-4" />
                     </div>
-                    <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{m.label}</p>
-                    <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{p.desc}</p>
-                    <span className="mt-1 inline-flex w-fit rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
+                    <p className="text-label-14 text-[var(--ds-gray-1000)]">
+                      {platformMeta.label}
+                    </p>
+                    <p className="text-label-12 text-[var(--ds-gray-900)]">
+                      {platform.desc}
+                    </p>
+                    <span className="mt-1 inline-flex w-fit rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2 py-0.5 text-label-12 text-[var(--ds-gray-900)]">
                       Coming soon
                     </span>
                   </div>
@@ -784,24 +1039,30 @@ export default function AnalyticsPage() {
   );
 }
 
-// ─── Shared micro-components ──────────────────────────────────────────────────
-
 function SectionHeader({
   icon: Icon,
   title,
   sub,
 }: {
-  icon: React.ElementType;
+  icon: ElementType;
   title: string;
   sub?: string;
 }) {
   return (
-    <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] px-5 py-4">
-      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+    <div
+      className={cn(
+        "flex flex-wrap items-center gap-2 px-5 py-4",
+        "border-b",
+        dividerClassName
+      )}
+    >
+      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
         <Icon className="h-3.5 w-3.5" />
       </div>
-      <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{title}</h2>
-      {sub && <span className="ml-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">{sub}</span>}
+      <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h2>
+      {sub ? (
+        <span className="text-label-12 text-[var(--ds-gray-900)]">{sub}</span>
+      ) : null}
     </div>
   );
 }
@@ -809,7 +1070,7 @@ function SectionHeader({
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="px-5 py-10 text-center">
-      <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{text}</p>
+      <p className="text-copy-14 text-[var(--ds-gray-900)]">{text}</p>
     </div>
   );
 }

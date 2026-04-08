@@ -1,8 +1,5 @@
 "use client";
 
-import AtlassianButton from "@atlaskit/button/new";
-import Lozenge from "@atlaskit/lozenge";
-import SectionMessage from "@atlaskit/section-message";
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import {
@@ -46,6 +43,16 @@ import {
   type CollaborationMediaAnnotation,
 } from "@/components/posts/post-collaboration-annotation-editor";
 import { PostCollaborationAnnotationView } from "@/components/posts/post-collaboration-annotation-view";
+import {
+  DraftDetailActionButton,
+  DraftDetailBadge,
+  DraftDetailNotice,
+  draftDetailBodyTextClassName,
+  draftDetailMetaTextClassName,
+  draftDetailPanelClassName,
+  draftDetailPanelHeaderClassName,
+  draftDetailSubtlePanelClassName,
+} from "@/components/drafts/draft-detail-primitives";
 
 type Props = {
   collection: PostCollectionResponse;
@@ -58,15 +65,15 @@ const THREAD_LABELS: Record<PostCollaborationThreadType, string> = {
   SUGGESTION: "Suggestion",
 };
 
-function getThreadAppearance(type: PostCollaborationThreadType) {
+function getThreadVariant(type: PostCollaborationThreadType) {
   switch (type) {
     case "NOTE":
-      return "moved";
+      return "warning";
     case "SUGGESTION":
-      return "new";
+      return "accent";
     case "COMMENT":
     default:
-      return "default";
+      return "neutral";
   }
 }
 
@@ -97,7 +104,7 @@ function MentionPicker({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+      <div className="flex items-center gap-2 text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
         <AtSign className="h-3.5 w-3.5" />
         <span>Mentions</span>
       </div>
@@ -116,10 +123,10 @@ function MentionPicker({
               disabled={disabled}
               onClick={() => onToggle(member.userId)}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
                 isSelected
-                  ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                  : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--accent))]/25 hover:text-[hsl(var(--foreground))]",
+                  ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                  : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:text-[var(--ds-gray-1000)]",
                 disabled && "cursor-not-allowed opacity-60"
               )}
             >
@@ -147,7 +154,7 @@ function MentionBadges({
       {mentions.map((mention) => (
         <span
           key={`${mention.userId}-${mention.displayName}`}
-          className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/25 bg-[hsl(var(--accent))]/10 px-2.5 py-1 text-xs font-medium text-[hsl(var(--accent))]"
+          className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-blue-700)]"
         >
           <span>@</span>
           <span>{mention.displayName}</span>
@@ -467,41 +474,39 @@ export function InternalCollaborationPanel({
       : "No caption yet. Suggestions will insert new text at the start.";
 
   return (
-    <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
+    <section className={draftDetailPanelClassName}>
+      <div className={draftDetailPanelHeaderClassName}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-              <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
-                Collaboration
-              </p>
+              <MessageSquare className="h-4 w-4 text-[var(--ds-gray-900)]" />
+              <p className="text-title-16 text-[var(--ds-gray-1000)]">Collaboration</p>
             </div>
-            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <p className={draftDetailBodyTextClassName}>
               Keep review discussion inside the workspace with comments, internal notes,
               replies, annotations, and caption suggestions.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Lozenge appearance="new">{openThreads} open</Lozenge>
-            <Lozenge appearance="default">{threads.length} total</Lozenge>
-            <Lozenge appearance="moved">{noteThreads} notes</Lozenge>
-            <Lozenge appearance="inprogress">{suggestionThreads} suggestions</Lozenge>
+            <DraftDetailBadge variant="accent">{openThreads} open</DraftDetailBadge>
+            <DraftDetailBadge>{threads.length} total</DraftDetailBadge>
+            <DraftDetailBadge variant="warning">{noteThreads} notes</DraftDetailBadge>
+            <DraftDetailBadge variant="accent">{suggestionThreads} suggestions</DraftDetailBadge>
           </div>
         </div>
       </div>
 
       <div className="space-y-5 px-5 py-5">
         {!canWrite && (
-          <SectionMessage appearance="information" title="View-only collaboration access">
-            <p className="text-sm">
+          <DraftDetailNotice title="View-only collaboration access">
+            <p>
               You can review collaboration threads here, but only editors, admins, and
               owners can add comments or act on suggestions.
             </p>
-          </SectionMessage>
+          </DraftDetailNotice>
         )}
 
-        <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4">
+        <div className={cn(draftDetailSubtlePanelClassName, "p-4")}>
           <div className="flex flex-wrap gap-2">
             {(["COMMENT", "NOTE", "SUGGESTION"] as const).map((type) => (
               <button
@@ -515,10 +520,10 @@ export function InternalCollaborationPanel({
                   }
                 }}
                 className={cn(
-                  "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+                  "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
                   composerType === type
-                    ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                    : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]",
+                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]",
                   (!canWrite || creatingThread) && "cursor-not-allowed opacity-60"
                 )}
               >
@@ -546,10 +551,10 @@ export function InternalCollaborationPanel({
                   disabled={!canWrite || creatingThread}
                   onClick={() => setComposerVisibility(value)}
                   className={cn(
-                    "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
                     composerVisibility === value
-                      ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                      : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]",
+                      ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                      : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]",
                     (!canWrite || creatingThread) && "cursor-not-allowed opacity-60"
                   )}
                 >
@@ -574,22 +579,22 @@ export function InternalCollaborationPanel({
                   ? "Write a client-visible comment for the review link..."
                   : "Add a comment for the team..."
               }
-              className="min-h-[112px] bg-[hsl(var(--surface))]"
+              className="min-h-[112px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
             />
 
             {composerType === "COMMENT" && composerVisibility === "CLIENT_VISIBLE" && (
-              <SectionMessage appearance="information" title="Visible on shared review links">
-                <p className="text-sm">
+              <DraftDetailNotice title="Visible on shared review links">
+                <p>
                   This comment will be shown to external reviewers. Internal notes,
                   suggestions, and mentions remain hidden from client review links.
                 </p>
-              </SectionMessage>
+              </DraftDetailNotice>
             )}
 
             {composerType === "SUGGESTION" ? (
-              <div className="space-y-4 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4">
+              <div className="space-y-4 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                  <p className="text-label-14 text-[var(--ds-gray-1000)]">
                     Select the caption text to change
                   </p>
                   <Textarea
@@ -603,20 +608,20 @@ export function InternalCollaborationPanel({
                       const text = (collection.description ?? "").slice(start, end);
                       setSelection({ start, end, text });
                     }}
-                    className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
+                    className="min-h-[140px] border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                   />
-                  <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 py-2.5">
-                    <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                  <div className="rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2.5">
+                    <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                       Current selection
                     </p>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-[hsl(var(--foreground-muted))]">
+                    <p className="mt-1 whitespace-pre-wrap text-label-14 text-[var(--ds-gray-900)]">
                       {selectionSummary}
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                  <p className="text-label-14 text-[var(--ds-gray-1000)]">
                     Suggested replacement
                   </p>
                   <Textarea
@@ -624,17 +629,17 @@ export function InternalCollaborationPanel({
                     onChange={(event) => setComposerSuggestedText(event.target.value)}
                     disabled={!canWrite || creatingThread}
                     placeholder="Write the replacement copy here..."
-                    className="min-h-[112px] bg-[hsl(var(--surface))]"
+                    className="min-h-[112px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
                   />
                 </div>
 
                 {!canApplySuggestions && (
-                  <SectionMessage appearance="warning" title="Suggestions cannot be applied yet">
-                    <p className="text-sm">
+                  <DraftDetailNotice title="Suggestions cannot be applied yet" variant="warning">
+                    <p>
                       Team members can propose suggestions while content is in review, but the
                       caption can only be updated once the draft is editable again.
                     </p>
-                  </SectionMessage>
+                  </DraftDetailNotice>
                 )}
               </div>
             ) : (
@@ -648,6 +653,7 @@ export function InternalCollaborationPanel({
                 mediaAnnotation={composerMediaAnnotation}
                 onMediaAnnotationChange={setComposerMediaAnnotation}
                 disabled={!canWrite || creatingThread}
+                appearance="geist"
               />
             )}
 
@@ -661,9 +667,9 @@ export function InternalCollaborationPanel({
             )}
 
             <div className="flex justify-end">
-              <AtlassianButton
-                appearance="primary"
-                isDisabled={!canWrite || creatingThread}
+              <DraftDetailActionButton
+                tone="primary"
+                disabled={!canWrite || creatingThread}
                 onClick={handleCreateThread}
               >
                 <span className="inline-flex items-center gap-2">
@@ -685,27 +691,27 @@ export function InternalCollaborationPanel({
                     </>
                   )}
                 </span>
-              </AtlassianButton>
+              </DraftDetailActionButton>
             </div>
           </div>
         </div>
 
         {threadError && (
-          <SectionMessage appearance="error" title="Collaboration failed to load">
-            <p className="text-sm">{threadError}</p>
-          </SectionMessage>
+          <DraftDetailNotice title="Collaboration failed to load" variant="error">
+            <p>{threadError}</p>
+          </DraftDetailNotice>
         )}
 
         {loadingThreads ? (
-          <div className="flex items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-[hsl(var(--foreground-muted))]" />
+          <div className={cn(draftDetailSubtlePanelClassName, "flex items-center justify-center px-4 py-8")}>
+            <Loader2 className="h-5 w-5 animate-spin text-[var(--ds-gray-900)]" />
           </div>
         ) : threads.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-8 text-center">
-            <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+          <div className="rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-8 text-center">
+            <p className="text-label-14 text-[var(--ds-gray-1000)]">
               No collaboration threads yet
             </p>
-            <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+            <p className={cn("mt-1", draftDetailBodyTextClassName)}>
               Start the conversation here instead of moving review feedback to Slack or email.
             </p>
           </div>
@@ -720,46 +726,46 @@ export function InternalCollaborationPanel({
               return (
                 <div
                   key={thread.id}
-                  className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4"
+                  className={cn(draftDetailSubtlePanelClassName, "p-4")}
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Lozenge appearance={getThreadAppearance(thread.threadType)}>
+                        <DraftDetailBadge variant={getThreadVariant(thread.threadType)}>
                           {THREAD_LABELS[thread.threadType]}
-                        </Lozenge>
+                        </DraftDetailBadge>
                         <span
                           className={cn(
-                            "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium",
+                            "inline-flex items-center rounded-full px-2.5 py-1 text-copy-12",
                             thread.status === "OPEN"
-                              ? "bg-amber-500/10 text-amber-700"
-                              : "bg-emerald-500/10 text-emerald-700"
+                              ? "border border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]"
+                              : "border border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]"
                           )}
                         >
                           {thread.status === "OPEN" ? "Open" : "Resolved"}
                         </span>
-                        <span className="inline-flex items-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-2.5 py-1 text-xs font-medium text-[hsl(var(--foreground-muted))]">
+                        <span className="inline-flex items-center rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-gray-900)]">
                           {thread.visibility === "CLIENT_VISIBLE"
                             ? "Client visible"
                             : "Internal only"}
                         </span>
                         {thread.authorType === "CLIENT_REVIEWER" && (
-                          <span className="inline-flex items-center rounded-full border border-[hsl(var(--accent))]/25 bg-[hsl(var(--accent))]/10 px-2.5 py-1 text-xs font-medium text-[hsl(var(--accent))]">
+                          <span className="inline-flex items-center rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-blue-700)]">
                             Client reviewer
                           </span>
                         )}
                         {thread.suggestionStatus && (
-                          <span className="inline-flex items-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-2.5 py-1 text-xs font-medium text-[hsl(var(--foreground-muted))]">
+                          <span className="inline-flex items-center rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-gray-900)]">
                             Suggestion {thread.suggestionStatus.toLowerCase()}
                           </span>
                         )}
                       </div>
 
                       <div>
-                        <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                        <p className="text-label-14 text-[var(--ds-gray-1000)]">
                           {thread.authorDisplayName}
                         </p>
-                        <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                        <p className={draftDetailMetaTextClassName}>
                           {formatTimestamp(thread.createdAt)}
                           {thread.status === "RESOLVED" && thread.resolvedAt
                             ? ` · resolved ${formatTimestamp(thread.resolvedAt)}`
@@ -772,9 +778,9 @@ export function InternalCollaborationPanel({
                       <div className="flex flex-wrap gap-2">
                         {!isSuggestion &&
                           (thread.status === "OPEN" ? (
-                            <AtlassianButton
-                              appearance="subtle"
-                              isDisabled={threadBusy}
+                            <DraftDetailActionButton
+                              compact
+                              disabled={threadBusy}
                               onClick={() => handleResolve(thread.id)}
                             >
                               <span className="inline-flex items-center gap-1.5">
@@ -785,11 +791,11 @@ export function InternalCollaborationPanel({
                                 )}
                                 <span>Resolve</span>
                               </span>
-                            </AtlassianButton>
+                            </DraftDetailActionButton>
                           ) : (
-                            <AtlassianButton
-                              appearance="subtle"
-                              isDisabled={threadBusy}
+                            <DraftDetailActionButton
+                              compact
+                              disabled={threadBusy}
                               onClick={() => handleReopen(thread.id)}
                             >
                               <span className="inline-flex items-center gap-1.5">
@@ -800,14 +806,14 @@ export function InternalCollaborationPanel({
                                 )}
                                 <span>Reopen</span>
                               </span>
-                            </AtlassianButton>
+                            </DraftDetailActionButton>
                           ))}
 
                         {suggestionPending && (
                           <>
-                            <AtlassianButton
-                              appearance="subtle"
-                              isDisabled={!canApplySuggestions || threadBusy}
+                            <DraftDetailActionButton
+                              compact
+                              disabled={!canApplySuggestions || threadBusy}
                               onClick={() => handleRejectSuggestion(thread.id)}
                             >
                               <span className="inline-flex items-center gap-1.5">
@@ -818,10 +824,11 @@ export function InternalCollaborationPanel({
                                 )}
                                 <span>Reject</span>
                               </span>
-                            </AtlassianButton>
-                            <AtlassianButton
-                              appearance="primary"
-                              isDisabled={!canApplySuggestions || threadBusy}
+                            </DraftDetailActionButton>
+                            <DraftDetailActionButton
+                              compact
+                              tone="primary"
+                              disabled={!canApplySuggestions || threadBusy}
                               onClick={() => handleAcceptSuggestion(thread.id)}
                             >
                               <span className="inline-flex items-center gap-1.5">
@@ -832,7 +839,7 @@ export function InternalCollaborationPanel({
                                 )}
                                 <span>Accept</span>
                               </span>
-                            </AtlassianButton>
+                            </DraftDetailActionButton>
                           </>
                         )}
                       </div>
@@ -840,7 +847,7 @@ export function InternalCollaborationPanel({
                   </div>
 
                   {thread.body && (
-                    <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                    <p className="mt-4 whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-900)]">
                       {thread.body}
                     </p>
                   )}
@@ -849,26 +856,27 @@ export function InternalCollaborationPanel({
                     <PostCollaborationAnnotationView
                       thread={thread}
                       media={collection.media}
+                      appearance="geist"
                     />
                   )}
 
                   {isSuggestion && (
                     <div className="mt-4 grid gap-3 lg:grid-cols-2">
-                      <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-3">
-                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                      <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-3">
+                        <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                           Current text
                         </p>
-                        <p className="mt-2 whitespace-pre-wrap text-sm text-[hsl(var(--foreground-muted))]">
+                        <p className="mt-2 whitespace-pre-wrap text-label-14 text-[var(--ds-gray-900)]">
                           {thread.anchorText && thread.anchorText.length > 0
                             ? thread.anchorText
                             : "Insertion point"}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-[hsl(var(--accent))]/25 bg-[hsl(var(--accent))]/8 p-3">
-                        <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--accent))]">
+                      <div className="rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] p-3">
+                        <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-blue-700)]">
                           Suggested text
                         </p>
-                        <p className="mt-2 whitespace-pre-wrap text-sm text-[hsl(var(--foreground))]">
+                        <p className="mt-2 whitespace-pre-wrap text-label-14 text-[var(--ds-gray-1000)]">
                           {thread.suggestedText}
                         </p>
                       </div>
@@ -878,21 +886,21 @@ export function InternalCollaborationPanel({
                   <MentionBadges mentions={thread.mentions} />
 
                   {thread.replies.length > 0 && (
-                    <div className="mt-4 space-y-3 border-t border-[hsl(var(--border-subtle))] pt-4">
+                    <div className="mt-4 space-y-3 border-t border-[var(--ds-gray-400)] pt-4">
                       {thread.replies.map((reply) => (
                         <div
                           key={reply.id}
-                          className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-3"
+                          className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
-                            <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                            <p className="text-label-14 text-[var(--ds-gray-1000)]">
                               {reply.authorDisplayName}
                             </p>
-                            <p className="text-xs text-[hsl(var(--foreground-muted))]">
+                            <p className={draftDetailMetaTextClassName}>
                               {formatTimestamp(reply.createdAt)}
                             </p>
                           </div>
-                          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                          <p className="mt-2 whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-900)]">
                             {reply.body}
                           </p>
                           <MentionBadges mentions={reply.mentions} />
@@ -902,7 +910,7 @@ export function InternalCollaborationPanel({
                   )}
 
                   {canWrite && thread.status === "OPEN" && (
-                    <div className="mt-4 space-y-3 border-t border-[hsl(var(--border-subtle))] pt-4">
+                    <div className="mt-4 space-y-3 border-t border-[var(--ds-gray-400)] pt-4">
                       <Textarea
                         value={replyDrafts[thread.id] ?? ""}
                         onChange={(event) =>
@@ -913,7 +921,7 @@ export function InternalCollaborationPanel({
                         }
                         disabled={submittingReplyThreadId === thread.id}
                         placeholder="Reply in thread..."
-                        className="min-h-[92px] bg-[hsl(var(--surface))]"
+                        className="min-h-[92px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
                       />
                       {thread.visibility === "INTERNAL" && (
                         <MentionPicker
@@ -926,9 +934,9 @@ export function InternalCollaborationPanel({
                         />
                       )}
                       <div className="flex justify-end">
-                        <AtlassianButton
-                          appearance="primary"
-                          isDisabled={submittingReplyThreadId === thread.id}
+                        <DraftDetailActionButton
+                          tone="primary"
+                          disabled={submittingReplyThreadId === thread.id}
                           onClick={() => handleReply(thread.id)}
                         >
                           <span className="inline-flex items-center gap-2">
@@ -944,7 +952,7 @@ export function InternalCollaborationPanel({
                               </>
                             )}
                           </span>
-                        </AtlassianButton>
+                        </DraftDetailActionButton>
                       </div>
                     </div>
                   )}

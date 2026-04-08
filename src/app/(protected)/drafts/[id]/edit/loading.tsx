@@ -1,5 +1,5 @@
-import { SchedulePostPageSkeleton } from "@/components/schedule-post/schedule-post-page-skeleton";
+import { DraftEditPageSkeleton } from "@/components/drafts/draft-edit-page-skeleton";
 
 export default function Loading() {
-  return <SchedulePostPageSkeleton />;
+  return <DraftEditPageSkeleton />;
 }

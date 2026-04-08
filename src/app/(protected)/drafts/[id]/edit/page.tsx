@@ -1,7 +1,5 @@
 "use client";
 
-import AtlassianButton from "@atlaskit/button/new";
-import Lozenge from "@atlaskit/lozenge";
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -48,11 +46,8 @@ import {
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
 import { PlatformConfigs } from "@/model/PostCollection";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AccountSelector } from "@/components/schedule-post/account-selection-sheet";
 import MediaUploader from "@/components/schedule-post/media-uploader";
-import { SchedulePostPageSkeleton } from "@/components/schedule-post/schedule-post-page-skeleton";
-import ScheduleDateTimePicker from "@/components/schedule-post/date-time-picker";
 import PlatformCharLimits from "@/components/schedule-post/platform-char-limits";
 import MediaValidationPanel from "@/components/schedule-post/media-validation-panel";
 import PlatformConfigsPanel from "@/components/schedule-post/platform-configs-panel";
@@ -75,6 +70,12 @@ import {
 import type { WorkspaceLibraryBundle, WorkspaceLibraryItem } from "@/model/WorkspaceLibrary";
 import { LibraryComposerPanel } from "@/components/workspace-library/library-composer-panel";
 import { SelectedLibraryAssets } from "@/components/workspace-library/selected-library-assets";
+import {
+  DraftDetailActionButton,
+  DraftDetailBadge,
+} from "@/components/drafts/draft-detail-primitives";
+import { DraftDateTimePicker } from "@/components/drafts/draft-date-time-picker";
+import { DraftEditPageSkeleton } from "@/components/drafts/draft-edit-page-skeleton";
 
 /* ── Config ── */
 
@@ -86,7 +87,7 @@ const TYPE_CONFIG: Record<
     label: "Image",
     Icon: ImageIcon,
     className:
-      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
+      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
     description:
       "Edit your caption, add or remove images, and configure platform-specific settings.",
   },
@@ -94,7 +95,7 @@ const TYPE_CONFIG: Record<
     label: "Video",
     Icon: Video,
     className:
-      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
+      "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
     description:
       "Edit your description, replace or add videos, and configure platform-specific settings.",
   },
@@ -102,19 +103,19 @@ const TYPE_CONFIG: Record<
     label: "Text",
     Icon: FileText,
     className:
-      "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
+      "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
     description: "Edit your content and configure platform-specific settings.",
   },
 };
 
 const PLATFORM_BADGE_STYLES: Record<string, string> = {
-  facebook:  "bg-[#1877F2]/10 text-[#1877F2] border-[#1877F2]/20",
-  instagram: "bg-pink-50 text-pink-600 border-pink-200",
-  x:         "bg-foreground/8 text-foreground border-border",
-  linkedin:  "bg-[#0A66C2]/10 text-[#0A66C2] border-[#0A66C2]/20",
-  youtube:   "bg-red-50 text-red-600 border-red-200",
-  threads:   "bg-foreground/8 text-foreground border-border",
-  tiktok:    "bg-foreground/8 text-foreground border-border",
+  facebook:  "border-[#1877F2]/20 bg-[#1877F2]/10 text-[#1877F2]",
+  instagram: "border-[#C13584]/20 bg-[#C13584]/10 text-[#A62E69]",
+  x:         "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  linkedin:  "border-[#0A66C2]/20 bg-[#0A66C2]/10 text-[#0A66C2]",
+  youtube:   "border-[#FF0000]/20 bg-[#FF0000]/10 text-[#D60000]",
+  threads:   "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
+  tiktok:    "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
 };
 
 const PLATFORM_LABELS: Record<string, string> = {
@@ -122,6 +123,8 @@ const PLATFORM_LABELS: Record<string, string> = {
   linkedin: "LinkedIn", youtube: "YouTube", threads: "Threads", tiktok: "TikTok",
 };
 const DEFAULT_APPROVAL_OVERRIDE = "DEFAULT";
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 /* ── Helpers ── */
 
@@ -165,14 +168,14 @@ function StepCard({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)] transition-[border-color,box-shadow,opacity] duration-200",
+        "overflow-hidden rounded-2xl border bg-[var(--ds-background-100)] shadow-sm transition-[border-color,box-shadow,opacity] duration-200",
         locked
-          ? "border-[hsl(var(--border-subtle))] opacity-55"
+          ? "border-[var(--ds-gray-400)] opacity-60"
           : complete && isOpen
-            ? "border-[hsl(var(--accent))]/30 shadow-md"
+            ? "border-[var(--ds-blue-200)] shadow-[0_0_0_1px_var(--ds-blue-200)]"
             : complete
-              ? "border-[hsl(var(--border))]"
-              : "border-[hsl(var(--border-subtle))]",
+              ? "border-[var(--ds-gray-500)]"
+              : "border-[var(--ds-gray-400)]",
       )}
     >
       <button
@@ -180,22 +183,22 @@ function StepCard({
         disabled={!canToggle}
         onClick={canToggle ? onToggle : undefined}
         className={cn(
-          "flex w-full items-center gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4 text-left transition-colors duration-150",
+          "flex w-full items-center gap-4 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-4 text-left transition-colors duration-150",
           canToggle
-            ? "cursor-pointer hover:bg-[hsl(var(--background))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-inset"
+            ? cn("cursor-pointer hover:bg-[var(--ds-gray-200)]", focusRingClassName)
             : "cursor-default",
         )}
       >
         <div
           className={cn(
-            "mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-md border text-xs font-medium leading-4 transition-colors duration-200",
+            "mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border text-label-12 transition-colors duration-200",
             complete
-              ? "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-              : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]",
+              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]",
           )}
         >
           {complete
-            ? <CheckCircle2 className="h-4 w-4 text-[hsl(var(--accent))]" />
+            ? <CheckCircle2 className="h-4 w-4 text-[var(--ds-blue-700)]" />
             : <span>{step}</span>
           }
         </div>
@@ -203,25 +206,25 @@ function StepCard({
         <div className="flex-1 min-w-0">
           {!isOpen && complete && summary ? (
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">{title}</span>
-              <span className="text-[hsl(var(--foreground-subtle))]">·</span>
+              <span className="text-copy-12 text-[var(--ds-gray-900)]">{title}</span>
+              <span className="text-[var(--ds-gray-700)]">·</span>
               {summary}
             </div>
           ) : (
             <>
-              <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{title}</h2>
-              <p className="mt-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">{description}</p>
+              <h2 className="text-label-14 text-[var(--ds-gray-1000)]">{title}</h2>
+              <p className="mt-1 text-copy-12 leading-5 text-[var(--ds-gray-900)]">{description}</p>
             </>
           )}
         </div>
 
         {canToggle && (
-          <div className="flex-shrink-0 flex items-center gap-1.5 text-[hsl(var(--foreground-muted))]">
+          <div className="flex flex-shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)]">
             {!isOpen && (
-              <span className="hidden items-center gap-1 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 py-0.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))] sm:flex">
+              <DraftDetailBadge variant="subtle" className="hidden gap-1.5 sm:inline-flex">
                 <Pencil className="w-2.5 h-2.5" />
                 Edit
-              </span>
+              </DraftDetailBadge>
             )}
             {isOpen
               ? <ChevronUp  className="w-4 h-4" />
@@ -252,17 +255,18 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
   label?: string;
 }) {
   return (
-    <div className="mt-4 flex justify-end">
-      <AtlassianButton
-        appearance="primary"
+    <div className="mt-5 flex justify-end">
+      <DraftDetailActionButton
+        tone="primary"
         onClick={onClick}
-        isDisabled={disabled}
+        disabled={disabled}
+        className="min-w-[11rem]"
       >
         <span className="inline-flex items-center gap-1.5">
           <span>{label}</span>
           <ChevronDown className="h-3.5 w-3.5" />
         </span>
-      </AtlassianButton>
+      </DraftDetailActionButton>
     </div>
   );
 }
@@ -414,13 +418,7 @@ export default function DraftEditPage() {
             postType as "IMAGE" | "VIDEO"
           )
         : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      newFiles.map((f) => f.name + f.size).join(","),
-      pseudoLibraryFiles.map((f) => f.name + f.size).join(","),
-      selectedPlatforms.join(","),
-      postType,
-    ],
+    [newFiles, pseudoLibraryFiles, selectedPlatforms, postType],
   );
 
   useEffect(() => {
@@ -432,8 +430,7 @@ export default function DraftEditPage() {
       .then(({ errors }) => setMediaErrors(errors))
       .catch(() => setMediaErrors([]))
       .finally(() => setValidatingMedia(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newFiles.map((f) => f.name + f.size).join(","), selectedPlatforms.join(","), postType]);
+  }, [newFiles, selectedPlatforms, postType]);
 
   const allMediaErrors = mediaErrors.length > 0 ? mediaErrors : syncMediaErrors;
   const effectiveApprovalMode = resolveWorkspaceApprovalMode(activeWorkspace, {
@@ -458,34 +455,40 @@ export default function DraftEditPage() {
   const TypeIcon = typeCfg.Icon;
 
   const step1Summary = (
-    <span className="flex items-center gap-1.5 text-sm font-medium leading-5 text-foreground">
-      <TypeIcon className="w-3.5 h-3.5 text-primary" />
+    <span className="flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
+      <TypeIcon className="h-3.5 w-3.5 text-[var(--ds-blue-700)]" />
       {typeCfg.label}
     </span>
   );
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-sm font-medium leading-5 text-primary">{selectedIds.length}</span>
-      <span className="text-xs leading-4 text-muted-foreground">{selectedIds.length === 1 ? "account" : "accounts"}</span>
+      <span className="text-label-14 text-[var(--ds-blue-700)]">{selectedIds.length}</span>
+      <span className="text-copy-12 text-[var(--ds-gray-900)]">{selectedIds.length === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
-        <span key={p} className={cn("text-xs font-medium leading-4 px-1.5 py-0.5 rounded-full border", PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border")}>
+        <span
+          key={p}
+          className={cn(
+            "inline-flex items-center rounded-full border px-2 py-1 text-label-12",
+            PLATFORM_BADGE_STYLES[p] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+          )}
+        >
           {PLATFORM_LABELS[p] ?? p}
         </span>
       ))}
       {selectedPlatformKeys.length > 3 && (
-        <span className="text-xs leading-4 text-muted-foreground">+{selectedPlatformKeys.length - 3}</span>
+        <span className="text-copy-12 text-[var(--ds-gray-900)]">+{selectedPlatformKeys.length - 3}</span>
       )}
     </span>
   );
 
   const step3Summary = (
-    <span className="flex items-center gap-2 text-sm text-foreground">
-      <span className="font-medium truncate max-w-[160px] sm:max-w-[260px]">
+    <span className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)]">
+      <span className="truncate font-medium max-w-[160px] sm:max-w-[260px]">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
       {postType !== "TEXT" && (keptCount + newFiles.length + selectedLibraryAssets.length) > 0 && (
-        <span className="text-xs text-muted-foreground flex-shrink-0">
+        <span className="flex-shrink-0 text-copy-12 text-[var(--ds-gray-900)]">
           · {keptCount + newFiles.length + selectedLibraryAssets.length} {postType === "IMAGE" ? "image" : "video"}{(keptCount + newFiles.length + selectedLibraryAssets.length) !== 1 ? "s" : ""}
         </span>
       )}
@@ -493,7 +496,7 @@ export default function DraftEditPage() {
   );
 
   const step4Summary = date && time ? (
-    <span className="text-sm font-medium text-foreground">
+    <span className="text-label-14 text-[var(--ds-gray-1000)]">
       {new Date(`${date}T${time}`).toLocaleString(undefined, {
         month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
       })}
@@ -673,62 +676,62 @@ export default function DraftEditPage() {
   }
 
   /* ── Render states ── */
-  if (loading) return <SchedulePostPageSkeleton />;
+  if (loading) return <DraftEditPageSkeleton />;
   if (error || !collection) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
-            <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
+      <main className="flex min-h-screen items-center justify-center bg-[var(--ds-background-200)] p-6">
+        <div className="w-full max-w-sm rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-8 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)]">
+            <AlertCircle className="h-7 w-7 text-[var(--ds-red-700)]" />
           </div>
-          <h3 className="mb-1 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Draft not found</h3>
-          <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+          <h3 className="mb-1 text-title-18 text-[var(--ds-gray-1000)]">Draft not found</h3>
+          <p className="mb-6 text-label-14 leading-6 text-[var(--ds-gray-900)]">
             {error ?? "This draft couldn't be loaded. It may have been deleted."}
           </p>
-          <AtlassianButton appearance="primary" onClick={() => router.push(`/drafts/${id}`)}>
+          <DraftDetailActionButton tone="primary" onClick={() => router.push(`/drafts/${id}`)}>
             <span className="inline-flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Draft</span>
             </span>
-          </AtlassianButton>
+          </DraftDetailActionButton>
         </div>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--background))]">
+    <main className="min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]">
       <ProtectedPageHeader
         title="Edit Draft"
         description={collection.description || "Untitled Draft"}
         icon={<Pencil className="h-4 w-4" />}
         leading={
-          <AtlassianButton appearance="subtle" onClick={() => router.push(`/drafts/${id}`)}>
+          <DraftDetailActionButton compact onClick={() => router.push(`/drafts/${id}`)}>
             <span className="inline-flex items-center gap-1.5">
               <ArrowLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Back</span>
             </span>
-          </AtlassianButton>
+          </DraftDetailActionButton>
         }
         actions={
           <div className="hidden sm:block">
-            <Lozenge appearance="inprogress">
+            <DraftDetailBadge variant="accent">
               {selectedIds.length} {selectedIds.length === 1 ? "account" : "accounts"}
-            </Lozenge>
+            </DraftDetailBadge>
           </div>
         }
       />
 
       {selectedPlatformKeys.length > 0 && (
-        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-6">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-xs text-[hsl(var(--foreground-muted))]">Posting to:</span>
+            <span className="text-copy-12 text-[var(--ds-gray-900)]">Posting to:</span>
             {selectedPlatformKeys.map((p) => (
               <span
                 key={p}
                 className={cn(
-                  "text-xs font-medium px-2 py-0.5 rounded-full border",
-                  PLATFORM_BADGE_STYLES[p] ?? "bg-muted text-foreground border-border"
+                  "inline-flex items-center rounded-full border px-2 py-1 text-label-12",
+                  PLATFORM_BADGE_STYLES[p] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                 )}
               >
                 {PLATFORM_LABELS[p] ?? p}
@@ -738,16 +741,21 @@ export default function DraftEditPage() {
         </div>
       )}
 
-      <div className="px-4 py-6 sm:px-6">
-        <div className="mb-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{typeCfg.label} draft</p>
-              <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{typeCfg.description}</p>
+      <div className="px-4 py-6 pb-8 sm:px-6">
+        <div className="mb-5 rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-5 py-5 shadow-sm">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl border", typeCfg.className)}>
+                <TypeIcon className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-title-18 text-[var(--ds-gray-1000)]">{typeCfg.label} draft</p>
+                <p className="mt-1 max-w-2xl text-label-14 leading-6 text-[var(--ds-gray-900)]">{typeCfg.description}</p>
+              </div>
             </div>
             <div className="flex items-center gap-2">
-              <Lozenge appearance="default">Draft</Lozenge>
-              <Lozenge appearance="new">{typeCfg.label}</Lozenge>
+              <DraftDetailBadge variant="subtle">Draft</DraftDetailBadge>
+              <DraftDetailBadge variant={postType === "TEXT" ? "neutral" : "accent"}>{typeCfg.label}</DraftDetailBadge>
             </div>
           </div>
         </div>
@@ -764,23 +772,23 @@ export default function DraftEditPage() {
           onToggle={() => toggleStep(1)}
           summary={step1Summary}
         >
-          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-muted/40 border border-border/40">
+          <div className="flex items-center gap-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3">
             <div
               className={cn(
-                "h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0",
+                "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border",
                 typeCfg.className
               )}
             >
               <TypeIcon className="h-4 w-4" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold leading-5 text-foreground">{typeCfg.label} Post</p>
-              <p className="text-xs leading-4 text-muted-foreground">Format is fixed for this draft</p>
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">{typeCfg.label} Post</p>
+              <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">Format is fixed for this draft</p>
             </div>
-            <div className="flex items-center gap-1.5 text-xs font-medium leading-4 text-muted-foreground bg-muted border border-border/50 px-2.5 py-1 rounded-lg">
+            <DraftDetailBadge variant="neutral" className="gap-1.5">
               <Lock className="h-3 w-3" />
               Locked
-            </div>
+            </DraftDetailBadge>
           </div>
         </StepCard>
 
@@ -835,12 +843,16 @@ export default function DraftEditPage() {
           {/* Caption */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium leading-5 text-foreground">
+              <label className="text-label-14 text-[var(--ds-gray-1000)]">
                 {postType === "TEXT" ? "Content" : "Caption"}
               </label>
               <span className={cn(
-                "text-xs font-mono tabular-nums transition-colors",
-                overLimit ? "text-red-500 font-medium" : nearLimit ? "text-amber-500" : "text-muted-foreground",
+                "text-copy-12 font-mono tabular-nums transition-colors",
+                overLimit
+                  ? "font-semibold text-[var(--ds-red-700)]"
+                  : nearLimit
+                    ? "text-[var(--ds-amber-700)]"
+                    : "text-[var(--ds-gray-900)]",
               )}>
                 {charCount.toLocaleString()} / {MAX_CHARS.toLocaleString()}
               </span>
@@ -854,13 +866,14 @@ export default function DraftEditPage() {
                   : "Write your post caption here. You can use emoji, hashtags, and mentions."
               }
               className={cn(
-                "w-full p-4 rounded-xl border text-sm bg-background text-foreground leading-relaxed",
+                "min-h-[140px] w-full resize-none rounded-xl border p-4 text-label-14 leading-relaxed",
+                "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
                 "resize-none min-h-[140px] transition-all duration-200",
-                "placeholder:text-muted-foreground/60",
-                "focus:outline-none focus:ring-2 focus:ring-primary/20",
+                "placeholder:text-[var(--ds-gray-900)]",
+                "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]",
                 overLimit || platformCharErrors.length > 0
-                  ? "border-red-400 focus:border-red-400"
-                  : "border-border focus:border-primary",
+                  ? "border-[var(--ds-red-500)]"
+                  : "focus:border-[var(--ds-blue-600)]",
               )}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -874,11 +887,11 @@ export default function DraftEditPage() {
           {postType !== "TEXT" && (
             <div className="space-y-2 mt-6">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium leading-5 text-foreground">
+                <label className="text-label-14 text-[var(--ds-gray-1000)]">
                   {postType === "IMAGE" ? "Images" : "Video"}
                 </label>
                 {selectedPlatforms.length > 0 && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-copy-12 text-[var(--ds-gray-900)]">
                     Max {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""}
                     {restrictivePlatformLabel ? ` (${restrictivePlatformLabel} limit)` : ""}
                   </span>
@@ -888,7 +901,7 @@ export default function DraftEditPage() {
               {/* Existing kept media thumbnails */}
               {keptMedia.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-xs font-medium leading-4 text-muted-foreground flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-copy-12 text-[var(--ds-gray-900)]">
                     <CloudUpload className="w-3.5 h-3.5" />
                     Existing media — click × to remove
                   </p>
@@ -896,7 +909,7 @@ export default function DraftEditPage() {
                     {keptMedia.map((m) => (
                       <div
                         key={m.fileKey}
-                        className="relative group w-28 h-28 rounded-xl border border-border bg-card overflow-hidden shadow-sm"
+                        className="group relative h-28 w-28 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm"
                       >
                         {m.mimeType.startsWith("video/") ? (
                           <video
@@ -916,9 +929,13 @@ export default function DraftEditPage() {
                           <button
                             type="button"
                             onClick={() => setKeepMediaKeys((prev) => prev.filter((k) => k !== m.fileKey))}
-                            className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white/95 shadow-md flex items-center justify-center border border-black/10 hover:bg-red-50"
+                            className={cn(
+                              "absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full border shadow-md transition-colors",
+                              "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-red-200)] hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)]",
+                              focusRingClassName,
+                            )}
                           >
-                            <X className="w-3 h-3 text-gray-700" strokeWidth={2.5} />
+                            <X className="h-3 w-3" strokeWidth={2.5} />
                           </button>
                         </div>
                       </div>
@@ -949,7 +966,7 @@ export default function DraftEditPage() {
                 }
               />
               {slotsForNew === 0 && newFiles.length === 0 && (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-copy-12 text-[var(--ds-gray-900)]">
                   Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove an existing file to add new ones.
                 </p>
               )}
@@ -968,7 +985,7 @@ export default function DraftEditPage() {
 
           {/* Platform configs */}
           {selectedAccounts.length > 0 && (
-            <div className="mt-6 pt-6 border-t border-border/60">
+            <div className="mt-6 border-t border-[var(--ds-gray-400)] pt-6">
               <PlatformConfigsPanel
                 selectedAccounts={selectedAccounts}
                 configs={platformConfigs}
@@ -997,19 +1014,19 @@ export default function DraftEditPage() {
           onToggle={reachedStep >= 4 ? () => toggleStep(4) : undefined}
           summary={step4Summary ?? undefined}
         >
-          <ScheduleDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
+          <DraftDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
 
-          <div className="mt-4 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4">
-            <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+          <div className="mt-4 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4">
+            <p className="text-label-14 text-[var(--ds-gray-1000)]">
               Effective approval mode
             </p>
-            <p className="mt-1 text-xs leading-5 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-1 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
               {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
             </p>
 
             {canManageApprovalRules ? (
               <div className="mt-4 space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground-muted))]">
+                <label className="text-copy-12 font-semibold uppercase tracking-[0.08em] text-[var(--ds-gray-900)]">
                   Campaign override
                 </label>
                 <select
@@ -1019,7 +1036,11 @@ export default function DraftEditPage() {
                       event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
                     )
                   }
-                  className="flex h-10 w-full rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                  className={cn(
+                    "flex h-10 w-full rounded-md border px-3 text-sm transition-colors",
+                    "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
+                    focusRingClassName,
+                  )}
                 >
                   <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
                   <option value="NONE">No approval required</option>
@@ -1027,23 +1048,24 @@ export default function DraftEditPage() {
                   <option value="REQUIRED">Required approval</option>
                   <option value="MULTI_STEP">Multi-step approval</option>
                 </select>
-                <p className="text-xs leading-5 text-[hsl(var(--foreground-muted))]">
+                <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
                   Campaign overrides beat account and content-type rules for this collection only.
                 </p>
               </div>
             ) : (
-              <p className="mt-4 text-xs leading-5 text-[hsl(var(--foreground-muted))]">
+              <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
                 Approval is resolved automatically from workspace policy, account rules, and content type.
               </p>
             )}
           </div>
 
           <div className="mt-6">
-            <AtlassianButton
-              appearance="primary"
+            <DraftDetailActionButton
+              tone="primary"
               onClick={save}
-              isDisabled={saving || selectedIds.length === 0 || hasAnyCharError || validatingMedia}
-              shouldFitContainer
+              disabled={saving || selectedIds.length === 0 || hasAnyCharError || validatingMedia}
+              fullWidth
+              className="h-11 text-label-14"
             >
               <span className="inline-flex items-center justify-center gap-2">
                 {saving ? (
@@ -1058,38 +1080,12 @@ export default function DraftEditPage() {
                   </>
                 )}
               </span>
-            </AtlassianButton>
+            </DraftDetailActionButton>
           </div>
         </StepCard>
 
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ── Loading Skeleton ── */
-function LoadingSkeleton() {
-  return (
-    <div className="min-h-screen bg-[hsl(var(--background))]">
-      <div className="sticky top-0 z-10 h-[60px] border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95" />
-      <div className="px-4 sm:px-6 py-6 space-y-4">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-            <div className="flex items-start gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-6 py-4">
-              <Skeleton className="w-7 h-7 rounded-lg flex-shrink-0" />
-              <div className="flex-1 space-y-1.5">
-                <Skeleton className="h-4 w-32 rounded" />
-                <Skeleton className="h-3 w-64 rounded" />
-              </div>
-            </div>
-            <div className="px-6 py-5 space-y-3">
-              <Skeleton className="h-10 w-full rounded-xl" />
-              {i === 3 && <Skeleton className="h-32 w-full rounded-xl" />}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    </main>
   );
 }

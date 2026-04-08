@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import Image from "next/image";
 import { Building2, Plus, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,35 @@ import { WorkspaceResponse } from "@/model/Workspace";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { createWorkspaceApi } from "@/service/workspace";
 import { cn } from "@/lib/utils";
+
+const pageClassName =
+  "flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-background-200)_100%)] p-4";
+const cardClassName =
+  "w-full max-w-md rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-5 shadow-sm sm:p-6";
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+const actionButtonClassName = cn(
+  "h-10 w-full rounded-md border text-label-14 shadow-none transition-colors disabled:pointer-events-none disabled:opacity-50",
+  focusRingClassName
+);
+const primaryButtonClassName = cn(
+  actionButtonClassName,
+  "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+);
+const secondaryButtonClassName = cn(
+  actionButtonClassName,
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+);
+const inputClassName = cn(
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)]",
+  "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+);
+const workspaceCardBaseClassName =
+  "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors";
+const workspaceCardIdleClassName =
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
+const workspaceCardActiveClassName =
+  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] shadow-sm";
 
 export default function WorkspaceSelectPage() {
   const router = useRouter();
@@ -128,49 +158,61 @@ export default function WorkspaceSelectPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/30 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-border/70 bg-[hsl(var(--surface))] p-5 shadow-lg sm:p-6">
-        {/* Header */}
+    <div className={pageClassName}>
+      <div className={cardClassName}>
         <div className="mb-6 text-center">
-          <img
+          <div className="mb-3 flex justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] shadow-sm">
+              <Image
             src="/SocialRavenLogo.svg"
             alt="SocialRaven"
-            className="mx-auto mb-3 h-10 w-10"
-          />
-          <h1 className="text-lg font-semibold leading-6 text-[hsl(var(--foreground))]">
+                width={28}
+                height={28}
+                className="h-7 w-7"
+              />
+            </div>
+          </div>
+          <h1 className="text-title-20 text-[var(--ds-gray-1000)]">
             Select a workspace
           </h1>
-          <p className="mt-1 text-sm leading-5 text-muted-foreground">
+          <p className="mt-1 text-label-14 leading-6 text-[var(--ds-gray-900)]">
             Choose where you&apos;d like to work
           </p>
         </div>
 
-        {/* Workspace list */}
         <div className="mb-3 space-y-2">
           {workspaces.map((w) => (
             <button
               key={w.id}
               onClick={() => handleSelect(w)}
               className={cn(
-                "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                workspaceCardBaseClassName,
                 selected?.id === w.id
-                  ? "border-accent/60 bg-[hsl(var(--surface-raised))] shadow-sm"
-                  : "border-border/60 bg-[hsl(var(--surface))] hover:border-accent/30 hover:bg-[hsl(var(--surface-raised))]"
+                  ? workspaceCardActiveClassName
+                  : workspaceCardIdleClassName,
+                focusRingClassName
               )}
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10">
-                <Building2 className="h-4 w-4 text-accent" />
+              <div
+                className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
+                  selected?.id === w.id
+                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                    : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
+                )}
+              >
+                <Building2 className="h-4 w-4" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
                   {w.name}
                 </p>
-                <p className="text-xs font-medium leading-4 text-muted-foreground">
+                <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
                   {[w.companyName, w.role.replace("_", " ").toLowerCase()].filter(Boolean).join(" • ")}
                 </p>
               </div>
               {selected?.id === w.id && (
-                <Check className="h-4 w-4 shrink-0 text-accent" />
+                <Check className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" />
               )}
             </button>
           ))}
@@ -182,27 +224,34 @@ export default function WorkspaceSelectPage() {
                 setSelected(null);
               }}
               className={cn(
-                "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all",
+                workspaceCardBaseClassName,
                 creating
-                  ? "border-accent/60 bg-[hsl(var(--surface-raised))] shadow-sm"
-                  : "border-dashed border-border/60 bg-[hsl(var(--surface))] hover:border-accent/30 hover:bg-[hsl(var(--surface-raised))]"
+                  ? workspaceCardActiveClassName
+                  : "border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]",
+                focusRingClassName
               )}
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <Plus className="h-4 w-4 text-muted-foreground" />
+              <div
+                className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
+                  creating
+                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                    : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
+                )}
+              >
+                <Plus className="h-4 w-4" />
               </div>
-              <p className="text-sm font-medium leading-5 text-muted-foreground">
+              <p className="text-label-14 text-[var(--ds-gray-900)]">
                 Create new workspace
               </p>
             </button>
           )}
         </div>
 
-        {/* Create form */}
         {creating && canCreateWorkspaces && (
-          <div className="mb-3 space-y-3 rounded-xl border border-accent/20 bg-[hsl(var(--surface-raised))] p-4">
+          <div className="mb-3 space-y-3 rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] p-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ws-name" className="text-sm font-medium leading-5">
+              <Label htmlFor="ws-name" className="text-label-14 text-[var(--ds-blue-700)]">
                 Workspace name
               </Label>
               <Input
@@ -212,21 +261,30 @@ export default function WorkspaceSelectPage() {
                 onChange={(e) => setNewName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
                 autoFocus
-                className="bg-[hsl(var(--surface))]"
+                className={inputClassName}
               />
             </div>
             {manageableCompanies.length > 1 && (
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium leading-5">
+                <Label className="text-label-14 text-[var(--ds-blue-700)]">
                   Company
                 </Label>
                 <Select value={createCompanyId} onValueChange={setCreateCompanyId}>
-                  <SelectTrigger className="bg-[hsl(var(--surface))]">
+                  <SelectTrigger
+                    className={cn(
+                      "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
+                      focusRingClassName
+                    )}
+                  >
                     <SelectValue placeholder="Select a company" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
                     {manageableCompanies.map((company) => (
-                      <SelectItem key={company.id} value={company.id}>
+                      <SelectItem
+                        key={company.id}
+                        value={company.id}
+                        className="focus:bg-[var(--ds-gray-100)] focus:text-[var(--ds-gray-1000)]"
+                      >
                         {company.name}
                       </SelectItem>
                     ))}
@@ -234,11 +292,11 @@ export default function WorkspaceSelectPage() {
                 </Select>
               </div>
             )}
-            {error && <p className="text-xs text-destructive">{error}</p>}
+            {error && <p className="text-copy-12 text-[var(--ds-red-700)]">{error}</p>}
             <Button
               onClick={handleCreate}
               disabled={!newName.trim() || busy || !createCompanyId}
-              className="w-full"
+              className={primaryButtonClassName}
               size="sm"
             >
               {busy ? "Creating…" : "Create & enter"}
@@ -246,12 +304,14 @@ export default function WorkspaceSelectPage() {
           </div>
         )}
 
-        {/* Enter button */}
         {!creating && (
           <Button
             onClick={handleEnter}
             disabled={!selected}
-            className="mt-1 w-full"
+            className={cn(
+              selected ? primaryButtonClassName : secondaryButtonClassName,
+              "mt-1"
+            )}
           >
             Enter workspace
           </Button>

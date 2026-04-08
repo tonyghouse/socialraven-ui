@@ -43,6 +43,7 @@ export function PostCollaborationAnnotationEditor({
   mediaAnnotation,
   onMediaAnnotationChange,
   disabled = false,
+  appearance = "default",
 }: {
   description: string;
   media: MediaResponse[];
@@ -53,7 +54,9 @@ export function PostCollaborationAnnotationEditor({
   mediaAnnotation: CollaborationMediaAnnotation;
   onMediaAnnotationChange: (annotation: CollaborationMediaAnnotation) => void;
   disabled?: boolean;
+  appearance?: "default" | "geist";
 }) {
+  const isGeist = appearance === "geist";
   const captionSelectionRef = useRef<HTMLTextAreaElement | null>(null);
 
   const selectedMedia = useMemo(() => {
@@ -114,9 +117,16 @@ export function PostCollaborationAnnotationEditor({
       : "No caption available to annotate.";
 
   return (
-    <div className="space-y-4 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4">
+    <div
+      className={cn(
+        "space-y-4 rounded-lg border p-4",
+        isGeist
+          ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
+          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))]"
+      )}
+    >
       <div className="space-y-2">
-        <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+        <p className={cn("text-sm font-medium", isGeist ? "text-[var(--ds-gray-1000)]" : "text-[hsl(var(--foreground))]")}>
           Annotation target
         </p>
         <div className="flex flex-wrap gap-2">
@@ -145,8 +155,12 @@ export function PostCollaborationAnnotationEditor({
               className={cn(
                 "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                 mode === value
-                  ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                  : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]",
+                  ? isGeist
+                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    : "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                  : isGeist
+                    ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
+                    : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]",
                 (disabled || (value === "MEDIA" && media.length === 0)) &&
                   "cursor-not-allowed opacity-60"
               )}
@@ -161,7 +175,7 @@ export function PostCollaborationAnnotationEditor({
       {mode === "CAPTION" && (
         <div className="space-y-3">
           <div className="space-y-2">
-            <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+            <p className={cn("text-sm font-medium", isGeist ? "text-[var(--ds-gray-1000)]" : "text-[hsl(var(--foreground))]")}>
               Select the caption text to anchor
             </p>
             <Textarea
@@ -170,14 +184,26 @@ export function PostCollaborationAnnotationEditor({
               readOnly
               disabled={disabled}
               onSelect={handleCaptionSelection}
-              className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
+              className={cn(
+                "min-h-[140px]",
+                isGeist
+                  ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                  : "bg-[hsl(var(--surface-raised))]"
+              )}
             />
           </div>
-          <div className="rounded-lg border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-3 py-2.5">
-            <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+          <div
+            className={cn(
+              "rounded-lg border border-dashed px-3 py-2.5",
+              isGeist
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]"
+                : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]"
+            )}
+          >
+            <p className={cn("text-xs font-medium uppercase tracking-[0.16em]", isGeist ? "text-[var(--ds-gray-900)]" : "text-[hsl(var(--foreground-subtle))]")}>
               Current selection
             </p>
-            <p className="mt-1 whitespace-pre-wrap text-sm text-[hsl(var(--foreground-muted))]">
+            <p className={cn("mt-1 whitespace-pre-wrap text-sm", isGeist ? "text-[var(--ds-gray-900)]" : "text-[hsl(var(--foreground-muted))]")}>
               {selectionSummary}
             </p>
           </div>
@@ -187,7 +213,7 @@ export function PostCollaborationAnnotationEditor({
       {mode === "MEDIA" && (
         <div className="space-y-3">
           {media.length === 0 ? (
-            <p className="text-sm text-[hsl(var(--foreground-muted))]">
+            <p className={cn("text-sm", isGeist ? "text-[var(--ds-gray-900)]" : "text-[hsl(var(--foreground-muted))]")}>
               No media is attached to this post yet.
             </p>
           ) : (
@@ -214,8 +240,12 @@ export function PostCollaborationAnnotationEditor({
                     className={cn(
                       "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                       item.id === selectedMedia?.id
-                        ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                        : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]",
+                        ? isGeist
+                          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                          : "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                        : isGeist
+                          ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
+                          : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))] hover:text-[hsl(var(--foreground))]",
                       disabled && "cursor-not-allowed opacity-60"
                     )}
                   >
@@ -226,14 +256,22 @@ export function PostCollaborationAnnotationEditor({
 
               {selectedMedia && (
                 <div className="space-y-2">
-                  <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                  <p className={cn("text-sm font-medium", isGeist ? "text-[var(--ds-gray-1000)]" : "text-[hsl(var(--foreground))]")}>
                     Click the media to place the annotation marker
                   </p>
-                  <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] p-3">
+                  <div
+                    className={cn(
+                      "rounded-lg border p-3",
+                      isGeist
+                        ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]"
+                        : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]"
+                    )}
+                  >
                     <div
                       onClick={handleMediaPlacement}
                       className={cn(
-                        "relative inline-block overflow-hidden rounded-lg border border-[hsl(var(--border-subtle))] bg-black/5",
+                        "relative inline-block overflow-hidden rounded-lg border bg-black/5",
+                        isGeist ? "border-[var(--ds-gray-400)]" : "border-[hsl(var(--border-subtle))]",
                         disabled ? "cursor-not-allowed" : "cursor-crosshair"
                       )}
                     >
@@ -257,7 +295,10 @@ export function PostCollaborationAnnotationEditor({
                         mediaAnnotation.mediaMarkerX !== null &&
                         mediaAnnotation.mediaMarkerY !== null && (
                           <div
-                            className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[hsl(var(--accent))] shadow-[0_0_0_3px_rgb(0 0 0 / 0.18)]"
+                            className={cn(
+                              "pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_3px_rgb(0_0_0_/_0.18)]",
+                              isGeist ? "bg-[var(--ds-blue-600)]" : "bg-[hsl(var(--accent))]"
+                            )}
                             style={{
                               left: `${mediaAnnotation.mediaMarkerX * 100}%`,
                               top: `${mediaAnnotation.mediaMarkerY * 100}%`,

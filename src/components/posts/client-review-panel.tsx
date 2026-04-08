@@ -1,8 +1,5 @@
 "use client";
 
-import AtlassianButton from "@atlaskit/button/new";
-import Lozenge from "@atlaskit/lozenge";
-import SectionMessage from "@atlaskit/section-message";
 import { useAuth } from "@clerk/nextjs";
 import {
   Copy,
@@ -15,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type {
   PostCollectionReviewLink,
@@ -26,6 +24,16 @@ import {
   revokePostCollectionReviewLinkApi,
 } from "@/service/reviewLinks";
 import { useRole } from "@/hooks/useRole";
+import {
+  DraftDetailActionButton,
+  DraftDetailBadge,
+  DraftDetailNotice,
+  draftDetailBodyTextClassName,
+  draftDetailMetaTextClassName,
+  draftDetailPanelClassName,
+  draftDetailPanelHeaderClassName,
+  draftDetailSubtlePanelClassName,
+} from "@/components/drafts/draft-detail-primitives";
 
 const LINK_EXPIRY_OPTIONS = [
   { label: "24 hours", hours: 24 },
@@ -52,10 +60,37 @@ function getCollectionPostLabel(collection: PostCollectionResponse, postId: numb
   if (!post) {
     return `Post #${postId}`;
   }
-  const username = post.connectedAccount?.username
-    ? ` · ${post.connectedAccount.username}`
-    : "";
+  const username = post.connectedAccount?.username ? ` · ${post.connectedAccount.username}` : "";
   return `${post.provider}${username}`;
+}
+
+function SelectChip({
+  selected,
+  disabled,
+  children,
+  onClick,
+}: {
+  selected: boolean;
+  disabled?: boolean;
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={cn(
+        "rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
+        selected
+          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+          : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]",
+        disabled && "cursor-not-allowed opacity-60"
+      )}
+    >
+      {children}
+    </button>
+  );
 }
 
 export function ClientReviewPanel({
@@ -205,40 +240,38 @@ export function ClientReviewPanel({
   const canCreateLink = isDraftWorkflowStatus(collection.overallStatus);
 
   return (
-    <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
+    <section className={draftDetailPanelClassName}>
+      <div className={draftDetailPanelHeaderClassName}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Globe2 className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-              <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
-                Client Review Links
-              </p>
+              <Globe2 className="h-4 w-4 text-[var(--ds-gray-900)]" />
+              <p className="text-title-16 text-[var(--ds-gray-1000)]">Client Review Links</p>
             </div>
-            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <p className={draftDetailBodyTextClassName}>
               Share a review-only link with clients. Only client-visible comments are exposed
               outside the workspace.
             </p>
           </div>
-          <Lozenge appearance="default">{links.length} links</Lozenge>
+          <DraftDetailBadge>{links.length} links</DraftDetailBadge>
         </div>
       </div>
 
       <div className="space-y-5 px-5 py-5">
-        {!canCreateLink && (
-          <SectionMessage appearance="information" title="Review links are read-only here">
-            <p className="text-sm">
+        {!canCreateLink ? (
+          <DraftDetailNotice title="Review links are read-only here">
+            <p>
               New review links can only be created while the content is still in the draft or
               approval workflow.
             </p>
-          </SectionMessage>
-        )}
+          </DraftDetailNotice>
+        ) : null}
 
-        <div className="space-y-4 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4">
+        <div className={cn(draftDetailSubtlePanelClassName, "space-y-4 p-4")}>
           <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                   Share scope
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -252,57 +285,44 @@ export function ClientReviewPanel({
                       label: "Selected posts",
                     },
                   ] as const).map((option) => (
-                    <button
+                    <SelectChip
                       key={option.value}
-                      type="button"
+                      selected={shareScope === option.value}
                       disabled={creating || !canCreateLink}
                       onClick={() => setShareScope(option.value)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                        shareScope === option.value
-                          ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
-                      } ${creating || !canCreateLink ? "cursor-not-allowed opacity-60" : ""}`}
                     >
                       {option.label}
-                    </button>
+                    </SelectChip>
                   ))}
                 </div>
               </div>
 
-              {shareScope === "SELECTED_POSTS" && (
+              {shareScope === "SELECTED_POSTS" ? (
                 <div>
-                  <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                  <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                     Included post variants
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {collection.posts.map((post) => {
-                      const selected = selectedPostIds.includes(post.id);
-                      return (
-                        <button
-                          key={post.id}
-                          type="button"
-                          disabled={creating || !canCreateLink}
-                          onClick={() => toggleSelectedPost(post.id)}
-                          className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                            selected
-                              ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                              : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
-                          } ${creating || !canCreateLink ? "cursor-not-allowed opacity-60" : ""}`}
-                        >
-                          {getCollectionPostLabel(collection, post.id)}
-                        </button>
-                      );
-                    })}
+                    {collection.posts.map((post) => (
+                      <SelectChip
+                        key={post.id}
+                        selected={selectedPostIds.includes(post.id)}
+                        disabled={creating || !canCreateLink}
+                        onClick={() => toggleSelectedPost(post.id)}
+                      >
+                        {getCollectionPostLabel(collection, post.id)}
+                      </SelectChip>
+                    ))}
                   </div>
-                  <p className="mt-2 text-xs text-[hsl(var(--foreground-muted))]">
+                  <p className={cn("mt-2", draftDetailMetaTextClassName)}>
                     Selected-post links are feedback-only. Final approve/reject stays on the full
                     campaign review link.
                   </p>
                 </div>
-              )}
+              ) : null}
 
               <label className="block">
-                <span className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <span className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                   Optional passcode
                 </span>
                 <input
@@ -311,83 +331,74 @@ export function ClientReviewPanel({
                   disabled={creating || !canCreateLink}
                   placeholder="Add a separate passcode"
                   type="password"
-                  className="mt-2 w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                  className="mt-2 flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[var(--ds-blue-600)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
                 />
               </label>
             </div>
 
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                   Link expiry
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {LINK_EXPIRY_OPTIONS.map((option) => (
-                    <button
+                    <SelectChip
                       key={option.hours}
-                      type="button"
+                      selected={selectedHours === option.hours}
                       disabled={creating || !canCreateLink}
                       onClick={() => setSelectedHours(option.hours)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                        selectedHours === option.hours
-                          ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]"
-                      } ${creating || !canCreateLink ? "cursor-not-allowed opacity-60" : ""}`}
                     >
                       {option.label}
-                    </button>
+                    </SelectChip>
                   ))}
                 </div>
               </div>
 
-              <AtlassianButton
-                appearance="primary"
-                isDisabled={creating || !canCreateLink}
+              <DraftDetailActionButton
+                tone="primary"
+                disabled={creating || !canCreateLink}
                 onClick={handleCreateLink}
               >
-                <span className="inline-flex items-center gap-2">
-                  {creating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span>Creating…</span>
-                    </>
-                  ) : (
-                    <>
-                      <Link2 className="h-4 w-4" />
-                      <span>Create Review Link</span>
-                    </>
-                  )}
-                </span>
-              </AtlassianButton>
+                {creating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Creating…</span>
+                  </>
+                ) : (
+                  <>
+                    <Link2 className="h-4 w-4" />
+                    <span>Create Review Link</span>
+                  </>
+                )}
+              </DraftDetailActionButton>
             </div>
           </div>
 
-          {passcode.trim().length > 0 && (
-            <SectionMessage appearance="information" title="Passcodes are never embedded in the URL">
-              <p className="text-sm">
+          {passcode.trim().length > 0 ? (
+            <DraftDetailNotice title="Passcodes are never embedded in the URL">
+              <p>
                 Send the copied link and the passcode separately. This keeps review access tighter
                 for client contacts in the US and EU.
               </p>
-            </SectionMessage>
-          )}
+            </DraftDetailNotice>
+          ) : null}
         </div>
 
-        {error && (
-          <SectionMessage appearance="error" title="Review links failed to load">
-            <p className="text-sm">{error}</p>
-          </SectionMessage>
-        )}
+        {error ? (
+          <DraftDetailNotice title="Review links failed to load" variant="error">
+            <p>{error}</p>
+          </DraftDetailNotice>
+        ) : null}
 
         {loading ? (
-          <div className="flex items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-[hsl(var(--foreground-muted))]" />
+          <div className={cn(draftDetailSubtlePanelClassName, "flex items-center justify-center px-4 py-8")}>
+            <Loader2 className="h-5 w-5 animate-spin text-[var(--ds-gray-900)]" />
           </div>
         ) : links.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-8 text-center">
-            <p className="text-sm font-medium text-[hsl(var(--foreground))]">
-              No review links yet
-            </p>
-            <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+          <div className="rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-8 text-center">
+            <p className="text-label-14 text-[var(--ds-gray-1000)]">No review links yet</p>
+            <p className={cn("mt-1", draftDetailBodyTextClassName)}>
               Create a link when this draft is ready for client eyes.
             </p>
           </div>
@@ -398,64 +409,52 @@ export function ClientReviewPanel({
               return (
                 <div
                   key={link.id}
-                  className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4"
+                  className={cn(draftDetailSubtlePanelClassName, "p-4")}
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
-                        <Lozenge appearance={link.active ? "success" : "moved"}>
+                        <DraftDetailBadge variant={link.active ? "success" : "warning"}>
                           {link.active ? "Active" : link.revokedAt ? "Revoked" : "Expired"}
-                        </Lozenge>
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-2.5 py-1 text-xs font-medium text-[hsl(var(--foreground-muted))]">
+                        </DraftDetailBadge>
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-gray-900)]">
                           <Layers3 className="h-3.5 w-3.5" />
                           <span>
-                            {link.shareScope === "SELECTED_POSTS"
-                              ? "Selected posts"
-                              : "Full campaign"}
+                            {link.shareScope === "SELECTED_POSTS" ? "Selected posts" : "Full campaign"}
                           </span>
                         </span>
-                        {link.passcodeProtected && (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/25 bg-[hsl(var(--accent))]/10 px-2.5 py-1 text-xs font-medium text-[hsl(var(--accent))]">
+                        {link.passcodeProtected ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-blue-700)]">
                             <LockKeyhole className="h-3.5 w-3.5" />
                             <span>Passcode protected</span>
                           </span>
-                        )}
-                        <span className="text-xs text-[hsl(var(--foreground-muted))]">
+                        ) : null}
+                        <span className={draftDetailMetaTextClassName}>
                           Expires {formatTimestamp(link.expiresAt)}
                         </span>
                       </div>
-                      <p className="text-sm text-[hsl(var(--foreground-muted))]">
+                      <p className={draftDetailBodyTextClassName}>
                         Created by {link.createdByDisplayName}
                         {link.createdAt ? ` · ${formatTimestamp(link.createdAt)}` : ""}
                       </p>
-                      <p className="text-sm text-[hsl(var(--foreground-muted))]">
-                        {describeLinkScope(link)}
-                      </p>
+                      <p className={draftDetailBodyTextClassName}>{describeLinkScope(link)}</p>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      <AtlassianButton appearance="subtle" onClick={() => handleCopy(link)}>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Copy className="h-3.5 w-3.5" />
-                          <span>Copy</span>
-                        </span>
-                      </AtlassianButton>
-                      {!link.revokedAt && (
-                        <AtlassianButton
-                          appearance="subtle"
-                          isDisabled={busy}
+                      <DraftDetailActionButton compact onClick={() => handleCopy(link)}>
+                        <Copy className="h-3.5 w-3.5" />
+                        <span>Copy</span>
+                      </DraftDetailActionButton>
+                      {!link.revokedAt ? (
+                        <DraftDetailActionButton
+                          compact
+                          disabled={busy}
                           onClick={() => handleRevoke(link.id)}
                         >
-                          <span className="inline-flex items-center gap-1.5">
-                            {busy ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-3.5 w-3.5" />
-                            )}
-                            <span>Revoke</span>
-                          </span>
-                        </AtlassianButton>
-                      )}
+                          {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                          <span>Revoke</span>
+                        </DraftDetailActionButton>
+                      ) : null}
                     </div>
                   </div>
                 </div>

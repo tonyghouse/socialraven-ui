@@ -48,24 +48,14 @@ import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 
 type CalendarView = "month" | "week";
 
-const PLATFORM_COLORS: Record<string, string> = {
-  instagram: "#e1306c",
-  x: "#172B4D",
-  linkedin: "#0077b5",
-  facebook: "#1877f2",
-  youtube: "#ff0000",
-  threads: "#101010",
-  tiktok: "#69C9D0",
-};
-
-const PLATFORM_LABELS: Record<string, string> = {
-  instagram: "Instagram",
-  x: "X / Twitter",
-  linkedin: "LinkedIn",
-  facebook: "Facebook",
-  youtube: "YouTube",
-  threads: "Threads",
-  tiktok: "TikTok",
+const PLATFORM_META: Record<string, { label: string; accent: string }> = {
+  instagram: { label: "Instagram", accent: "var(--chart-categorical-4)" },
+  x: { label: "X / Twitter", accent: "var(--chart-neutral)" },
+  linkedin: { label: "LinkedIn", accent: "var(--chart-categorical-2)" },
+  facebook: { label: "Facebook", accent: "var(--chart-categorical-5)" },
+  youtube: { label: "YouTube", accent: "var(--chart-categorical-1)" },
+  threads: { label: "Threads", accent: "var(--chart-neutral)" },
+  tiktok: { label: "TikTok", accent: "var(--chart-categorical-6)" },
 };
 
 const STATUS_CONFIG: Record<
@@ -73,18 +63,18 @@ const STATUS_CONFIG: Record<
   { color: string; bg: string; text: string; border: string; label: string; Icon: React.ElementType }
 > = {
   SCHEDULED: {
-    color: "#0C66E4",
-    bg: "bg-[hsl(var(--info)/0.12)]",
-    text: "text-[hsl(var(--info))]",
-    border: "border-[hsl(var(--info)/0.24)]",
+    color: "var(--ds-blue-600)",
+    bg: "bg-[var(--ds-blue-100)]",
+    text: "text-[var(--ds-blue-700)]",
+    border: "border-[var(--ds-blue-200)]",
     label: "Scheduled",
     Icon: Clock,
   },
   PUBLISHED: {
-    color: "#22a06b",
-    bg: "bg-[hsl(var(--success)/0.12)]",
-    text: "text-[hsl(var(--success))]",
-    border: "border-[hsl(var(--success)/0.24)]",
+    color: "var(--ds-green-600)",
+    bg: "bg-[var(--ds-green-100)]",
+    text: "text-[var(--ds-green-700)]",
+    border: "border-[var(--ds-green-200)]",
     label: "Published",
     Icon: CheckCircle2,
   },
@@ -93,17 +83,48 @@ const STATUS_CONFIG: Record<
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const HOUR_HEIGHT = 64;
 
+const pageClassName = "flex h-screen flex-col bg-[var(--ds-background-200)]";
+const surfaceClassName = "bg-[var(--ds-background-100)]";
+const dividerClassName = "border-[var(--ds-gray-400)]";
+const sectionStripClassName = "border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
+const mutedTextClassName = "text-[var(--ds-gray-900)]";
+const strongTextClassName = "text-[var(--ds-gray-1000)]";
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const CONTROL_BUTTON_CLASS =
-  "inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-border bg-[hsl(var(--surface))] px-3 text-[13px] font-medium text-foreground transition-colors hover:bg-[hsl(var(--surface-raised))] disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:pointer-events-none disabled:opacity-50";
 
 const ICON_BUTTON_CLASS =
-  "inline-flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-foreground";
+  "inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]";
 
 const PRIMARY_BUTTON_CLASS =
-  "inline-flex h-9 items-center justify-center gap-2 rounded-lg bg-[hsl(var(--accent))] px-3.5 text-[13px] font-medium text-[hsl(var(--accent-foreground))] transition-colors hover:bg-[hsl(var(--accent-hover))]";
+  "inline-flex h-9 items-center justify-center gap-2 rounded-md bg-[var(--ds-blue-600)] px-3.5 text-label-14 text-white transition-colors hover:bg-[var(--ds-blue-700)]";
 
 const SUBTLE_BADGE_CLASS =
-  "inline-flex items-center gap-1.5 rounded-full border border-border bg-[hsl(var(--surface-raised))] px-2.5 py-1 text-[12px] font-medium text-[hsl(var(--foreground-muted))]";
+  "inline-flex items-center gap-1.5 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]";
+
+const SEGMENTED_CONTROL_CLASS =
+  "flex items-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-1";
+
+const SEGMENTED_BUTTON_CLASS =
+  "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-label-13 transition-colors";
+
+function platformLabel(platform: string) {
+  return PLATFORM_META[platform]?.label ?? platform;
+}
+
+function platformAccent(platform: string) {
+  return PLATFORM_META[platform]?.accent ?? "var(--ds-gray-700)";
+}
+
+function platformSurfaceStyle(platform: string, backgroundPercent = 12, borderPercent = 28) {
+  const accent = platformAccent(platform);
+
+  return {
+    backgroundColor: `color-mix(in srgb, ${accent} ${backgroundPercent}%, var(--ds-background-100))`,
+    borderColor: `color-mix(in srgb, ${accent} ${borderPercent}%, var(--ds-gray-400))`,
+  };
+}
 
 function getUTCRangeForMonth(date: Date) {
   const start = startOfMonth(date);
@@ -156,9 +177,9 @@ function PostChip({
   onClick?: () => void;
 }) {
   const PlatformIcon = PLATFORM_ICONS[post.platform];
-  const color = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
+  const color = platformAccent(post.platform);
   const account = accountMap.get(post.providerUserId);
-  const statusColor = STATUS_CONFIG[post.postStatus]?.color ?? "#94a3b8";
+  const statusColor = STATUS_CONFIG[post.postStatus]?.color ?? "var(--ds-gray-700)";
 
   return (
     <button
@@ -166,12 +187,15 @@ function PostChip({
         e.stopPropagation();
         onClick?.();
       }}
-      title={`${account?.username ?? post.providerUserId} · ${PLATFORM_LABELS[post.platform] ?? post.platform} · ${formatTime(post.scheduledTime)}`}
-      className="group flex w-full items-center gap-1.5 overflow-hidden rounded-lg border px-2 py-1.5 text-left transition-colors hover:bg-[hsl(var(--surface-raised))]"
-      style={{ backgroundColor: color + "12", borderColor: color + "35" }}
+      title={`${account?.username ?? post.providerUserId} · ${platformLabel(post.platform)} · ${formatTime(post.scheduledTime)}`}
+      className={cn(
+        "group flex w-full items-center gap-1.5 overflow-hidden rounded-md border px-2 py-1.5 text-left transition-opacity hover:opacity-90",
+        focusRingClassName
+      )}
+      style={platformSurfaceStyle(post.platform, 10, 28)}
     >
       {PlatformIcon ? <PlatformIcon className="shrink-0" style={{ width: 11, height: 11, color }} /> : null}
-      <span className="flex-1 truncate text-[12px] font-medium leading-none text-foreground">
+      <span className="flex-1 truncate text-label-12 leading-none text-[var(--ds-gray-1000)]">
         {account?.username ?? post.platform}
       </span>
       <span className="shrink-0 rounded-full" style={{ width: 5, height: 5, backgroundColor: statusColor }} />
@@ -189,7 +213,7 @@ function PostTimelineCard({
   onNavigate: () => void;
 }) {
   const PlatformIcon = PLATFORM_ICONS[post.platform];
-  const color = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
+  const color = platformAccent(post.platform);
   const account = accountMap.get(post.providerUserId);
   const statusCfg = STATUS_CONFIG[post.postStatus];
   const StatusIcon = statusCfg?.Icon ?? Clock;
@@ -197,30 +221,35 @@ function PostTimelineCard({
   return (
     <button
       onClick={onNavigate}
-      className="flex w-full items-start gap-3 rounded-xl border border-border bg-[hsl(var(--surface))] p-3 text-left transition-colors hover:bg-[hsl(var(--surface-raised))]"
+      className={cn(
+        "flex w-full items-start gap-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-3 text-left transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]",
+        focusRingClassName
+      )}
     >
       <div
         className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-        style={{ backgroundColor: color + "16" }}
+        style={{
+          backgroundColor: `color-mix(in srgb, ${color} 14%, var(--ds-background-100))`,
+        }}
       >
         {PlatformIcon ? <PlatformIcon style={{ width: 16, height: 16, color }} /> : null}
       </div>
 
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-center gap-1.5">
-          <span className="truncate text-[13px] font-semibold text-foreground">
+          <span className="truncate text-label-14 text-[var(--ds-gray-1000)]">
             {account?.username ?? post.providerUserId}
           </span>
-          <span className="shrink-0 text-[12px] text-muted-foreground">
-            {PLATFORM_LABELS[post.platform] ?? post.platform}
+          <span className="shrink-0 text-label-12 text-[var(--ds-gray-900)]">
+            {platformLabel(post.platform)}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[12px] font-medium text-muted-foreground">{formatTime(post.scheduledTime)}</span>
+          <span className="text-label-12 text-[var(--ds-gray-900)]">{formatTime(post.scheduledTime)}</span>
           {statusCfg ? (
             <span
               className={cn(
-                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium",
+                "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-copy-12 font-medium",
                 statusCfg.bg,
                 statusCfg.text,
                 statusCfg.border
@@ -230,7 +259,13 @@ function PostTimelineCard({
               {statusCfg.label}
             </span>
           ) : null}
-          <span className="rounded-full px-2 py-0.5 text-[11px] font-medium" style={{ backgroundColor: color + "16", color }}>
+          <span
+            className="rounded-full px-2 py-0.5 text-copy-12 font-medium"
+            style={{
+              backgroundColor: `color-mix(in srgb, ${color} 14%, var(--ds-background-100))`,
+              color,
+            }}
+          >
             {post.postCollectionType}
           </span>
         </div>
@@ -285,7 +320,7 @@ function DayDetailSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-[hsl(var(--foreground)/0.28)]"
+            className="fixed inset-0 z-40 bg-black/30"
             onClick={onClose}
           />
 
@@ -295,34 +330,38 @@ function DayDetailSheet({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.97, y: 8 }}
               transition={{ type: "spring", damping: 28, stiffness: 350 }}
-              className="pointer-events-auto flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-[hsl(var(--surface))] shadow-xl"
+              className="pointer-events-auto flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-xl"
             >
-              <div className="flex items-start justify-between border-b border-border px-5 py-4">
+              <div className="flex items-start justify-between border-b border-[var(--ds-gray-400)] px-5 py-4">
                 <div>
-                  <p className="mb-1 text-[12px] font-medium text-muted-foreground">{day ? format(day, "EEEE") : ""}</p>
-                  <h2 className="text-lg font-semibold tracking-[-0.005em] text-foreground">
+                  <p className="mb-1 text-label-12 text-[var(--ds-gray-900)]">{day ? format(day, "EEEE") : ""}</p>
+                  <h2 className="text-heading-20 tracking-[-0.005em] text-[var(--ds-gray-1000)]">
                     {day ? format(day, "MMMM d, yyyy") : ""}
                   </h2>
                   <div className="mt-2 flex items-center gap-1.5">
-                    <Globe className="h-3 w-3 text-muted-foreground" />
-                    <span className="text-[12px] text-muted-foreground">{timezone}</span>
+                    <Globe className="h-3 w-3 text-[var(--ds-gray-900)]" />
+                    <span className="text-label-12 text-[var(--ds-gray-900)]">{timezone}</span>
                   </div>
                 </div>
-                <button onClick={onClose} className={ICON_BUTTON_CLASS} aria-label="Close day details">
+                <button
+                  onClick={onClose}
+                  className={cn(ICON_BUTTON_CLASS, focusRingClassName)}
+                  aria-label="Close day details"
+                >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 border-b border-border bg-[hsl(var(--surface-raised))] px-5 py-2.5">
-                <CalendarDays className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                <span className="text-[12px] text-muted-foreground">
+              <div className="flex items-center gap-2 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-2.5">
+                <CalendarDays className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-900)]" />
+                <span className="text-label-12 text-[var(--ds-gray-900)]">
                   {posts.length === 0 ? "No posts for this day. Pick an hour to schedule." : `${posts.length} post${posts.length !== 1 ? "s" : ""} scheduled`}
                 </span>
                 {posts.length > 0 ? (
                   <div className="ml-auto flex items-center gap-1">
                     {[...new Set(posts.map((post) => post.platform))].map((platform) => {
                       const PlatformIcon = PLATFORM_ICONS[platform];
-                      const color = PLATFORM_COLORS[platform] ?? "#94a3b8";
+                      const color = platformAccent(platform);
                       return PlatformIcon ? (
                         <PlatformIcon key={platform} style={{ width: 12, height: 12, color }} />
                       ) : null;
@@ -341,10 +380,10 @@ function DayDetailSheet({
                     return (
                       <div key={hour}>
                         <div className="flex items-center gap-3 px-4 py-1">
-                          <span className="w-12 shrink-0 text-right text-[12px] font-medium text-muted-foreground">
+                          <span className="w-12 shrink-0 text-right text-label-12 text-[var(--ds-gray-900)]">
                             {formatHour(hour)}
                           </span>
-                          <div className="h-px flex-1 bg-border" />
+                          <div className="h-px flex-1 bg-[var(--ds-gray-400)]" />
                         </div>
 
                         {hourPosts.length > 0 ? (
@@ -361,7 +400,10 @@ function DayDetailSheet({
                         ) : (
                           <button
                             onClick={() => scheduleAt(hour)}
-                            className="group flex w-full items-center gap-1.5 pb-1 pl-[72px] pr-4 text-left text-[12px] text-[hsl(var(--foreground-subtle))] transition-colors hover:text-[hsl(var(--accent))]"
+                            className={cn(
+                              "group flex w-full items-center gap-1.5 pb-1 pl-[72px] pr-4 text-left text-label-12 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-blue-700)]",
+                              focusRingClassName
+                            )}
                           >
                             <Plus className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
                             <span className="opacity-0 transition-opacity group-hover:opacity-100">Schedule a post here</span>
@@ -373,14 +415,14 @@ function DayDetailSheet({
                 </div>
               </div>
 
-              <div className="border-t border-border px-5 py-4">
+              <div className="border-t border-[var(--ds-gray-400)] px-5 py-4">
                 <button
                   onClick={() => {
                     if (!day) return;
                     router.push(`/schedule-post?date=${format(day, "yyyy-MM-dd")}&time=09:00`);
                     onClose();
                   }}
-                  className={cn(PRIMARY_BUTTON_CLASS, "w-full")}
+                  className={cn(PRIMARY_BUTTON_CLASS, focusRingClassName, "w-full")}
                 >
                   <Plus className="h-4 w-4" />
                   Schedule post for this day
@@ -420,9 +462,9 @@ function MonthView({
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="grid shrink-0 grid-cols-7 border-b border-border bg-[hsl(var(--surface-sunken))]">
+      <div className="grid shrink-0 grid-cols-7 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
         {dayHeaders.map((label) => (
-          <div key={label} className="py-3 text-center text-[12px] font-medium text-muted-foreground">
+          <div key={label} className="py-3 text-center text-label-12 text-[var(--ds-gray-900)]">
             {label}
           </div>
         ))}
@@ -440,22 +482,22 @@ function MonthView({
             <div
               key={index}
               className={cn(
-                "group relative overflow-hidden border-b border-r border-[hsl(var(--border-subtle))] p-2 transition-colors",
-                !inMonth && "bg-[hsl(var(--surface-sunken)/0.55)]",
-                todayFlag && "bg-[hsl(var(--accent)/0.08)]",
-                "hover:bg-[hsl(var(--surface-raised))]"
+                "group relative overflow-hidden border-b border-r border-[var(--ds-gray-400)] p-2 transition-colors",
+                !inMonth && "bg-[var(--ds-gray-100)]",
+                todayFlag && "bg-[var(--ds-blue-100)]",
+                "hover:bg-[var(--ds-gray-100)]"
               )}
               onClick={() => onDayClick(day)}
             >
               <div className="mb-2 flex items-center justify-between">
                 <span
                   className={cn(
-                    "inline-flex h-7 w-7 items-center justify-center rounded-full text-[12px] font-semibold transition-colors",
+                    "inline-flex h-7 w-7 items-center justify-center rounded-full text-label-12 transition-colors",
                     todayFlag
-                      ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]"
+                      ? "bg-[var(--ds-blue-600)] text-white"
                       : inMonth
-                        ? "text-foreground"
-                        : "text-[hsl(var(--foreground-subtle))]"
+                        ? "text-[var(--ds-gray-1000)]"
+                        : "text-[var(--ds-gray-900)]"
                   )}
                 >
                   {format(day, "d")}
@@ -465,7 +507,10 @@ function MonthView({
                     e.stopPropagation();
                     onSchedule(format(day, "yyyy-MM-dd"), "09:00");
                   }}
-                  className="rounded-md p-1 text-transparent transition-all group-hover:text-[hsl(var(--foreground-subtle))] hover:bg-[hsl(var(--accent)/0.08)] hover:!text-[hsl(var(--accent))]"
+                  className={cn(
+                    "rounded-md p-1 text-transparent transition-all group-hover:text-[var(--ds-gray-900)] hover:bg-[var(--ds-blue-100)] hover:!text-[var(--ds-blue-700)]",
+                    focusRingClassName
+                  )}
                   title="Schedule post"
                 >
                   <Plus className="h-3 w-3" />
@@ -478,7 +523,10 @@ function MonthView({
                 ))}
                 {overflow > 0 ? (
                   <button
-                    className="pl-1 text-[12px] font-medium text-[hsl(var(--accent))] transition-colors hover:text-[hsl(var(--accent-hover))]"
+                    className={cn(
+                      "pl-1 text-label-12 text-[var(--ds-blue-700)] transition-colors hover:text-[var(--ds-blue-800)]",
+                      focusRingClassName
+                    )}
                     onClick={(e) => {
                       e.stopPropagation();
                       onDayClick(day);
@@ -526,26 +574,26 @@ function WeekView({
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="grid shrink-0 border-b border-border bg-[hsl(var(--surface-sunken))]" style={{ gridTemplateColumns: `${timeGutter}px repeat(7, 1fr)` }}>
-        <div className="border-r border-[hsl(var(--border-subtle))]" />
+      <div className="grid shrink-0 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]" style={{ gridTemplateColumns: `${timeGutter}px repeat(7, 1fr)` }}>
+        <div className="border-r border-[var(--ds-gray-400)]" />
         {weekDays.map((day) => {
           const todayFlag = isToday(day);
           return (
             <div
               key={day.toISOString()}
               className={cn(
-                "cursor-pointer border-l border-[hsl(var(--border-subtle))] py-2.5 text-center transition-colors hover:bg-[hsl(var(--surface-raised))]",
-                todayFlag && "bg-[hsl(var(--accent)/0.08)]"
+                "cursor-pointer border-l border-[var(--ds-gray-400)] py-2.5 text-center transition-colors hover:bg-[var(--ds-background-100)]",
+                todayFlag && "bg-[var(--ds-blue-100)]"
               )}
               onClick={() => onDayClick(day)}
             >
-              <p className={cn("text-[12px] font-medium", todayFlag ? "text-[hsl(var(--accent))]" : "text-muted-foreground")}>
+              <p className={cn("text-label-12", todayFlag ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]")}>
                 {format(day, "EEE")}
               </p>
               <div
                 className={cn(
-                  "mx-auto mt-1 flex h-7 w-7 items-center justify-center rounded-full text-[13px] font-semibold",
-                  todayFlag ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]" : "text-foreground"
+                  "mx-auto mt-1 flex h-7 w-7 items-center justify-center rounded-full text-label-14",
+                  todayFlag ? "bg-[var(--ds-blue-600)] text-white" : "text-[var(--ds-gray-1000)]"
                 )}
               >
                 {format(day, "d")}
@@ -561,7 +609,7 @@ function WeekView({
             {HOURS.map((hour) => (
               <div
                 key={hour}
-                className="absolute right-2 text-right text-[12px] font-medium text-[hsl(var(--foreground-subtle))]"
+                className="absolute right-2 text-right text-label-12 text-[var(--ds-gray-900)]"
                 style={{ top: hour * HOUR_HEIGHT + 4 }}
               >
                 {formatHour(hour)}
@@ -572,7 +620,7 @@ function WeekView({
           {HOURS.map((hour) => (
             <div
               key={hour}
-              className="absolute left-0 right-0 border-t border-[hsl(var(--border-subtle))]"
+              className="absolute left-0 right-0 border-t border-[var(--ds-gray-400)]"
               style={{ top: hour * HOUR_HEIGHT }}
             />
           ))}
@@ -580,8 +628,8 @@ function WeekView({
           {todayInView ? (
             <div className="pointer-events-none absolute z-20" style={{ top: nowTop, left: timeGutter, right: 0 }}>
               <div className="relative flex items-center">
-                <div className="absolute -left-[5px] h-2.5 w-2.5 rounded-full bg-red-500" />
-                <div className="ml-1 h-[1.5px] flex-1 bg-red-500 opacity-75" />
+                <div className="absolute -left-[5px] h-2.5 w-2.5 rounded-full bg-[var(--ds-red-600)]" />
+                <div className="ml-1 h-[1.5px] flex-1 bg-[var(--ds-red-600)] opacity-75" />
               </div>
             </div>
           ) : null}
@@ -600,7 +648,7 @@ function WeekView({
             return (
               <div
                 key={day.toISOString()}
-                className="absolute bottom-0 top-0 border-l border-[hsl(var(--border-subtle))]"
+                className="absolute bottom-0 top-0 border-l border-[var(--ds-gray-400)]"
                 style={{
                   left: `calc(${timeGutter}px + ${dayIndex} * (100% - ${timeGutter}px) / 7)`,
                   width: `calc((100% - ${timeGutter}px) / 7)`,
@@ -609,11 +657,11 @@ function WeekView({
                 {HOURS.map((hour) => (
                   <div
                     key={hour}
-                    className="group absolute left-0 right-0 cursor-pointer transition-colors hover:bg-[hsl(var(--accent)/0.05)]"
+                    className="group absolute left-0 right-0 cursor-pointer transition-colors hover:bg-[var(--ds-blue-100)]/60"
                     style={{ top: hour * HOUR_HEIGHT, height: HOUR_HEIGHT }}
                     onClick={() => onSchedule(format(day, "yyyy-MM-dd"), `${String(hour).padStart(2, "0")}:00`)}
                   >
-                    <Plus className="absolute right-1 top-1 h-3 w-3 text-[hsl(var(--accent))] opacity-0 transition-opacity group-hover:opacity-100" />
+                    <Plus className="absolute right-1 top-1 h-3 w-3 text-[var(--ds-blue-700)] opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>
                 ))}
 
@@ -622,9 +670,9 @@ function WeekView({
                     const minute = getMinutes(new Date(post.scheduledTime));
                     const topOffset = hour * HOUR_HEIGHT + (minute / 60) * HOUR_HEIGHT * 0.5 + postIndex * 22 + 2;
                     const PlatformIcon = PLATFORM_ICONS[post.platform];
-                    const color = PLATFORM_COLORS[post.platform] ?? "#94a3b8";
+                    const color = platformAccent(post.platform);
                     const account = accountMap.get(post.providerUserId);
-                    const statusColor = STATUS_CONFIG[post.postStatus]?.color ?? "#94a3b8";
+                    const statusColor = STATUS_CONFIG[post.postStatus]?.color ?? "var(--ds-gray-700)";
 
                     return (
                       <button
@@ -633,15 +681,17 @@ function WeekView({
                           e.stopPropagation();
                           onDayClick(day);
                         }}
-                        title={`${account?.username ?? ""} · ${PLATFORM_LABELS[post.platform] ?? post.platform} · ${formatTime(post.scheduledTime)}`}
-                        className="absolute z-10 flex items-center gap-1 rounded-lg border bg-[hsl(var(--surface))] text-[11px] font-medium text-foreground transition-colors hover:bg-[hsl(var(--surface-raised))]"
+                        title={`${account?.username ?? ""} · ${platformLabel(post.platform)} · ${formatTime(post.scheduledTime)}`}
+                        className={cn(
+                          "absolute z-10 flex items-center gap-1 rounded-md border text-copy-12 font-medium text-[var(--ds-gray-1000)] transition-opacity hover:opacity-90",
+                          focusRingClassName
+                        )}
                         style={{
                           left: 3,
                           right: 3,
                           top: topOffset,
                           height: 22,
-                          backgroundColor: color + "12",
-                          borderColor: color + "42",
+                          ...platformSurfaceStyle(post.platform, 10, 32),
                         }}
                       >
                         {PlatformIcon ? <PlatformIcon style={{ width: 9, height: 9, marginLeft: 4, flexShrink: 0 }} /> : null}
@@ -692,7 +742,7 @@ function FilterBar({
   }, []);
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border-t border-border bg-[hsl(var(--surface))] px-4 py-3">
+    <div className={cn("flex flex-wrap items-center gap-2 border-t px-4 py-3", dividerClassName, surfaceClassName)}>
       <div className={SUBTLE_BADGE_CLASS}>
         <Filter className="h-3 w-3 shrink-0" />
         Filters
@@ -702,10 +752,11 @@ function FilterBar({
         <button
           onClick={() => setAccountOpen((current) => !current)}
           className={cn(
-            "inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-[13px] font-medium transition-colors",
+            CONTROL_BUTTON_CLASS,
+            focusRingClassName,
             hasFilters
-              ? "border-[hsl(var(--accent)/0.28)] bg-[hsl(var(--accent)/0.08)] text-[hsl(var(--accent))]"
-              : "border-border bg-[hsl(var(--surface))] text-muted-foreground hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
+              ? "border-[var(--ds-blue-300)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)] hover:border-[var(--ds-blue-400)] hover:bg-[var(--ds-blue-200)]"
+              : mutedTextClassName
           )}
         >
           <Users className="h-3.5 w-3.5 shrink-0" />
@@ -720,20 +771,20 @@ function FilterBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.97 }}
               transition={{ duration: 0.12 }}
-              className="absolute left-0 top-full z-30 mt-1.5 w-72 overflow-hidden rounded-xl border border-border bg-[hsl(var(--surface))] shadow-lg"
+              className="absolute left-0 top-full z-30 mt-1.5 w-72 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-[0_16px_40px_rgba(15,23,42,0.12)]"
             >
-              <div className="border-b border-border bg-[hsl(var(--surface-raised))] px-3 py-2">
-                <p className="text-[12px] font-medium text-muted-foreground">
+              <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2">
+                <p className="text-label-12 text-[var(--ds-gray-900)]">
                   {accounts.length} account{accounts.length !== 1 ? "s" : ""} in scope
                 </p>
               </div>
               <div className="max-h-64 space-y-1 overflow-y-auto p-1">
                 {accounts.length === 0 ? (
-                  <p className="px-2 py-3 text-center text-[13px] text-muted-foreground">No accounts in this group</p>
+                  <p className="px-2 py-3 text-center text-label-13 text-[var(--ds-gray-900)]">No accounts in this group</p>
                 ) : (
                   accounts.map((account) => {
                     const PlatformIcon = PLATFORM_ICONS[account.platform];
-                    const color = PLATFORM_COLORS[account.platform] ?? "#94a3b8";
+                    const color = platformAccent(account.platform);
                     const checked = selectedAccountIds.includes(account.providerUserId);
 
                     return (
@@ -741,23 +792,31 @@ function FilterBar({
                         key={account.providerUserId}
                         onClick={() => onAccountToggle(account.providerUserId)}
                         className={cn(
-                          "flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] transition-colors",
+                          "flex w-full items-center gap-2.5 rounded-md border px-3 py-2 text-left text-label-13 transition-colors",
+                          focusRingClassName,
                           checked
-                            ? "bg-[hsl(var(--accent)/0.08)] text-[hsl(var(--accent))]"
-                            : "text-foreground hover:bg-[hsl(var(--surface-raised))]"
+                            ? strongTextClassName
+                            : "border-transparent text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)]"
                         )}
+                        style={checked ? platformSurfaceStyle(account.platform, 10, 32) : undefined}
                       >
                         <div
                           className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-                          style={{ backgroundColor: color + "16" }}
+                          style={{
+                            backgroundColor: checked
+                              ? `color-mix(in srgb, ${color} 14%, var(--ds-background-100))`
+                              : "var(--ds-gray-100)",
+                          }}
                         >
                           {PlatformIcon ? <PlatformIcon style={{ width: 12, height: 12, color }} /> : null}
                         </div>
                         <div className="min-w-0 flex-1 text-left">
-                          <p className="truncate font-medium">{account.username}</p>
-                          <p className="text-[12px] capitalize text-muted-foreground">{account.platform}</p>
+                          <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">{account.username}</p>
+                          <p className="text-label-12 text-[var(--ds-gray-900)]">{platformLabel(account.platform)}</p>
                         </div>
-                        {checked ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--accent))]" /> : null}
+                        {checked ? (
+                          <CheckCircle2 className="h-3.5 w-3.5 shrink-0" style={{ color }} />
+                        ) : null}
                       </button>
                     );
                   })
@@ -771,14 +830,18 @@ function FilterBar({
       {hasFilters ? (
         <button
           onClick={onClearFilters}
-          className="inline-flex h-9 items-center gap-1 rounded-lg px-3 text-[13px] font-medium text-muted-foreground transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
+          className={cn(
+            "inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-label-13 transition-colors hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]",
+            mutedTextClassName,
+            focusRingClassName
+          )}
         >
           <X className="h-3 w-3" />
           Clear
         </button>
       ) : null}
 
-      <div className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-border bg-[hsl(var(--surface-raised))] px-2.5 py-1 text-[12px] text-muted-foreground">
+      <div className={cn(SUBTLE_BADGE_CLASS, "ml-auto")}>
         <Globe className="h-3 w-3 shrink-0" />
         <span className="max-w-[160px] truncate">{timezone}</span>
       </div>
@@ -899,16 +962,21 @@ export default function CalendarPage() {
 
   if (error) {
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-[hsl(var(--surface))] px-6 py-8 shadow-sm">
-          <AlertCircle className="h-6 w-6 text-destructive" />
-          <p className="text-sm text-muted-foreground">{error}</p>
+      <div className={cn(pageClassName, "items-center justify-center px-6")}>
+        <div className="flex max-w-sm flex-col items-center gap-4 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-6 py-8 text-center shadow-sm">
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--ds-red-100)] text-[var(--ds-red-700)]">
+            <AlertCircle className="h-5 w-5" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-label-14 text-[var(--ds-gray-1000)]">Calendar data could not be loaded.</p>
+            <p className="text-copy-12 text-[var(--ds-gray-900)]">{error}</p>
+          </div>
           <button
             onClick={() => {
               setError(null);
               setLoadingData(true);
             }}
-            className="text-[13px] font-medium text-[hsl(var(--accent))] hover:underline"
+            className={cn(PRIMARY_BUTTON_CLASS, focusRingClassName)}
           >
             Retry
           </button>
@@ -918,12 +986,13 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col bg-app-canvas">
+    <div className={pageClassName}>
       <div className="shrink-0">
         <ProtectedPageHeader
           title="Content Calendar"
           description="Track scheduled publishing across connected accounts."
           icon={<Calendar className="h-4 w-4" />}
+          className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
           actions={
             <>
               <div className={SUBTLE_BADGE_CLASS}>
@@ -933,25 +1002,26 @@ export default function CalendarPage() {
               </div>
 
               <div className="flex items-center gap-1">
-                <button onClick={goBack} className={ICON_BUTTON_CLASS} aria-label="Previous period">
+                <button onClick={goBack} className={cn(ICON_BUTTON_CLASS, focusRingClassName)} aria-label="Previous period">
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                <button onClick={goToday} className={CONTROL_BUTTON_CLASS}>
+                <button onClick={goToday} className={cn(CONTROL_BUTTON_CLASS, focusRingClassName)}>
                   Today
                 </button>
-                <button onClick={goForward} className={ICON_BUTTON_CLASS} aria-label="Next period">
+                <button onClick={goForward} className={cn(ICON_BUTTON_CLASS, focusRingClassName)} aria-label="Next period">
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="flex items-center rounded-lg border border-border bg-[hsl(var(--surface-raised))] p-1">
+              <div className={SEGMENTED_CONTROL_CLASS}>
                 <button
                   onClick={() => setView("month")}
                   className={cn(
-                    "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors",
+                    SEGMENTED_BUTTON_CLASS,
+                    focusRingClassName,
                     view === "month"
-                      ? "bg-[hsl(var(--surface))] text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-sm"
+                      : "text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
                   )}
                 >
                   <LayoutGrid className="h-3.5 w-3.5" />
@@ -960,10 +1030,11 @@ export default function CalendarPage() {
                 <button
                   onClick={() => setView("week")}
                   className={cn(
-                    "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-[13px] font-medium transition-colors",
+                    SEGMENTED_BUTTON_CLASS,
+                    focusRingClassName,
                     view === "week"
-                      ? "bg-[hsl(var(--surface))] text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-sm"
+                      : "text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
                   )}
                 >
                   <CalendarDays className="h-3.5 w-3.5" />
@@ -973,7 +1044,7 @@ export default function CalendarPage() {
 
               <button
                 onClick={() => handleSchedule(format(new Date(), "yyyy-MM-dd"), "09:00")}
-                className={PRIMARY_BUTTON_CLASS}
+                className={cn(PRIMARY_BUTTON_CLASS, focusRingClassName)}
               >
                 <Plus className="h-4 w-4" />
                 Schedule post
@@ -982,7 +1053,7 @@ export default function CalendarPage() {
           }
         />
 
-        <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 text-[13px] text-[hsl(var(--foreground-muted))] sm:px-6">
+        <div className={cn(sectionStripClassName, "px-4 py-2.5 text-label-13 sm:px-6", mutedTextClassName)}>
           {loadingPosts
             ? "Refreshing calendar data"
             : filteredPosts.length > 0
@@ -1000,15 +1071,15 @@ export default function CalendarPage() {
 
       {accounts.length === 0 ? (
         <div className="flex flex-1 items-center justify-center px-6">
-          <div className="max-w-sm rounded-xl border border-border bg-[hsl(var(--surface))] p-8 text-center shadow-sm">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-border bg-[hsl(var(--surface-raised))]">
-              <Users className="h-8 w-8 text-muted-foreground/40" />
+          <div className="max-w-sm rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-8 text-center shadow-sm">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+              <Users className="h-8 w-8 text-[var(--ds-gray-700)] opacity-70" />
             </div>
-            <h3 className="mb-2 text-base font-semibold text-foreground">No connected accounts</h3>
-            <p className="mb-5 text-[13px] leading-relaxed text-muted-foreground">
+            <h3 className="mb-2 text-heading-20 text-[var(--ds-gray-1000)]">No connected accounts</h3>
+            <p className="mb-5 text-label-14 leading-relaxed text-[var(--ds-gray-900)]">
               Connect your social accounts to start scheduling posts and see everything visualized here.
             </p>
-            <a href="/connect-accounts" className={PRIMARY_BUTTON_CLASS}>
+            <a href="/connect-accounts" className={cn(PRIMARY_BUTTON_CLASS, focusRingClassName)}>
               Connect accounts
             </a>
           </div>
@@ -1023,7 +1094,7 @@ export default function CalendarPage() {
             transition={{ duration: 0.12 }}
             className="flex flex-1 flex-col overflow-hidden"
           >
-            <div className="flex flex-1 flex-col overflow-hidden border-t border-border bg-[hsl(var(--surface))]">
+            <div className={cn("flex flex-1 flex-col overflow-hidden border-t", dividerClassName, surfaceClassName)}>
               {view === "month" ? (
                 <MonthView
                   currentDate={currentDate}

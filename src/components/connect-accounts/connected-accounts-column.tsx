@@ -1,12 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { ConnectedAccount } from "@/model/ConnectedAccount";
 import { ArrowRight, Plus, RefreshCw, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  ConnectBadge,
+  ConnectButton,
+  connectEmptyStateClassName,
+  connectInsetCardClassName,
+  connectMetaClassName,
+  connectSectionHeaderClassName,
+  connectSurfaceClassName,
+  connectTitleClassName,
+} from "@/components/connect-accounts/connect-accounts-primitives";
+import {
+  platformAccentColor,
+  platformLabel,
+  platformSurfaceStyle,
+} from "@/components/connect-accounts/platform-meta";
 
 function oauthUrl(base: string) {
   if (typeof window === "undefined") return base;
@@ -18,7 +31,7 @@ type Props = {
   platformKey: string;
   label: string;
   Icon: any;
-  accent?: string;
+  accentColor?: string;
   iconClassName?: string;
   connectHref?: string;
   accounts: ConnectedAccount[];
@@ -55,9 +68,10 @@ const getInitials = (username?: string) =>
         .toUpperCase();
 
 export default function ConnectedAccountsColumn({
+  platformKey,
   label,
   Icon,
-  accent,
+  accentColor,
   iconClassName,
   connectHref = "#",
   accounts = [],
@@ -67,17 +81,24 @@ export default function ConnectedAccountsColumn({
   canWrite = true,
 }: Props) {
   return (
-    <section className="flex flex-col overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] shadow-sm">
-      <div className="flex items-center gap-3 border-b border-[hsl(var(--border-subtle))] px-4 py-3 sm:px-5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+    <section className={cn(connectSurfaceClassName, "flex flex-col")}>
+      <div className={cn(connectSectionHeaderClassName, "flex items-center gap-3")}>
+        <div
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-[var(--ds-background-100)] shadow-sm"
+          style={{
+            backgroundColor: `color-mix(in srgb, ${accentColor ?? "var(--ds-gray-1000)"} 10%, var(--ds-background-100))`,
+            borderColor: `color-mix(in srgb, ${accentColor ?? "var(--ds-gray-1000)"} 24%, var(--ds-gray-400))`,
+          }}
+        >
           <Icon
             size={16}
-            className={cn(iconClassName, accent ?? "text-[hsl(var(--foreground))]")}
+            className={cn(iconClassName)}
+            style={{ color: accentColor ?? "var(--ds-gray-1000)" }}
           />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-xs font-medium leading-4 text-[hsl(var(--foreground))]">{label}</div>
-          <div className="mt-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+          <div className={connectTitleClassName}>{label}</div>
+          <div className={cn("mt-0.5", connectMetaClassName)}>
             {comingSoon
               ? "Coming soon"
               : accounts.length === 0
@@ -86,14 +107,11 @@ export default function ConnectedAccountsColumn({
           </div>
         </div>
         {comingSoon ? (
-          <Badge
-            variant="outline"
-            className="shrink-0 rounded-md border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2 py-1 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]"
-          >
+          <ConnectBadge className="shrink-0 rounded-md px-2 py-1">
             Soon
-          </Badge>
+          </ConnectBadge>
         ) : accounts.length > 0 ? (
-          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-1.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
+          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-1.5 text-label-12 text-[var(--ds-gray-900)]">
             {accounts.length}
           </span>
         ) : null}
@@ -101,11 +119,11 @@ export default function ConnectedAccountsColumn({
 
       <div className="flex-1 px-4 py-4 sm:px-5">
         {comingSoon ? (
-          <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-5 text-center">
-            <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+          <div className={connectEmptyStateClassName}>
+            <p className={connectTitleClassName}>
               Coming soon
             </p>
-            <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <p className={cn("mt-1", connectMetaClassName)}>
               {label} support is on the roadmap.
             </p>
           </div>
@@ -113,27 +131,36 @@ export default function ConnectedAccountsColumn({
           canWrite ? (
             <button
               onClick={() => { window.location.href = oauthUrl(connectHref); }}
-              className="group flex w-full items-center gap-3 rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-3 text-left transition-[border-color,background-color,transform] hover:-translate-y-0.5 hover:border-[hsl(var(--accent))]/35 hover:bg-[hsl(var(--background))]"
+              className="group flex w-full items-center gap-3 rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 text-left transition-[border-color,background-color,transform] hover:-translate-y-0.5 hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+              style={platformSurfaceStyle(platformKey, 6, 20)}
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] text-[hsl(var(--foreground-muted))] transition-colors group-hover:text-accent">
+              <div
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-[var(--ds-background-100)] transition-colors"
+                style={{
+                  backgroundColor: `color-mix(in srgb, ${accentColor ?? "var(--ds-gray-1000)"} 10%, var(--ds-background-100))`,
+                  borderColor: `color-mix(in srgb, ${accentColor ?? "var(--ds-gray-1000)"} 24%, var(--ds-gray-400))`,
+                  color: accentColor ?? "var(--ds-gray-1000)",
+                }}
+              >
                 <Plus size={14} />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+                <p className={connectTitleClassName}>
                   Connect {label}
                 </p>
-                <p className="mt-0.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+                <p className={cn("mt-0.5", connectMetaClassName)}>
                   Authorize a new channel for this account.
                 </p>
               </div>
               <ArrowRight
                 size={14}
-                className="shrink-0 text-[hsl(var(--foreground-subtle))] transition-colors group-hover:text-accent"
+                className="shrink-0 transition-colors"
+                style={{ color: accentColor ?? "var(--ds-gray-1000)" }}
               />
             </button>
           ) : (
-            <div className="rounded-xl border border-dashed border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-5 text-center">
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+            <div className={connectEmptyStateClassName}>
+              <p className={connectMetaClassName}>
                 No accounts connected
               </p>
             </div>
@@ -153,17 +180,15 @@ export default function ConnectedAccountsColumn({
       </div>
 
       {!comingSoon && accounts.length > 0 && canWrite && (
-        <div className="border-t border-[hsl(var(--border-subtle))] px-4 py-3 sm:px-5">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
+        <div className="border-t border-[var(--ds-gray-400)] px-4 py-3 sm:px-5">
+          <ConnectButton
+            compact
             onClick={() => { window.location.href = oauthUrl(connectHref); }}
-            className="h-8 rounded-lg border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--background))] hover:text-accent"
+            className="rounded-md"
           >
             <Plus size={13} />
             Add another account
-          </Button>
+          </ConnectButton>
         </div>
       )}
     </section>
@@ -183,7 +208,7 @@ function AccountRow({
   const src = getImageUrl(acc.profilePicLink);
 
   return (
-    <div className="group flex items-center gap-3 rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-2.5 transition-[border-color,background-color] hover:border-[hsl(var(--accent))]/20 hover:bg-[hsl(var(--background))]">
+    <div className={cn(connectInsetCardClassName, "group flex items-center gap-3 px-3 py-2.5")}>
       <Avatar className="h-8 w-8 shrink-0">
         {!imgError && src ? (
           <AvatarImage
@@ -192,46 +217,50 @@ function AccountRow({
             onError={() => setImgError(true)}
           />
         ) : (
-          <AvatarFallback className="bg-accent/10 text-xs font-medium leading-4 text-accent">
+          <AvatarFallback
+            className="text-label-12"
+            style={{
+              backgroundColor: `color-mix(in srgb, ${platformAccentColor(acc.platform)} 10%, var(--ds-background-100))`,
+              color: "var(--ds-gray-1000)",
+            }}
+          >
             {getInitials(acc.username)}
           </AvatarFallback>
         )}
       </Avatar>
 
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
+        <div className={cn("truncate", connectTitleClassName)}>
           {acc.username}
         </div>
-        <div className="mt-0.5 truncate text-xs leading-4 capitalize text-[hsl(var(--foreground-muted))]">
-          {acc.platform}
+        <div className={cn("mt-0.5 truncate", connectMetaClassName)}>
+          {platformLabel(acc.platform)}
         </div>
       </div>
 
       {(onReconnect || onRemove) && (
         <div className="ml-auto flex items-center gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
           {onReconnect && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
+            <ConnectButton
+              compact
+              iconOnly
+              tone="ghost"
               onClick={() => onReconnect(acc)}
               aria-label="Reconnect account"
-              className="h-7 w-7 rounded-lg text-[hsl(var(--foreground-muted))] hover:bg-[hsl(var(--background))] hover:text-[hsl(var(--foreground))]"
             >
               <RefreshCw size={13} />
-            </Button>
+            </ConnectButton>
           )}
           {onRemove && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
+            <ConnectButton
+              compact
+              iconOnly
+              tone="danger"
               onClick={() => onRemove(acc)}
               aria-label="Remove account"
-              className="h-7 w-7 rounded-lg text-[hsl(var(--foreground-muted))] hover:bg-red-500/10 hover:text-red-500"
             >
               <Trash2 size={13} />
-            </Button>
+            </ConnectButton>
           )}
         </div>
       )}

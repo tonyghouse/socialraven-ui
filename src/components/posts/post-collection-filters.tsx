@@ -35,6 +35,7 @@ interface PostCollectionFiltersProps {
     sortDir?: SortDir
   ) => void;
   hidePeriod?: boolean;
+  appearance?: "default" | "geist";
 }
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -80,13 +81,17 @@ function DropdownButton({
   active,
   open,
   onClick,
+  appearance = "default",
 }: {
   label: string;
   icon?: React.ReactNode;
   active?: boolean;
   open: boolean;
   onClick: () => void;
+  appearance?: "default" | "geist";
 }) {
+  const isGeist = appearance === "geist";
+
   return (
     <button
       type="button"
@@ -94,8 +99,12 @@ function DropdownButton({
       className={cn(
         "h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
         active
-          ? "bg-primary/10 border-primary/40 text-primary"
-          : "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
+          ? isGeist
+            ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+            : "bg-primary/10 border-primary/40 text-primary"
+          : isGeist
+            ? "bg-[var(--ds-background-100)] border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+            : "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
       )}
     >
       {icon}
@@ -107,8 +116,13 @@ function DropdownButton({
   );
 }
 
-export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: PostCollectionFiltersProps) {
+export function PostCollectionFilters({
+  onFiltersChange,
+  hidePeriod = false,
+  appearance = "default",
+}: PostCollectionFiltersProps) {
   const { getToken } = useAuth();
+  const isGeist = appearance === "geist";
 
   // Account filter popover state
   const [accountOpen, setAccountOpen] = useState(false);
@@ -179,20 +193,34 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
 
         {/* Search */}
         <div className="relative flex-shrink-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
+          <Search
+            className={cn(
+              "absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none",
+              isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+            )}
+          />
           <input
             type="text"
             placeholder="Search collections…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className={cn(
-              "h-9 pl-9 pr-8 rounded-lg border text-sm text-foreground placeholder:text-muted-foreground",
-              "bg-background border-border/60 w-44 sm:w-72",
-              "focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+              "h-9 pl-9 pr-8 rounded-lg border text-sm w-44 sm:w-72 transition-all",
+              isGeist
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)] focus:border-[var(--ds-blue-600)]"
+                : "text-foreground placeholder:text-muted-foreground bg-background border-border/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
             )}
           />
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+            <button
+              onClick={() => setSearch("")}
+              className={cn(
+                "absolute right-2.5 top-1/2 -translate-y-1/2 transition-colors",
+                isGeist
+                  ? "text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
               <X className="h-3.5 w-3.5" />
             </button>
           )}
@@ -208,24 +236,49 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
                 active={!!selectedPlatform}
                 open={platformOpen}
                 onClick={() => setPlatformOpen((v) => !v)}
+                appearance={appearance}
               />
             </div>
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-52 p-1 shadow-lg">
+          <PopoverContent
+            align="start"
+            className={cn(
+              "w-52 p-1",
+              isGeist
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-lg"
+                : "shadow-lg"
+            )}
+          >
             {/* All Platforms option */}
             <button
               onClick={() => { setSelectedPlatform(undefined); setPlatformOpen(false); }}
               className={cn(
                 "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
-                !selectedPlatform ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground"
+                !selectedPlatform
+                  ? isGeist
+                    ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    : "bg-primary/10 text-primary"
+                  : isGeist
+                    ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                    : "hover:bg-muted/60 text-foreground"
               )}
             >
-              <Globe className="h-3.5 w-3.5 flex-shrink-0 text-muted-foreground" />
+              <Globe
+                className={cn(
+                  "h-3.5 w-3.5 flex-shrink-0",
+                  isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+                )}
+              />
               <span className="flex-1 font-medium">All Platforms</span>
               {!selectedPlatform && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
             </button>
 
-            <div className="h-px bg-border/50 my-1" />
+            <div
+              className={cn(
+                "h-px my-1",
+                isGeist ? "bg-[var(--ds-gray-400)]" : "bg-border/50"
+              )}
+            />
 
             {ALL_PLATFORMS.map((p) => {
               const Icon = PLATFORM_ICONS[p];
@@ -236,10 +289,27 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
                   onClick={() => { setSelectedPlatform(p); setPlatformOpen(false); }}
                   className={cn(
                     "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
-                    isSelected ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground"
+                    isSelected
+                      ? isGeist
+                        ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        : "bg-primary/10 text-primary"
+                      : isGeist
+                        ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                        : "hover:bg-muted/60 text-foreground"
                   )}
                 >
-                  {Icon && <Icon className={cn("h-3.5 w-3.5 flex-shrink-0", isSelected ? "text-primary" : PLATFORM_COLORS[p])} />}
+                  {Icon && (
+                    <Icon
+                      className={cn(
+                        "h-3.5 w-3.5 flex-shrink-0",
+                        isSelected
+                          ? isGeist
+                            ? "text-[var(--ds-blue-700)]"
+                            : "text-primary"
+                          : PLATFORM_COLORS[p]
+                      )}
+                    />
+                  )}
                   <span className="flex-1 font-medium">{PLATFORM_LABELS[p]}</span>
                   {isSelected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                 </button>
@@ -258,22 +328,42 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
                 active={!!selectedDateRange}
                 open={periodOpen}
                 onClick={() => setPeriodOpen((v) => !v)}
+                appearance={appearance}
               />
             </div>
           </PopoverTrigger>
-          <PopoverContent align="start" className="w-44 p-1 shadow-lg">
+          <PopoverContent
+            align="start"
+            className={cn(
+              "w-44 p-1",
+              isGeist
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-lg"
+                : "shadow-lg"
+            )}
+          >
             <button
               onClick={() => { setSelectedDateRange(undefined); setPeriodOpen(false); }}
               className={cn(
                 "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
-                !selectedDateRange ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground"
+                !selectedDateRange
+                  ? isGeist
+                    ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    : "bg-primary/10 text-primary"
+                  : isGeist
+                    ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                    : "hover:bg-muted/60 text-foreground"
               )}
             >
               <span className="flex-1 font-medium">All Time</span>
               {!selectedDateRange && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
             </button>
 
-            <div className="h-px bg-border/50 my-1" />
+            <div
+              className={cn(
+                "h-px my-1",
+                isGeist ? "bg-[var(--ds-gray-400)]" : "bg-border/50"
+              )}
+            />
 
             {DATE_RANGE_OPTIONS.map(({ value, label }) => {
               const isSelected = selectedDateRange === value;
@@ -283,7 +373,13 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
                   onClick={() => { setSelectedDateRange(value); setPeriodOpen(false); }}
                   className={cn(
                     "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
-                    isSelected ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground"
+                    isSelected
+                      ? isGeist
+                        ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        : "bg-primary/10 text-primary"
+                      : isGeist
+                        ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                        : "hover:bg-muted/60 text-foreground"
                   )}
                 >
                   <span className="flex-1 font-medium">{label}</span>
@@ -301,14 +397,25 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
               className={cn(
                 "relative h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
                 accountFilterCount > 0
-                  ? "bg-primary/10 border-primary/40 text-primary"
-                  : "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
+                  ? isGeist
+                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    : "bg-primary/10 border-primary/40 text-primary"
+                  : isGeist
+                    ? "bg-[var(--ds-background-100)] border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+                    : "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
               )}
             >
               <SlidersHorizontal className="h-3.5 w-3.5" />
               <span>Accounts</span>
               {accountFilterCount > 0 && (
-                <span className="h-[18px] min-w-[18px] px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center leading-none">
+                <span
+                  className={cn(
+                    "h-[18px] min-w-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center leading-none",
+                    isGeist
+                      ? "bg-[var(--ds-blue-600)] text-white"
+                      : "bg-primary text-primary-foreground"
+                  )}
+                >
                   {accountFilterCount}
                 </span>
               )}
@@ -316,36 +423,119 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
             </button>
           </PopoverTrigger>
 
-          <PopoverContent align="start" className="w-72 p-0 shadow-lg">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-border/50">
-              <span className="text-sm font-semibold text-foreground">Filter by account</span>
+          <PopoverContent
+            align="start"
+            className={cn(
+              "w-72 p-0",
+              isGeist
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-lg"
+                : "shadow-lg"
+            )}
+          >
+            <div
+              className={cn(
+                "flex items-center justify-between px-4 py-3 border-b",
+                isGeist ? "border-[var(--ds-gray-400)]" : "border-border/50"
+              )}
+            >
+              <span
+                className={cn(
+                  "text-sm font-semibold",
+                  isGeist ? "text-[var(--ds-gray-1000)]" : "text-foreground"
+                )}
+              >
+                Filter by account
+              </span>
               {accountFilterCount > 0 && (
-                <button onClick={clearAccounts} className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2">
+                <button
+                  onClick={clearAccounts}
+                  className={cn(
+                    "text-xs transition-colors underline underline-offset-2",
+                    isGeist
+                      ? "text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
                   Clear all
                 </button>
               )}
             </div>
 
             {loadingFilters ? (
-              <div className="py-8 text-center text-sm text-muted-foreground">Loading…</div>
+              <div
+                className={cn(
+                  "py-8 text-center text-sm",
+                  isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+                )}
+              >
+                Loading…
+              </div>
             ) : accounts.length === 0 ? (
-              <div className="py-8 text-center text-sm text-muted-foreground px-4">No connected accounts found.</div>
+              <div
+                className={cn(
+                  "px-4 py-8 text-center text-sm",
+                  isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground"
+                )}
+              >
+                No connected accounts found.
+              </div>
             ) : (
               <ScrollArea className="max-h-[320px]">
                 <div className="p-2 space-y-1">
                   {accounts.length > 0 && (
                     <>
-                      <p className="px-2 pt-3 pb-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Accounts</p>
+                      <p
+                        className={cn(
+                          "px-2 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-wider",
+                          isGeist
+                            ? "text-[var(--ds-gray-900)]"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        Accounts
+                      </p>
                       {accounts.map((account) => {
                         const Icon = PLATFORM_ICONS[account.platform];
                         const isSelected = selectedAccountIds.has(account.providerUserId);
                         const platformColor = PLATFORM_COLORS[account.platform] ?? "text-muted-foreground";
                         return (
-                          <button key={account.providerUserId} onClick={() => toggleAccount(account.providerUserId)}
-                            className={cn("w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors text-left", isSelected ? "bg-primary/10 text-primary" : "hover:bg-muted/60 text-foreground")}>
-                            {Icon && <Icon className={cn("h-3.5 w-3.5 flex-shrink-0", isSelected ? "text-primary" : platformColor)} />}
+                          <button
+                            key={account.providerUserId}
+                            onClick={() => toggleAccount(account.providerUserId)}
+                            className={cn(
+                              "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors text-left",
+                              isSelected
+                                ? isGeist
+                                  ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                                  : "bg-primary/10 text-primary"
+                                : isGeist
+                                  ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                                  : "hover:bg-muted/60 text-foreground"
+                            )}
+                          >
+                            {Icon && (
+                              <Icon
+                                className={cn(
+                                  "h-3.5 w-3.5 flex-shrink-0",
+                                  isSelected
+                                    ? isGeist
+                                      ? "text-[var(--ds-blue-700)]"
+                                      : "text-primary"
+                                    : platformColor
+                                )}
+                              />
+                            )}
                             <span className="flex-1 truncate font-medium">{account.username}</span>
-                            <span className="text-[11px] text-muted-foreground capitalize">{account.platform}</span>
+                            <span
+                              className={cn(
+                                "text-[11px] capitalize",
+                                isGeist
+                                  ? "text-[var(--ds-gray-900)]"
+                                  : "text-muted-foreground"
+                              )}
+                            >
+                              {account.platform}
+                            </span>
                             {isSelected && <Check className="h-3.5 w-3.5 flex-shrink-0" />}
                           </button>
                         );
@@ -364,7 +554,9 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
           title={sortDir === "desc" ? "Newest first — click for oldest first" : "Oldest first — click for newest first"}
           className={cn(
             "h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
-            "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
+            isGeist
+              ? "bg-[var(--ds-background-100)] border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+              : "bg-background border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
           )}
         >
           <ArrowUpDown className="h-3.5 w-3.5" />
@@ -379,7 +571,12 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
               setSelectedDateRange(undefined);
               clearAccounts();
             }}
-            className="h-9 px-3 rounded-lg border border-border/60 text-xs text-muted-foreground hover:text-foreground hover:border-border transition-all flex items-center gap-1.5 flex-shrink-0"
+            className={cn(
+              "h-9 px-3 rounded-lg border text-xs transition-all flex items-center gap-1.5 flex-shrink-0",
+              isGeist
+                ? "border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+                : "border-border/60 text-muted-foreground hover:text-foreground hover:border-border"
+            )}
           >
             <X className="h-3 w-3" />
             Clear filters
@@ -395,10 +592,24 @@ export function PostCollectionFilters({ onFiltersChange, hidePeriod = false }: P
             if (!account) return null;
             const Icon = PLATFORM_ICONS[account.platform];
             return (
-              <span key={uid} className="inline-flex items-center gap-1.5 h-7 pl-2 pr-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-medium text-primary">
+              <span
+                key={uid}
+                className={cn(
+                  "inline-flex items-center gap-1.5 h-7 pl-2 pr-1.5 rounded-full border text-[11px] font-medium",
+                  isGeist
+                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    : "bg-primary/10 border-primary/20 text-primary"
+                )}
+              >
                 {Icon && <Icon className="h-3 w-3 flex-shrink-0" />}
                 {account.username}
-                <button onClick={() => toggleAccount(uid)} className="hover:bg-primary/20 rounded-full p-0.5 transition-colors">
+                <button
+                  onClick={() => toggleAccount(uid)}
+                  className={cn(
+                    "rounded-full p-0.5 transition-colors",
+                    isGeist ? "hover:bg-[var(--ds-blue-200)]" : "hover:bg-primary/20"
+                  )}
+                >
                   <X className="h-2.5 w-2.5" />
                 </button>
               </span>

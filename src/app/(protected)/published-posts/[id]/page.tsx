@@ -1,7 +1,6 @@
 "use client";
 
-import AtlassianButton from "@atlaskit/button/new";
-import { useEffect, useState } from "react";
+import { type ButtonHTMLAttributes, type ReactNode, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import Image from "next/image";
@@ -36,10 +35,9 @@ import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi
 import type { PostCollectionResponse } from "@/model/PostCollectionResponse";
 import type { PostResponse } from "@/model/PostResponse";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
-import { CollectionDetailPageSkeleton } from "@/components/posts/collection-page-skeletons";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getImageUrl } from "@/service/getImageUrl";
+import { PublishedPostDetailPageSkeleton } from "@/components/posts/published-post-detail-page-skeleton";
 
 /* ─── Config maps ─────────────────────────────────────────── */
 
@@ -50,26 +48,22 @@ const statusConfig: Record<
   SCHEDULED: {
     label: "Scheduled",
     Icon: Clock,
-    className:
-      "border-[hsl(var(--info))]/18 bg-[hsl(var(--info))]/10 text-[hsl(var(--info))]",
+    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   PUBLISHED: {
     label: "Published",
     Icon: CheckCircle2,
-    className:
-      "border-[hsl(var(--success))]/18 bg-[hsl(var(--success))]/10 text-[hsl(var(--success))]",
+    className: "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
   },
   PARTIAL_SUCCESS: {
     label: "Partially Completed",
     Icon: AlertTriangle,
-    className:
-      "border-[hsl(var(--warning))]/18 bg-[hsl(var(--warning))]/10 text-[hsl(var(--warning))]",
+    className: "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]",
   },
   FAILED: {
     label: "Failed",
     Icon: XCircle,
-    className:
-      "border-[hsl(var(--destructive))]/18 bg-[hsl(var(--destructive))]/10 text-[hsl(var(--destructive))]",
+    className: "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   },
 };
 
@@ -80,20 +74,17 @@ const typeConfig: Record<
   IMAGE: {
     label: "Image",
     Icon: ImageIcon,
-    className:
-      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
+    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   VIDEO: {
     label: "Video",
     Icon: Video,
-    className:
-      "border-[hsl(var(--accent))]/18 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
+    className: "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
   },
   TEXT: {
     label: "Text",
     Icon: FileText,
-    className:
-      "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
+    className: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
   },
 };
 
@@ -109,18 +100,18 @@ const platformDisplayName: Record<string, string> = {
 
 const platformIconStyle: Record<string, string> = {
   YOUTUBE:
-    "text-red-600 bg-red-50 border-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/30",
+    "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   INSTAGRAM:
-    "text-pink-600 bg-pink-50 border-pink-100 dark:bg-pink-900/20 dark:text-pink-400 dark:border-pink-800/30",
+    "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   FACEBOOK:
-    "text-blue-600 bg-blue-50 border-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/30",
+    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   LINKEDIN:
-    "text-sky-600 bg-sky-50 border-sky-100 dark:bg-sky-900/20 dark:text-sky-400 dark:border-sky-800/30",
-  X: "text-neutral-800 bg-neutral-50 border-neutral-200 dark:bg-neutral-800/30 dark:text-neutral-300 dark:border-neutral-700/30",
+    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  X: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   THREADS:
-    "text-neutral-700 bg-neutral-50 border-neutral-200 dark:bg-neutral-800/30 dark:text-neutral-300 dark:border-neutral-700/30",
+    "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   TIKTOK:
-    "text-neutral-900 bg-neutral-50 border-neutral-200 dark:bg-neutral-800/30 dark:text-neutral-200 dark:border-neutral-700/30",
+    "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
 };
 
 /* Platform-specific accent tokens for the circle cards */
@@ -134,66 +125,121 @@ const platformAccent: Record<
   }
 > = {
   INSTAGRAM: {
-    bar: "linear-gradient(90deg,#f9ce34 0%,#ee2a7b 45%,#6228d7 100%)",
-    cardBg:
-      "bg-gradient-to-br from-pink-50/70 to-purple-50/40 dark:from-pink-950/30 dark:to-purple-950/20",
-    cardBorder: "border-pink-200/70 dark:border-pink-800/30",
+    bar: "linear-gradient(90deg,var(--ds-amber-600) 0%,var(--ds-pink-700) 50%,var(--ds-purple-700) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-amber-400 via-pink-500 to-purple-600 border-transparent text-white shadow-md shadow-pink-500/25",
+      "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   },
   X: {
-    bar: "linear-gradient(90deg,#000 0%,#3a3a3a 50%,#000 100%)",
-    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
-    cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
+    bar: "linear-gradient(90deg,var(--ds-gray-900) 0%,var(--ds-gray-1000) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-neutral-900 dark:bg-neutral-100 border-transparent text-white dark:text-neutral-900 shadow-md shadow-neutral-900/20",
+      "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   },
   LINKEDIN: {
-    bar: "linear-gradient(90deg,#0077b5 0%,#00a0dc 100%)",
-    cardBg:
-      "bg-gradient-to-br from-sky-50/70 to-blue-50/40 dark:from-sky-950/30 dark:to-blue-950/20",
-    cardBorder: "border-sky-200/70 dark:border-sky-800/30",
+    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-600) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-sky-400 to-blue-700 border-transparent text-white shadow-md shadow-sky-500/25",
+      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   YOUTUBE: {
-    bar: "linear-gradient(90deg,#ff0000 0%,#ff5252 50%,#cc0000 100%)",
-    cardBg:
-      "bg-gradient-to-br from-red-50/70 to-rose-50/40 dark:from-red-950/30 dark:to-rose-950/20",
-    cardBorder: "border-red-200/70 dark:border-red-800/30",
+    bar: "linear-gradient(90deg,var(--ds-red-700) 0%,var(--ds-red-600) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-red-500 to-red-700 border-transparent text-white shadow-md shadow-red-500/25",
+      "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   },
   FACEBOOK: {
-    bar: "linear-gradient(90deg,#1877f2 0%,#42a5f5 100%)",
-    cardBg:
-      "bg-gradient-to-br from-blue-50/70 to-indigo-50/40 dark:from-blue-950/30 dark:to-indigo-950/20",
-    cardBorder: "border-blue-200/70 dark:border-blue-800/30",
+    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-500) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-gradient-to-br from-blue-500 to-blue-700 border-transparent text-white shadow-md shadow-blue-500/25",
+      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
   },
   TIKTOK: {
-    bar: "linear-gradient(90deg,#010101 0%,#ff0050 50%,#00f2ea 100%)",
-    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
-    cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
+    bar: "linear-gradient(90deg,var(--ds-gray-1000) 0%,var(--ds-red-600) 55%,var(--ds-teal-600) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-neutral-900 border-transparent text-white shadow-md shadow-neutral-900/20",
+      "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
   },
   THREADS: {
-    bar: "linear-gradient(90deg,#101010 0%,#606060 50%,#101010 100%)",
-    cardBg: "bg-neutral-50/90 dark:bg-neutral-900/50",
-    cardBorder: "border-neutral-200/80 dark:border-neutral-700/50",
+    bar: "linear-gradient(90deg,var(--ds-gray-900) 0%,var(--ds-gray-1000) 100%)",
+    cardBg: "bg-[var(--ds-background-100)]",
+    cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "bg-neutral-900 dark:bg-neutral-700 border-transparent text-white shadow-md shadow-neutral-900/20",
+      "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   },
 };
 
 const platformAccentFallback = {
   bar: "linear-gradient(90deg,#6b7280,#9ca3af)",
-  cardBg: "bg-muted/30",
-  cardBorder: "border-border/60",
-  iconClass: "bg-muted border-border/60 text-muted-foreground",
+  cardBg: "bg-[var(--ds-gray-100)]",
+  cardBorder: "border-[var(--ds-gray-400)]",
+  iconClass: "bg-[var(--ds-gray-100)] border-[var(--ds-gray-400)] text-[var(--ds-gray-900)]",
 };
+
+const pageClassName =
+  "min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]";
+const surfaceClassName =
+  "overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm";
+const surfaceHeaderClassName =
+  "flex items-center gap-2.5 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-3.5";
+const focusRingClassName =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+
+function ActionButton({
+  tone = "secondary",
+  compact = false,
+  fullWidth = false,
+  className,
+  children,
+  type = "button",
+  ...props
+}: ButtonHTMLAttributes<HTMLButtonElement> & {
+  tone?: "primary" | "secondary";
+  compact?: boolean;
+  fullWidth?: boolean;
+}) {
+  const toneClassName =
+    tone === "primary"
+      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
+
+  return (
+    <button
+      type={type}
+      className={cn(
+        "inline-flex items-center justify-center gap-2 rounded-md border transition-colors disabled:pointer-events-none disabled:opacity-50",
+        toneClassName,
+        compact ? "h-8 px-3 text-copy-12" : "h-9 px-3.5 text-label-14",
+        focusRingClassName,
+        fullWidth && "w-full",
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ToneBadge({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className: string;
+}) {
+  return (
+    <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-label-12", className)}>
+      {children}
+    </span>
+  );
+}
 
 /* ─── Page ────────────────────────────────────────────────── */
 
@@ -224,30 +270,31 @@ export default function PublishedCollectionDetailPage() {
   }, [collectionId, getToken]);
 
   if (loading) {
-    return <CollectionDetailPageSkeleton />;
+    return <PublishedPostDetailPageSkeleton />;
   }
 
   if (error || !collection) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
-            <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
+      <main className={cn(pageClassName, "flex items-center justify-center p-6")}>
+        <div className="w-full max-w-sm rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-8 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)]">
+            <AlertCircle className="h-7 w-7 text-[var(--ds-red-700)]" />
           </div>
-          <h3 className="mb-1 text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+          <h3 className="mb-1 text-title-18 text-[var(--ds-gray-1000)]">
             Collection not found
           </h3>
-          <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+          <p className="mb-6 text-label-14 leading-6 text-[var(--ds-gray-900)]">
             This collection couldn&apos;t be loaded. It may have been deleted.
           </p>
-          <AtlassianButton appearance="primary" onClick={() => router.push("/published-posts")}>
-            <span className="inline-flex items-center gap-1.5">
-              <ArrowLeft className="h-4 w-4" />
-              <span>Back to Published Posts</span>
-            </span>
-          </AtlassianButton>
+          <ActionButton
+            tone="primary"
+            onClick={() => router.push("/published-posts")}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Published Posts
+          </ActionButton>
         </div>
-      </div>
+      </main>
     );
   }
 
@@ -258,7 +305,11 @@ export default function PublishedCollectionDetailPage() {
   const StatusIcon = status.Icon;
   const TypeIcon = type.Icon;
   const recoveryBadge = collection.failureState === "RECOVERED"
-    ? { label: "Recovered", className: "border-emerald-200 bg-emerald-50 text-emerald-700" }
+    ? {
+        label: "Recovered",
+        className:
+          "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
+      }
     : null;
   const canOpenChannelRecovery = collection.overallStatus === "PARTIAL_SUCCESS"
     && (collection.failedChannelCount ?? 0) > 0
@@ -301,81 +352,81 @@ export default function PublishedCollectionDetailPage() {
   }));
 
   return (
-    <main className="min-h-screen bg-[hsl(var(--background))]">
+    <main className={pageClassName}>
       <ProtectedPageHeader
         title={collection.description}
         description="Published post details."
         icon={<CheckCircle2 className="h-4 w-4" />}
+        className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
         actions={
           <div className="hidden sm:block">
-            <AtlassianButton appearance="primary" onClick={() => router.push("/schedule-post")}>
-              <span className="inline-flex items-center gap-1.5">
-                <Plus className="h-3.5 w-3.5" />
-                <span>New Post</span>
-              </span>
-            </AtlassianButton>
+            <ActionButton tone="primary" onClick={() => router.push("/schedule-post")}>
+              <Plus className="h-3.5 w-3.5" />
+              New Post
+            </ActionButton>
           </div>
         }
       />
 
-      <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-4 py-2.5 sm:px-6">
-        <nav className="flex min-w-0 items-center gap-1.5 text-sm">
+      <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-6">
+        <nav className="flex min-w-0 items-center gap-1.5 text-label-14">
           <button
             onClick={() => router.push("/published-posts")}
-            className="flex items-center gap-1.5 text-sm font-medium leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))] flex-shrink-0"
+            className={cn(
+              "flex shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]",
+              focusRingClassName
+            )}
           >
             <CheckCircle2 className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline font-medium">
+            <span className="hidden font-medium sm:inline">
               Published Posts
             </span>
           </button>
-          <ChevronRight className="h-3.5 w-3.5 text-[hsl(var(--foreground-subtle))] flex-shrink-0" />
-          <span className="font-medium text-[hsl(var(--foreground))] truncate">
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-700)]" />
+          <span className="truncate text-label-14 text-[var(--ds-gray-1000)]">
             {collection.description}
           </span>
         </nav>
       </div>
 
-      <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8 space-y-5">
-        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-          <div className="h-[3px] w-full bg-[hsl(var(--success))]" />
+      <div className="space-y-5 px-4 py-6 pb-24 sm:px-6 sm:pb-8">
+        <div className={surfaceClassName}>
+          <div className="h-[3px] w-full bg-[var(--ds-green-600)]" />
           <div className="px-6 pt-6 pb-5">
-            <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
-              <h1 className="min-w-0 flex-1 text-xl font-semibold leading-7 text-[hsl(var(--foreground))]">
+            <div className="mb-4 flex flex-wrap items-start gap-x-4 gap-y-3">
+              <h1 className="min-w-0 flex-1 text-title-20 text-[var(--ds-gray-1000)]">
                 {collection.description}
               </h1>
-              <div className="flex items-center gap-2 flex-shrink-0 flex-wrap">
-                <span className={cn("inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium leading-4", type.className)}>
+              <div className="flex shrink-0 flex-wrap items-center gap-2">
+                <ToneBadge className={type.className}>
                   <TypeIcon className="h-3.5 w-3.5" />
                   {type.label}
-                </span>
-                <span className={cn("inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium leading-4", status.className)}>
+                </ToneBadge>
+                <ToneBadge className={status.className}>
                   <StatusIcon className="h-3.5 w-3.5" />
                   {status.label}
-                </span>
+                </ToneBadge>
                 {recoveryBadge && (
-                  <span className={cn("inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium leading-4", recoveryBadge.className)}>
+                  <ToneBadge className={recoveryBadge.className}>
                     {recoveryBadge.label}
-                  </span>
+                  </ToneBadge>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className="inline-flex items-center gap-2 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-xs font-medium leading-4 text-[hsl(var(--foreground-muted))]">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2 text-copy-12 text-[var(--ds-gray-900)]">
                 <Calendar className="h-3.5 w-3.5" />
                 <span>{formattedDate} · {formattedTime}</span>
               </div>
               {canOpenChannelRecovery && (
-                <AtlassianButton
-                  appearance="primary"
-                  spacing="compact"
+                <ActionButton
+                  tone="primary"
+                  compact
                   onClick={() => router.push(`/recovery-drafts/${collection.id}`)}
                 >
-                  <span className="inline-flex items-center gap-1.5">
-                    <RefreshCcw className="h-3.5 w-3.5" />
-                    <span>Recover Failed Channels</span>
-                  </span>
-                </AtlassianButton>
+                  <RefreshCcw className="h-3.5 w-3.5" />
+                  Recover Failed Channels
+                </ActionButton>
               )}
               <div className="flex items-center gap-1.5">
                 {Object.keys(groupedPosts).map((plat) => {
@@ -386,8 +437,9 @@ export default function PublishedCollectionDetailPage() {
                       key={plat}
                       title={platformDisplayName[platUpper] ?? plat}
                       className={cn(
-                        "h-7 w-7 rounded-lg border flex items-center justify-center flex-shrink-0",
-                        platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60"
+                        "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border",
+                        platformIconStyle[platUpper]
+                        ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                       )}
                     >
                       {PlatIcon ? <PlatIcon className="h-3.5 w-3.5" /> : null}
@@ -403,68 +455,82 @@ export default function PublishedCollectionDetailPage() {
         <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)] items-start">
           <div className="space-y-4">
             {canOpenChannelRecovery && (
-              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
+              <div className="overflow-hidden rounded-2xl border border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] shadow-sm">
                 <div className="flex items-start gap-3 px-5 py-4">
-                  <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-700" />
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ds-amber-700)]" />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold leading-5 text-amber-900">Failed channels still need attention</p>
-                    <p className="mt-1 text-sm leading-5 text-amber-800">
+                    <p className="text-label-14 text-[var(--ds-amber-800)]">
+                      Failed channels still need attention
+                    </p>
+                    <p className="mt-1 text-copy-14 leading-6 text-[var(--ds-amber-800)]">
                       {collection.failedChannelCount} channel{collection.failedChannelCount === 1 ? "" : "s"} did not publish successfully. Create a recovery draft to correct and reschedule only those failed channels.
                     </p>
                     <div className="mt-3">
-                      <AtlassianButton appearance="primary" spacing="compact" onClick={() => router.push(`/recovery-drafts/${collection.id}`)}>
-                        <span className="inline-flex items-center gap-1.5">
-                          <RefreshCcw className="h-3.5 w-3.5" />
-                          <span>Open Channel Recovery</span>
-                        </span>
-                      </AtlassianButton>
+                      <ActionButton
+                        tone="primary"
+                        compact
+                        onClick={() => router.push(`/recovery-drafts/${collection.id}`)}
+                      >
+                        <RefreshCcw className="h-3.5 w-3.5" />
+                        Open Channel Recovery
+                      </ActionButton>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">Published</p>
-              </div>
-              <div className="p-5 space-y-2.5">
-                <div className="flex items-center gap-2.5 text-sm">
-                  <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-foreground font-medium">{formattedDate}</span>
+            <div className={surfaceClassName}>
+              <div className={surfaceHeaderClassName}>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-green-200)] bg-[var(--ds-green-100)]">
+                  <Calendar className="h-4 w-4 text-[var(--ds-green-700)]" />
                 </div>
-                <div className="flex items-center gap-2.5 text-sm">
-                  <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <span className="text-foreground font-medium">{formattedTime}</span>
+                <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">Published</p>
+              </div>
+              <div className="space-y-2.5 p-5">
+                <div className="flex items-center gap-2.5 text-label-14">
+                  <Calendar className="h-4 w-4 shrink-0 text-[var(--ds-gray-900)]" />
+                  <span className="text-[var(--ds-gray-1000)]">{formattedDate}</span>
+                </div>
+                <div className="flex items-center gap-2.5 text-label-14">
+                  <Clock className="h-4 w-4 shrink-0 text-[var(--ds-gray-900)]" />
+                  <span className="text-[var(--ds-gray-1000)]">{formattedTime}</span>
                 </div>
               </div>
             </div>
 
             {/* Caption card */}
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">Caption</p>
+            <div className={surfaceClassName}>
+              <div className={surfaceHeaderClassName}>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                  <FileText className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                </div>
+                <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">Caption</p>
               </div>
               <div className="p-5">
                 {captionText ? (
-                  <p className="text-sm text-foreground/80 leading-relaxed line-clamp-10 whitespace-pre-wrap">{captionText}</p>
+                  <p className="line-clamp-10 whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-1000)]">
+                    {captionText}
+                  </p>
                 ) : (
-                  <p className="text-sm text-muted-foreground/50 italic">No caption specified</p>
+                  <p className="text-copy-12 italic text-[var(--ds-gray-900)]">No caption specified</p>
                 )}
                 {captionText && (
-                  <p className="text-xs text-muted-foreground/40 tabular-nums mt-3">{captionText.length} characters</p>
+                  <p className="mt-3 text-copy-12 tabular-nums text-[var(--ds-gray-900)]">
+                    {captionText.length} characters
+                  </p>
                 )}
               </div>
             </div>
 
             {/* Media carousel */}
             {collection.media.length > 0 && (
-              <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
-                  <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                  <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">
-                    Media <span className="font-normal text-muted-foreground">· {collection.media.length}</span>
+              <div className={surfaceClassName}>
+                <div className={surfaceHeaderClassName}>
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                    <ImageIcon className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                  </div>
+                  <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">
+                    Media <span className="font-normal text-[var(--ds-gray-900)]">· {collection.media.length}</span>
                   </p>
                 </div>
                 <div className="p-4">
@@ -474,28 +540,42 @@ export default function PublishedCollectionDetailPage() {
             )}
 
             {/* Stats card with platform breakdown */}
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="px-5 py-4 flex items-center divide-x divide-border/40">
-                <div className="flex-1 text-center pr-4">
-                  <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
-                  <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Posts</p>
+            <div className={surfaceClassName}>
+              <div className="flex items-center divide-x divide-[var(--ds-gray-400)] px-5 py-4">
+                <div className="flex-1 pr-4 text-center">
+                  <p className="text-[24px] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">
+                    {collection.posts.length}
+                  </p>
+                  <p className="mt-1.5 text-copy-12 text-[var(--ds-gray-900)]">Posts</p>
                 </div>
-                <div className="flex-1 text-center pl-4">
-                  <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{platformCount}</p>
-                  <p className="mt-1.5 text-xs font-medium leading-4 text-muted-foreground">Platforms</p>
+                <div className="flex-1 pl-4 text-center">
+                  <p className="text-[24px] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">
+                    {platformCount}
+                  </p>
+                  <p className="mt-1.5 text-copy-12 text-[var(--ds-gray-900)]">Platforms</p>
                 </div>
               </div>
-              <div className="px-5 pb-4 border-t border-border/30 pt-4 space-y-3">
+              <div className="space-y-3 border-t border-[var(--ds-gray-400)] px-5 pt-4 pb-4">
                 {Object.entries(groupedPosts).map(([plat, platPosts]) => {
                   const platUpper = plat.toUpperCase();
                   const PlatIcon = PLATFORM_ICONS[plat] ?? PLATFORM_ICONS[plat.toLowerCase()];
                   return (
                     <div key={plat} className="flex items-center gap-2.5">
-                      <div className={cn("h-6 w-6 rounded-lg border flex items-center justify-center flex-shrink-0", platformIconStyle[platUpper] ?? "text-muted-foreground bg-muted/50 border-border/60")}>
+                      <div
+                        className={cn(
+                          "flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border",
+                          platformIconStyle[platUpper]
+                          ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                        )}
+                      >
                         {PlatIcon ? <PlatIcon className="h-3.5 w-3.5" /> : null}
                       </div>
-                      <span className="text-sm font-medium text-foreground flex-1 truncate">{platformDisplayName[platUpper] ?? plat}</span>
-                      <span className="text-xs text-muted-foreground tabular-nums">{platPosts.length} acct{platPosts.length !== 1 ? "s" : ""}</span>
+                      <span className="flex-1 truncate text-label-14 text-[var(--ds-gray-1000)]">
+                        {platformDisplayName[platUpper] ?? plat}
+                      </span>
+                      <span className="text-copy-12 tabular-nums text-[var(--ds-gray-900)]">
+                        {platPosts.length} acct{platPosts.length !== 1 ? "s" : ""}
+                      </span>
                     </div>
                   );
                 })}
@@ -506,9 +586,9 @@ export default function PublishedCollectionDetailPage() {
           {/* Platform sections */}
           <div className="min-w-0 space-y-4">
             {collection.posts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] py-12 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-                <CheckCircle2 className="h-8 w-8 text-muted-foreground/40 mb-2" />
-                <p className="text-sm text-muted-foreground">No posts in this collection</p>
+              <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-12 text-center shadow-sm">
+                <CheckCircle2 className="mb-2 h-8 w-8 text-[var(--ds-gray-700)]" />
+                <p className="text-label-14 text-[var(--ds-gray-900)]">No posts in this collection</p>
               </div>
             ) : (
               Object.entries(groupedPosts).map(([platform, posts]) => (
@@ -531,16 +611,23 @@ export default function PublishedCollectionDetailPage() {
 /* --- Platform Post Previews -------------------------------------------- */
 
 /* Shared small account avatar */
-function AccountAvatar({ src, name, size = 8 }: { src: string | null; name: string; size?: number }) {
-  const dim = `h-${size} w-${size}`;
+function AccountAvatar({ src, name, size = 8 }: { src: string | null; name: string; size?: 6 | 7 | 8 }) {
+  const sizeClassName =
+    size === 6 ? "h-6 w-6" : size === 7 ? "h-7 w-7" : "h-8 w-8";
+  const iconSizeClassName = size === 6 ? "h-2.5 w-2.5" : "h-3 w-3";
   return (
-    <div className={cn("rounded-full overflow-hidden bg-muted flex-shrink-0 border border-white/20", dim)}>
+    <div
+      className={cn(
+        "overflow-hidden rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] shrink-0",
+        sizeClassName
+      )}
+    >
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={name} className="w-full h-full object-cover" />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-muted">
-          <User className="h-3 w-3 text-muted-foreground" />
+        <div className="flex h-full w-full items-center justify-center bg-[var(--ds-gray-100)]">
+          <User className={cn(iconSizeClassName, "text-[var(--ds-gray-900)]")} />
         </div>
       )}
     </div>
@@ -917,7 +1004,7 @@ function MediaCarousel({
 
   return (
     <div>
-      <div className="relative aspect-video w-full max-h-40 rounded-xl overflow-hidden bg-neutral-950 border border-border/40">
+      <div className="relative aspect-video w-full max-h-40 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-neutral-950">
         {isVideo ? (
           // eslint-disable-next-line jsx-a11y/media-has-caption
           <video src={current.fileUrl} className="w-full h-full object-contain" />
@@ -954,8 +1041,8 @@ function MediaCarousel({
               className={cn(
                 "rounded-full transition-all",
                 i === idx
-                  ? "w-4 h-1.5 bg-foreground"
-                  : "w-1.5 h-1.5 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+                  ? "h-1.5 w-4 bg-[var(--ds-gray-1000)]"
+                  : "h-1.5 w-1.5 bg-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-700)]"
               )}
             />
           ))}
@@ -995,21 +1082,21 @@ function PlatformSection({
       <div className="h-[3px] w-full" style={{ background: accent.bar }} />
 
       {/* Platform header row */}
-      <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
-        <div className={cn("h-9 w-9 rounded-xl border flex items-center justify-center flex-shrink-0", accent.iconClass)}>
-          {Icon ? <Icon className="h-4.5 w-4.5" /> : null}
+      <div className="flex items-center gap-3 border-b border-[var(--ds-gray-400)] px-5 py-4">
+        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border", accent.iconClass)}>
+          {Icon ? <Icon className="h-4 w-4" /> : null}
         </div>
-        <p className="text-sm font-semibold leading-5 text-foreground flex-1">
+        <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">
           {platformDisplayName[p] ?? platformDisplayName[platform] ?? platform}
         </p>
-        <span className="text-xs font-medium leading-4 text-muted-foreground">
+        <span className="text-copy-12 text-[var(--ds-gray-900)]">
           {posts.length} account{posts.length !== 1 ? "s" : ""}
         </span>
       </div>
 
       {/* Platform-specific post preview */}
-      <div className="px-4 py-3 border-b border-border/30">
-        <div className="max-w-xs mx-auto sm:max-w-sm">
+      <div className="border-b border-[var(--ds-gray-400)] px-4 py-3">
+        <div className="mx-auto max-w-xs sm:max-w-sm">
           {p === "X" && <XPreview {...previewProps} />}
           {p === "INSTAGRAM" && <InstagramPreview {...previewProps} />}
           {p === "LINKEDIN" && <LinkedInPreview {...previewProps} />}
@@ -1018,8 +1105,12 @@ function PlatformSection({
           {p === "TIKTOK" && <TikTokPreview {...previewProps} />}
           {p === "THREADS" && <ThreadsPreview {...previewProps} />}
           {!["X","INSTAGRAM","LINKEDIN","FACEBOOK","YOUTUBE","TIKTOK","THREADS"].includes(p) && (
-            <div className="rounded-lg bg-muted/40 border border-border/40 p-3">
-              {caption && <p className="text-xs text-foreground/80 leading-relaxed line-clamp-4 whitespace-pre-wrap">{caption}</p>}
+            <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-3">
+              {caption && (
+                <p className="line-clamp-4 whitespace-pre-wrap text-copy-12 leading-5 text-[var(--ds-gray-1000)]">
+                  {caption}
+                </p>
+              )}
               {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
             </div>
           )}
@@ -1033,18 +1124,18 @@ function PlatformSection({
           return (
             <div
               key={post.id}
-              className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full bg-background/70 border border-border/50 shadow-sm"
+              className="flex items-center gap-2 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] py-1.5 pl-1.5 pr-3 shadow-sm"
             >
-              <div className="relative h-6 w-6 rounded-full overflow-hidden flex-shrink-0 bg-muted border border-border/30">
+              <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
                 {src ? (
                   <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="20px" className="object-cover" />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <User className="h-2.5 w-2.5 text-muted-foreground" />
+                  <div className="flex h-full w-full items-center justify-center">
+                    <User className="h-2.5 w-2.5 text-[var(--ds-gray-900)]" />
                   </div>
                 )}
               </div>
-              <span className="text-xs font-medium leading-4 text-foreground/75 max-w-[140px] truncate">
+              <span className="max-w-[140px] truncate text-copy-12 text-[var(--ds-gray-1000)]">
                 {post.connectedAccount?.username ?? "Account"}
               </span>
               <div className={cn(
@@ -1056,95 +1147,6 @@ function PlatformSection({
             </div>
           );
         })}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Skeleton ────────────────────────────────────────────── */
-
-function SkeletonDetailPage() {
-  return (
-    <main className="min-h-screen bg-[hsl(var(--background))]">
-      <header className="sticky top-0 z-10 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
-        <div className="px-4 sm:px-6">
-          <div className="flex h-[60px] items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-4 w-4 rounded" />
-              <Skeleton className="hidden h-4 w-32 rounded sm:block" />
-              <Skeleton className="h-4 w-4 rounded" />
-              <Skeleton className="h-4 w-44 rounded" />
-            </div>
-            <div className="flex items-center gap-2">
-              <Skeleton className="hidden h-8 w-24 rounded-lg sm:block" />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="space-y-5 px-4 py-6 sm:px-6">
-        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-          <div className="px-5 py-4 flex items-center gap-4">
-            <Skeleton className="h-6 rounded-lg flex-1" />
-            <div className="flex gap-2">
-              <Skeleton className="h-5 w-16 rounded-md" />
-              <Skeleton className="h-5 w-20 rounded-full" />
-              <Skeleton className="hidden h-5 w-40 rounded-lg sm:block" />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid gap-5 items-start lg:grid-cols-[280px_minmax(0,1fr)]">
-          <div className="space-y-3">
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-2.5">
-                <Skeleton className="h-3.5 w-3.5 rounded flex-shrink-0" />
-                <Skeleton className="h-4 w-20 rounded flex-1" />
-              </div>
-              <div className="p-4 space-y-2">
-                {[100, 91, 83, 97, 76, 88].map((w, i) => (
-                  <Skeleton key={i} className="h-2.5 rounded" style={{ width: `${w}%` }} />
-                ))}
-              </div>
-            </div>
-            <div className="flex items-center divide-x divide-border/40 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-3 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-              <div className="flex-1 text-center pr-3 space-y-1">
-                <Skeleton className="h-6 w-8 rounded mx-auto" />
-                <Skeleton className="h-2.5 w-10 rounded mx-auto" />
-              </div>
-              <div className="flex-1 text-center pl-3 space-y-1">
-                <Skeleton className="h-6 w-8 rounded mx-auto" />
-                <Skeleton className="h-2.5 w-14 rounded mx-auto" />
-              </div>
-            </div>
-          </div>
-
-          <div className="min-w-0 space-y-2.5">
-            {[0, 1, 2].map((i) => (
-              <SkeletonPlatformSection key={i} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function SkeletonPlatformSection() {
-  return (
-    <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
-      <Skeleton className="h-[3px] w-full rounded-none" />
-      <div className="p-4">
-        <div className="flex items-center gap-2.5 mb-3">
-          <Skeleton className="h-8 w-8 rounded-lg flex-shrink-0" />
-          <Skeleton className="h-4 w-24 rounded flex-1" />
-          <Skeleton className="h-3 w-16 rounded" />
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {[80, 100, 90, 110, 85, 95].map((w, i) => (
-            <Skeleton key={i} className="h-7 rounded-full" style={{ width: `${w}px` }} />
-          ))}
-        </div>
       </div>
     </div>
   );
