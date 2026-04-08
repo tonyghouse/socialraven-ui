@@ -217,7 +217,7 @@ export default function ProfilePage() {
   const { getToken } = useAuth();
   const { user } = useUser();
   const { role, isOwner } = useRole();
-  const { plan, isInfluencer } = usePlan();
+  const { plan, isInfluencer, syncFromUserPlan } = usePlan();
   const { activeWorkspace } = useWorkspace();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -243,13 +243,14 @@ export default function ProfilePage() {
         setFirstName(profileResponse.firstName ?? "");
         setLastName(profileResponse.lastName ?? "");
         setUserPlan(planResponse);
+        syncFromUserPlan(planResponse);
       })
       .catch(() => toast.error("Failed to load profile details"))
       .finally(() => {
         setProfileLoading(false);
         setPlanLoading(false);
       });
-  }, [getToken]);
+  }, [getToken, syncFromUserPlan]);
 
   const statusCfg = userPlan ? STATUS_CONFIG[userPlan.status] : null;
   const roleCfg = ROLE_CONFIG[role];

@@ -13,6 +13,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
 
@@ -30,9 +31,11 @@ export function AppSidebar() {
   const scrollAreaRef = useRef<HTMLElement | null>(null);
   const scrollContentRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
+  const { mode, isInfluencer } = usePlan();
   const { canWrite, canSeeAgencyOps, canSeeApprovalQueue, isOwner, canManageAssetLibrary } = useRole();
 
   const navGroups = getSidebarNavGroups({
+    mode,
     canWrite,
     canSeeAgencyOps,
     canSeeApprovalQueue,
@@ -97,6 +100,7 @@ export function AppSidebar() {
     canWrite,
     isCollapsed,
     isOwner,
+    mode,
   ]);
 
   return (
@@ -145,9 +149,11 @@ export function AppSidebar() {
           </button>
         </div>
 
-        <div className={cn("mt-2.5", isCollapsed && "flex justify-center")}>
-          <WorkspaceSwitcher collapsed={isCollapsed} />
-        </div>
+        {!isInfluencer ? (
+          <div className={cn("mt-2.5", isCollapsed && "flex justify-center")}>
+            <WorkspaceSwitcher collapsed={isCollapsed} />
+          </div>
+        ) : null}
       </div>
 
       <div className="relative min-h-0 flex-1">

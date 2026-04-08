@@ -7,6 +7,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { MobileBottomBar } from "@/components/sidebar/MobileBottomBar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { WorkspaceProvider, useWorkspace } from "@/context/WorkspaceContext";
+import { AppModeProvider, useAppMode } from "@/context/AppModeContext";
+import { resolveProtectedRouteTag } from "@/constants/protected-route-access";
+import { modeAllows } from "@/lib/app-mode";
 
 /**
  * Hard gate: wait for workspaces to load, then:
@@ -151,32 +154,56 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
   if (isFullscreenWorkspacePage) {
     return (
       <WorkspaceGate>
-        <main className="min-h-screen bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
-          {children}
-        </main>
+        <ModeRouteGuard>
+          <main className="min-h-screen bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
+            {children}
+          </main>
+        </ModeRouteGuard>
       </WorkspaceGate>
     );
   }
 
   return (
     <WorkspaceGate>
-      {isMobile ? (
-        <div className="min-h-screen bg-[var(--ds-background-100)] pb-16 text-[var(--ds-gray-1000)]">
-          <main className="min-h-screen bg-[var(--ds-background-200)]">
-            {children}
-          </main>
-          <MobileBottomBar />
-        </div>
-      ) : (
-        <div className="flex h-screen w-full bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
-          <AppSidebar />
-          <main className="flex-1 overflow-auto bg-[var(--ds-background-200)]">
-            {children}
-          </main>
-        </div>
-      )}
+      <ModeRouteGuard>
+        {isMobile ? (
+          <div className="min-h-screen bg-[var(--ds-background-100)] pb-16 text-[var(--ds-gray-1000)]">
+            <main className="min-h-screen bg-[var(--ds-background-200)]">
+              {children}
+            </main>
+            <MobileBottomBar />
+          </div>
+        ) : (
+          <div className="flex h-screen w-full bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
+            <AppSidebar />
+            <main className="flex-1 overflow-auto bg-[var(--ds-background-200)]">
+              {children}
+            </main>
+          </div>
+        )}
+      </ModeRouteGuard>
     </WorkspaceGate>
   );
+}
+
+function ModeRouteGuard({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { mode } = useAppMode();
+  const tag = resolveProtectedRouteTag(pathname);
+  const allowed = modeAllows(tag, mode);
+
+  useEffect(() => {
+    if (!allowed) {
+      router.replace("/dashboard");
+    }
+  }, [allowed, router]);
+
+  if (!allowed) {
+    return <div aria-hidden="true" className="min-h-screen bg-[var(--ds-background-100)]" />;
+  }
+
+  return <>{children}</>;
 }
 
 export default function ProtectedRootLayout({
@@ -188,7 +215,9 @@ export default function ProtectedRootLayout({
     <>
       <SignedIn>
         <WorkspaceProvider>
-          <LayoutContent>{children}</LayoutContent>
+          <AppModeProvider>
+            <LayoutContent>{children}</LayoutContent>
+          </AppModeProvider>
         </WorkspaceProvider>
       </SignedIn>
 

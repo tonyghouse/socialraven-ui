@@ -1,4 +1,5 @@
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { usePlan } from "@/hooks/usePlan";
 import {
   WorkspaceCapability,
   WorkspaceResponse,
@@ -49,9 +50,17 @@ function capabilitiesForWorkspace(
  */
 export function useRole() {
   const { activeWorkspace, workspaces } = useWorkspace();
+  const { isInfluencer } = usePlan();
   const role: WorkspaceRole = activeWorkspace?.role ?? "READ_ONLY";
-  const capabilities = capabilitiesForWorkspace(activeWorkspace);
-  const canSeeAgencyOps = workspaces.some((workspace) => {
+  const roleCapabilities = capabilitiesForWorkspace(activeWorkspace);
+  const capabilities = isInfluencer
+    ? new Set<WorkspaceCapability>(
+        Array.from(roleCapabilities).filter(
+          (capability) => capability === "PUBLISH_POSTS"
+        )
+      )
+    : roleCapabilities;
+  const canSeeAgencyOps = !isInfluencer && workspaces.some((workspace) => {
     const workspaceCapabilities = capabilitiesForWorkspace(workspace);
     return (
       workspaceCapabilities.has("APPROVE_POSTS") ||
@@ -64,7 +73,7 @@ export function useRole() {
     capabilities: Array.from(capabilities),
     isViewer: role === "READ_ONLY",
     canWrite: role !== "READ_ONLY",
-    canManageWorkspace: role === "OWNER" || role === "ADMIN",
+    canManageWorkspace: !isInfluencer && (role === "OWNER" || role === "ADMIN"),
     canApprovePosts: capabilities.has("APPROVE_POSTS"),
     canPublishPosts: capabilities.has("PUBLISH_POSTS"),
     canRequestChanges: capabilities.has("REQUEST_CHANGES"),
@@ -74,7 +83,8 @@ export function useRole() {
     canExportClientReports: capabilities.has("EXPORT_CLIENT_REPORTS"),
     canSeeAgencyOps,
     canSeeApprovalQueue:
-      capabilities.has("APPROVE_POSTS") || capabilities.has("REQUEST_CHANGES"),
+      !isInfluencer &&
+      (capabilities.has("APPROVE_POSTS") || capabilities.has("REQUEST_CHANGES")),
     isOwner: role === "OWNER",
   };
 }

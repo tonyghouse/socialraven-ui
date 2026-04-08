@@ -27,6 +27,7 @@ import { fetchUsageStatsApi, fetchUserPlanApi } from "@/service/plan";
 import { PLATFORM_ICONS } from "@/components/generic/platform-icons";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { DashboardPageSkeleton } from "@/components/dashboard/dashboard-page-skeleton";
+import { usePlan } from "@/hooks/usePlan";
 import { cn } from "@/lib/utils";
 import type { PostResponse } from "@/model/PostResponse";
 import type { ConnectedAccount } from "@/model/ConnectedAccount";
@@ -249,6 +250,7 @@ function ProgressTrack({
 export default function DashboardPage() {
   const { getToken } = useAuth();
   const { user } = useUser();
+  const { syncFromUserPlan } = usePlan();
 
   const [scheduledPosts, setScheduledPosts] = useState<PostResponse[]>([]);
   const [publishedCols, setPublishedCols] = useState<PostCollectionResponse[]>([]);
@@ -275,7 +277,10 @@ export default function DashboardPage() {
         if (accountsRes.status === "fulfilled") setAccounts(accountsRes.value);
         if (publishedRes.status === "fulfilled") setPublishedCols(publishedRes.value.content);
         if (usageRes.status === "fulfilled") setUsageStats(usageRes.value);
-        if (planRes.status === "fulfilled") setUserPlan(planRes.value);
+        if (planRes.status === "fulfilled") {
+          setUserPlan(planRes.value);
+          syncFromUserPlan(planRes.value);
+        }
 
         const errors = [upcomingRes, accountsRes, publishedRes, usageRes, planRes]
           .filter((result) => result.status === "rejected")
@@ -290,7 +295,7 @@ export default function DashboardPage() {
     }
 
     void load();
-  }, [getToken, refreshKey]);
+  }, [getToken, refreshKey, syncFromUserPlan]);
 
   const today = new Date().toISOString().slice(0, 10);
   const weekFromNow = new Date(Date.now() + 7 * 86_400_000).toISOString();

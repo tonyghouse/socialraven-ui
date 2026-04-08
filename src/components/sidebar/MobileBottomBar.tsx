@@ -23,6 +23,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
 
@@ -38,10 +39,12 @@ export function MobileBottomBar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
+  const { mode, isInfluencer } = usePlan();
   const { canWrite, canSeeAgencyOps, canSeeApprovalQueue, isOwner, canManageAssetLibrary } = useRole();
   const { workspaces, activeWorkspace, switchWorkspace } = useWorkspace();
 
   const navFlags = {
+    mode,
     canWrite,
     canSeeAgencyOps,
     canSeeApprovalQueue,
@@ -95,7 +98,7 @@ export function MobileBottomBar() {
               </section>
             ))}
 
-            {workspaces.length > 1 ? (
+            {!isInfluencer && workspaces.length > 1 ? (
               <section className="space-y-2">
                 <p className="text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                   Workspaces

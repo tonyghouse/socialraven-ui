@@ -21,6 +21,7 @@ import {
 import { toast } from "sonner";
 
 import { PLAN_ICONS } from "@/constants/plans";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
 import { Invoice, Plan, PlanType, UpcomingInvoice, UsageStats, UserPlan } from "@/model/Plan";
@@ -493,6 +494,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
 
 export default function BillingPage() {
   const { getToken } = useAuth();
+  const { syncFromUserPlan } = usePlan();
   const { isOwner } = useRole();
 
   const [userPlan, setUserPlan] = useState<UserPlan | null>(null);
@@ -509,10 +511,11 @@ export default function BillingPage() {
       .then(([plan, usage]) => {
         setUserPlan(plan);
         setUsageStats(usage);
+        syncFromUserPlan(plan);
       })
       .catch(() => toast.error("Failed to load plan information"))
       .finally(() => setPlanLoading(false));
-  }, [getToken]);
+  }, [getToken, syncFromUserPlan]);
 
   useEffect(() => {
     Promise.all([fetchUpcomingInvoiceApi(getToken), fetchInvoicesApi(getToken)])
@@ -540,6 +543,7 @@ export default function BillingPage() {
     try {
       const updated = await changeUserPlanApi(getToken, planType);
       setUserPlan(updated);
+      syncFromUserPlan(updated);
       const name = PLANS.find((plan) => plan.type === planType)?.name ?? planType;
       toast.success(`Switched to ${name} plan`);
     } catch {
