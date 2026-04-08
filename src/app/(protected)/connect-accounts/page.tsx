@@ -12,6 +12,7 @@ import {
   RefreshCw,
   ShieldCheck,
 } from "lucide-react";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import {
@@ -25,6 +26,7 @@ import {
 
 export default function ManageAccountsPage() {
   const { canWrite } = useRole();
+  const { isAgency } = usePlan();
   const params = useSearchParams();
   const router = useRouter();
 
@@ -88,7 +90,7 @@ export default function ManageAccountsPage() {
             />
           </div>
 
-            {canWrite && <ClientConnectionHandoffSection />}
+            {canWrite && isAgency && <ClientConnectionHandoffSection />}
         </section>
       </main>
     </div>

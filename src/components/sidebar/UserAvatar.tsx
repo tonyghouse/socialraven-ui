@@ -154,7 +154,7 @@ export function UserAvatar({
                 <Settings className="h-3.5 w-3.5" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">Profile & settings</p>
+                <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">Profile</p>
               </div>
             </Link>
 
