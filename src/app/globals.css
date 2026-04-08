@@ -374,6 +374,91 @@
       linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-sunken)));
   }
 
+  .geist-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    scrollbar-gutter: stable;
+  }
+
+  .geist-scrollbar:hover {
+    scrollbar-color: var(--ds-gray-alpha-300) transparent;
+  }
+
+  .geist-scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  .geist-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .geist-scrollbar::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    background-clip: padding-box;
+  }
+
+  .geist-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: var(--ds-gray-alpha-300);
+  }
+
+  .geist-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--ds-gray-alpha-400);
+  }
+
+  .sidebar-scroll-fade {
+    pointer-events: none;
+    position: absolute;
+    left: 0.625rem;
+    right: 0.625rem;
+    z-index: 10;
+    height: 1.75rem;
+    transition: opacity 0.16s ease;
+  }
+
+  .sidebar-scroll-fade-top {
+    top: 0;
+    background: linear-gradient(180deg, var(--ds-background-100) 18%, transparent 100%);
+  }
+
+  .sidebar-scroll-fade-bottom {
+    bottom: 0;
+    background: linear-gradient(0deg, var(--ds-background-100) 22%, transparent 100%);
+  }
+
+  .sidebar-scroll-cue {
+    position: absolute;
+    left: 50%;
+    bottom: 0.5rem;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125rem;
+    width: 18px;
+    height: 8px;
+  }
+
+  .sidebar-scroll-cue-line {
+    display: block;
+    width: 7px;
+    height: 1.5px;
+    border-radius: 999px;
+    background: var(--ds-gray-alpha-300);
+  }
+
+  .sidebar-scroll-cue-line-left {
+    transform: rotate(28deg);
+    transform-origin: right center;
+  }
+
+  .sidebar-scroll-cue-line-right {
+    transform: rotate(-28deg);
+    transform-origin: left center;
+  }
+
   /* === Geist type scale === */
 
   /* Heading scale (bold) */

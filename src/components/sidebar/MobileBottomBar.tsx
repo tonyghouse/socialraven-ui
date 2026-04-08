@@ -2,34 +2,36 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  ArrowLeftRight as ArrowsLeftRight,
-  BarChart3 as ChartBar,
-  BriefcaseBusiness,
-  Building2 as Buildings,
-  Calendar,
-  CalendarCheck,
-  Check,
-  CreditCard,
-  Ellipsis as DotsThreeOutline,
-  FilePen as NotePencil,
-  History as ClockCounterClockwise,
-  Home,
-  LibraryBig,
-  LogOut as SignOut,
-  Plug,
-  Send as PaperPlaneTilt,
-  User,
-} from "lucide-react";
-import type { LucideIcon as Icon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useClerk, useUser } from "@clerk/nextjs";
-import { useRole } from "@/hooks/useRole";
-import { useWorkspace } from "@/context/WorkspaceContext";
-import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import {
+  Building2 as Buildings,
+  Check,
+  Ellipsis,
+  LogOut,
+  Send as PaperPlaneTilt,
+  Settings,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
+import { ThemeSwitcher } from "@/components/theme/theme-switcher";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { useRole } from "@/hooks/useRole";
+import { cn } from "@/lib/utils";
+
+import {
+  getMobileDrawerGroups,
+  getMobilePrimaryItems,
+  getSidebarNavGroups,
+  isSidebarItemActive,
+} from "./navigation";
 
 export function MobileBottomBar() {
   const pathname = usePathname();
@@ -39,242 +41,230 @@ export function MobileBottomBar() {
   const { canWrite, canSeeAgencyOps, canSeeApprovalQueue, isOwner, canManageAssetLibrary } = useRole();
   const { workspaces, activeWorkspace, switchWorkspace } = useWorkspace();
 
-  const drawerItems = [
-    { title: "Analytics",        url: "/analytics",         icon: ChartBar },
-    ...(canWrite || canManageAssetLibrary ? [{ title: "Asset Library", url: "/asset-library", icon: LibraryBig }] : []),
-    ...(canSeeAgencyOps ? [{ title: "Agency Ops", url: "/agency-ops", icon: BriefcaseBusiness }] : []),
-    ...(canSeeApprovalQueue ? [{ title: "Approvals", url: "/approvals", icon: Check }] : []),
-    { title: "Drafts",           url: "/drafts",            icon: NotePencil },
-    { title: "Published Posts",  url: "/published-posts",   icon: CalendarCheck },
-    { title: "Connect Accounts", url: "/connect-accounts",  icon: Plug },
-    { title: "Workspace Settings", url: "/workspace/settings", icon: Buildings },
-    ...(isOwner ? [{ title: "Billing & Plans", url: "/billing", icon: CreditCard }] : []),
-  ];
-
-  const isMoreActive = drawerItems.some((item) =>
-    pathname.startsWith(item.url)
+  const navFlags = {
+    canWrite,
+    canSeeAgencyOps,
+    canSeeApprovalQueue,
+    isOwner,
+    canManageAssetLibrary,
+  };
+  const primaryItems = getMobilePrimaryItems(navFlags);
+  const drawerGroups = getMobileDrawerGroups(navFlags);
+  const allGroups = getSidebarNavGroups(navFlags);
+  const scheduleItem = allGroups
+    .flatMap((group) => group.items)
+    .find((item) => item.url === "/schedule-post");
+  const isMoreActive = drawerGroups.some((group) =>
+    group.items.some((item) => isSidebarItemActive(pathname, item.url))
   );
 
   return (
     <>
-      <div
-        onClick={() => setDrawerOpen(false)}
-        className={cn(
-          "fixed inset-0 z-[195] transition-all duration-200",
-          drawerOpen
-            ? "pointer-events-auto bg-black/40"
-            : "pointer-events-none bg-transparent"
-        )}
-        aria-hidden="true"
-      />
+      <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <SheetContent
+          side="bottom"
+          className="max-h-[88vh] rounded-t-[28px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-5 shadow-none"
+        >
+          <SheetHeader className="space-y-1 pr-10 text-left">
+            <SheetTitle className="text-heading-20 text-[var(--ds-gray-1000)]">
+              Workspace menu
+            </SheetTitle>
+            <SheetDescription className="text-copy-14 text-[var(--ds-gray-900)]">
+              Navigate, switch workspaces, and manage your account.
+            </SheetDescription>
+          </SheetHeader>
 
-      <div
-        className={cn(
-          "fixed inset-x-2.5 z-[210] overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none",
-          "transition-all duration-200 ease-out",
-          drawerOpen
-            ? "pointer-events-auto bottom-[72px] translate-y-0 opacity-100"
-            : "pointer-events-none bottom-[64px] translate-y-2 opacity-0"
-        )}
-      >
-        <div className="flex justify-center border-b border-[var(--ds-gray-400)] py-2">
-          <div className="h-1 w-7 rounded-full bg-[var(--ds-gray-900)]/20" />
-        </div>
-
-        <div className="space-y-1 px-2 py-2">
-          {drawerItems.map(({ title, url, icon: Icon }) => {
-            const isActive = pathname.startsWith(url);
-            return (
-              <Link
-                key={url}
-                href={url}
-                onClick={() => setDrawerOpen(false)}
-                className={cn(
-                  "flex h-9 items-center gap-2.5 rounded-lg border px-3 text-label-14 transition-[background-color,color,border-color] duration-150",
-                  isActive
-                    ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]"
-                    : "border-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
-                )}
-              >
-                <div
-                  className={cn(
-                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
-                    isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
-                  )}
-                >
-                  <Icon size={16} />
+          <div className="mt-5 space-y-6 overflow-y-auto pr-1">
+            {drawerGroups.map((group) => (
+              <section key={group.label} className="space-y-2">
+                <p className="text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
+                  {group.label}
+                </p>
+                <div className="space-y-1">
+                  {group.items.map((item) => (
+                    <MobileDrawerLink
+                      key={item.url}
+                      title={item.title}
+                      url={item.url}
+                      icon={item.icon}
+                      active={isSidebarItemActive(pathname, item.url)}
+                      onNavigate={() => setDrawerOpen(false)}
+                    />
+                  ))}
                 </div>
-                {title}
+              </section>
+            ))}
+
+            {workspaces.length > 1 ? (
+              <section className="space-y-2">
+                <p className="text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
+                  Workspaces
+                </p>
+                <div className="space-y-1">
+                  {workspaces.map((workspace) => {
+                    const isActive = workspace.id === activeWorkspace?.id;
+
+                    return (
+                      <button
+                        key={workspace.id}
+                        type="button"
+                        onClick={() => {
+                          setDrawerOpen(false);
+                          if (!isActive) {
+                            switchWorkspace(workspace);
+                          }
+                        }}
+                        className={cn(
+                          "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
+                          isActive
+                            ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                            : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                            isActive
+                              ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                              : "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
+                          )}
+                        >
+                          <Buildings className="h-4 w-4" />
+                        </div>
+
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-label-14">{workspace.name}</p>
+                          {workspace.companyName ? (
+                            <p
+                              className={cn(
+                                "mt-0.5 truncate text-label-12",
+                                isActive ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]"
+                              )}
+                            >
+                              {workspace.companyName}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        {isActive ? <Check className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" /> : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              </section>
+            ) : null}
+
+            <section className="space-y-2">
+              <p className="text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
+                Appearance
+              </p>
+              <ThemeSwitcher
+                align="start"
+                className="rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+              />
+            </section>
+
+            <section className="space-y-2">
+              <p className="text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
+                Account
+              </p>
+
+              <Link
+                href="/profile"
+                onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
+              >
+                {user?.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.imageUrl}
+                    alt=""
+                    className="h-9 w-9 shrink-0 rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-label-12 text-[var(--ds-gray-900)]">
+                    {`${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase() || "U"}
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
+                    {[user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Your account"}
+                  </p>
+                  <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
+                    {user?.primaryEmailAddress?.emailAddress}
+                  </p>
+                </div>
+                <Settings className="h-4 w-4 shrink-0 text-[var(--ds-gray-900)]" />
               </Link>
-            );
-          })}
-        </div>
 
-        <div className="mx-4 border-t border-[var(--ds-gray-400)]" />
-
-        {workspaces.length > 0 && (
-          <div className="px-2 py-2">
-            <p className="px-3 pb-1 text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
-              Workspace
-            </p>
-            {workspaces.map((w) => (
               <button
-                key={w.id}
+                type="button"
                 onClick={() => {
                   setDrawerOpen(false);
-                  if (activeWorkspace?.id !== w.id) switchWorkspace(w);
+                  signOut();
                 }}
-                className={cn(
-                  "flex h-9 w-full items-center gap-2.5 rounded-lg border px-3 text-label-14 transition-[background-color,color,border-color] duration-150",
-                  activeWorkspace?.id === w.id
-                    ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]"
-                    : "border-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
-                )}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)]"
               >
-                <div
-                  className={cn(
-                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
-                    activeWorkspace?.id === w.id ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
-                  )}
-                >
-                  <ArrowsLeftRight size={16} />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
+                  <LogOut className="h-4 w-4" />
                 </div>
-                <span className="flex-1 truncate text-left">{w.name}</span>
-                {activeWorkspace?.id === w.id && (
-                  <Check size={14} className="shrink-0 text-[hsl(var(--accent))]" />
-                )}
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">Sign out</p>
+                </div>
               </button>
-            ))}
+            </section>
           </div>
-        )}
+        </SheetContent>
+      </Sheet>
 
-        <div className="mx-4 border-t border-[var(--ds-gray-400)]" />
+      <nav className="fixed bottom-0 left-0 right-0 z-[200] border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] pb-[max(env(safe-area-inset-bottom),0px)]">
+        <div className="mx-auto grid h-16 max-w-lg grid-cols-5 items-center gap-1 px-2">
+          <MobileNavTab item={primaryItems[0]} pathname={pathname} />
+          <MobileNavTab item={primaryItems[1]} pathname={pathname} />
 
-        <div className="px-2 py-2">
-          <p className="px-3 pb-1 text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
-            Appearance
-          </p>
-          <ThemeSwitcher align="start" className="w-full justify-between" />
-        </div>
-
-        <div className="mx-4 border-t border-[var(--ds-gray-400)]" />
-
-        <div className="px-2 py-2">
-          <Link
-            href="/profile"
-            onClick={() => setDrawerOpen(false)}
-            className="flex h-9 items-center gap-2.5 rounded-lg border border-transparent px-3 text-label-13 text-[var(--ds-gray-900)] transition-[background-color,color,border-color] duration-150 hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
-          >
-            {user?.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={user.imageUrl}
-                alt=""
-                className="h-5 w-5 shrink-0 rounded-md object-cover"
-              />
-            ) : (
-              <User size={16} className="shrink-0" />
-            )}
-            <span className="flex-1 truncate">
-              {user?.firstName} {user?.lastName}
-            </span>
-          </Link>
-
-          <button
-            onClick={() => {
-              setDrawerOpen(false);
-              signOut();
-            }}
-            className="flex h-9 w-full items-center gap-2.5 rounded-lg border border-transparent px-3 text-label-13 text-[var(--ds-gray-900)] transition-[background-color,color,border-color] duration-150 hover:border-[var(--ds-red-200)] hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)]"
-          >
-            <SignOut size={16} className="shrink-0" />
-            Sign out
-          </button>
-        </div>
-      </div>
-
-      <nav
-        className={cn(
-          "fixed bottom-0 left-0 right-0 z-[200] border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]",
-          "pb-[max(env(safe-area-inset-bottom),0px)]"
-        )}
-      >
-        <div className="mx-auto flex h-14 max-w-lg items-stretch px-1.5">
-          <NavTab
-            url="/dashboard"
-            title="Dashboard"
-            icon={Home}
-            isActive={
-              pathname === "/dashboard" || pathname.startsWith("/dashboard/")
-            }
-          />
-
-          <NavTab
-            url="/scheduled-posts"
-            title="Scheduled"
-            icon={ClockCounterClockwise}
-            isActive={pathname.startsWith("/scheduled-posts")}
-          />
-
-          <div className="flex flex-1 items-center justify-center">
-            {canWrite ? (
+          <div className="flex items-center justify-center">
+            {canWrite && scheduleItem ? (
               <Link
-                href="/schedule-post"
-                aria-label="Schedule Post"
+                href={scheduleItem.url}
+                aria-label={scheduleItem.title}
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-xl border border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-white transition-transform duration-150 shadow-none active:scale-95",
-                  pathname.startsWith("/schedule-post") && "ring-2 ring-[hsl(var(--accent)/0.22)] ring-offset-2 ring-offset-[var(--ds-background-100)]"
+                  "flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--ds-blue-600)] text-white transition-transform duration-150 active:scale-95",
+                  isSidebarItemActive(pathname, scheduleItem.url) && "ring-2 ring-[var(--ds-blue-200)] ring-offset-2 ring-offset-[var(--ds-background-100)]"
                 )}
               >
-                <PaperPlaneTilt size={16} className="text-white" />
+                <PaperPlaneTilt className="h-4 w-4" />
               </Link>
             ) : (
-              <div
-                aria-label="Schedule Post (view only)"
-                title="Viewers cannot create posts"
-                className={cn(
-                  "flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] opacity-60"
-                )}
-              >
-                <PaperPlaneTilt size={16} className="text-[var(--ds-gray-900)]" />
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] opacity-60">
+                <PaperPlaneTilt className="h-4 w-4" />
               </div>
             )}
           </div>
 
-          <NavTab
-            url="/calendar"
-            title="Calendar"
-            icon={Calendar}
-            isActive={pathname.startsWith("/calendar")}
-          />
+          <MobileNavTab item={primaryItems[2]} pathname={pathname} />
 
           <button
-            onClick={() => setDrawerOpen((v) => !v)}
-            aria-label="More navigation"
+            type="button"
+            onClick={() => setDrawerOpen(true)}
             className={cn(
-              "relative flex h-full flex-1 flex-col items-center justify-center gap-1 transition-all duration-150 active:scale-95",
-              isMoreActive || drawerOpen
-                ? "text-[hsl(var(--accent))]"
+              "flex flex-col items-center justify-center gap-1 rounded-xl transition-colors",
+              drawerOpen || isMoreActive
+                ? "text-[var(--ds-blue-700)]"
                 : "text-[var(--ds-gray-900)]"
             )}
+            aria-label="Open workspace menu"
           >
-            <span
+            <div
               className={cn(
-                "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-[hsl(var(--accent))] transition-all duration-200",
-                isMoreActive || drawerOpen ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
-              )}
-            />
-            <DotsThreeOutline size={18} />
-            <span
-              className={cn(
-                "text-label-12 leading-none",
-                isMoreActive || drawerOpen
-                  ? "text-[hsl(var(--accent))]"
+                "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
+                drawerOpen || isMoreActive
+                  ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
                   : "text-[var(--ds-gray-900)]"
               )}
             >
-              More
-            </span>
+              <Ellipsis className="h-4 w-4" />
+            </div>
+            <span className="text-label-12 leading-none">More</span>
           </button>
         </div>
       </nav>
@@ -282,44 +272,91 @@ export function MobileBottomBar() {
   );
 }
 
-// ── NavTab ────────────────────────────────────────────────────────────────────
-
-function NavTab({
-  url,
-  title,
-  icon: Icon,
-  isActive,
+function MobileNavTab({
+  item,
+  pathname,
 }: {
-  url: string;
+  item?: { title: string; url: string; icon: LucideIcon };
+  pathname: string;
+}) {
+  if (!item) {
+    return <div />;
+  }
+
+  const isActive = isSidebarItemActive(pathname, item.url);
+
+  return (
+    <Link
+      href={item.url}
+      className={cn(
+        "flex flex-col items-center justify-center gap-1 rounded-xl transition-colors",
+        isActive ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]"
+      )}
+    >
+      <div
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
+          isActive
+            ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+            : "text-[var(--ds-gray-900)]"
+        )}
+      >
+        <item.icon className="h-4 w-4" />
+      </div>
+      <span className="text-label-12 leading-none">{shortLabel(item.title)}</span>
+    </Link>
+  );
+}
+
+function MobileDrawerLink({
+  title,
+  url,
+  icon: Icon,
+  active,
+  onNavigate,
+}: {
   title: string;
-  icon: Icon;
-  isActive: boolean;
+  url: string;
+  icon: LucideIcon;
+  active: boolean;
+  onNavigate: () => void;
 }) {
   return (
     <Link
       href={url}
+      onClick={onNavigate}
       className={cn(
-        "relative flex h-full flex-1 flex-col items-center justify-center gap-0.5 transition-all duration-150 active:scale-95",
-        isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
+        "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors",
+        active
+          ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+          : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
       )}
     >
-      <span
+      <div
         className={cn(
-          "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-[hsl(var(--accent))]",
-          "transition-all duration-200",
-          isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
-        )}
-      />
-
-      <Icon size={18} />
-      <span
-        className={cn(
-          "text-label-12 leading-none",
-          isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+          active
+            ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+            : "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
         )}
       >
-        {title}
-      </span>
+        <Icon className="h-4 w-4" />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-label-14">{title}</p>
+      </div>
     </Link>
   );
+}
+
+function shortLabel(title: string) {
+  switch (title) {
+    case "Dashboard":
+      return "Home";
+    case "Scheduled Posts":
+      return "Scheduled";
+    default:
+      return title;
+  }
 }

@@ -2,8 +2,9 @@
 
 import { Building2 as Buildings, Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,41 +47,45 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
     setOpen(false);
   }
 
-  if (collapsed) {
-    const collapsedTrigger = (
-      <button
-        type="button"
-        disabled={!canSwitch}
-        className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-lg border transition-[background-color,border-color,color,box-shadow] duration-150",
-          canSwitch
-            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
-            : "cursor-default border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]/60 shadow-none"
-        )}
-        aria-label={canSwitch ? "Switch workspace" : `Current workspace: ${displayName}`}
-      >
-        <Buildings size={15} />
-      </button>
-    );
+  const collapsedTrigger = (
+    <button
+      type="button"
+      disabled={!canSwitch}
+      className={cn(
+        "flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
+        canSwitch
+          ? "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-200)] hover:text-[var(--ds-gray-1000)]"
+          : "cursor-default bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
+      )}
+      aria-label={canSwitch ? "Switch workspace" : `Current workspace: ${displayName}`}
+    >
+      <Buildings className="h-4 w-4" />
+    </button>
+  );
 
+  if (collapsed) {
     return (
-      <TooltipProvider delayDuration={300}>
+      <TooltipProvider delayDuration={250}>
         <DropdownMenu open={canSwitch ? open : false} onOpenChange={handleOpenChange}>
           <Tooltip>
             <TooltipTrigger asChild>
               <DropdownMenuTrigger asChild>{collapsedTrigger}</DropdownMenuTrigger>
             </TooltipTrigger>
-            <TooltipContent side="right" sideOffset={8}>
+            <TooltipContent
+              side="right"
+              sideOffset={8}
+              className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none"
+            >
               {displayName}
             </TooltipContent>
           </Tooltip>
 
-          {canSwitch && (
+          {canSwitch ? (
             <DropdownMenuContent
               side="right"
               align="start"
               sideOffset={10}
-              className="w-64 rounded-xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-1.5 shadow-none"
+              className="w-[264px] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
             >
               <WorkspaceList
                 activeWorkspaceId={activeWorkspace?.id ?? null}
@@ -88,7 +93,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
                 onSelect={handleSelect}
               />
             </DropdownMenuContent>
-          )}
+          ) : null}
         </DropdownMenu>
       </TooltipProvider>
     );
@@ -101,45 +106,40 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           type="button"
           disabled={!canSwitch}
           className={cn(
-            "group flex h-9 w-full items-center gap-2 rounded-lg border px-2.5 text-left transition-[background-color,border-color,color,box-shadow] duration-150",
+            "group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors",
             canSwitch
-              ? "border-transparent bg-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-gray-1000)]"
-              : "cursor-default border-transparent bg-transparent text-[var(--ds-gray-900)]"
+              ? "hover:bg-[var(--ds-gray-100)]"
+              : "cursor-default"
           )}
         >
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]">
-            <Buildings size={14} />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
+            <Buildings className="h-4 w-4" />
           </div>
 
           <div className="min-w-0 flex-1">
-            <span className="block truncate text-label-13 text-[var(--ds-gray-1000)]">
-              {displayName}
-            </span>
-            {displayCompanyName && (
-              <span className="block truncate text-label-12 text-[var(--ds-gray-900)]">
-                {displayCompanyName}
-              </span>
-            )}
+            <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">{displayName}</p>
+            <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
+              {displayCompanyName ?? `${workspaces.length} workspace${workspaces.length === 1 ? "" : "s"}`}
+            </p>
           </div>
 
-          {canSwitch && (
+          {canSwitch ? (
             <ChevronDown
-              size={14}
               className={cn(
-                "shrink-0 text-[var(--ds-gray-900)] transition-transform duration-150",
+                "h-4 w-4 shrink-0 text-[var(--ds-gray-900)] transition-transform duration-150",
                 open && "rotate-180"
               )}
             />
-          )}
+          ) : null}
         </button>
       </DropdownMenuTrigger>
 
-      {canSwitch && (
+      {canSwitch ? (
         <DropdownMenuContent
           align="start"
           side="bottom"
           sideOffset={8}
-          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[240px] rounded-xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-1.5 shadow-none"
+          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[264px] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
         >
           <WorkspaceList
             activeWorkspaceId={activeWorkspace?.id ?? null}
@@ -147,7 +147,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
             onSelect={handleSelect}
           />
         </DropdownMenuContent>
-      )}
+      ) : null}
     </DropdownMenu>
   );
 }
@@ -164,60 +164,61 @@ function WorkspaceList({
   onSelect,
 }: WorkspaceListProps) {
   return (
-    <div className="space-y-1">
-      <p className="px-2 py-1 text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
-        Switch workspace
-      </p>
+    <div className="space-y-2">
+      <div className="px-2 pb-1">
+        <p className="text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
+          Workspaces
+        </p>
+        <p className="mt-1 text-copy-13 text-[var(--ds-gray-900)]">
+          Switch the active workspace.
+        </p>
+      </div>
 
-      <div className="max-h-72 overflow-y-auto pr-0.5">
-        <div className="space-y-1">
-          {workspaces.map((workspace) => {
-            const isActive = workspace.id === activeWorkspaceId;
+      <div className="space-y-1">
+        {workspaces.map((workspace) => {
+          const isActive = workspace.id === activeWorkspaceId;
 
-            return (
-              <button
-                key={workspace.id}
-                type="button"
-                onClick={() => onSelect(workspace.id)}
+          return (
+            <button
+              key={workspace.id}
+              type="button"
+              onClick={() => onSelect(workspace.id)}
+              className={cn(
+                "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors",
+                isActive
+                  ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                  : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
+              )}
+            >
+              <div
                 className={cn(
-                  "flex h-9 w-full items-center gap-2 rounded-lg border px-2.5 text-left transition-[background-color,border-color,color] duration-150",
+                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
                   isActive
-                    ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]"
-                    : "border-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
+                    ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                    : "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                 )}
               >
-                <div
-                  className={cn(
-                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border",
-                    isActive
-                      ? "border-[hsl(var(--accent)/0.18)] bg-[var(--ds-background-100)] text-[hsl(var(--accent))]"
-                      : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]"
-                  )}
-                >
-                  <Buildings size={12} />
-                </div>
+                <Buildings className="h-4 w-4" />
+              </div>
 
-                <span className="flex-1 truncate text-label-13">
-                  <span className="block truncate text-label-13">
-                    {workspace.name}
-                  </span>
-                  {workspace.companyName && (
-                    <span
-                      className={cn(
-                        "block truncate text-label-12",
-                        isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
-                      )}
-                    >
-                      {workspace.companyName}
-                    </span>
-                  )}
-                </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-label-13">{workspace.name}</p>
+                {workspace.companyName ? (
+                  <p
+                    className={cn(
+                      "mt-0.5 truncate text-label-12",
+                      isActive ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]"
+                    )}
+                  >
+                    {workspace.companyName}
+                  </p>
+                ) : null}
+              </div>
 
-                {isActive && <Check size={14} className="shrink-0 text-[hsl(var(--accent))]" />}
-              </button>
-            );
-          })}
-        </div>
+              {isActive ? <Check className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" /> : null}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

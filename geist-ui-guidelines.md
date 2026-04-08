@@ -143,7 +143,30 @@ Avoid:
 - heavy shadows on standard cards
 - playful treatment in analytics, billing, settings, or operational views
 
-### 4.4 Accessibility is part of the design
+### 4.4 Surface discipline
+
+Geist-style product UI uses restraint. Cards and divider lines are tools, not the layout itself.
+
+Prefer:
+- open layouts with clear spacing before adding a card
+- one strong containing surface when a group truly needs shared context
+- divider lines used sparingly to separate major sections, tables, or dense lists
+- visual balance between open space, contained surfaces, and separators
+- designing with the judgment and restraint expected from a senior Geist designer
+
+Do not:
+- wrap every section in a card by default
+- stack cards inside cards unless the nested grouping is essential
+- add divider lines mechanically above, below, and between everything
+- use lines as a substitute for hierarchy, spacing, or alignment
+- mix heavy card chrome with excessive separators on the same screen
+
+Before shipping a screen, check:
+- If several cards can become one calmer surface or an open section, simplify it
+- If multiple divider lines say the same thing, remove the extras
+- If the layout still reads clearly without one more border, leave it out
+
+### 4.5 Accessibility is part of the design
 
 Readable contrast, visible focus, and non-color cues are mandatory.
 

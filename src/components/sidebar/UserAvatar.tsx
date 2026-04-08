@@ -1,47 +1,49 @@
 "use client";
 
 import Link from "next/link";
-import { useUser, useClerk } from "@clerk/nextjs";
-import { useState, useRef, useEffect, type ElementType } from "react";
+import { useClerk, useUser } from "@clerk/nextjs";
+import { type ElementType } from "react";
 import {
   Crown,
   Eye,
-  Settings,
   LogOut,
+  Settings,
   ShieldCheck,
   Sparkles,
   Users,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useRole } from "@/hooks/useRole";
-import { usePlan } from "@/hooks/usePlan";
-import { useWorkspace } from "@/context/WorkspaceContext";
-import { WorkspaceRole } from "@/model/Workspace";
-import { PlanType } from "@/model/Plan";
 
-// ─── badge configs ───────────────────────────────────────────────────────────
+import { usePlan } from "@/hooks/usePlan";
+import { useRole } from "@/hooks/useRole";
+import { cn } from "@/lib/utils";
+import { useWorkspace } from "@/context/WorkspaceContext";
+import { PlanType } from "@/model/Plan";
+import { WorkspaceRole } from "@/model/Workspace";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const ROLE_BADGE: Record<
   WorkspaceRole,
   { label: string; icon: ElementType; tone: string }
 > = {
-  OWNER: { label: "Owner", icon: Crown, tone: "text-[hsl(var(--accent))]" },
-  ADMIN: { label: "Admin", icon: ShieldCheck, tone: "text-[hsl(var(--accent))]" },
-  EDITOR: { label: "Editor", icon: Users, tone: "text-[var(--ds-gray-900)]" },
-  READ_ONLY: { label: "Read Only", icon: Eye, tone: "text-[var(--ds-gray-900)]" },
+  OWNER: { label: "Owner", icon: Crown, tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]" },
+  ADMIN: { label: "Admin", icon: ShieldCheck, tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]" },
+  EDITOR: { label: "Editor", icon: Users, tone: "text-[var(--ds-gray-1000)] bg-[var(--ds-gray-100)]" },
+  READ_ONLY: { label: "Read only", icon: Eye, tone: "text-[var(--ds-gray-1000)] bg-[var(--ds-gray-100)]" },
 };
 
 const PLAN_LABELS: Partial<Record<PlanType, string>> = {
   INFLUENCER_TRIAL: "Influencer Trial",
-  INFLUENCER_BASE:  "Influencer",
-  INFLUENCER_PRO:   "Influencer Pro",
-  AGENCY_TRIAL:     "Agency Trial",
-  AGENCY_BASE:      "Agency",
-  AGENCY_PRO:       "Agency Pro",
-  AGENCY_CUSTOM:    "Agency Custom",
+  INFLUENCER_BASE: "Influencer",
+  INFLUENCER_PRO: "Influencer Pro",
+  AGENCY_TRIAL: "Agency Trial",
+  AGENCY_BASE: "Agency",
+  AGENCY_PRO: "Agency Pro",
+  AGENCY_CUSTOM: "Agency Custom",
 };
-
-// ─── component ───────────────────────────────────────────────────────────────
 
 export function UserAvatar({
   size = "md",
@@ -55,192 +57,172 @@ export function UserAvatar({
   const { role } = useRole();
   const { plan, isInfluencer } = usePlan();
   const { workspaces } = useWorkspace();
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    }
-    function handleEscape(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        setOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handle);
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("mousedown", handle);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, []);
-
-  const avatarSize = size === "sm" ? "w-9 h-9" : "w-10 h-10";
+  const avatarSize = size === "sm" ? "h-8 w-8" : "h-9 w-9";
   const initials =
     `${user?.firstName?.[0] ?? ""}${user?.lastName?.[0] ?? ""}`.toUpperCase() || "?";
-
-  // Build badge config
-  let badge: { label: string; icon: ElementType; tone: string };
-
-  if (isInfluencer) {
-    badge = {
-      label: plan ? (PLAN_LABELS[plan] ?? "Influencer") : "Influencer",
-      icon: Sparkles,
-      tone: "text-[hsl(var(--accent))]",
-    };
-  } else if (role === "OWNER" || role === "READ_ONLY") {
-    // No change for owners and read-only users
-    badge = ROLE_BADGE[role];
-  } else {
-    // Teammate: collect unique ADMIN/EDITOR roles across all workspaces
-    const teamRoles = [
-      ...new Set(
-        workspaces
-          .map((w) => w.role)
-          .filter((r): r is "ADMIN" | "EDITOR" => r === "ADMIN" || r === "EDITOR")
-      ),
-    ];
-    const hasAdmin = teamRoles.includes("ADMIN");
-    const hasEditor = teamRoles.includes("EDITOR");
-    const parts: string[] = [];
-    if (hasAdmin) parts.push("Admin");
-    if (hasEditor) parts.push("Editor");
-    badge = {
-      label: parts.join(" / ") || ROLE_BADGE[role].label,
-      icon: hasAdmin ? ShieldCheck : Users,
-      tone: hasAdmin ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]",
-    };
-  }
-
-  const BadgeIcon = badge.icon;
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Your account";
-  const email = user?.primaryEmailAddress?.emailAddress;
-  const actionItemClassName =
-    "group flex w-full items-center gap-2 rounded-lg border border-transparent px-2 py-1.5 text-left text-label-13 transition-[background-color,border-color,color] duration-150";
+  const email = user?.primaryEmailAddress?.emailAddress ?? "No email";
+  const badge = resolveBadge({ isInfluencer, plan, role, workspaces });
+  const BadgeIcon = badge.icon;
 
   return (
-    <div ref={ref} className="relative">
-      {/* ─── Trigger ─────────────────────────────────────── */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        className={cn(
-          "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 transition-colors hover:bg-[var(--ds-gray-100)]",
-          collapsed && "justify-center px-0"
-        )}
-      >
-        {user?.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={user.imageUrl}
-            alt={user.fullName ?? "User avatar"}
-            className={`${avatarSize} shrink-0 rounded-lg object-cover`}
-          />
-        ) : (
-          <div
-            className={`${avatarSize} flex shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-label-12 text-[hsl(var(--accent))]`}
-          >
-            {initials}
-          </div>
-        )}
-
-        {!collapsed && (
-          <div className="flex-1 min-w-0 text-left">
-            <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">
-              {fullName}
-            </p>
-            <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
-              {email}
-            </p>
-          </div>
-        )}
-      </button>
-
-      {/* ─── Dropdown ────────────────────────────────────── */}
-      {open && (
-        <div
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
           className={cn(
-            "absolute bottom-[calc(100%+8px)] z-[300] w-56 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none",
-            collapsed ? "left-0" : "left-0"
+            "group flex w-full items-center gap-2.5 rounded-xl transition-colors hover:bg-[var(--ds-gray-100)]",
+            collapsed ? "justify-center px-0 py-1" : "px-2 py-2"
           )}
-          role="menu"
+          aria-label={collapsed ? "Open account menu" : undefined}
         >
-          <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-2.5">
-            <div className="flex items-start gap-2.5">
+          {user?.imageUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={user.imageUrl}
+              alt={user.fullName ?? "User avatar"}
+              className={cn(avatarSize, "shrink-0 rounded-xl object-cover")}
+            />
+          ) : (
+            <div
+              className={cn(
+                avatarSize,
+                "flex shrink-0 items-center justify-center rounded-xl bg-[var(--ds-blue-100)] text-label-12 text-[var(--ds-blue-700)]"
+              )}
+            >
+              {initials}
+            </div>
+          )}
+
+          {!collapsed ? (
+            <div className="min-w-0 flex-1 text-left">
+              <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">{fullName}</p>
+              <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">{email}</p>
+            </div>
+          ) : null}
+        </button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        side={collapsed ? "right" : "top"}
+        align="start"
+        sideOffset={10}
+        className="w-[272px] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
+      >
+        <div className="space-y-2">
+          <div className="rounded-xl bg-[var(--ds-gray-100)] p-2.5">
+            <div className="flex items-start gap-3">
               {user?.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={user.imageUrl}
                   alt=""
-                  className="h-8 w-8 shrink-0 rounded-lg object-cover ring-1 ring-[var(--ds-gray-400)]"
+                  className="h-9 w-9 shrink-0 rounded-xl object-cover"
                 />
               ) : (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-label-12 text-[hsl(var(--accent))]">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-blue-100)] text-label-12 text-[var(--ds-blue-700)]">
                   {initials}
                 </div>
               )}
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">
-                  {fullName}
-                </p>
-                <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
-                  {email}
-                </p>
 
-                <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2 py-0.5 text-label-12",
-                      badge.tone
-                    )}
-                  >
-                    <BadgeIcon size={12} className="shrink-0" />
-                    {badge.label}
-                  </span>
-                </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">{fullName}</p>
+                <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">{email}</p>
               </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-label-12",
+                  badge.tone
+                )}
+              >
+                <BadgeIcon className="h-3 w-3 shrink-0" />
+                {badge.label}
+              </span>
             </div>
           </div>
 
-          <div className="bg-[var(--ds-gray-100)] p-1.5">
+          <div className="space-y-1">
             <Link
               href="/profile"
-              onClick={() => setOpen(false)}
-              className={cn(
-                actionItemClassName,
-                "text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-gray-1000)]"
-              )}
-              role="menuitem"
+              className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] transition-colors group-hover:text-[hsl(var(--accent))]">
-                <Settings size={15} className="shrink-0" />
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
+                <Settings className="h-3.5 w-3.5" />
               </div>
-              <span className="min-w-0 flex-1 truncate text-label-13 text-[var(--ds-gray-1000)]">
-                Profile &amp; Settings
-              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">Profile & settings</p>
+              </div>
             </Link>
 
             <button
+              type="button"
               onClick={() => signOut()}
-              className={cn(
-                actionItemClassName,
-                "mt-1 text-[var(--ds-gray-900)] hover:border-[var(--ds-red-200)] hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)]"
-              )}
-              role="menuitem"
+              className="group flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)]"
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] transition-colors group-hover:border-[var(--ds-red-200)] group-hover:text-[var(--ds-red-700)]">
-                <LogOut size={15} className="shrink-0" />
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] transition-colors group-hover:text-[var(--ds-red-700)]">
+                <LogOut className="h-3.5 w-3.5" />
               </div>
-              <span className="min-w-0 flex-1 truncate text-label-13 text-[var(--ds-gray-1000)]">
-                Sign out
-              </span>
+              <div className="min-w-0 flex-1 text-left">
+                <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">Sign out</p>
+              </div>
             </button>
           </div>
         </div>
-      )}
-    </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
+}
+
+function resolveBadge({
+  isInfluencer,
+  plan,
+  role,
+  workspaces,
+}: {
+  isInfluencer: boolean;
+  plan: PlanType | null;
+  role: WorkspaceRole;
+  workspaces: Array<{ role: WorkspaceRole }>;
+}) {
+  if (isInfluencer) {
+    return {
+      label: plan ? (PLAN_LABELS[plan] ?? "Influencer") : "Influencer",
+      icon: Sparkles,
+      tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]",
+    };
+  }
+
+  if (role === "OWNER" || role === "READ_ONLY") {
+    return ROLE_BADGE[role];
+  }
+
+  const teamRoles = [
+    ...new Set(
+      workspaces
+        .map((workspace) => workspace.role)
+        .filter((workspaceRole): workspaceRole is "ADMIN" | "EDITOR" => (
+          workspaceRole === "ADMIN" || workspaceRole === "EDITOR"
+        ))
+    ),
+  ];
+  const hasAdmin = teamRoles.includes("ADMIN");
+  const hasEditor = teamRoles.includes("EDITOR");
+
+  if (hasAdmin && hasEditor) {
+    return {
+      label: "Admin / Editor",
+      icon: ShieldCheck,
+      tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]",
+    };
+  }
+
+  if (hasAdmin) {
+    return ROLE_BADGE.ADMIN;
+  }
+
+  return ROLE_BADGE.EDITOR;
 }
