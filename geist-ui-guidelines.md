@@ -510,6 +510,48 @@ Avoid:
 - ambient glows
 - dramatic floating-card treatment on standard content surfaces
 
+### 9.4 Dividers and Separators
+
+Vercel uses thin 1px horizontal lines extensively to separate logical regions. This is a core layout pattern in Geist — not a fallback.
+
+**The rule:** spacing groups related things; dividers separate distinct things.
+
+#### When to use a divider
+
+| Context | Pattern |
+|---|---|
+| Between header and page body | `border-b` on the header element |
+| Between sidebar nav groups | `border-t` between groups |
+| Between rows in a settings page | `border-b` on each row |
+| Between sections inside a card | `border-t` inside the card body |
+| Between modal header and body | Geist `Modal` handles this internally |
+| Between modal body and footer actions | Geist `Modal` handles this internally |
+| Between table rows | Geist `Table` handles this internally |
+| Between menu items of different categories | `MenuDivider` from Geist |
+
+#### Divider spec
+
+- Always **1px** — never 2px or thicker
+- Always `--ds-gray-400` — never a custom gray or a hard-coded hex
+- Always rendered as a true border or `<hr>` — never a background-color block
+- Always full-width within its containing column — never floating or short decorative lines
+
+#### When NOT to use a divider
+
+- Between every item in a vertical list — use `gap-*` spacing instead
+- Inside simple single-concern cards that have one content block
+- To compensate for weak heading or spacing hierarchy
+- As decoration when the section is already visually distinct through surface color
+
+#### Divider anti-patterns
+
+Do not:
+- use multiple dividers back-to-back with no content between them
+- add dividers and also a contrasting background on the same boundary
+- use a divider where spacing alone would already communicate separation
+- use a gradient or semi-transparent line as a divider
+- add a divider above the first item in a list or below the last item
+
 ---
 
 ## 10. Component Guidance
@@ -858,7 +900,211 @@ Use for global search, quick navigation, and power-user keyboard-driven workflow
 
 ---
 
-## 14. What AI Tools Must Not Do
+## 14. Page Layout and Chrome
+
+### 14.1 App shell structure
+
+The protected app uses a persistent sidebar with a main content area. The structure is:
+
+```
+┌─────────────────────────────────────┐
+│  Topbar (optional)                  │  border-b --ds-gray-400
+├──────────┬──────────────────────────┤
+│          │  Page header             │  border-b --ds-gray-400
+│ Sidebar  │──────────────────────────│
+│          │  Page content            │
+│          │                          │
+└──────────┴──────────────────────────┘
+```
+
+Rules:
+- Sidebar background: `--ds-background-100` or `--ds-gray-100`
+- Sidebar/content boundary: `border-r` using `--ds-gray-400`
+- Topbar bottom boundary: `border-b` using `--ds-gray-400`
+- Page header (title + actions row): separated from content by `border-b` using `--ds-gray-400`
+- Content area background: `--ds-background-100`
+
+### 14.2 Page header pattern
+
+Every page with a title follows this structure:
+
+```
+[Page Title]          [Primary Action Button]
+──────────────────────────────────────────── ← border-b --ds-gray-400
+[content]
+```
+
+- Title: `text-heading-24`
+- Supporting description (optional): `text-copy-14` in `--ds-gray-900`
+- Primary action right-aligned using `justify-between` or `flex` layout
+- Divider below the header row is mandatory — do not omit it
+
+### 14.3 Sidebar nav structure
+
+```
+[Logo / Brand]
+──────────── ← border-b --ds-gray-400
+[Nav group label]  ← text-label-12 --ds-gray-900 uppercase
+  [Nav item]
+  [Nav item]
+──────────── ← border-t --ds-gray-400
+[Nav group label]
+  [Nav item]
+──────────── ← border-t --ds-gray-400
+[Bottom items (settings, account)]
+```
+
+Rules:
+- Dividers between nav groups are `border-t` — not gaps or padding alone
+- Group labels use `text-label-12` in `--ds-gray-900`, uppercase, `tracking-wider`
+- Active item: brand blue background (`--ds-blue-*`) or left accent border
+- Inactive item text: `--ds-gray-900`; hover: `--ds-gray-200` background
+
+### 14.4 Content width
+
+- Page content should have a readable max-width — do not stretch full-viewport on wide screens
+- Standard: `max-w-screen-lg` or `max-w-5xl` for primary content
+- Settings pages: `max-w-2xl` or `max-w-3xl` for form content
+- Full-bleed only for dashboards with charts that benefit from width
+
+---
+
+## 15. Settings and Configuration Page Patterns
+
+Settings pages follow a specific Geist-style row pattern. This is distinct from forms and must be applied consistently across all settings routes.
+
+### 15.1 Settings row pattern
+
+Each setting is a horizontal row:
+
+```
+┌─────────────────────────────────────────────────────┐
+│ Label                     Control (right-aligned)    │
+│ Description (optional)                               │
+└─────────────────────────────────────────────────────┘  ← border-b --ds-gray-400
+```
+
+Rules:
+- Label: `text-label-14` medium weight, `--ds-gray-1000`
+- Description: `text-copy-13` or `text-label-12`, `--ds-gray-900`
+- Control right-aligned: Toggle, Select, Button, or Badge
+- Divider between every row: `border-b` using `--ds-gray-400`
+- No outer box or card wrapping individual rows — just surface + dividers
+- Last row in a section has no bottom divider (or the section card provides it)
+
+### 15.2 Settings section pattern
+
+Group related rows into named sections:
+
+```
+[Section Title]        ← text-heading-16
+[Section description]  ← text-copy-14 --ds-gray-900 (optional)
+──────────────────── ← border-b --ds-gray-400
+[Row]
+──────────────────── ← border-b --ds-gray-400
+[Row]
+──────────────────── ← border-b --ds-gray-400
+[Row]
+```
+
+- Section title: `text-heading-16`
+- Divider immediately below the title, before the first row
+- Each row separated by `border-b`
+- Sections separated from each other by `gap-8` or `mt-8`
+
+### 15.3 Danger zone
+
+Destructive settings (delete account, revoke all access, etc.) must be visually separated:
+
+- Place in a distinct section at the bottom of the page
+- Title: "Danger Zone" using `text-heading-16`
+- Section border or left accent using `--geist-error` / `--ds-red-*`
+- Destructive button: Geist `Button type="error"`
+- Never mix danger actions with safe actions in the same row group
+
+---
+
+## 16. Motion and Transitions
+
+### 16.1 Philosophy
+
+Motion in SocialRaven should be invisible when it is working correctly. Transitions communicate state — they do not perform.
+
+Vercel's Geist motion principle: **fast, subtle, purposeful**. If you notice the animation, it is probably too slow or too dramatic.
+
+### 16.2 Transition defaults
+
+| Element | Duration | Easing |
+|---|---|---|
+| Background/border color on hover | `100ms` | `ease` |
+| Opacity on show/hide | `150ms` | `ease` |
+| Height/transform on expand | `150–200ms` | `ease-out` |
+| Sidebar open/close | `200ms` | `ease-in-out` |
+| Modal enter | `150ms` | `ease-out` |
+| Modal exit | `100ms` | `ease-in` |
+| Toast enter | `200ms` | `ease-out` |
+
+### 16.3 Rules
+
+- Use `transition-colors` for hover state color changes — not a full `transition-all`
+- Never animate layout properties (width, height, margin, padding) on interactive elements during hover
+- Do not animate opacity and transform simultaneously on page-load content — it looks heavy
+- Page transitions: use none or a single fast fade — no slide animations between routes
+- Loading states use `LoadingDots` or `Skeleton` — not spinning loaders for passive states
+
+### 16.4 Anti-patterns
+
+Do not:
+- use `transition-all duration-300` as a default — it is too slow and too broad
+- animate background on every card hover — use instant or 100ms max
+- add entrance animations to operational data (tables, lists, dashboards)
+- use spring or bounce easing in a B2B operational UI
+- animate things that did not change (unnecessary re-renders triggering transitions)
+
+---
+
+## 17. Interaction States
+
+Every interactive element must have a defined state for each of the following. Do not leave any state unstyled.
+
+### 17.1 State matrix
+
+| State | Visual treatment |
+|---|---|
+| Default | Base surface + `--ds-gray-1000` text |
+| Hover | `--ds-gray-200` background OR `--ds-gray-500` border |
+| Active / Pressed | `--ds-gray-300` background |
+| Focus (keyboard) | Geist focus ring — do not override or remove |
+| Selected | Brand blue background or left-border accent + `--ds-blue-*` text |
+| Disabled | `opacity-50`; cursor `not-allowed`; always paired with a tooltip explaining why |
+| Loading | Spinner inside button or Skeleton over content — button should disable while loading |
+| Error | `--geist-error` border on input; error message below |
+| Success | `--geist-success` inline note or Toast — not a persistent green glow |
+
+### 17.2 Hover rules
+
+- Navigation items: `--ds-gray-200` background, `border-radius: 6px`
+- Table rows: `--ds-gray-100` background on `Table.Row`
+- Card with action: subtle `--ds-gray-500` border upgrade on hover (not a shadow)
+- Buttons: Geist handles hover internally — do not override with custom hover classes
+- Icon buttons: same background rules as navigation items
+
+### 17.3 Focus rules
+
+- Never remove the focus ring with `outline-none` or `focus:outline-none` alone — always replace it
+- Geist components provide focus rings by default — do not override them
+- Custom interactive elements must implement `focus-visible:ring-2 focus-visible:ring-[--ds-blue-600]`
+- Tab order must follow reading order — do not use positive `tabIndex` values
+
+### 17.4 Disabled state rules
+
+- Disabled controls must be paired with a `Tooltip` explaining why they are disabled
+- Use the `disabled` prop — never simulate disabled with `pointer-events-none` alone
+- Never fully hide an action because it is unavailable — use `MenuItemLocked` or a disabled+tooltip pattern instead
+
+---
+
+## 18. What AI Tools Must Not Do
 
 Do not:
 - use Lucide icons — use Geist Icons
@@ -875,10 +1121,21 @@ Do not:
 - introduce a second monospace family (Geist Mono is the only monospace)
 - hard-code hex values — use `--ds-*` tokens
 - rely on color alone for meaning
+- omit the page header divider (`border-b --ds-gray-400`) below the title/actions row
+- omit dividers between settings page rows
+- use `transition-all duration-300` — use targeted `transition-colors` at `100ms`
+- remove focus rings with `outline-none` without providing a replacement
+- disable a control without providing a tooltip explaining why
+- use thick (2px+) or decorative divider lines — always 1px `--ds-gray-400`
+- add dividers between every list item — use spacing for related items, dividers only for distinct regions
+- leave a disabled state without a tooltip
+- use `pointer-events-none` as the sole disabled mechanism
+- build a settings page as a form layout — use the row + divider pattern instead
+- use bounce or spring easing anywhere in the protected app
 
 ---
 
-## 15. Workflow for UI Changes
+## 19. Workflow for UI Changes
 
 Whenever redesigning or creating a page:
 
@@ -886,17 +1143,20 @@ Whenever redesigning or creating a page:
 2. Inspect the local page and nearby components.
 3. Preserve business logic and permissions behavior unless behavior changes are requested.
 4. Normalize spacing, hierarchy, and state treatment before inventing new visuals.
-5. Use Geist components from `geist/components` — shadcn only as a fallback.
-6. Use Geist Icons — not Lucide.
-7. Use neutral surfaces first and brand emphasis second.
-8. Use semantic colors only when the meaning is semantic.
-9. For analytics, separate chart-mark colors from chart-interface colors.
-10. Verify both light and dark themes.
-11. Keep the result production-ready, not exploratory.
+5. Apply page layout chrome: header row with `border-b`, sidebar with `border-r`, content in `--ds-background-100`.
+6. Use dividers (`border-t` / `border-b` in `--ds-gray-400`) to separate distinct regions — not just spacing.
+7. Use Geist components from `geist/components` — shadcn only as a fallback.
+8. Use Geist Icons — not Lucide.
+9. Use neutral surfaces first and brand emphasis second.
+10. Use semantic colors only when the meaning is semantic.
+11. For analytics, separate chart-mark colors from chart-interface colors.
+12. Define all interaction states: hover, focus, active, disabled, loading, error.
+13. Verify both light and dark themes.
+14. Keep the result production-ready, not exploratory.
 
 ---
 
-## 16. Definition of Done
+## 20. Definition of Done
 
 A UI task is not complete unless the result is:
 - cleaner than before
@@ -905,10 +1165,14 @@ A UI task is not complete unless the result is:
 - consistent with nearby screens
 - correct in both light and dark themes
 - responsive
-- accessible in common states
+- accessible in common states (hover, focus, disabled, loading, error)
 - using Geist components where available
 - using Geist Icons (not Lucide)
 - using brand and semantic color correctly
 - using analytics colors intentionally and consistently
 - using `--ds-*` tokens for color, not hard-coded values
+- using 1px `--ds-gray-400` dividers at region boundaries, not missing them
+- using the settings row + divider pattern on settings pages
+- using targeted, fast transitions (100–200ms) not `transition-all`
+- every disabled state paired with a tooltip
 - appropriate for a mature B2B product

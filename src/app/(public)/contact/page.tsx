@@ -14,7 +14,7 @@ import {
 import {
   PublicLozenge,
   PublicPrimaryLinkButton,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import {
   PublicCard,
   PublicHero,
@@ -118,7 +118,7 @@ export default function ContactPage() {
         topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+            className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
           >
             ← Back
           </Link>
@@ -130,12 +130,12 @@ export default function ContactPage() {
           <PublicCard className="grid gap-4 p-6 sm:grid-cols-2">
             {TRUST.map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex items-start gap-3">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
                   <Icon className="h-4 w-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{label}</p>
-                  <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{sub}</p>
+                  <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
+                  <p className="text-label-12 text-[var(--ds-gray-900)]">{sub}</p>
                 </div>
               </div>
             ))}
@@ -147,14 +147,14 @@ export default function ContactPage() {
         <div className="grid gap-5 sm:grid-cols-2">
           {CONTACTS.map(({ label, description, detail, email, icon: Icon }) => (
             <PublicCard key={label} className="space-y-4 p-7">
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
                 <Icon className="h-5 w-5" />
               </div>
               <div className="space-y-2">
-                <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{label}</h2>
-                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{description}</p>
+                <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">{label}</h2>
+                <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
               </div>
-              <p className="border-t border-[hsl(var(--border-subtle))] pt-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+              <p className="border-t border-[var(--ds-gray-400)] pt-4 text-copy-14 text-[var(--ds-gray-900)]">
                 {detail}
               </p>
               <PublicPrimaryLinkButton href={`mailto:${email}`}>{email}</PublicPrimaryLinkButton>
@@ -167,8 +167,8 @@ export default function ContactPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FAQS.map(({ q, a }) => (
             <PublicInsetCard key={q} className="space-y-3 p-6">
-              <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{q}</h3>
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{a}</p>
+              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{q}</h3>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">{a}</p>
             </PublicInsetCard>
           ))}
         </div>
@@ -179,10 +179,10 @@ export default function ContactPage() {
           <div className="grid items-center gap-10 md:grid-cols-2">
             <div className="space-y-4">
               <PublicLozenge appearance="inprogress">Agency</PublicLozenge>
-              <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+              <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
                 Need something built for scale?
               </h2>
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 Dedicated onboarding, workspace planning, and support for multi-brand teams that need more guidance than a standard self-serve setup.
               </p>
               <PublicPrimaryLinkButton href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry">
@@ -193,9 +193,9 @@ export default function ContactPage() {
               {AGENCY_FEATURES.map((feature) => (
                 <PublicInsetCard
                   key={feature}
-                  className="flex items-center gap-2.5 p-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]"
+                  className="flex items-center gap-2.5 p-4 text-copy-14 text-[var(--ds-gray-900)]"
                 >
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--accent))]" />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--ds-blue-600)]" />
                   {feature}
                 </PublicInsetCard>
               ))}

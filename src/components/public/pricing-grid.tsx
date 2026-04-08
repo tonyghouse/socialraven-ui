@@ -7,8 +7,8 @@ const PAID_PLANS = PLANS.filter((plan) => !plan.type.endsWith("_TRIAL"));
 
 function ctaClasses(isPrimary: boolean) {
   return isPrimary
-    ? "inline-flex min-h-10 items-center justify-center rounded-md bg-[hsl(var(--accent))] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[hsl(var(--accent))]/90"
-    : "inline-flex min-h-10 items-center justify-center rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-2 text-sm font-medium text-[hsl(var(--foreground))] transition-colors hover:bg-[hsl(var(--surface-raised))]";
+    ? "inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--ds-blue-600)] px-4 py-2 text-label-14 text-white transition-colors duration-150 hover:bg-[var(--ds-blue-700)]"
+    : "inline-flex min-h-10 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-2 text-label-14 text-[var(--ds-gray-1000)] transition-colors duration-150 hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 }
 
 export function PricingGrid() {
@@ -29,22 +29,22 @@ export function PricingGrid() {
         return (
           <PublicCard
             key={plan.type}
-            className={`p-6 shadow-sm ${centeredLastRowClass} ${plan.popular ? "border-[hsl(var(--accent))]" : ""}`}
+            className={`p-6 shadow-none ${centeredLastRowClass} ${plan.popular ? "border-[var(--ds-blue-400)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-blue-100)_100%)]" : "bg-[var(--ds-background-100)]"}`}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-base leading-5 font-bold tracking-[-0.01em] text-[hsl(var(--foreground))]">
+                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">
                   {plan.name}
                 </h3>
-                <p className="mt-2 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
                   {plan.description}
                 </p>
               </div>
               <span
-                className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium leading-4 ${
+                className={`inline-flex items-center rounded-full border px-2.5 py-1 text-label-12 ${
                   plan.popular
-                    ? "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                    : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
+                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                 }`}
               >
                 {plan.popular ? "Recommended" : "Standard"}
@@ -54,19 +54,19 @@ export function PricingGrid() {
             <div className="mt-6">
               {plan.customPricing ? (
                 <div className="space-y-1">
-                  <p className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                  <p className="text-heading-32 text-[var(--ds-gray-1000)]">
                     $399+
                   </p>
-                  <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                  <p className="text-copy-13 text-[var(--ds-gray-900)]">
                     custom monthly pricing
                   </p>
                 </div>
               ) : (
                 <div className="flex items-end gap-2">
-                  <span className="text-[1.75rem] leading-8 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                  <span className="text-heading-32 text-[var(--ds-gray-1000)]">
                     ${plan.price}
                   </span>
-                  <span className="pb-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                  <span className="pb-1 text-copy-13 text-[var(--ds-gray-900)]">
                     per month
                   </span>
                 </div>
@@ -75,8 +75,8 @@ export function PricingGrid() {
 
             <ul className="mt-6 space-y-3">
               {plan.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
-                  <span className="mt-1 h-2 w-2 rounded-full bg-[hsl(var(--accent))]" />
+                <li key={feature} className="flex items-start gap-3 text-copy-13 text-[var(--ds-gray-900)]">
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--ds-blue-600)]" />
                   <span>{feature}</span>
                 </li>
               ))}

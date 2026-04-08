@@ -70,15 +70,15 @@ export function MobileBottomBar() {
 
       <div
         className={cn(
-          "fixed inset-x-2.5 z-[210] overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-lg",
+          "fixed inset-x-2.5 z-[210] overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none",
           "transition-all duration-200 ease-out",
           drawerOpen
             ? "pointer-events-auto bottom-[72px] translate-y-0 opacity-100"
             : "pointer-events-none bottom-[64px] translate-y-2 opacity-0"
         )}
       >
-        <div className="flex justify-center border-b border-[hsl(var(--border-subtle))] py-2">
-          <div className="h-1 w-7 rounded-full bg-[hsl(var(--foreground-subtle))]/30" />
+        <div className="flex justify-center border-b border-[var(--ds-gray-400)] py-2">
+          <div className="h-1 w-7 rounded-full bg-[var(--ds-gray-900)]/20" />
         </div>
 
         <div className="space-y-1 px-2 py-2">
@@ -90,16 +90,16 @@ export function MobileBottomBar() {
                 href={url}
                 onClick={() => setDrawerOpen(false)}
                 className={cn(
-                  "flex h-9 items-center gap-2.5 rounded-lg border px-3 text-[13px] font-medium transition-[background-color,color,border-color] duration-150",
+                  "flex h-9 items-center gap-2.5 rounded-lg border px-3 text-label-14 transition-[background-color,color,border-color] duration-150",
                   isActive
-                    ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))]"
-                    : "border-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
+                    ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]"
+                    : "border-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
                 )}
               >
                 <div
                   className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
-                    isActive ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground-muted))]"
+                    isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
                   )}
                 >
                   <Icon size={16} />
@@ -110,11 +110,11 @@ export function MobileBottomBar() {
           })}
         </div>
 
-        <div className="mx-4 border-t border-[hsl(var(--border-subtle))]" />
+        <div className="mx-4 border-t border-[var(--ds-gray-400)]" />
 
         {workspaces.length > 0 && (
           <div className="px-2 py-2">
-            <p className="px-3 pb-1 text-[10px] font-semibold tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
+            <p className="px-3 pb-1 text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
               Workspace
             </p>
             {workspaces.map((w) => (
@@ -125,45 +125,45 @@ export function MobileBottomBar() {
                   if (activeWorkspace?.id !== w.id) switchWorkspace(w);
                 }}
                 className={cn(
-                  "flex h-9 w-full items-center gap-2.5 rounded-lg border px-3 text-[13px] font-medium transition-[background-color,color,border-color] duration-150",
+                  "flex h-9 w-full items-center gap-2.5 rounded-lg border px-3 text-label-14 transition-[background-color,color,border-color] duration-150",
                   activeWorkspace?.id === w.id
-                    ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))]"
-                    : "border-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
+                    ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]"
+                    : "border-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
                 )}
               >
                 <div
                   className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded-md",
-                    activeWorkspace?.id === w.id ? "text-[hsl(var(--accent))]" : "text-[hsl(var(--foreground-muted))]"
+                    activeWorkspace?.id === w.id ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
                   )}
                 >
                   <ArrowsLeftRight size={16} />
                 </div>
                 <span className="flex-1 truncate text-left">{w.name}</span>
                 {activeWorkspace?.id === w.id && (
-                  <Check size={14} className="shrink-0 text-accent" />
+                  <Check size={14} className="shrink-0 text-[hsl(var(--accent))]" />
                 )}
               </button>
             ))}
           </div>
         )}
 
-        <div className="mx-4 border-t border-[hsl(var(--border-subtle))]" />
+        <div className="mx-4 border-t border-[var(--ds-gray-400)]" />
 
         <div className="px-2 py-2">
-          <p className="px-3 pb-1 text-[10px] font-semibold tracking-[0.04em] text-[hsl(var(--foreground-subtle))]">
+          <p className="px-3 pb-1 text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
             Appearance
           </p>
           <ThemeSwitcher align="start" className="w-full justify-between" />
         </div>
 
-        <div className="mx-4 border-t border-[hsl(var(--border-subtle))]" />
+        <div className="mx-4 border-t border-[var(--ds-gray-400)]" />
 
         <div className="px-2 py-2">
           <Link
             href="/profile"
             onClick={() => setDrawerOpen(false)}
-            className="flex h-9 items-center gap-2.5 rounded-lg border border-transparent px-3 text-[13px] font-medium text-[hsl(var(--foreground-muted))] transition-[background-color,color,border-color] duration-150 hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
+            className="flex h-9 items-center gap-2.5 rounded-lg border border-transparent px-3 text-label-13 text-[var(--ds-gray-900)] transition-[background-color,color,border-color] duration-150 hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
           >
             {user?.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
@@ -185,7 +185,7 @@ export function MobileBottomBar() {
               setDrawerOpen(false);
               signOut();
             }}
-            className="flex h-9 w-full items-center gap-2.5 rounded-lg border border-transparent px-3 text-[13px] font-medium text-[hsl(var(--foreground-muted))] transition-[background-color,color,border-color] duration-150 hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-foreground"
+            className="flex h-9 w-full items-center gap-2.5 rounded-lg border border-transparent px-3 text-label-13 text-[var(--ds-gray-900)] transition-[background-color,color,border-color] duration-150 hover:border-[var(--ds-red-200)] hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)]"
           >
             <SignOut size={16} className="shrink-0" />
             Sign out
@@ -195,7 +195,7 @@ export function MobileBottomBar() {
 
       <nav
         className={cn(
-          "fixed bottom-0 left-0 right-0 z-[200] border-t border-[hsl(var(--border))] bg-[hsl(var(--surface))]",
+          "fixed bottom-0 left-0 right-0 z-[200] border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]",
           "pb-[max(env(safe-area-inset-bottom),0px)]"
         )}
       >
@@ -222,8 +222,8 @@ export function MobileBottomBar() {
                 href="/schedule-post"
                 aria-label="Schedule Post"
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-xl border border-accent/20 bg-accent text-white transition-transform duration-150 active:scale-95",
-                  pathname.startsWith("/schedule-post") && "shadow-[0_0_0_1px_rgba(94,106,210,0.18)]"
+                  "flex h-10 w-10 items-center justify-center rounded-xl border border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-white transition-transform duration-150 shadow-none active:scale-95",
+                  pathname.startsWith("/schedule-post") && "ring-2 ring-[hsl(var(--accent)/0.22)] ring-offset-2 ring-offset-[var(--ds-background-100)]"
                 )}
               >
                 <PaperPlaneTilt size={16} className="text-white" />
@@ -233,10 +233,10 @@ export function MobileBottomBar() {
                 aria-label="Schedule Post (view only)"
                 title="Viewers cannot create posts"
                 className={cn(
-                  "flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] opacity-60"
+                  "flex h-10 w-10 cursor-not-allowed items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] opacity-60"
                 )}
               >
-                <PaperPlaneTilt size={16} className="text-[hsl(var(--foreground-subtle))]" />
+                <PaperPlaneTilt size={16} className="text-[var(--ds-gray-900)]" />
               </div>
             )}
           </div>
@@ -254,23 +254,23 @@ export function MobileBottomBar() {
             className={cn(
               "relative flex h-full flex-1 flex-col items-center justify-center gap-1 transition-all duration-150 active:scale-95",
               isMoreActive || drawerOpen
-                ? "text-accent"
-                : "text-[hsl(var(--foreground-muted))]"
+                ? "text-[hsl(var(--accent))]"
+                : "text-[var(--ds-gray-900)]"
             )}
           >
             <span
               className={cn(
-                "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-accent transition-all duration-200",
+                "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-[hsl(var(--accent))] transition-all duration-200",
                 isMoreActive || drawerOpen ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
               )}
             />
             <DotsThreeOutline size={18} />
             <span
               className={cn(
-                "text-[10px] font-medium leading-none",
+                "text-label-12 leading-none",
                 isMoreActive || drawerOpen
-                  ? "text-accent"
-                  : "text-[hsl(var(--foreground-muted))]"
+                  ? "text-[hsl(var(--accent))]"
+                  : "text-[var(--ds-gray-900)]"
               )}
             >
               More
@@ -300,12 +300,12 @@ function NavTab({
       href={url}
       className={cn(
         "relative flex h-full flex-1 flex-col items-center justify-center gap-0.5 transition-all duration-150 active:scale-95",
-        isActive ? "text-accent" : "text-[hsl(var(--foreground-muted))]"
+        isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
       )}
     >
       <span
         className={cn(
-          "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-accent",
+          "absolute top-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-b-full bg-[hsl(var(--accent))]",
           "transition-all duration-200",
           isActive ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
         )}
@@ -314,8 +314,8 @@ function NavTab({
       <Icon size={18} />
       <span
         className={cn(
-          "text-[10px] font-medium leading-none",
-          isActive ? "text-accent" : "text-[hsl(var(--foreground-muted))]"
+          "text-label-12 leading-none",
+          isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
         )}
       >
         {title}

@@ -34,20 +34,20 @@ const FOOTER_GROUPS = [
 
 export function PublicSiteFooter() {
   return (
-    <footer className="bg-[hsl(var(--background))]">
+    <footer className="border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
       <div className="container mx-auto max-w-7xl px-6 py-14">
         <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
           <div className="max-w-sm">
             <div className="flex items-center gap-3">
               <Image src="/SocialRavenLogo.svg" alt="SocialRaven logo" width={28} height={28} className="h-7 w-7" />
-              <span className="text-base leading-5 font-bold tracking-[-0.01em] text-[hsl(var(--foreground))]">
+              <span className="text-heading-16 text-[var(--ds-gray-1000)]">
                 SocialRaven
               </span>
             </div>
-            <p className="mt-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-4 text-copy-14 text-[var(--ds-gray-900)]">
               Structured social media scheduling and publishing for creators, agencies, and operations-focused teams.
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-1.5 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+            <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-1.5 text-label-12 text-[var(--ds-gray-900)]">
               <Lock className="h-3.5 w-3.5" />
               GDPR-conscious · US and EU ready
             </div>
@@ -55,7 +55,7 @@ export function PublicSiteFooter() {
 
           {FOOTER_GROUPS.map((group) => (
             <div key={group.title}>
-              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+              <p className="text-label-12 text-[var(--ds-gray-900)]">
                 {group.title}
               </p>
               <ul className="mt-4 space-y-3">
@@ -63,7 +63,7 @@ export function PublicSiteFooter() {
                   <li key={item.label}>
                     <Link
                       href={item.href}
-                      className="text-sm leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+                      className="text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
                     >
                       {item.label}
                     </Link>
@@ -74,9 +74,9 @@ export function PublicSiteFooter() {
           ))}
         </div>
 
-        <Separator className="my-8 bg-[hsl(var(--border-subtle))]" />
+        <Separator className="my-8 bg-[var(--ds-gray-400)]" />
 
-        <div className="flex flex-col gap-2 text-xs leading-4 text-[hsl(var(--foreground-muted))] md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-2 text-label-12 text-[var(--ds-gray-900)] md:flex-row md:items-center md:justify-between">
           <p>© 2026 SocialRaven. All rights reserved.</p>
           <p>Built for calm execution across global publishing teams.</p>
         </div>

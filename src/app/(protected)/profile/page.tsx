@@ -296,7 +296,7 @@ export default function ProfilePage() {
 
       <div className="flex w-full flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">
 
-        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-4 py-3 dark:bg-[hsl(var(--surface-sunken))] sm:px-5">
             <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
               Account
@@ -511,7 +511,7 @@ export default function ProfilePage() {
           )}
         </section>
 
-        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-4 py-3 dark:bg-[hsl(var(--surface-sunken))] sm:px-5">
             <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
               Membership &amp; Role
@@ -659,7 +659,7 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]/70 px-4 py-3 dark:bg-[hsl(var(--surface-sunken))] sm:px-5">
             <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
               Data &amp; Privacy

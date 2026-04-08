@@ -599,7 +599,7 @@ export function WorkspaceLibraryManager() {
 
           <TabsContent value="items" className="space-y-6">
             {canManageAssetLibrary && (
-              <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
@@ -924,7 +924,7 @@ export function WorkspaceLibraryManager() {
               </section>
             )}
 
-            <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
@@ -1118,7 +1118,7 @@ export function WorkspaceLibraryManager() {
 
           <TabsContent value="bundles" className="space-y-6">
             {canManageAssetLibrary && (
-              <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
@@ -1230,7 +1230,7 @@ export function WorkspaceLibraryManager() {
               </section>
             )}
 
-            <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-3">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>

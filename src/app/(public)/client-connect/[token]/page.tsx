@@ -25,7 +25,7 @@ import {
   PublicLozenge,
   PublicPrimaryButton,
   PublicSectionMessage,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import type {
   ClientConnectPlatform,
   PublicClientConnectionSession,
@@ -168,8 +168,8 @@ export default function PublicClientConnectPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)]">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(var(--foreground-muted))]" />
+      <div className="flex min-h-screen items-center justify-center bg-[var(--ds-background-100)]">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--ds-gray-900)]" />
       </div>
     );
   }
@@ -180,12 +180,12 @@ export default function PublicClientConnectPage() {
         <div className="mx-auto max-w-xl px-6 py-24">
           <PublicCard className="p-8">
             <div className="mb-4 flex justify-center">
-              <AlertCircle className="h-12 w-12 text-[hsl(var(--destructive))]" />
+              <AlertCircle className="h-12 w-12 text-[var(--ds-red-600)]" />
             </div>
-            <h1 className="text-center text-[1.5rem] font-bold text-[hsl(var(--foreground))]">
+            <h1 className="text-center text-heading-24 text-[var(--ds-gray-1000)]">
               Client handoff unavailable
             </h1>
-            <p className="mt-3 text-center text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-3 text-center text-copy-14 text-[var(--ds-gray-900)]">
               {error}
             </p>
           </PublicCard>
@@ -209,7 +209,7 @@ export default function PublicClientConnectPage() {
         topSlot={
           <div className="flex flex-wrap items-center gap-3">
             {session.logoUrl ? (
-              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-white">
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-white">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={session.logoUrl}
@@ -219,10 +219,10 @@ export default function PublicClientConnectPage() {
               </div>
             ) : null}
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">
                 {session.agencyLabel}
               </p>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-copy-13 text-[var(--ds-gray-900)]">
                 Connecting channels for {session.workspaceName}
               </p>
             </div>
@@ -243,30 +243,30 @@ export default function PublicClientConnectPage() {
           <PublicCard className="p-5">
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   What this does
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
                   Connect approved social accounts directly to SocialRaven without
                   sharing passwords with the agency team.
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Invited contact
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
                   {session.recipientName || "Client contact"}
                   {restrictionEmail ? ` · ${restrictionEmail}` : ""}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Audit trail
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
                   Every connection and reconnection is recorded with the contact
                   identity used on this page.
                 </p>
@@ -311,13 +311,13 @@ export default function PublicClientConnectPage() {
           <div className="grid gap-4 md:grid-cols-2">
             <PublicInsetCard className="p-5">
               <label className="space-y-1.5">
-                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                <span className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Your name
                 </span>
                 <input
                   value={clientName}
                   onChange={(event) => setClientName(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--accent))]"
+                  className="h-11 w-full rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-copy-14 text-[var(--ds-gray-1000)] outline-none focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2"
                   placeholder="Ava Client"
                 />
               </label>
@@ -325,14 +325,14 @@ export default function PublicClientConnectPage() {
 
             <PublicInsetCard className="p-5">
               <label className="space-y-1.5">
-                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[hsl(var(--foreground-subtle))]">
+                <span className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Your email
                 </span>
                 <input
                   type="email"
                   value={clientEmail}
                   onChange={(event) => setClientEmail(event.target.value)}
-                  className="h-11 w-full rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 text-sm text-[hsl(var(--foreground))] outline-none focus:border-[hsl(var(--accent))]"
+                  className="h-11 w-full rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-copy-14 text-[var(--ds-gray-1000)] outline-none focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2"
                   placeholder={session.recipientEmail || "client@example.com"}
                 />
               </label>
@@ -352,7 +352,7 @@ export default function PublicClientConnectPage() {
                 <PublicInsetCard key={platform} className="flex h-full flex-col justify-between p-5">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
                         <Icon className="h-5 w-5" />
                       </div>
                       {latest ? (
@@ -365,10 +365,10 @@ export default function PublicClientConnectPage() {
                     </div>
 
                     <div>
-                      <p className="text-base font-semibold text-[hsl(var(--foreground))]">
+                      <p className="text-heading-16 text-[var(--ds-gray-1000)]">
                         {platformLabel(platform)}
                       </p>
-                      <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                      <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
                         {latest
                           ? `${latest.providerUserId} was last updated on ${formatTimestamp(latest.createdAt)}.`
                           : `Start a secure ${platformLabel(platform)} connection without exposing workspace settings or other agency data.`}
@@ -403,7 +403,7 @@ export default function PublicClientConnectPage() {
         >
           {session.recentActivity.length === 0 ? (
             <PublicInsetCard className="p-8">
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-copy-13 text-[var(--ds-gray-900)]">
                 No channels have been connected through this secure handoff yet.
               </p>
             </PublicInsetCard>
@@ -422,14 +422,14 @@ export default function PublicClientConnectPage() {
                       {activity.eventType === "RECONNECTED" ? "Reconnected" : "Connected"}
                     </PublicLozenge>
                   </div>
-                  <p className="mt-4 text-sm leading-6 text-[hsl(var(--foreground))]">
+                  <p className="mt-4 text-copy-14 text-[var(--ds-gray-1000)]">
                     <span className="font-semibold">{activity.actorDisplayName}</span> connected{" "}
                     <span className="font-semibold">{activity.providerUserId}</span>.
                   </p>
-                  <p className="mt-2 text-sm text-[hsl(var(--foreground-muted))]">
+                  <p className="mt-2 text-copy-13 text-[var(--ds-gray-900)]">
                     {activity.actorEmail}
                   </p>
-                  <div className="mt-3 flex items-center gap-2 text-sm text-[hsl(var(--foreground-muted))]">
+                  <div className="mt-3 flex items-center gap-2 text-copy-13 text-[var(--ds-gray-900)]">
                     <CalendarClock className="h-4 w-4" />
                     <span>{formatTimestamp(activity.createdAt)}</span>
                   </div>

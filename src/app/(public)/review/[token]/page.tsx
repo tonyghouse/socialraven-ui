@@ -24,7 +24,7 @@ import {
   PublicPrimaryButton,
   PublicSectionMessage,
   PublicSubtleButton,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import {
   buildFullCaptionSelection,
   PostCollaborationAnnotationEditor,
@@ -315,8 +315,8 @@ export default function PublicReviewPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)]">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(var(--foreground-muted))]" />
+      <div className="flex min-h-screen items-center justify-center bg-[var(--ds-background-100)]">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--ds-gray-900)]" />
       </div>
     );
   }
@@ -327,12 +327,12 @@ export default function PublicReviewPage() {
         <div className="mx-auto max-w-xl px-6 py-24">
           <PublicCard className="p-8">
             <div className="mb-4 flex justify-center">
-              <AlertCircle className="h-12 w-12 text-[hsl(var(--destructive))]" />
+              <AlertCircle className="h-12 w-12 text-[var(--ds-red-600)]" />
             </div>
-            <h1 className="text-center text-[1.5rem] font-bold text-[hsl(var(--foreground))]">
+            <h1 className="text-center text-heading-24 text-[var(--ds-gray-1000)]">
               Review link unavailable
             </h1>
-            <p className="mt-3 text-center text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-3 text-center text-copy-14 text-[var(--ds-gray-900)]">
               {error}
             </p>
           </PublicCard>
@@ -347,12 +347,12 @@ export default function PublicReviewPage() {
         <div className="mx-auto max-w-xl px-6 py-24">
           <PublicCard className="p-8">
             <div className="mb-4 flex justify-center">
-              <LockKeyhole className="h-12 w-12 text-[hsl(var(--accent))]" />
+              <LockKeyhole className="h-12 w-12 text-[var(--ds-blue-600)]" />
             </div>
-            <h1 className="text-center text-[1.5rem] font-bold text-[hsl(var(--foreground))]">
+            <h1 className="text-center text-heading-24 text-[var(--ds-gray-1000)]">
               Passcode Required
             </h1>
-            <p className="mt-3 text-center text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-3 text-center text-copy-14 text-[var(--ds-gray-900)]">
               This review link is protected. Enter the passcode shared by the workspace team to
               view the campaign.
             </p>
@@ -360,7 +360,7 @@ export default function PublicReviewPage() {
               <input
                 value={reviewPasscode}
                 onChange={(event) => setReviewPasscode(event.target.value)}
-                className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                className="w-full rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2 text-copy-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2"
                 placeholder="Enter passcode"
                 type="password"
               />
@@ -375,12 +375,10 @@ export default function PublicReviewPage() {
                 </span>
               </PublicPrimaryButton>
             </div>
-            <p className="mt-4 text-center text-sm text-[hsl(var(--foreground-muted))]">
+            <p className="mt-4 text-center text-copy-13 text-[var(--ds-gray-900)]">
               {lockedMessage}
             </p>
-            {error && (
-              <p className="mt-2 text-center text-sm text-[hsl(var(--destructive))]">{error}</p>
-            )}
+            {error && <p className="mt-2 text-center text-copy-13 text-[var(--ds-red-600)]">{error}</p>}
           </PublicCard>
         </div>
       </PublicPageShell>
@@ -429,17 +427,17 @@ export default function PublicReviewPage() {
           <PublicCard className="p-5">
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Scheduled time
                 </p>
-                <div className="mt-2 flex items-center gap-2 text-sm text-[hsl(var(--foreground))]">
-                  <CalendarClock className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
+                <div className="mt-2 flex items-center gap-2 text-copy-14 text-[var(--ds-gray-1000)]">
+                  <CalendarClock className="h-4 w-4 text-[var(--ds-gray-900)]" />
                   <span>{formatTimestamp(review.scheduledTime)}</span>
                 </div>
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Platforms
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -466,20 +464,20 @@ export default function PublicReviewPage() {
           <PublicCard className="p-5">
             <div className="grid gap-4 md:grid-cols-2">
               <label className="space-y-2">
-                <span className="text-sm font-medium text-[hsl(var(--foreground))]">Your name</span>
+                <span className="text-label-14 text-[var(--ds-gray-1000)]">Your name</span>
                 <input
                   value={reviewerName}
                   onChange={(event) => setReviewerName(event.target.value)}
-                  className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                  className="w-full rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2 text-copy-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2"
                   placeholder="Jane Client"
                 />
               </label>
               <label className="space-y-2">
-                <span className="text-sm font-medium text-[hsl(var(--foreground))]">Email</span>
+                <span className="text-label-14 text-[var(--ds-gray-1000)]">Email</span>
                 <input
                   value={reviewerEmail}
                   onChange={(event) => setReviewerEmail(event.target.value)}
-                  className="w-full rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-3 py-2 text-sm text-[hsl(var(--foreground))] outline-none transition-colors focus:border-[hsl(var(--accent))]"
+                  className="w-full rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2 text-copy-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2"
                   placeholder="jane@client.com"
                   type="email"
                 />
@@ -488,13 +486,13 @@ export default function PublicReviewPage() {
 
             <div className="mt-5 grid gap-4 lg:grid-cols-2">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-[hsl(var(--foreground))]">Comment</p>
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">Comment</p>
                 <Textarea
                   value={commentBody}
                   onChange={(event) => setCommentBody(event.target.value)}
                   placeholder="Share any feedback for the team..."
                   disabled={!review.canComment || commenting || acting !== null}
-                  className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
+                  className="min-h-[140px] bg-[var(--ds-gray-100)]"
                 />
                 <PostCollaborationAnnotationEditor
                   description={review.description ?? ""}
@@ -532,12 +530,12 @@ export default function PublicReviewPage() {
                   </PublicSectionMessage>
                 ) : (
                   <>
-                    <p className="text-sm font-medium text-[hsl(var(--foreground))]">Decision note</p>
+                    <p className="text-label-14 text-[var(--ds-gray-1000)]">Decision note</p>
                     <Textarea
                       value={decisionNote}
                       onChange={(event) => setDecisionNote(event.target.value)}
                       placeholder="Optional context for your decision..."
-                      className="min-h-[140px] bg-[hsl(var(--surface-raised))]"
+                      className="min-h-[140px] bg-[var(--ds-gray-100)]"
                     />
                     <div className="flex flex-wrap gap-3">
                       <PublicPrimaryButton
@@ -576,12 +574,12 @@ export default function PublicReviewPage() {
           <PublicInsetCard className="p-5">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <Globe2 className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
+                <Globe2 className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">
                   Review access
                 </p>
               </div>
-              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 This page only exposes the content preview, schedule, platform targets, and
                 client-visible discussion. Internal workspace settings and notes are hidden.
               </p>
@@ -622,14 +620,14 @@ export default function PublicReviewPage() {
           <div className="space-y-6">
             {review.media.length > 0 && (
               <PublicCard className="p-5">
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Media</p>
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">Media</p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   {review.media.map((media) => {
                     const isVideo = media.mimeType?.startsWith("video/");
                     return (
                       <div
                         key={media.id}
-                        className="overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]"
+                        className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]"
                       >
                         <div className="aspect-video bg-black/5">
                           {isVideo ? (
@@ -640,8 +638,8 @@ export default function PublicReviewPage() {
                             <img src={media.fileUrl} alt={media.fileName} className="h-full w-full object-contain" />
                           )}
                         </div>
-                        <div className="border-t border-[hsl(var(--border-subtle))] px-3 py-2">
-                          <p className="truncate text-sm text-[hsl(var(--foreground-muted))]">
+                        <div className="border-t border-[var(--ds-gray-400)] px-3 py-2">
+                          <p className="truncate text-copy-13 text-[var(--ds-gray-900)]">
                             {media.fileName}
                           </p>
                         </div>
@@ -653,16 +651,16 @@ export default function PublicReviewPage() {
             )}
 
             <PublicCard className="p-5">
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Caption</p>
-              <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">Caption</p>
+              <p className="mt-4 whitespace-pre-wrap text-copy-14 text-[var(--ds-gray-900)]">
                 {review.description || "No caption provided."}
               </p>
             </PublicCard>
 
             <PublicCard className="p-5">
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Comments</p>
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">Comments</p>
               {review.collaborationThreads.length === 0 ? (
-                <p className="mt-4 text-sm text-[hsl(var(--foreground-muted))]">
+                <p className="mt-4 text-copy-13 text-[var(--ds-gray-900)]">
                   No client-visible comments yet.
                 </p>
               ) : (
@@ -670,7 +668,7 @@ export default function PublicReviewPage() {
                   {review.collaborationThreads.map((thread) => (
                     <PublicInsetCard key={thread.id} className="p-4">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                        <p className="text-label-14 text-[var(--ds-gray-1000)]">
                           {thread.authorDisplayName}
                         </p>
                         <PublicLozenge
@@ -682,33 +680,33 @@ export default function PublicReviewPage() {
                             ? "Client reviewer"
                             : "Workspace team"}
                         </PublicLozenge>
-                        <span className="text-xs text-[hsl(var(--foreground-muted))]">
+                        <span className="text-label-12 text-[var(--ds-gray-900)]">
                           {formatTimestamp(thread.createdAt)}
                         </span>
                       </div>
                       {thread.body && (
-                        <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                        <p className="mt-3 whitespace-pre-wrap text-copy-14 text-[var(--ds-gray-900)]">
                           {thread.body}
                         </p>
                       )}
                       <PostCollaborationAnnotationView thread={thread} media={review.media} />
                       {thread.replies.length > 0 && (
-                        <div className="mt-4 space-y-3 border-t border-[hsl(var(--border-subtle))] pt-4">
+                        <div className="mt-4 space-y-3 border-t border-[var(--ds-gray-400)] pt-4">
                           {thread.replies.map((reply) => (
                             <div
                               key={reply.id}
-                              className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-3 py-3"
+                              className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3"
                             >
                               <div className="flex flex-wrap items-center gap-2">
-                                <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                                <p className="text-label-14 text-[var(--ds-gray-1000)]">
                                   {reply.authorDisplayName}
                                 </p>
                                 <PublicLozenge appearance="default">Workspace team</PublicLozenge>
-                                <span className="text-xs text-[hsl(var(--foreground-muted))]">
+                                <span className="text-label-12 text-[var(--ds-gray-900)]">
                                   {formatTimestamp(reply.createdAt)}
                                 </span>
                               </div>
-                              <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                              <p className="mt-2 whitespace-pre-wrap text-copy-14 text-[var(--ds-gray-900)]">
                                 {reply.body}
                               </p>
                             </div>
@@ -724,14 +722,14 @@ export default function PublicReviewPage() {
 
           <div className="space-y-6">
             <PublicCard className="p-5">
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Platform targets</p>
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">Platform targets</p>
               <div className="mt-4 space-y-3">
                 {review.channels.map((channel, index) => (
                   <PublicInsetCard key={`${channel.platform}-${index}`} className="p-3">
-                    <p className="text-sm font-medium text-[hsl(var(--foreground))]">
+                    <p className="text-label-14 text-[var(--ds-gray-1000)]">
                       {channel.platform ?? "Unknown platform"}
                     </p>
-                    <p className="mt-1 text-sm text-[hsl(var(--foreground-muted))]">
+                    <p className="mt-1 text-copy-13 text-[var(--ds-gray-900)]">
                       {channel.username ?? "Connected profile"}
                     </p>
                   </PublicInsetCard>
@@ -741,14 +739,14 @@ export default function PublicReviewPage() {
 
             {review.platformConfigs && Object.keys(review.platformConfigs).length > 0 && (
               <PublicCard className="p-5">
-                <p className="text-sm font-semibold text-[hsl(var(--foreground))]">Platform-specific details</p>
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">Platform-specific details</p>
                 <div className="mt-4 space-y-3">
                   {Object.entries(review.platformConfigs).map(([key, value]) => (
                     <PublicInsetCard key={key} className="p-3">
-                      <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                      <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                         {key}
                       </p>
-                      <p className="mt-2 whitespace-pre-wrap text-sm text-[hsl(var(--foreground-muted))]">
+                      <p className="mt-2 whitespace-pre-wrap text-copy-13 text-[var(--ds-gray-900)]">
                         {typeof value === "string" ? value : JSON.stringify(value, null, 2)}
                       </p>
                     </PublicInsetCard>

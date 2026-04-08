@@ -14,6 +14,14 @@ import { UserType } from "@/model/Onboarding";
 import { completeOnboardingApi } from "@/service/onboarding";
 
 const MAX_ONBOARDING_WORKSPACES = 10;
+const primaryButtonClassName =
+  "h-10 rounded-md bg-[var(--ds-blue-600)] px-4 text-label-14 text-white shadow-none transition-colors hover:bg-[var(--ds-blue-700)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+const secondaryButtonClassName =
+  "h-10 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 text-label-14 text-[var(--ds-gray-1000)] shadow-none transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+const formCardClassName =
+  "rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-8 shadow-none";
+const inputClassName =
+  "h-10 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 text-copy-14 text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 type Step = "choose-type" | "company-details" | "agency-workspaces";
 
@@ -117,93 +125,99 @@ export default function OnboardingPage() {
   const totalSteps = selectedType === "AGENCY" ? 3 : 2;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--ds-background-100)] px-4 py-16 text-[var(--ds-gray-1000)]">
       {/* Logo / brand */}
       <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome to SocialRaven</h1>
-        <p className="mt-2 text-muted-foreground">Let&apos;s set up your account in seconds.</p>
+        <h1 className="text-heading-32 text-[var(--ds-gray-1000)]">Welcome to SocialRaven</h1>
+        <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
+          Let&apos;s set up your account in seconds.
+        </p>
       </div>
 
       {/* ── Step 1: Choose type ── */}
       {step === "choose-type" && (
         <div className="w-full max-w-2xl">
-          <p className="text-center text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest">
+          <p className="mb-6 text-center text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
             Step 1 of 2 &mdash; Who are you?
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Influencer card */}
-            <button
-              onClick={handleInfluencerSelect}
-              disabled={loading}
-              className={cn(
-                "group relative flex flex-col items-start gap-4 rounded-2xl border p-6 text-left transition-all",
-                "hover:border-primary hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                selectedType === "INFLUENCER" ? "border-primary bg-primary/5" : "border-border bg-card"
-              )}
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                {loading && selectedType === "INFLUENCER" ? (
-                  <Loader2 className="h-6 w-6 animate-spin" />
-                ) : (
-                  <Sparkles className="h-6 w-6" />
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {/* Influencer card */}
+              <button
+                onClick={handleInfluencerSelect}
+                disabled={loading}
+                className={cn(
+                  "group relative flex flex-col items-start gap-4 rounded-2xl border p-6 text-left shadow-none transition-[border-color,background-color,color]",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] hover:border-[var(--ds-blue-600)] hover:bg-[var(--ds-gray-100)]",
+                  selectedType === "INFLUENCER"
+                    ? "border-[var(--ds-blue-600)] bg-[var(--ds-blue-100)]"
+                    : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
                 )}
-              </div>
-              <div>
-                <p className="text-base font-semibold">Creator / Influencer</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  I manage my own social accounts and content schedule.
-                </p>
-              </div>
-              <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✓</span> Single personal workspace
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✓</span> Up to 15 connected accounts
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✓</span> 500 posts / month
-                </li>
-              </ul>
-              <ArrowRight className="absolute right-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-            </button>
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+                  {loading && selectedType === "INFLUENCER" ? (
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-6 w-6" />
+                  )}
+                </div>
+                <div>
+                  <p className="text-heading-16 text-[var(--ds-gray-1000)]">Creator / Influencer</p>
+                  <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+                    I manage my own social accounts and content schedule.
+                  </p>
+                </div>
+                <ul className="mt-2 space-y-1 text-copy-14 text-[var(--ds-gray-900)]">
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--ds-blue-600)]">✓</span> Single personal workspace
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--ds-blue-600)]">✓</span> Up to 15 connected accounts
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--ds-blue-600)]">✓</span> 500 posts / month
+                  </li>
+                </ul>
+                <ArrowRight className="absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--ds-gray-900)]/40 transition-colors group-hover:text-[var(--ds-blue-600)]" />
+              </button>
 
-            {/* Agency card */}
-            <button
-              onClick={handleAgencySelect}
-              disabled={loading}
-              className={cn(
-                "group relative flex flex-col items-start gap-4 rounded-2xl border p-6 text-left transition-all",
-                "hover:border-primary hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                selectedType === "AGENCY" ? "border-primary bg-primary/5" : "border-border bg-card"
-              )}
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <Building2 className="h-6 w-6" />
-              </div>
-              <div>
-                <p className="text-base font-semibold">Agency / Business</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  I manage social accounts for multiple clients or brands.
-                </p>
-              </div>
-              <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✓</span> Multiple workspaces (one per brand)
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✓</span> Team members &amp; roles
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✓</span> Client-level isolation
-                </li>
-              </ul>
-              <ArrowRight className="absolute right-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-            </button>
-          </div>
+              {/* Agency card */}
+              <button
+                onClick={handleAgencySelect}
+                disabled={loading}
+                className={cn(
+                  "group relative flex flex-col items-start gap-4 rounded-2xl border p-6 text-left shadow-none transition-[border-color,background-color,color]",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] hover:border-[var(--ds-blue-600)] hover:bg-[var(--ds-gray-100)]",
+                  selectedType === "AGENCY"
+                    ? "border-[var(--ds-blue-600)] bg-[var(--ds-blue-100)]"
+                    : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
+                )}
+              >
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+                  <Building2 className="h-6 w-6" />
+                </div>
+                <div>
+                  <p className="text-heading-16 text-[var(--ds-gray-1000)]">Agency / Business</p>
+                  <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+                    I manage social accounts for multiple clients or brands.
+                  </p>
+                </div>
+                <ul className="mt-2 space-y-1 text-copy-14 text-[var(--ds-gray-900)]">
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--ds-blue-600)]">✓</span> Multiple workspaces (one per brand)
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--ds-blue-600)]">✓</span> Team members &amp; roles
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[var(--ds-blue-600)]">✓</span> Client-level isolation
+                  </li>
+                </ul>
+                <ArrowRight className="absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--ds-gray-900)]/40 transition-colors group-hover:text-[var(--ds-blue-600)]" />
+              </button>
+            </div>
 
-          <p className="mt-6 text-center text-xs text-muted-foreground">
+          <p className="mt-6 text-center text-copy-13 text-[var(--ds-gray-900)]">
             You can switch from Creator to Agency at any time from your profile settings.
           </p>
         </div>
@@ -212,103 +226,107 @@ export default function OnboardingPage() {
       {/* ── Step 2 (Agency only): Company details ── */}
       {step === "company-details" && (
         <div className="w-full max-w-md">
-          <p className="text-center text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest">
+          <p className="mb-6 text-center text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
             Step 2 of {totalSteps} &mdash; Your Agency Details
           </p>
 
-          <form
-            onSubmit={handleCompanyDetailsSubmit}
-            className="rounded-2xl border border-border bg-card p-8 space-y-6"
-          >
-            {/* Explainer callout */}
-            <div className="rounded-xl border border-border bg-muted/40 p-4 space-y-2 text-sm">
-              <p className="font-semibold text-foreground flex items-center gap-2">
-                <Building2 className="h-4 w-4 text-primary shrink-0" />
-                What is Agency / Company Name?
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                This is the name of <strong>your own agency or business</strong> — the company you run.
-                For example: <em>&quot;Spark Media Agency&quot;</em> or <em>&quot;Acme Marketing Inc.&quot;</em>
-                It is used for your account identity and owner-level settings.
-              </p>
-              <p className="text-xs text-muted-foreground/70">
-                The brands or clients you manage will be set up as separate workspaces on the next screen.
-              </p>
-            </div>
+            <form onSubmit={handleCompanyDetailsSubmit} className={cn(formCardClassName, "space-y-6")}>
+              {/* Explainer callout */}
+              <div className="space-y-2 rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] p-4">
+                <p className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)]">
+                  <Building2 className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" />
+                  What is Agency / Company Name?
+                </p>
+                <p className="text-copy-14 leading-relaxed text-[var(--ds-gray-900)]">
+                  This is the name of <strong>your own agency or business</strong> — the company you run.
+                  For example: <em>&quot;Spark Media Agency&quot;</em> or{" "}
+                  <em>&quot;Acme Marketing Inc.&quot;</em> It is used for your account identity and
+                  owner-level settings.
+                </p>
+                <p className="text-copy-13 text-[var(--ds-gray-900)]">
+                  The brands or clients you manage will be set up as separate workspaces on the next
+                  screen.
+                </p>
+              </div>
 
-            {/* Company name input */}
-            <div className="space-y-2">
-              <Label htmlFor="company-name">
-                Agency / Company Name <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="company-name"
-                placeholder="e.g. Spark Media Agency"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                autoFocus
-                required
-              />
-              <p className="text-xs text-muted-foreground">
-                Enter your agency or company name exactly as you want it to appear on your account.
-              </p>
-            </div>
-
-            {/* Confirmation input */}
-            <div className="space-y-2">
-              <Label htmlFor="company-name-confirm">
-                Confirm Agency / Company Name <span className="text-destructive">*</span>
-              </Label>
-              <div className="relative">
+              {/* Company name input */}
+              <div className="space-y-2">
+                <Label htmlFor="company-name" className="text-label-14 text-[var(--ds-gray-1000)]">
+                  Agency / Company Name <span className="text-[var(--ds-red-600)]">*</span>
+                </Label>
                 <Input
-                  id="company-name-confirm"
-                  placeholder="Re-enter company name to confirm"
-                  value={companyNameConfirm}
-                  onChange={(e) => setCompanyNameConfirm(e.target.value)}
+                  id="company-name"
+                  placeholder="e.g. Spark Media Agency"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  autoFocus
                   required
-                  className={cn(
-                    companyNamesMatch && "border-green-500 focus-visible:ring-green-500/30",
-                    companyNameMismatch && "border-destructive focus-visible:ring-destructive/30"
-                  )}
+                  className={inputClassName}
                 />
-                {companyNamesMatch && (
-                  <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500 pointer-events-none" />
-                )}
+                <p className="text-copy-13 text-[var(--ds-gray-900)]">
+                  Enter your agency or company name exactly as you want it to appear on your account.
+                </p>
+              </div>
+
+              {/* Confirmation input */}
+              <div className="space-y-2">
+                <Label htmlFor="company-name-confirm" className="text-label-14 text-[var(--ds-gray-1000)]">
+                  Confirm Agency / Company Name <span className="text-[var(--ds-red-600)]">*</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="company-name-confirm"
+                    placeholder="Re-enter company name to confirm"
+                    value={companyNameConfirm}
+                    onChange={(e) => setCompanyNameConfirm(e.target.value)}
+                    required
+                    className={cn(
+                      inputClassName,
+                      companyNamesMatch &&
+                        "border-[var(--ds-green-600)] focus-visible:ring-[var(--ds-green-600)]",
+                      companyNameMismatch &&
+                        "border-[var(--ds-red-600)] focus-visible:ring-[var(--ds-red-600)]"
+                    )}
+                  />
+                  {companyNamesMatch && (
+                    <CheckCircle2 className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ds-green-600)]" />
+                  )}
+                  {companyNameMismatch && (
+                    <AlertCircle className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ds-red-600)]" />
+                  )}
+                </div>
                 {companyNameMismatch && (
-                  <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-destructive pointer-events-none" />
+                  <p className="flex items-center gap-1 text-copy-13 text-[var(--ds-red-600)]">
+                    <AlertCircle className="h-3 w-3" />
+                    Names don&apos;t match. Please re-enter your company name exactly.
+                  </p>
+                )}
+                {companyNamesMatch && (
+                  <p className="flex items-center gap-1 text-copy-13 text-[var(--ds-green-700)]">
+                    <CheckCircle2 className="h-3 w-3" />
+                    Company name confirmed.
+                  </p>
                 )}
               </div>
-              {companyNameMismatch && (
-                <p className="text-xs text-destructive flex items-center gap-1">
-                  <AlertCircle className="h-3 w-3" />
-                  Names don&apos;t match. Please re-enter your company name exactly.
-                </p>
-              )}
-              {companyNamesMatch && (
-                <p className="text-xs text-green-600 flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3" />
-                  Company name confirmed.
-                </p>
-              )}
-            </div>
 
-            <div className="flex gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => { setStep("choose-type"); setSelectedType(null); setCompanyName(""); setCompanyNameConfirm(""); }}
-                className="flex-1"
-              >
-                Back
-              </Button>
-              <Button
-                type="submit"
-                disabled={!companyNamesMatch}
-                className="flex-1"
-              >
-                Continue <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
+              <div className="flex gap-3 pt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setStep("choose-type");
+                    setSelectedType(null);
+                    setCompanyName("");
+                    setCompanyNameConfirm("");
+                  }}
+                  className={cn("flex-1", secondaryButtonClassName)}
+                >
+                  Back
+                </Button>
+                <Button type="submit" disabled={!companyNamesMatch} className={cn("flex-1", primaryButtonClassName)}>
+                  Continue <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
           </form>
         </div>
       )}
@@ -316,111 +334,115 @@ export default function OnboardingPage() {
       {/* ── Step 3 (Agency only): Name workspaces ── */}
       {step === "agency-workspaces" && (
         <div className="w-full max-w-md">
-          <p className="text-center text-sm font-medium text-muted-foreground mb-6 uppercase tracking-widest">
+          <p className="mb-6 text-center text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
             Step 3 of {totalSteps} &mdash; Add Your Brands / Clients
           </p>
 
-          <form
-            onSubmit={handleAgencySubmit}
-            className="rounded-2xl border border-border bg-card p-8 space-y-5"
-          >
-            {/* Company summary */}
-            <div className="flex items-center gap-3 rounded-xl border border-border bg-muted/40 px-4 py-3 text-sm">
-              <Building2 className="h-4 w-4 text-primary shrink-0" />
-              <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Your agency</p>
-                <p className="font-semibold truncate">{companyName}</p>
-              </div>
-            </div>
-
-            {/* Workspace explainer */}
-            <div className="space-y-1">
-              <p className="text-sm font-medium">Workspace names</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Each workspace represents a <strong>brand or client</strong> you manage.
-                Give each one a clear name — your team will use these names to switch between clients.
-                You can add, rename, or remove workspaces at any time from settings.
-              </p>
-            </div>
-
-            {/* Workspace name list */}
-            <div className="space-y-3">
-              {workspaceNames.map((name, index) => (
-                <div key={index} className="space-y-1">
-                  {index === 0 && (
-                    <Label htmlFor="workspace-0">
-                      First workspace (brand / client) <span className="text-destructive">*</span>
-                    </Label>
-                  )}
-                  <div className="flex gap-2">
-                    <Input
-                      id={index === 0 ? "workspace-0" : undefined}
-                      placeholder={index === 0 ? "e.g. Nike Campaign" : `Workspace ${index + 1} (brand / client)`}
-                      value={name}
-                      onChange={(e) => updateWorkspaceName(index, e.target.value)}
-                      disabled={loading}
-                      autoFocus={index === 0}
-                    />
-                    {workspaceNames.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeWorkspace(index)}
-                        disabled={loading}
-                        className="shrink-0 text-muted-foreground hover:text-destructive"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
+            <form onSubmit={handleAgencySubmit} className={cn(formCardClassName, "space-y-5")}>
+              {/* Company summary */}
+              <div className="flex items-center gap-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3">
+                <Building2 className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" />
+                <div className="min-w-0">
+                  <p className="text-label-12 text-[var(--ds-gray-900)]">Your agency</p>
+                  <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">{companyName}</p>
                 </div>
-              ))}
+              </div>
 
-              {/* Add workspace button */}
-              {workspaceNames.length < MAX_ONBOARDING_WORKSPACES && (
+              {/* Workspace explainer */}
+              <div className="space-y-1">
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">Workspace names</p>
+                <p className="text-copy-13 leading-relaxed text-[var(--ds-gray-900)]">
+                  Each workspace represents a <strong>brand or client</strong> you manage. Give each one
+                  a clear name — your team will use these names to switch between clients. You can add,
+                  rename, or remove workspaces at any time from settings.
+                </p>
+              </div>
+
+              {/* Workspace name list */}
+              <div className="space-y-3">
+                {workspaceNames.map((name, index) => (
+                  <div key={index} className="space-y-1">
+                    {index === 0 && (
+                      <Label htmlFor="workspace-0" className="text-label-14 text-[var(--ds-gray-1000)]">
+                        First workspace (brand / client) <span className="text-[var(--ds-red-600)]">*</span>
+                      </Label>
+                    )}
+                    <div className="flex gap-2">
+                      <Input
+                        id={index === 0 ? "workspace-0" : undefined}
+                        placeholder={
+                          index === 0 ? "e.g. Nike Campaign" : `Workspace ${index + 1} (brand / client)`
+                        }
+                        value={name}
+                        onChange={(e) => updateWorkspaceName(index, e.target.value)}
+                        disabled={loading}
+                        autoFocus={index === 0}
+                        className={inputClassName}
+                      />
+                      {workspaceNames.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeWorkspace(index)}
+                          disabled={loading}
+                          className="h-10 w-10 shrink-0 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] shadow-none transition-colors hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Add workspace button */}
+                {workspaceNames.length < MAX_ONBOARDING_WORKSPACES && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={addWorkspace}
+                    disabled={loading}
+                    className="h-10 w-full rounded-md border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 text-label-14 text-[var(--ds-gray-1000)] shadow-none transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+                  >
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Workspace (brand / client)
+                  </Button>
+                )}
+
+                {workspaceNames.length >= MAX_ONBOARDING_WORKSPACES && (
+                  <p className="text-center text-copy-13 text-[var(--ds-gray-900)]">
+                    Maximum of {MAX_ONBOARDING_WORKSPACES} workspaces during setup. You can add more later.
+                  </p>
+                )}
+              </div>
+
+              <div className="flex gap-3 pt-2">
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
-                  onClick={addWorkspace}
+                  onClick={() => setStep("company-details")}
                   disabled={loading}
-                  className="w-full border-dashed text-muted-foreground hover:text-foreground"
+                  className={cn("flex-1", secondaryButtonClassName)}
                 >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Workspace (brand / client)
+                  Back
                 </Button>
-              )}
-
-              {workspaceNames.length >= MAX_ONBOARDING_WORKSPACES && (
-                <p className="text-xs text-muted-foreground text-center">
-                  Maximum of {MAX_ONBOARDING_WORKSPACES} workspaces during setup. You can add more later.
-                </p>
-              )}
-            </div>
-
-            <div className="flex gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setStep("company-details")}
-                disabled={loading}
-                className="flex-1"
-              >
-                Back
-              </Button>
-              <Button
-                type="submit"
-                disabled={loading || !workspaceNames[0]?.trim()}
-                className="flex-1"
-              >
-                {loading ? (
-                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating…</>
-                ) : (
-                  <>Finish Setup <ArrowRight className="ml-2 h-4 w-4" /></>
-                )}
-              </Button>
-            </div>
+                <Button
+                  type="submit"
+                  disabled={loading || !workspaceNames[0]?.trim()}
+                  className={cn("flex-1", primaryButtonClassName)}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating…
+                    </>
+                  ) : (
+                    <>
+                      Finish Setup <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
+              </div>
           </form>
         </div>
       )}

@@ -436,7 +436,7 @@ export default function DraftDetailPage() {
         <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8">
           <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
             <aside className="space-y-5">
-              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                   <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Platforms</p>
                 </div>
@@ -472,7 +472,7 @@ export default function DraftDetailPage() {
               </section>
 
               {captionText && (
-                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                   <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                     <FileText className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
                     <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Caption</p>
@@ -489,7 +489,7 @@ export default function DraftDetailPage() {
               )}
 
               {collection.media.length > 0 && (
-                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                   <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                     <ImageIcon className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
                     <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
@@ -507,7 +507,7 @@ export default function DraftDetailPage() {
             </aside>
 
             <div className="space-y-5">
-              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
@@ -702,7 +702,7 @@ export default function DraftDetailPage() {
               <ApprovalSafetyPanel collection={collection} />
 
               {!hasAccounts && (
-                <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-10 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-10 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                   <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
                     <BookOpen className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
                   </div>
@@ -834,7 +834,7 @@ function LoadingSkeleton() {
         <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
           <div className="space-y-5">
             {[1, 2].map((i) => (
-              <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                   <Skeleton className="h-4 w-24 rounded" />
                 </div>
@@ -846,7 +846,7 @@ function LoadingSkeleton() {
               </div>
             ))}
           </div>
-          <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-4">
               <div className="flex items-center gap-3">
                 <Skeleton className="h-10 w-10 rounded-lg" />
@@ -870,7 +870,7 @@ function LoadingSkeleton() {
 function ErrorState({ error, onBack }: { error: string | null; onBack: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-      <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+      <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
           <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
         </div>

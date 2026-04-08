@@ -29,7 +29,7 @@ import type {
 import { useRole } from "@/hooks/useRole";
 
 const surfaceClassName =
-  "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]";
+  "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]";
 
 function formatDateTime(value: string | null | undefined) {
   if (!value) return "Not set";

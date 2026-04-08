@@ -25,10 +25,10 @@ const ROLE_BADGE: Record<
   WorkspaceRole,
   { label: string; icon: ElementType; tone: string }
 > = {
-  OWNER:  { label: "Owner",  icon: Crown,       tone: "text-accent" },
-  ADMIN:  { label: "Admin",  icon: ShieldCheck, tone: "text-accent" },
-  EDITOR: { label: "Editor", icon: Users,       tone: "text-[hsl(var(--foreground-muted))]" },
-  READ_ONLY: { label: "Read Only", icon: Eye,      tone: "text-[hsl(var(--foreground-muted))]" },
+  OWNER: { label: "Owner", icon: Crown, tone: "text-[hsl(var(--accent))]" },
+  ADMIN: { label: "Admin", icon: ShieldCheck, tone: "text-[hsl(var(--accent))]" },
+  EDITOR: { label: "Editor", icon: Users, tone: "text-[var(--ds-gray-900)]" },
+  READ_ONLY: { label: "Read Only", icon: Eye, tone: "text-[var(--ds-gray-900)]" },
 };
 
 const PLAN_LABELS: Partial<Record<PlanType, string>> = {
@@ -88,7 +88,7 @@ export function UserAvatar({
     badge = {
       label: plan ? (PLAN_LABELS[plan] ?? "Influencer") : "Influencer",
       icon: Sparkles,
-      tone: "text-accent",
+      tone: "text-[hsl(var(--accent))]",
     };
   } else if (role === "OWNER" || role === "READ_ONLY") {
     // No change for owners and read-only users
@@ -110,7 +110,7 @@ export function UserAvatar({
     badge = {
       label: parts.join(" / ") || ROLE_BADGE[role].label,
       icon: hasAdmin ? ShieldCheck : Users,
-      tone: hasAdmin ? "text-accent" : "text-[hsl(var(--foreground-muted))]",
+      tone: hasAdmin ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]",
     };
   }
 
@@ -118,7 +118,7 @@ export function UserAvatar({
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ") || "Your account";
   const email = user?.primaryEmailAddress?.emailAddress;
   const actionItemClassName =
-    "group flex w-full items-center gap-2 rounded-lg border border-transparent px-2 py-1.5 text-left text-sm transition-[background-color,border-color,color] duration-150";
+    "group flex w-full items-center gap-2 rounded-lg border border-transparent px-2 py-1.5 text-left text-label-13 transition-[background-color,border-color,color] duration-150";
 
   return (
     <div ref={ref} className="relative">
@@ -128,7 +128,7 @@ export function UserAvatar({
         aria-expanded={open}
         aria-haspopup="menu"
         className={cn(
-          "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 transition-colors hover:bg-[hsl(var(--surface-raised))]",
+          "flex w-full items-center gap-2 rounded-lg px-2.5 py-2 transition-colors hover:bg-[var(--ds-gray-100)]",
           collapsed && "justify-center px-0"
         )}
       >
@@ -141,7 +141,7 @@ export function UserAvatar({
           />
         ) : (
           <div
-            className={`${avatarSize} flex shrink-0 items-center justify-center rounded-lg bg-accent/10 text-xs font-medium text-accent`}
+            className={`${avatarSize} flex shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-label-12 text-[hsl(var(--accent))]`}
           >
             {initials}
           </div>
@@ -149,10 +149,10 @@ export function UserAvatar({
 
         {!collapsed && (
           <div className="flex-1 min-w-0 text-left">
-            <p className="truncate text-sm font-medium leading-5 text-foreground">
+            <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">
               {fullName}
             </p>
-            <p className="mt-0.5 truncate text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
               {email}
             </p>
           </div>
@@ -163,37 +163,37 @@ export function UserAvatar({
       {open && (
         <div
           className={cn(
-            "absolute bottom-[calc(100%+8px)] z-[300] w-56 overflow-hidden rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-[0_8px_24px_rgba(9,30,66,0.14)]",
+            "absolute bottom-[calc(100%+8px)] z-[300] w-56 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none",
             collapsed ? "left-0" : "left-0"
           )}
           role="menu"
         >
-          <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] px-2.5 py-2.5">
+          <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-2.5">
             <div className="flex items-start gap-2.5">
               {user?.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={user.imageUrl}
                   alt=""
-                  className="h-8 w-8 shrink-0 rounded-lg object-cover ring-1 ring-[hsl(var(--border-subtle))]"
+                  className="h-8 w-8 shrink-0 rounded-lg object-cover ring-1 ring-[var(--ds-gray-400)]"
                 />
               ) : (
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-xs font-medium text-accent ring-1 ring-[hsl(var(--accent))]/10">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-label-12 text-[hsl(var(--accent))]">
                   {initials}
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium leading-5 text-foreground">
+                <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">
                   {fullName}
                 </p>
-                <p className="mt-0.5 truncate text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
                   {email}
                 </p>
 
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <span
                     className={cn(
-                      "inline-flex items-center gap-1.5 rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-2 py-0.5 text-xs font-medium leading-4",
+                      "inline-flex items-center gap-1.5 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2 py-0.5 text-label-12",
                       badge.tone
                     )}
                   >
@@ -205,20 +205,20 @@ export function UserAvatar({
             </div>
           </div>
 
-          <div className="bg-[hsl(var(--surface-sunken))]/45 p-1.5">
+          <div className="bg-[var(--ds-gray-100)] p-1.5">
             <Link
               href="/profile"
               onClick={() => setOpen(false)}
               className={cn(
                 actionItemClassName,
-                "text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface))] hover:text-foreground"
+                "text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-gray-1000)]"
               )}
               role="menuitem"
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] transition-colors group-hover:text-[hsl(var(--accent))]">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] transition-colors group-hover:text-[hsl(var(--accent))]">
                 <Settings size={15} className="shrink-0" />
               </div>
-              <span className="min-w-0 flex-1 truncate text-sm font-medium leading-5 text-foreground">
+              <span className="min-w-0 flex-1 truncate text-label-13 text-[var(--ds-gray-1000)]">
                 Profile &amp; Settings
               </span>
             </Link>
@@ -227,14 +227,14 @@ export function UserAvatar({
               onClick={() => signOut()}
               className={cn(
                 actionItemClassName,
-                "mt-1 text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--destructive))]/20 hover:bg-[hsl(var(--destructive))]/[0.08] hover:text-[hsl(var(--destructive))]"
+                "mt-1 text-[var(--ds-gray-900)] hover:border-[var(--ds-red-200)] hover:bg-[var(--ds-red-100)] hover:text-[var(--ds-red-700)]"
               )}
               role="menuitem"
             >
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] transition-colors group-hover:border-[hsl(var(--destructive))]/20 group-hover:text-[hsl(var(--destructive))]">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] transition-colors group-hover:border-[var(--ds-red-200)] group-hover:text-[var(--ds-red-700)]">
                 <LogOut size={15} className="shrink-0" />
               </div>
-              <span className="min-w-0 flex-1 truncate text-sm font-medium leading-5">
+              <span className="min-w-0 flex-1 truncate text-label-13 text-[var(--ds-gray-1000)]">
                 Sign out
               </span>
             </button>

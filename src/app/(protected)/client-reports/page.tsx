@@ -323,7 +323,7 @@ export default function ClientReportsPage() {
         )}
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
@@ -477,7 +477,7 @@ export default function ClientReportsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="mb-5 space-y-1">
               <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
                 Active Links
@@ -566,7 +566,7 @@ export default function ClientReportsPage() {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
@@ -759,7 +759,7 @@ export default function ClientReportsPage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-5 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="mb-5 space-y-1">
               <p className="text-sm font-semibold text-[hsl(var(--foreground))]">
                 Active Schedules

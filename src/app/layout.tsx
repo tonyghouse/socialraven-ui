@@ -1,22 +1,11 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import ClientToaster from "@/components/generic/ClientToaster";
 import { ThemeProvider } from "@/components/theme/theme-provider";
-
-const fontSans = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
-
-const fontMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "SocialRaven",
@@ -35,8 +24,8 @@ export default function RootLayout({
           suppressHydrationWarning
           className={cn(
             "min-h-screen bg-background font-sans antialiased",
-            fontSans.variable,
-            fontMono.variable
+            GeistSans.variable,
+            GeistMono.variable
           )}
         >
           <ThemeProvider>

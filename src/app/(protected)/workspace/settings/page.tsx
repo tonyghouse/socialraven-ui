@@ -105,20 +105,20 @@ const ROLE_ORDER: Record<WorkspaceRole, number> = {
 };
 
 const surfaceClass =
-  "rounded-xl border border-slate-200/80 bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08),0_0_0_1px_rgba(9,30,66,0.02)] dark:border-white/10 dark:bg-[hsl(var(--surface))] dark:shadow-none";
+  "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-sm";
 const raisedSurfaceClass =
-  "rounded-xl border border-slate-200/80 bg-[hsl(var(--surface-raised))] shadow-[0_1px_1px_rgba(9,30,66,0.04)] dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:shadow-none";
-const subtleTextClass = "text-slate-600 dark:text-[#9fadbc]";
-const dividerClass = "border-slate-200/80 dark:border-white/10";
-const atlBlueTextClass = "text-[#0c66e4] dark:text-[#85b8ff]";
+  "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] shadow-xs";
+const subtleTextClass = "text-[hsl(var(--foreground-muted))]";
+const dividerClass = "border-[hsl(var(--border))]";
+const accentTextClass = "text-[hsl(var(--accent))]";
 const sectionIconBadgeClass =
-  "border border-slate-200/80 bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))] dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:text-[#85b8ff]";
+  "border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--accent))]";
 const neutralIconBadgeClass =
-  "border border-slate-200/80 bg-[hsl(var(--surface-raised))] text-slate-700 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:text-[#c7d1db]";
+  "border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
 const dangerIconBadgeClass =
   "border border-[#f5c2c7] bg-[#fff1f2] text-[#ae2e24] dark:border-[#5d1f1a] dark:bg-[#2b1917] dark:text-[#fd9891]";
 const pillClass =
-  "inline-flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db]";
+  "inline-flex items-center gap-2 rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-2.5 py-1.5 text-xs font-medium text-[hsl(var(--foreground-muted))]";
 const DEFAULT_RULE_VALUE = "DEFAULT";
 
 function roleLabel(role: WorkspaceRole) {
@@ -150,13 +150,13 @@ function roleGroupLabel(role: WorkspaceRole) {
 function roleBadgeClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]";
+      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
     case "ADMIN":
-      return "border-[#b3d4ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]";
+      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
     case "EDITOR":
       return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
     case "READ_ONLY":
-      return "border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]";
+      return "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
   }
 }
 
@@ -167,13 +167,13 @@ function approvalModeLabel(mode: WorkspaceApprovalMode) {
 function avatarToneClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "bg-[hsl(var(--accent))]/12 text-[hsl(var(--accent))]";
+      return "bg-[hsl(var(--accent)/0.12)] text-[hsl(var(--accent))]";
     case "ADMIN":
-      return "bg-[#deebff] text-[#0c66e4] dark:bg-[#1b2638] dark:text-[#85b8ff]";
+      return "bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
     case "EDITOR":
       return "bg-[#dcfff1] text-[#216e4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
     case "READ_ONLY":
-      return "bg-slate-100 text-slate-600 dark:bg-white/5 dark:text-[#9fadbc]";
+      return "bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
   }
 }
 
@@ -384,7 +384,7 @@ function SectionHeader({
           <Icon size={17} />
         </div>
         <div className="space-y-1">
-          <h2 className="text-sm font-semibold leading-5 text-slate-900 dark:text-[#f1f5f9]">
+          <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
             {title}
           </h2>
           <p className={cn("text-xs leading-4", subtleTextClass)}>{description}</p>
@@ -405,11 +405,11 @@ function EmptyState({
   return (
     <div
       className={cn(
-        "rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-8 text-center dark:border-white/10 dark:bg-white/5",
+        "rounded-xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] px-4 py-8 text-center",
         dividerClass
       )}
     >
-      <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">{title}</p>
+      <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{title}</p>
       <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>{description}</p>
     </div>
   );
@@ -420,24 +420,24 @@ function roleHeadingClass(role: WorkspaceRole) {
     case "OWNER":
       return "text-[hsl(var(--accent))]";
     case "ADMIN":
-      return "text-[#0c66e4] dark:text-[#85b8ff]";
+      return "text-[hsl(var(--accent))]";
     case "EDITOR":
       return "text-[#216e4e] dark:text-[#7ee2b8]";
     case "READ_ONLY":
-      return "text-slate-600 dark:text-[#9fadbc]";
+      return "text-[hsl(var(--foreground-muted))]";
   }
 }
 
 function roleContextAccentClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 text-[hsl(var(--accent))]";
+      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.08)] text-[hsl(var(--accent))]";
     case "ADMIN":
-      return "border-[#b3d4ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]";
+      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
     case "EDITOR":
       return "border-[#c6f0d3] bg-[#eafbf0] text-[#216e4e] dark:border-[#295f4e] dark:bg-[#1f2e28] dark:text-[#7ee2b8]";
     case "READ_ONLY":
-      return "border-slate-200 bg-slate-100 text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]";
+      return "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]";
   }
 }
 
@@ -878,7 +878,7 @@ export default function WorkspaceSettingsPage() {
           <div className="space-y-6">
           <div className="space-y-2">
             <p className={cn("text-xs", subtleTextClass)}>Workspace settings</p>
-            <h1 className="text-lg font-semibold leading-6 text-slate-900 dark:text-[#f1f5f9]">
+            <h1 className="text-lg font-semibold leading-6 text-[hsl(var(--foreground))]">
               No active workspace selected
             </h1>
             <p className={cn("max-w-2xl text-sm leading-5", subtleTextClass)}>
@@ -917,7 +917,7 @@ export default function WorkspaceSettingsPage() {
                           variant="outline"
                           onClick={() => handleRestoreWorkspace(workspace)}
                           disabled={restoreBusyId === workspace.id}
-                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
                         >
                           <ArchiveRestore size={16} />
                           {restoreBusyId === workspace.id ? "Restoring..." : "Restore"}
@@ -958,12 +958,12 @@ export default function WorkspaceSettingsPage() {
                 <AlertTriangle size={18} />
               </div>
               <div className="space-y-1">
-                <h2 className="text-sm font-semibold leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                <h2 className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
                   Delete workspace?
                 </h2>
                 <p className={cn("text-sm leading-5", subtleTextClass)}>
                   This removes access for the whole team immediately. Type{" "}
-                  <span className="font-medium text-slate-900 dark:text-[#f1f5f9]">
+                  <span className="font-medium text-[hsl(var(--foreground))]">
                     {activeWorkspace.name}
                   </span>{" "}
                   to confirm.
@@ -1039,7 +1039,7 @@ export default function WorkspaceSettingsPage() {
               size="sm"
               onClick={() => loadData({ silent: true, syncWorkspaceList: true })}
               disabled={loading || refreshing}
-              className="h-8 rounded-md border-slate-300 bg-white/80 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+              className="h-8 rounded-md border-slate-300 bg-white/80 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
             >
               <RefreshCw
                 size={16}
@@ -1070,11 +1070,11 @@ export default function WorkspaceSettingsPage() {
                 <div className="space-y-3 p-4">
                   {isInfluencer ? (
                     <div className={cn(raisedSurfaceClass, "flex items-center gap-3 p-4")}>
-                      <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[#cce0ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]">
                         <BriefcaseBusiness size={18} />
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                        <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                           main
                         </p>
                         <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1089,13 +1089,13 @@ export default function WorkspaceSettingsPage() {
                           type="button"
                           onClick={() => setSwitcherOpen((open) => !open)}
                           className={cn(
-                            "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 text-sm transition-colors hover:bg-slate-50 dark:bg-[#161a22] dark:hover:bg-white/5",
+                            "flex h-10 w-full items-center justify-between rounded-lg border bg-white px-3 text-sm transition-colors hover:bg-slate-50 dark:bg-[hsl(var(--surface-raised))] dark:hover:bg-white/5",
                             dividerClass,
                           )}
                         >
                           <span className="flex min-w-0 items-center gap-2">
-                            <BriefcaseBusiness size={16} className={atlBlueTextClass} />
-                            <span className="truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                            <BriefcaseBusiness size={16} className={accentTextClass} />
+                            <span className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                               {workspaceName}
                             </span>
                           </span>
@@ -1110,7 +1110,7 @@ export default function WorkspaceSettingsPage() {
                         </button>
 
                         {switcherOpen && (
-                          <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-xl border border-slate-200 bg-white p-1 shadow-[0_12px_32px_rgba(9,30,66,0.18)] dark:border-white/10 dark:bg-[#161a22] dark:shadow-none">
+                          <div className="absolute left-0 right-0 top-full z-30 mt-2 rounded-xl border border-slate-200 bg-white p-1 shadow-[0_12px_32px_rgb(0 0 0 / 0.18)] dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] dark:shadow-none">
                             {workspaces.map((ws) => (
                               <button
                                 key={ws.id}
@@ -1121,8 +1121,8 @@ export default function WorkspaceSettingsPage() {
                                 }}
                                 className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
                               >
-                                <BriefcaseBusiness size={16} className={atlBlueTextClass} />
-                                <span className="flex-1 truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                                <BriefcaseBusiness size={16} className={accentTextClass} />
+                                <span className="flex-1 truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                                   {ws.name}
                                 </span>
                                 {ws.id === activeWorkspace.id && (
@@ -1142,7 +1142,7 @@ export default function WorkspaceSettingsPage() {
                             setShowCreateWorkspace((current) => !current);
                             setCreateWorkspaceError(null);
                           }}
-                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
                         >
                           <Plus size={16} />
                           New workspace
@@ -1155,7 +1155,7 @@ export default function WorkspaceSettingsPage() {
                     <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                             Create workspace
                           </p>
                           <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1213,7 +1213,7 @@ export default function WorkspaceSettingsPage() {
                     <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                       <div className="flex items-start justify-between gap-3">
                         <div className="space-y-1">
-                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                             Display name
                           </p>
                           <p className={cn("text-sm", subtleTextClass)}>
@@ -1225,7 +1225,7 @@ export default function WorkspaceSettingsPage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setIsEditingWorkspaceName(true)}
-                            className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                            className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
                           >
                             <PencilLine size={16} />
                             Rename
@@ -1276,7 +1276,7 @@ export default function WorkspaceSettingsPage() {
                       ) : (
                         <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
                           <p className={cn("text-xs", subtleTextClass)}>Current name</p>
-                          <p className="mt-1 text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="mt-1 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                             {activeWorkspace.name}
                           </p>
                         </div>
@@ -1286,7 +1286,7 @@ export default function WorkspaceSettingsPage() {
 
                   <div className={cn(raisedSurfaceClass, "space-y-4 p-4")}>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                      <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                         Approval workflow
                       </p>
                       <p className={cn("text-sm", subtleTextClass)}>
@@ -1320,10 +1320,10 @@ export default function WorkspaceSettingsPage() {
                           </p>
                         </div>
 
-                        <div className="rounded-xl border border-slate-200/80 bg-white px-4 py-4 dark:border-white/10 dark:bg-[#161a22]">
+                        <div className="rounded-xl border border-slate-200/80 bg-white px-4 py-4 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div className="space-y-1">
-                              <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                              <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                                 Auto-schedule after final approval
                               </p>
                               <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1348,7 +1348,7 @@ export default function WorkspaceSettingsPage() {
                               defaultApproverMembers.map((member) => (
                                 <span key={member.userId} className={pillClass}>
                                   {memberDisplayLabel(member)}
-                                  <span className="text-[11px] text-slate-500 dark:text-[#9fadbc]">
+                                  <span className="text-[11px] text-slate-500 dark:text-[hsl(var(--foreground-subtle))]">
                                     {roleLabel(member.role)}
                                   </span>
                                 </span>
@@ -1372,7 +1372,7 @@ export default function WorkspaceSettingsPage() {
                           </div>
 
                           {editorMembers.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]">
+                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-subtle))]">
                               Invite or assign editors first to grant extra approver capability.
                             </div>
                           ) : (
@@ -1387,8 +1387,8 @@ export default function WorkspaceSettingsPage() {
                                     className={cn(
                                       "flex items-start gap-3 rounded-xl border px-3 py-3 transition-colors",
                                       checked
-                                        ? "border-[#b3d4ff] bg-[#f7fbff] dark:border-[#2c4f7c] dark:bg-[#1b2638]"
-                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#161a22]"
+                                        ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.06)]"
+                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]"
                                     )}
                                   >
                                     <Checkbox
@@ -1405,7 +1405,7 @@ export default function WorkspaceSettingsPage() {
                                       className="mt-0.5"
                                     />
                                     <div className="space-y-1">
-                                      <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                                      <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                                         {label}
                                       </p>
                                       <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1428,7 +1428,7 @@ export default function WorkspaceSettingsPage() {
                               defaultPublisherMembers.map((member) => (
                                 <span key={member.userId} className={pillClass}>
                                   {memberDisplayLabel(member)}
-                                  <span className="text-[11px] text-slate-500 dark:text-[#9fadbc]">
+                                  <span className="text-[11px] text-slate-500 dark:text-[hsl(var(--foreground-subtle))]">
                                     {roleLabel(member.role)}
                                   </span>
                                 </span>
@@ -1452,7 +1452,7 @@ export default function WorkspaceSettingsPage() {
                           </div>
 
                           {editorMembers.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]">
+                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-subtle))]">
                               Invite or assign editors first to grant extra publisher capability.
                             </div>
                           ) : (
@@ -1468,7 +1468,7 @@ export default function WorkspaceSettingsPage() {
                                       "flex items-start gap-3 rounded-xl border px-3 py-3 transition-colors",
                                       checked
                                         ? "border-[#c6f0d3] bg-[#f2fcf6] dark:border-[#295f4e] dark:bg-[#1f2e28]"
-                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[#161a22]"
+                                        : "border-slate-200/80 bg-white dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]"
                                     )}
                                   >
                                     <Checkbox
@@ -1485,7 +1485,7 @@ export default function WorkspaceSettingsPage() {
                                       className="mt-0.5"
                                     />
                                     <div className="space-y-1">
-                                      <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                                      <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                                         {label}
                                       </p>
                                       <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1512,10 +1512,10 @@ export default function WorkspaceSettingsPage() {
                             {CONTENT_TYPE_RULE_TYPES.map((contentType) => (
                               <div
                                 key={contentType}
-                                className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[#161a22] sm:grid-cols-[130px_minmax(0,1fr)]"
+                                className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] sm:grid-cols-[130px_minmax(0,1fr)]"
                               >
                                 <div>
-                                  <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                  <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                                     {contentType.charAt(0) + contentType.slice(1).toLowerCase()}
                                   </p>
                                   <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1568,7 +1568,7 @@ export default function WorkspaceSettingsPage() {
                           </div>
 
                           {sortedConnectedAccounts.length === 0 ? (
-                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[#9fadbc]">
+                            <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50/80 px-4 py-3 text-xs text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-[hsl(var(--foreground-subtle))]">
                               Connect at least one social account in this workspace before adding account-specific approval rules.
                             </div>
                           ) : (
@@ -1576,10 +1576,10 @@ export default function WorkspaceSettingsPage() {
                               {sortedConnectedAccounts.map((account) => (
                                 <div
                                   key={account.providerUserId}
-                                  className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[#161a22] sm:grid-cols-[minmax(0,1fr)_220px]"
+                                  className="grid gap-2 rounded-xl border border-slate-200/80 bg-white px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))] sm:grid-cols-[minmax(0,1fr)_220px]"
                                 >
                                   <div className="min-w-0 space-y-1">
-                                    <p className="truncate text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                    <p className="truncate text-sm font-medium text-[hsl(var(--foreground))]">
                                       {account.username || account.providerUserId}
                                     </p>
                                     <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1622,8 +1622,8 @@ export default function WorkspaceSettingsPage() {
                           )}
                         </div>
 
-                        <div className="rounded-xl border border-[#cce0ff] bg-[#f7fbff] px-4 py-3 dark:border-[#2c4f7c] dark:bg-[#1b2638]">
-                          <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                        <div className="rounded-xl border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.06)] px-4 py-3">
+                          <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                             Rule precedence
                           </p>
                           <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
@@ -1680,7 +1680,7 @@ export default function WorkspaceSettingsPage() {
                       <div className="space-y-3">
                         <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
                           <p className={cn("text-xs", subtleTextClass)}>Current mode</p>
-                          <p className="mt-1 text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="mt-1 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                             {approvalModeLabel(activeWorkspace.approvalMode)}
                           </p>
                           <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
@@ -1689,7 +1689,7 @@ export default function WorkspaceSettingsPage() {
                         </div>
                         <div className="rounded-xl border border-slate-200 bg-[hsl(var(--surface-raised))] px-3 py-3 dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
                           <p className={cn("text-xs", subtleTextClass)}>Auto-schedule policy</p>
-                          <p className="mt-1 text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="mt-1 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                             {activeWorkspace.autoScheduleAfterApproval
                               ? "Approved content schedules automatically"
                               : "Approved content waits for a publisher to activate the schedule"}
@@ -1748,7 +1748,7 @@ export default function WorkspaceSettingsPage() {
                                 )
                                 .map((rule) => (
                                   <div key={rule.id} className={cn(raisedSurfaceClass, "px-3 py-3")}>
-                                    <p className="text-sm font-medium text-slate-900 dark:text-[#f1f5f9]">
+                                    <p className="text-sm font-medium text-[hsl(var(--foreground))]">
                                       {rule.scopeType === "ACCOUNT"
                                         ? `Account: ${sortedConnectedAccounts.find(
                                             (account) => account.providerUserId === rule.scopeValue
@@ -1770,11 +1770,11 @@ export default function WorkspaceSettingsPage() {
                   {myRole && <RoleContextPanel role={myRole} />}
 
                   {isInfluencer && (
-                    <div className="rounded-xl px-4 py-3 [border:1px_solid_#cce0ff] [background:linear-gradient(180deg,#f7fbff_0%,#edf4ff_100%)] dark:[border-color:#2c4f7c] dark:[background:#1b2638]">
+                    <div className="rounded-xl border border-[hsl(var(--accent)/0.18)] bg-[linear-gradient(180deg,hsl(var(--surface))_0%,hsl(var(--accent)/0.08)_100%)] px-4 py-3">
                       <div className="flex items-start gap-3">
-                        <Info size={16} className={cn("mt-0.5", atlBlueTextClass)} />
+                        <Info size={16} className={cn("mt-0.5", accentTextClass)} />
                         <div className="space-y-1">
-                          <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                          <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                             Influencer plan
                           </p>
                           <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1820,7 +1820,7 @@ export default function WorkspaceSettingsPage() {
                   <div className={cn(raisedSurfaceClass, "space-y-3 p-4")}>
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="space-y-1">
-                        <p className="text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                        <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                           Invite teammate
                         </p>
                         <p className={cn("text-xs leading-4", subtleTextClass)}>
@@ -1835,7 +1835,7 @@ export default function WorkspaceSettingsPage() {
                             setShowInviteForm(true);
                             setInviteSuccess(false);
                           }}
-                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                          className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
                         >
                           <UserPlus size={16} />
                           Add teammate
@@ -1970,7 +1970,7 @@ export default function WorkspaceSettingsPage() {
                                           className={cn(
                                             "truncate text-sm leading-5",
                                             fullName
-                                              ? "font-medium text-slate-900 dark:text-[#f1f5f9]"
+                                              ? "font-medium text-[hsl(var(--foreground))]"
                                               : subtleTextClass
                                           )}
                                         >
@@ -1995,7 +1995,7 @@ export default function WorkspaceSettingsPage() {
                                             handleRoleChange(member.userId, value as WorkspaceRole)
                                           }
                                         >
-                                          <SelectTrigger className="h-8 w-[132px] rounded-md border-slate-300 bg-white dark:border-white/10 dark:bg-[#161a22]">
+                                          <SelectTrigger className="h-8 w-[132px] rounded-md border-slate-300 bg-white dark:border-white/10 dark:bg-[hsl(var(--surface-raised))]">
                                             <SelectValue />
                                           </SelectTrigger>
                                           <SelectContent>
@@ -2055,11 +2055,11 @@ export default function WorkspaceSettingsPage() {
                         )}
                       >
                         <div className="flex min-w-0 flex-1 items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#cce0ff] bg-[#e9f2ff] text-[#0c66e4] dark:border-[#2c4f7c] dark:bg-[#1b2638] dark:text-[#85b8ff]">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]">
                             <Mail size={18} />
                           </div>
                           <div className="min-w-0 space-y-1">
-                            <p className="truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                            <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                               {invitation.invitedEmail}
                             </p>
                             <p className={cn("flex items-center gap-1 text-xs leading-4", subtleTextClass)}>
@@ -2128,7 +2128,7 @@ export default function WorkspaceSettingsPage() {
                         <div key={workspace.id} className={cn(raisedSurfaceClass, "p-4")}>
                           <div className="flex items-start justify-between gap-3">
                             <div className="min-w-0">
-                              <p className="truncate text-sm font-medium leading-5 text-slate-900 dark:text-[#f1f5f9]">
+                              <p className="truncate text-sm font-medium leading-5 text-[hsl(var(--foreground))]">
                                 {workspace.name}
                               </p>
                               <p className={cn("mt-1 text-xs leading-4", subtleTextClass)}>
@@ -2143,7 +2143,7 @@ export default function WorkspaceSettingsPage() {
                               variant="outline"
                               onClick={() => handleRestoreWorkspace(workspace)}
                               disabled={restoreBusyId === workspace.id}
-                              className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[#c7d1db] dark:hover:bg-white/10 dark:hover:text-white"
+                              className="h-8 rounded-md border-slate-300 px-3 text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:border-white/10 dark:text-[hsl(var(--foreground-muted))] dark:hover:bg-white/10 dark:hover:text-white"
                             >
                               <ArchiveRestore size={16} />
                               {restoreBusyId === workspace.id ? "Restoring..." : "Restore"}

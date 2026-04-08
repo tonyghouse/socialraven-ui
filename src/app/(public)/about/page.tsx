@@ -15,7 +15,7 @@ import {
 import {
   PublicPrimaryLinkButton,
   PublicSubtleLinkButton,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import {
   PublicCard,
   PublicHero,
@@ -103,7 +103,7 @@ export default function AboutPage() {
       <div className="mx-auto w-full max-w-7xl px-6 pt-4 md:px-10">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+          className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
         >
           ← Back
         </Link>
@@ -116,10 +116,10 @@ export default function AboutPage() {
           <PublicCard className="grid gap-5 p-6 sm:grid-cols-2">
             {STATS.map(({ value, label }) => (
               <div key={label}>
-                <p className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                <p className="text-heading-32 text-[var(--ds-gray-1000)]">
                   {value}
                 </p>
-                <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{label}</p>
+                <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{label}</p>
               </div>
             ))}
           </PublicCard>
@@ -129,19 +129,19 @@ export default function AboutPage() {
       <PublicSection>
         <div className="grid items-center gap-14 lg:grid-cols-2">
           <div className="space-y-5">
-            <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+            <p className="text-label-12 text-[var(--ds-gray-900)]">
               Our mission
             </p>
-            <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+            <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
               Give every team the tools that used to cost a fortune.
             </h2>
-            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
+            <p className="text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
               Enterprise social media tools charge thousands per month and take weeks to set up. Meanwhile, creators and small businesses are duct-taping together spreadsheets, free trials, and manual posting.
             </p>
-            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
+            <p className="text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
               Social Raven exists to close that gap. We believe powerful, professional-grade scheduling and analytics should be accessible to every creator, agency, and business — not just the ones with six-figure software budgets.
             </p>
-            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
+            <p className="text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
               The service is operated from India by Kammullu Ghouse under the Social Raven brand.
             </p>
             <div>
@@ -156,11 +156,11 @@ export default function AboutPage() {
               { icon: Lock, label: "Secure & compliant", value: "GDPR · CCPA · TLS 1.2+" },
             ].map(({ icon: Icon, label, value }) => (
               <PublicInsetCard key={label} className="space-y-3 p-5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
                   <Icon className="h-4 w-4" />
                 </div>
-                <p className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{label}</p>
-                <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{value}</p>
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
+                <p className="text-label-12 text-[var(--ds-gray-900)]">{value}</p>
               </PublicInsetCard>
             ))}
           </div>
@@ -171,11 +171,11 @@ export default function AboutPage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {VALUES.map(({ icon: Icon, title, description }) => (
             <PublicInsetCard key={title} className="space-y-4 p-6">
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{title}</h3>
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{description}</p>
+              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
             </PublicInsetCard>
           ))}
         </div>
@@ -186,16 +186,16 @@ export default function AboutPage() {
           {PERSONAS.map(({ title, description, bullets }) => (
             <PublicCard key={title} className="space-y-4 p-7">
               <div className="space-y-3">
-                <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{title}</h3>
-                <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{description}</p>
+                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
+                <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
               </div>
               <ul className="space-y-2.5 pt-1">
                 {bullets.map((bullet) => (
                   <li
                     key={bullet}
-                    className="flex items-center gap-2.5 text-sm text-[hsl(var(--foreground-muted))]"
+                    className="flex items-center gap-2.5 text-copy-13 text-[var(--ds-gray-900)]"
                   >
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[hsl(var(--accent))]" />
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--ds-blue-600)]" />
                     {bullet}
                   </li>
                 ))}
@@ -208,13 +208,13 @@ export default function AboutPage() {
       <PublicSection>
         <PublicCard className="px-8 py-10 text-center md:px-14 md:py-16">
           <div className="mx-auto max-w-3xl space-y-5">
-            <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+            <p className="text-label-12 text-[var(--ds-gray-900)]">
               Get started
             </p>
-            <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+            <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
               Ready to take back your time?
             </h2>
-            <p className="mx-auto max-w-md text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
+            <p className="mx-auto max-w-md text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
               Start with a trial workspace and see whether Social Raven fits the way your team plans and publishes content.
             </p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">

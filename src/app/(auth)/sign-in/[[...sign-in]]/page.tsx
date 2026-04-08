@@ -1,5 +1,6 @@
 import { SignIn } from "@clerk/nextjs";
 
+import { authClerkAppearance } from "@/components/generic/auth-clerk-appearance";
 import { AuthPageShell } from "@/components/generic/auth-page-shell";
 
 export default function SignInPage() {
@@ -14,7 +15,7 @@ export default function SignInPage() {
       alternateLabel="Create one here"
       alternateHref="/sign-up"
     >
-      <SignIn afterSignInUrl="/dashboard" />
+      <SignIn afterSignInUrl="/dashboard" appearance={authClerkAppearance} />
     </AuthPageShell>
   );
 }

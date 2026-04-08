@@ -20,7 +20,7 @@ export function PublicPageShell({
       </div>
       <main
         className={cn(
-          "min-h-screen bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)] pt-20 text-[hsl(var(--foreground))]",
+          "min-h-screen bg-[var(--ds-background-100)] pt-20 text-[var(--ds-gray-1000)]",
           mainClassName,
         )}
       >
@@ -51,22 +51,22 @@ export function PublicHero({
   aside?: ReactNode;
 }) {
   return (
-    <section className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] print:border-b-0 print:bg-white">
+    <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] print:border-b-0 print:bg-white">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-6 py-16 md:px-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-start lg:py-20 print:gap-6 print:px-0 print:py-8">
         <div className="space-y-5">
           {topSlot ? <div>{topSlot}</div> : null}
-          <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+          <p className="text-label-12 text-[var(--ds-gray-900)]">
             {eyebrow}
           </p>
           <div className="space-y-4">
-            <h1 className="max-w-4xl text-[2rem] leading-9 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))] md:text-[2.5rem] md:leading-[2.75rem] lg:text-[2.75rem] lg:leading-[3rem]">
+            <h1 className="max-w-4xl text-4xl leading-tight font-bold tracking-[-0.04em] text-[var(--ds-gray-1000)] md:text-5xl md:leading-[1.02] lg:text-[3.25rem]">
               {title}
             </h1>
             {meta ? (
-              <div className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{meta}</div>
+              <div className="text-label-14 text-[var(--ds-gray-900)]">{meta}</div>
             ) : null}
             {description ? (
-              <p className="max-w-3xl text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
+              <p className="max-w-3xl text-copy-16 text-[var(--ds-gray-900)]">
                 {description}
               </p>
             ) : null}
@@ -95,8 +95,8 @@ export function PublicSection({
   return (
     <section
       className={cn(
-        "border-b border-[hsl(var(--border-subtle))]",
-        surface === "surface" ? "bg-[hsl(var(--surface))]" : "bg-transparent",
+        "border-b border-[var(--ds-gray-400)]",
+        surface === "surface" ? "bg-[var(--ds-background-200)]" : "bg-[var(--ds-background-100)]",
         "print:border-b-0 print:bg-white",
       )}
     >
@@ -104,17 +104,17 @@ export function PublicSection({
         {eyebrow || title || description ? (
           <div className="mb-8 space-y-2">
             {eyebrow ? (
-              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+              <p className="text-label-12 text-[var(--ds-gray-900)]">
                 {eyebrow}
               </p>
             ) : null}
             {title ? (
-              <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+              <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
                 {title}
               </h2>
             ) : null}
             {description ? (
-              <p className="max-w-3xl text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[1rem] md:leading-6">
+              <p className="max-w-3xl text-copy-14 text-[var(--ds-gray-900)]">
                 {description}
               </p>
             ) : null}
@@ -136,7 +136,7 @@ export function PublicCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[var(--shadow-xs)] print:break-inside-avoid print:shadow-none",
+        "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] print:break-inside-avoid print:shadow-none",
         className,
       )}
       {...props}
@@ -156,7 +156,7 @@ export function PublicInsetCard({
   return (
     <div
       className={cn(
-        "rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] print:break-inside-avoid print:bg-white",
+        "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] print:break-inside-avoid print:bg-white",
         className,
       )}
       {...props}
@@ -174,7 +174,7 @@ export function PublicToc({
   return (
     <aside className="hidden lg:block">
       <PublicCard className="sticky top-24 p-5">
-        <p className="mb-3 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+        <p className="mb-3 text-label-12 text-[var(--ds-gray-900)]">
           Contents
         </p>
         <nav className="space-y-1">
@@ -182,7 +182,7 @@ export function PublicToc({
             <a
               key={id}
               href={`#${id}`}
-              className="block rounded-md px-2 py-1 text-sm leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+              className="block rounded-md px-2 py-1.5 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
             >
               {label}
             </a>
@@ -201,18 +201,18 @@ export function PublicTable({
   rows: ReactNode[][];
 }) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-[hsl(var(--border))] print:break-inside-avoid">
-      <table className="w-full border-collapse text-sm leading-5">
+    <div className="overflow-x-auto rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] print:break-inside-avoid">
+      <table className="w-full border-collapse text-copy-14">
         <thead>
-          <tr className="border-b border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
+          <tr className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
             {headers.map((header, index) => (
-              <th key={index} className="p-3 text-left font-bold text-[hsl(var(--foreground))]">
+              <th key={index} className="p-3 text-left text-label-14 text-[var(--ds-gray-1000)]">
                 {header}
               </th>
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))]">
+        <tbody className="divide-y divide-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]">
           {rows.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {row.map((cell, cellIndex) => (

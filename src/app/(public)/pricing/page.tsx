@@ -4,7 +4,7 @@ import Link from "next/link";
 import {
   PublicPrimaryLinkButton,
   PublicSubtleLinkButton,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import { PricingGrid } from "@/components/public/pricing-grid";
 import {
   PublicCard,
@@ -67,7 +67,7 @@ export default function PricingPage() {
         topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm font-medium leading-5 text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+            className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
           >
             ← Back
           </Link>
@@ -76,7 +76,7 @@ export default function PricingPage() {
         title="Clear pricing for creators, teams, and agencies."
         meta={
           <>
-            Last updated: <span className="font-medium text-[hsl(var(--foreground))]">April 7, 2026</span>
+            Last updated: <span className="font-medium text-[var(--ds-gray-1000)]">April 7, 2026</span>
           </>
         }
         description="Choose a plan based on how many brands, accounts, and campaigns you need to manage. Trial signup is available now; paid self-serve billing is still being finalized."
@@ -89,10 +89,10 @@ export default function PricingPage() {
         aside={
           <PublicCard className="space-y-4 p-6">
             <div>
-              <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+              <p className="text-label-12 text-[var(--ds-gray-900)]">
                 Pricing summary
               </p>
-              <h2 className="mt-2 text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+              <h2 className="mt-2 text-heading-32 text-[var(--ds-gray-1000)]">
                 Public pricing is live. Paid self-serve billing is not yet enabled.
               </h2>
             </div>
@@ -103,7 +103,7 @@ export default function PricingPage() {
                 "Paid self-serve billing in progress",
                 "Agency custom plans from $399 / month",
               ].map((item) => (
-                <PublicInsetCard key={item} className="px-4 py-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <PublicInsetCard key={item} className="px-4 py-3 text-copy-14 text-[var(--ds-gray-900)]">
                   {item}
                 </PublicInsetCard>
               ))}
@@ -119,7 +119,7 @@ export default function PricingPage() {
       >
         <div className="grid gap-4 md:grid-cols-2">
           {INCLUDED_WITH_EVERY_PLAN.map((item) => (
-            <PublicInsetCard key={item} className="px-5 py-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <PublicInsetCard key={item} className="px-5 py-4 text-copy-14 text-[var(--ds-gray-900)]">
               {item}
             </PublicInsetCard>
           ))}
@@ -131,11 +131,11 @@ export default function PricingPage() {
         title="Current public plan pricing"
         description="These are the self-serve and agency plan prices currently offered by SocialRaven."
       >
-        <div className="rounded-xl border border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 px-5 py-4 text-[hsl(var(--foreground))]">
-          <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+        <div className="rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-5 py-4 text-[var(--ds-gray-1000)]">
+          <p className="text-label-14 text-[var(--ds-gray-1000)]">
             14-day free trial available on standard plans
           </p>
-          <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
             Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Agency Custom plans generally range from $399 to $999+ per month based on workspace count, volume, onboarding, and SLA requirements.
           </p>
         </div>
@@ -154,8 +154,8 @@ export default function PricingPage() {
         <div className="grid gap-4 md:grid-cols-2">
           {BILLING_NOTES.map((note) => (
             <PublicCard key={note.title} className="space-y-3 p-6">
-              <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{note.title}</h3>
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{note.description}</p>
+              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{note.title}</h3>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">{note.description}</p>
             </PublicCard>
           ))}
         </div>

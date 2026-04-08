@@ -89,7 +89,7 @@ export function ApprovalSafetyPanel({ collection }: { collection: PostCollection
   }
 
   return (
-    <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+    <section className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
       <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">Approval Safety</p>

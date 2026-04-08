@@ -54,8 +54,8 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
         className={cn(
           "flex h-8 w-8 items-center justify-center rounded-lg border transition-[background-color,border-color,color,box-shadow] duration-150",
           canSwitch
-            ? "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
-            : "cursor-default border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-subtle))]"
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
+            : "cursor-default border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]/60 shadow-none"
         )}
         aria-label={canSwitch ? "Switch workspace" : `Current workspace: ${displayName}`}
       >
@@ -80,7 +80,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
               side="right"
               align="start"
               sideOffset={10}
-              className="w-64 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-1.5 shadow-lg"
+              className="w-64 rounded-xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-1.5 shadow-none"
             >
               <WorkspaceList
                 activeWorkspaceId={activeWorkspace?.id ?? null}
@@ -103,20 +103,20 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           className={cn(
             "group flex h-9 w-full items-center gap-2 rounded-lg border px-2.5 text-left transition-[background-color,border-color,color,box-shadow] duration-150",
             canSwitch
-              ? "border-transparent bg-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface))] hover:text-[hsl(var(--foreground))]"
-              : "cursor-default border-transparent bg-transparent text-[hsl(var(--foreground-muted))]"
+              ? "border-transparent bg-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-gray-1000)]"
+              : "cursor-default border-transparent bg-transparent text-[var(--ds-gray-900)]"
           )}
         >
-          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-subtle))]">
+          <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]">
             <Buildings size={14} />
           </div>
 
           <div className="min-w-0 flex-1">
-            <span className="block truncate text-[13px] font-medium text-[hsl(var(--foreground))]">
+            <span className="block truncate text-label-13 text-[var(--ds-gray-1000)]">
               {displayName}
             </span>
             {displayCompanyName && (
-              <span className="block truncate text-[11px] leading-4 text-[hsl(var(--foreground-subtle))]">
+              <span className="block truncate text-label-12 text-[var(--ds-gray-900)]">
                 {displayCompanyName}
               </span>
             )}
@@ -126,7 +126,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
             <ChevronDown
               size={14}
               className={cn(
-                "shrink-0 text-[hsl(var(--foreground-subtle))] transition-transform duration-150",
+                "shrink-0 text-[var(--ds-gray-900)] transition-transform duration-150",
                 open && "rotate-180"
               )}
             />
@@ -139,7 +139,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           align="start"
           side="bottom"
           sideOffset={8}
-          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[240px] rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-1.5 shadow-lg"
+          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[240px] rounded-xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-1.5 shadow-none"
         >
           <WorkspaceList
             activeWorkspaceId={activeWorkspace?.id ?? null}
@@ -165,7 +165,7 @@ function WorkspaceList({
 }: WorkspaceListProps) {
   return (
     <div className="space-y-1">
-      <p className="px-2 py-1 text-[11px] font-medium text-[hsl(var(--foreground-subtle))]">
+      <p className="px-2 py-1 text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
         Switch workspace
       </p>
 
@@ -182,27 +182,32 @@ function WorkspaceList({
                 className={cn(
                   "flex h-9 w-full items-center gap-2 rounded-lg border px-2.5 text-left transition-[background-color,border-color,color] duration-150",
                   isActive
-                    ? "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))]"
-                    : "border-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]"
+                    ? "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]"
+                    : "border-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
                 )}
               >
                 <div
                   className={cn(
                     "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border",
                     isActive
-                      ? "border-[hsl(var(--accent))]/15 bg-white/70 text-[hsl(var(--accent))] dark:bg-[hsl(var(--surface))]"
-                      : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--foreground-subtle))]"
+                      ? "border-[hsl(var(--accent)/0.18)] bg-[var(--ds-background-100)] text-[hsl(var(--accent))]"
+                      : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]"
                   )}
                 >
                   <Buildings size={12} />
                 </div>
 
-                <span className="flex-1 truncate text-[13px] font-medium">
-                  <span className="block truncate text-[13px] font-medium">
+                <span className="flex-1 truncate text-label-13">
+                  <span className="block truncate text-label-13">
                     {workspace.name}
                   </span>
                   {workspace.companyName && (
-                    <span className="block truncate text-[11px] leading-4 text-[hsl(var(--foreground-subtle))]">
+                    <span
+                      className={cn(
+                        "block truncate text-label-12",
+                        isActive ? "text-[hsl(var(--accent))]" : "text-[var(--ds-gray-900)]"
+                      )}
+                    >
                       {workspace.companyName}
                     </span>
                   )}

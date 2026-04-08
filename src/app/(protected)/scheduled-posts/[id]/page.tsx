@@ -504,7 +504,7 @@ function DeleteModal({
       />
 
       {/* Panel */}
-      <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_8px_24px_rgba(9,30,66,0.24)] animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_8px_24px_rgb(0 0 0 / 0.24)] animate-in fade-in zoom-in-95 duration-200">
         <div className="p-6">
           {/* Icon + heading */}
           <div className="flex items-start gap-4 mb-5">
@@ -794,7 +794,7 @@ export default function ScheduledCollectionDetailPage() {
   if (error || !collection) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-        <div className="w-full max-w-md rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <div className="w-full max-w-md rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <SectionMessage appearance="error" title="Collection not found">
             <div className="mt-3">
               <AtlassianButton appearance="primary" onClick={() => router.push("/scheduled-posts")}>
@@ -963,7 +963,7 @@ export default function ScheduledCollectionDetailPage() {
           </div>
 
           <div className="px-4 py-6 space-y-5 sm:px-6">
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="border-b border-[hsl(var(--border-subtle))] px-6 py-5">
                 <div className="mb-3 flex flex-wrap items-start gap-3">
                   <h1 className="min-w-0 flex-1 text-xl font-semibold leading-7 text-[hsl(var(--foreground))]">
@@ -1025,7 +1025,7 @@ export default function ScheduledCollectionDetailPage() {
             </div>
 
             {canOpenChannelRecovery && (
-              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="flex flex-wrap items-start justify-between gap-3 px-6 py-4">
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold leading-5 text-amber-900">Failed channels still need attention</p>
@@ -1047,7 +1047,7 @@ export default function ScheduledCollectionDetailPage() {
 
             <div className="flex flex-col lg:flex-row gap-5 items-start">
               <div className="w-full lg:w-72 xl:w-80 flex-shrink-0 space-y-4">
-                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                   <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                     <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <p className="text-sm font-semibold leading-5 text-foreground flex-1">Schedule</p>
@@ -1077,7 +1077,7 @@ export default function ScheduledCollectionDetailPage() {
                   </div>
                 </div>
 
-                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                   <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                     <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <p className="text-sm font-semibold leading-5 text-foreground flex-1">Caption</p>
@@ -1101,7 +1101,7 @@ export default function ScheduledCollectionDetailPage() {
 
                 {/* Media carousel */}
                 {collection.media.length > 0 && (
-                  <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                     <div className="flex items-center gap-2.5 px-5 py-3.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]">
                       <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       <p className="text-sm font-semibold leading-5 text-foreground flex-1">
@@ -1119,7 +1119,7 @@ export default function ScheduledCollectionDetailPage() {
                   </div>
                 )}
 
-                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                   <div className="px-5 py-4 flex items-center divide-x divide-border/40">
                     <div className="flex-1 text-center pr-4">
                       <p className="text-2xl font-semibold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
@@ -1150,7 +1150,7 @@ export default function ScheduledCollectionDetailPage() {
 
               <div className="flex-1 min-w-0 space-y-4">
                 {collection.posts.length === 0 ? (
-                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                     <SectionMessage appearance="information" title="No posts in this collection">
                       Add posts to this collection to preview them here by platform.
                     </SectionMessage>

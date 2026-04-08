@@ -230,7 +230,7 @@ export default function PublishedCollectionDetailPage() {
   if (error || !collection) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
             <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
           </div>
@@ -337,7 +337,7 @@ export default function PublishedCollectionDetailPage() {
       </div>
 
       <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8 space-y-5">
-        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="h-[3px] w-full bg-[hsl(var(--success))]" />
           <div className="px-6 pt-6 pb-5">
             <div className="flex flex-wrap items-start gap-x-4 gap-y-3 mb-4">
@@ -403,7 +403,7 @@ export default function PublishedCollectionDetailPage() {
         <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)] items-start">
           <div className="space-y-4">
             {canOpenChannelRecovery && (
-              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="overflow-hidden rounded-xl border border-amber-200 bg-amber-50 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="flex items-start gap-3 px-5 py-4">
                   <AlertTriangle className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-700" />
                   <div className="min-w-0 flex-1">
@@ -423,7 +423,7 @@ export default function PublishedCollectionDetailPage() {
                 </div>
               </div>
             )}
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                 <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">Published</p>
@@ -441,7 +441,7 @@ export default function PublishedCollectionDetailPage() {
             </div>
 
             {/* Caption card */}
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                 <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">Caption</p>
@@ -460,7 +460,7 @@ export default function PublishedCollectionDetailPage() {
 
             {/* Media carousel */}
             {collection.media.length > 0 && (
-              <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <div className="flex items-center gap-2.5 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
                   <ImageIcon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))] flex-1">
@@ -474,7 +474,7 @@ export default function PublishedCollectionDetailPage() {
             )}
 
             {/* Stats card with platform breakdown */}
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="px-5 py-4 flex items-center divide-x divide-border/40">
                 <div className="flex-1 text-center pr-4">
                   <p className="text-2xl font-bold text-foreground tabular-nums leading-none">{collection.posts.length}</p>
@@ -506,7 +506,7 @@ export default function PublishedCollectionDetailPage() {
           {/* Platform sections */}
           <div className="min-w-0 space-y-4">
             {collection.posts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] py-12 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="flex flex-col items-center justify-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] py-12 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <CheckCircle2 className="h-8 w-8 text-muted-foreground/40 mb-2" />
                 <p className="text-sm text-muted-foreground">No posts in this collection</p>
               </div>
@@ -1083,7 +1083,7 @@ function SkeletonDetailPage() {
       </header>
 
       <div className="space-y-5 px-4 py-6 sm:px-6">
-        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="px-5 py-4 flex items-center gap-4">
             <Skeleton className="h-6 rounded-lg flex-1" />
             <div className="flex gap-2">
@@ -1096,7 +1096,7 @@ function SkeletonDetailPage() {
 
         <div className="grid gap-5 items-start lg:grid-cols-[280px_minmax(0,1fr)]">
           <div className="space-y-3">
-            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="flex items-center gap-2 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-4 py-2.5">
                 <Skeleton className="h-3.5 w-3.5 rounded flex-shrink-0" />
                 <Skeleton className="h-4 w-20 rounded flex-1" />
@@ -1107,7 +1107,7 @@ function SkeletonDetailPage() {
                 ))}
               </div>
             </div>
-            <div className="flex items-center divide-x divide-border/40 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-3 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="flex items-center divide-x divide-border/40 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-3 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="flex-1 text-center pr-3 space-y-1">
                 <Skeleton className="h-6 w-8 rounded mx-auto" />
                 <Skeleton className="h-2.5 w-10 rounded mx-auto" />
@@ -1132,7 +1132,7 @@ function SkeletonDetailPage() {
 
 function SkeletonPlatformSection() {
   return (
-    <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+    <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
       <Skeleton className="h-[3px] w-full rounded-none" />
       <div className="p-4">
         <div className="flex items-center gap-2.5 mb-3">

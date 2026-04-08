@@ -89,7 +89,7 @@ const TYPE_META = {
 } as const;
 
 const sectionClassName =
-  "overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]";
+  "overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]";
 
 const rowHoverClassName =
   "transition-colors duration-150 hover:bg-[hsl(var(--surface-raised))]/70";
@@ -603,7 +603,7 @@ function StatCard({
   return (
     <div
       className={cn(
-        "rounded-xl border p-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)] transition-colors duration-150",
+        "rounded-xl border p-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)] transition-colors duration-150",
         danger
           ? "border-red-200 bg-red-50/70 dark:border-red-900/40 dark:bg-red-950/20"
           : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] hover:bg-[hsl(var(--surface-raised))]/40"
@@ -785,7 +785,7 @@ function DashboardSkeleton() {
         {/* Stats row */}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 sm:gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="space-y-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div key={i} className="space-y-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
               <div className="flex items-start justify-between gap-2">
                 <div className="space-y-2 flex-1">
                   <Bone className="h-2.5 w-24" />

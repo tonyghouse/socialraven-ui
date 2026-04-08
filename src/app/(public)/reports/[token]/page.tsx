@@ -30,7 +30,7 @@ import {
   PublicPrimaryButton,
   PublicSectionMessage,
   PublicSubtleButton,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import type { PublicClientReport } from "@/model/ClientReport";
 import { getPublicClientReportApi, publicClientReportPdfUrl } from "@/service/clientReports";
 
@@ -128,7 +128,7 @@ function TrendChart({ series }: { series: TimelineDatum[] }) {
 
   return (
     <div className="space-y-4">
-      <div className="overflow-hidden rounded-2xl border border-[hsl(var(--border-subtle))] bg-[linear-gradient(180deg,hsl(var(--surface-raised))_0%,hsl(var(--surface))_100%)] p-4">
+      <div className="overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[linear-gradient(180deg,var(--ds-gray-100)_0%,var(--ds-background-100)_100%)] p-4">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="h-60 w-full"
@@ -144,17 +144,17 @@ function TrendChart({ series }: { series: TimelineDatum[] }) {
                 y1={y}
                 x2={width - paddingX}
                 y2={y}
-                stroke="hsl(var(--border-subtle))"
+                stroke="var(--ds-gray-400)"
                 strokeDasharray="4 6"
                 strokeWidth="1"
               />
             );
           })}
-          <path d={areaPath} fill="hsl(var(--accent) / 0.12)" />
+          <path d={areaPath} fill="var(--ds-blue-100)" />
           <path
             d={linePath}
             fill="none"
-            stroke="hsl(var(--accent))"
+            stroke="var(--ds-blue-600)"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="4"
@@ -165,15 +165,15 @@ function TrendChart({ series }: { series: TimelineDatum[] }) {
               cx={point.x}
               cy={point.y}
               r="4.5"
-              fill="hsl(var(--surface))"
-              stroke="hsl(var(--accent))"
+              fill="var(--ds-background-100)"
+              stroke="var(--ds-blue-600)"
               strokeWidth="3"
             />
           ))}
         </svg>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[hsl(var(--foreground-subtle))]">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-label-12 text-[var(--ds-gray-900)]">
         <span>{fmtCalendarDate(series[0]?.date ?? "")}</span>
         <span>Daily engagements across all connected platforms</span>
         <span>{fmtCalendarDate(series[series.length - 1]?.date ?? "")}</span>
@@ -196,16 +196,16 @@ function KpiCard({
   return (
     <PublicInsetCard className="p-5">
       <div className="flex items-center justify-between">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
           <Icon className="h-5 w-5" />
         </div>
-        <p className="text-[1.625rem] font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+        <p className="text-heading-32 text-[var(--ds-gray-1000)]">
           {value}
         </p>
       </div>
       <div className="mt-4 space-y-1">
-        <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{label}</p>
-        <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{detail}</p>
+        <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
+        <p className="text-copy-14 text-[var(--ds-gray-900)]">{detail}</p>
       </div>
     </PublicInsetCard>
   );
@@ -290,8 +290,8 @@ export default function PublicClientReportPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)]">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(var(--foreground-muted))]" />
+      <div className="flex min-h-screen items-center justify-center bg-[var(--ds-background-100)]">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--ds-gray-900)]" />
       </div>
     );
   }
@@ -302,12 +302,12 @@ export default function PublicClientReportPage() {
         <div className="mx-auto max-w-xl px-6 py-24">
           <PublicCard className="p-8">
             <div className="mb-4 flex justify-center">
-              <AlertCircle className="h-12 w-12 text-[hsl(var(--destructive))]" />
+              <AlertCircle className="h-12 w-12 text-[var(--ds-red-600)]" />
             </div>
-            <h1 className="text-center text-[1.5rem] font-bold text-[hsl(var(--foreground))]">
+            <h1 className="text-center text-heading-24 text-[var(--ds-gray-1000)]">
               Report unavailable
             </h1>
-            <p className="mt-3 text-center text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-3 text-center text-copy-14 text-[var(--ds-gray-900)]">
               {error}
             </p>
           </PublicCard>
@@ -329,14 +329,14 @@ export default function PublicClientReportPage() {
         topSlot={
           <div className="flex flex-wrap items-center gap-3">
             {report.logoUrl ? (
-              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-white">
+              <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-white">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={report.logoUrl} alt={report.agencyLabel} className="h-full w-full object-contain" />
               </div>
             ) : null}
             <div className="space-y-1">
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))]">{report.clientLabel}</p>
-              <p className="text-sm text-[hsl(var(--foreground-muted))]">
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">{report.clientLabel}</p>
+              <p className="text-copy-13 text-[var(--ds-gray-900)]">
                 Prepared by {report.agencyLabel}
               </p>
             </div>
@@ -389,28 +389,28 @@ export default function PublicClientReportPage() {
           <PublicCard className="p-5">
             <div className="space-y-4">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Report coverage
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
                   {report.reportWindowLabel} for {report.clientLabel}.
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Share window
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
                   This report link stays active until {fmtDate(report.linkExpiresAt)}.
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Timezone
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
                   Date and time values render in your local browser timezone.
                 </p>
               </div>
@@ -423,7 +423,7 @@ export default function PublicClientReportPage() {
         <div className="print:hidden">
           <PublicSection surface="surface">
             <PublicSectionMessage appearance="warning" title="Copy action failed">
-              <p className="text-sm">{error}</p>
+              <p className="text-copy-13">{error}</p>
             </PublicSectionMessage>
           </PublicSection>
         </div>
@@ -474,13 +474,13 @@ export default function PublicClientReportPage() {
               {report.highlights.map((highlight, index) => (
                 <div
                   key={`${highlight}-${index}`}
-                  className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-4"
+                  className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]">
+                    <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--ds-blue-100)] text-[var(--ds-blue-600)]">
                       <TrendingUp className="h-4 w-4" />
                     </div>
-                    <p className="text-sm leading-6 text-[hsl(var(--foreground))]">{highlight}</p>
+                    <p className="text-copy-14 text-[var(--ds-gray-1000)]">{highlight}</p>
                   </div>
                 </div>
               ))}
@@ -490,22 +490,22 @@ export default function PublicClientReportPage() {
           <PublicCard className="p-6">
             <div className="space-y-5">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Top channel
                 </p>
-                <p className="mt-2 text-[1.25rem] font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-heading-20 text-[var(--ds-gray-1000)]">
                   {report.platformStats[0]?.provider ?? "No data yet"}
                 </p>
-                <p className="mt-1 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                   Highest current impression volume in the selected report window.
                 </p>
               </div>
 
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Top content
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
                   {report.topPosts[0]?.content || "No top-post content captured yet."}
                 </p>
               </div>
@@ -522,7 +522,7 @@ export default function PublicClientReportPage() {
       >
         {timelineSeries.length === 0 ? (
           <PublicSectionMessage appearance="information" title="No timeline data yet">
-            <p className="text-sm">
+            <p className="text-copy-14">
               SocialRaven has not collected enough engagement snapshots to render a daily trend for
               this report window yet.
             </p>
@@ -535,13 +535,13 @@ export default function PublicClientReportPage() {
 
             <div className="space-y-4">
               <PublicInsetCard className="p-5">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Peak day
                 </p>
-                <p className="mt-2 text-[1.375rem] font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-heading-24 text-[var(--ds-gray-1000)]">
                   {peakTrendPoint ? fmt(peakTrendPoint.totalEngagements) : "0"}
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
                   {peakTrendPoint
                     ? `${fmtCalendarDate(peakTrendPoint.date)} delivered the highest daily engagement across the selected report window.`
                     : "No daily engagement peak is available yet."}
@@ -549,23 +549,23 @@ export default function PublicClientReportPage() {
               </PublicInsetCard>
 
               <PublicInsetCard className="p-5">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Daily average
                 </p>
-                <p className="mt-2 text-[1.375rem] font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+                <p className="mt-2 text-heading-24 text-[var(--ds-gray-1000)]">
                   {fmt(averageDailyEngagements)}
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
                   Average daily engagements across {timelineSeries.length} tracked day
                   {timelineSeries.length === 1 ? "" : "s"} in this reporting period.
                 </p>
               </PublicInsetCard>
 
               <PublicInsetCard className="p-5">
-                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[hsl(var(--foreground-subtle))]">
+                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                   Report framing
                 </p>
-                <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
                   Use the trendline with the highlights above to explain which publishing windows
                   gained momentum and where the next creative sprint should focus.
                 </p>
@@ -582,7 +582,7 @@ export default function PublicClientReportPage() {
       >
         {report.platformStats.length === 0 ? (
           <PublicSectionMessage appearance="information" title="No platform analytics yet">
-            <p className="text-sm">
+            <p className="text-copy-14">
               Publish a few posts and let snapshots collect before sharing this report externally.
             </p>
           </PublicSectionMessage>
@@ -591,8 +591,8 @@ export default function PublicClientReportPage() {
             headers={["Platform", "Impressions", "Engagements", "Follower Growth", "Posts"]}
             rows={report.platformStats.map((platform) => [
               <div key={`${platform.provider}-platform`} className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4 text-[hsl(var(--foreground-muted))]" />
-                <span className="font-medium text-[hsl(var(--foreground))]">{platform.provider}</span>
+                <BarChart3 className="h-4 w-4 text-[var(--ds-gray-900)]" />
+                <span className="font-medium text-[var(--ds-gray-1000)]">{platform.provider}</span>
               </div>,
               <span key={`${platform.provider}-impressions`}>{fmt(platform.impressions)}</span>,
               <span key={`${platform.provider}-engagement`}>
@@ -614,7 +614,7 @@ export default function PublicClientReportPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           {report.topPosts.length === 0 ? (
             <PublicCard className="p-6">
-              <p className="text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 No published post snapshots were available for this report window.
               </p>
             </PublicCard>
@@ -627,10 +627,10 @@ export default function PublicClientReportPage() {
                     {fmtPct(post.engagementRate)} engagement
                   </PublicLozenge>
                 </div>
-                <p className="mt-4 text-sm leading-6 text-[hsl(var(--foreground))]">
+                <p className="mt-4 text-copy-14 text-[var(--ds-gray-1000)]">
                   {post.content || "No post caption was captured for this item."}
                 </p>
-                <div className="mt-4 flex flex-wrap gap-4 text-xs text-[hsl(var(--foreground-subtle))]">
+                <div className="mt-4 flex flex-wrap gap-4 text-xs text-[var(--ds-gray-900)]">
                   <span className="inline-flex items-center gap-1">
                     <Eye className="h-3.5 w-3.5" />
                     {fmt(post.impressions)} impressions
@@ -657,30 +657,30 @@ export default function PublicClientReportPage() {
       >
         <div className="grid gap-4 md:grid-cols-3">
           <PublicInsetCard className="p-5">
-            <LineChart className="h-5 w-5 text-[hsl(var(--accent))]" />
-            <p className="mt-3 text-sm font-semibold text-[hsl(var(--foreground))]">
+            <LineChart className="h-5 w-5 text-[var(--ds-blue-600)]" />
+            <p className="mt-3 text-label-14 text-[var(--ds-gray-1000)]">
               Snapshot-based analytics
             </p>
-            <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
               Numbers are based on the latest analytics snapshots available for the selected report window.
             </p>
           </PublicInsetCard>
           <PublicInsetCard className="p-5">
-            <Globe2 className="h-5 w-5 text-[hsl(var(--accent))]" />
-            <p className="mt-3 text-sm font-semibold text-[hsl(var(--foreground))]">
+            <Globe2 className="h-5 w-5 text-[var(--ds-blue-600)]" />
+            <p className="mt-3 text-label-14 text-[var(--ds-gray-1000)]">
               Shareable by default
             </p>
-            <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
               Agencies can send this link directly, and the print-safe layout is optimized for PDF
               export without exposing app navigation or extra client-unfriendly chrome.
             </p>
           </PublicInsetCard>
           <PublicInsetCard className="p-5">
-            <Users className="h-5 w-5 text-[hsl(var(--accent))]" />
-            <p className="mt-3 text-sm font-semibold text-[hsl(var(--foreground))]">
+            <Users className="h-5 w-5 text-[var(--ds-blue-600)]" />
+            <p className="mt-3 text-label-14 text-[var(--ds-gray-1000)]">
               Client-friendly formatting
             </p>
-            <p className="mt-2 text-sm leading-6 text-[hsl(var(--foreground-muted))]">
+            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
               Commentary and highlights are structured to reduce manual deck-building for agencies serving US and EU clients.
             </p>
           </PublicInsetCard>

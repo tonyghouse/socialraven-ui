@@ -338,8 +338,8 @@ export function CollectionCard({ collection, href }: CollectionCardProps) {
       aria-label="View collection"
       className={cn(
         "group flex h-full flex-col overflow-hidden rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface))]",
-        "shadow-[0_1px_2px_rgba(9,30,66,0.08)] transition-[box-shadow,border-color] duration-150",
-        "hover:border-[hsl(var(--accent))]/30 hover:shadow-[0_6px_12px_rgba(9,30,66,0.12)]",
+        "shadow-[0_1px_2px_rgb(0 0 0 / 0.08)] transition-[box-shadow,border-color] duration-150",
+        "hover:border-[hsl(var(--accent))]/30 hover:shadow-[0_6px_12px_rgb(0 0 0 / 0.12)]",
         "focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))]/30 focus:ring-offset-2"
       )}
     >

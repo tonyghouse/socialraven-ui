@@ -230,7 +230,7 @@ export default function PublishedPostsPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="mt-8 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -262,7 +262,7 @@ export default function PublishedPostsPage() {
 
 function SkeletonCollectionCard() {
   return (
-    <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+    <div className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
       <div className="h-[3px] bg-[hsl(var(--success))]" />
       <div className="flex items-center justify-between px-5 pt-4">
         <Skeleton className="h-5 w-16 rounded-lg" />
@@ -300,7 +300,7 @@ function SkeletonCollectionCard() {
 
 function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
   return (
-    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-16 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-16 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
         <CalendarCheck2 className="h-5 w-5 text-[hsl(var(--success))]" />
       </div>

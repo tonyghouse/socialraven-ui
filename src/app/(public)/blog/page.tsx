@@ -13,7 +13,7 @@ import {
 import {
   PublicLozenge,
   PublicPrimaryLinkButton,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import {
   PublicCard,
   PublicHero,
@@ -98,7 +98,7 @@ export default function BlogPage() {
         topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+            className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
           >
             ← Back
           </Link>
@@ -119,13 +119,13 @@ export default function BlogPage() {
             <PublicCard key={title} className="space-y-4 p-6">
               <div className="flex items-center justify-between gap-3">
                 <PublicLozenge appearance="inprogress">{category}</PublicLozenge>
-                <div className="flex items-center gap-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+                <div className="flex items-center gap-1 text-label-12 text-[var(--ds-gray-900)]">
                   <Clock className="h-3 w-3" />
                   {readTime}
                 </div>
               </div>
-              <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{title}</h3>
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{excerpt}</p>
+              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">{excerpt}</p>
               <PublicLozenge appearance="default">Publishing soon</PublicLozenge>
             </PublicCard>
           ))}
@@ -136,11 +136,11 @@ export default function BlogPage() {
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map(({ icon: Icon, title, description }) => (
             <PublicInsetCard key={title} className="space-y-3 p-6">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))]">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
                 <Icon className="h-5 w-5" />
               </div>
-              <h3 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{title}</h3>
-              <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">{description}</p>
+              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
             </PublicInsetCard>
           ))}
         </div>
@@ -149,13 +149,13 @@ export default function BlogPage() {
       <PublicSection>
         <PublicCard className="px-8 py-10 text-center md:px-14 md:py-14">
           <div className="mx-auto max-w-2xl space-y-5">
-            <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+            <p className="text-label-12 text-[var(--ds-gray-900)]">
               Stay in the loop
             </p>
-            <h2 className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">
+            <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
               Be the first to read our articles.
             </h2>
-            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <p className="text-copy-14 text-[var(--ds-gray-900)]">
               Drop us an email and we&apos;ll notify you as soon as the first posts go live. No spam, unsubscribe any time.
             </p>
             <div className="flex justify-center">

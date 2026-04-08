@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PublicLozenge } from "@/components/public/public-atlassian";
+import { PublicLozenge } from "@/components/public/public-site-primitives";
 import {
   PublicCard,
   PublicHero,
@@ -37,7 +37,7 @@ export default function ChangelogPage() {
         topSlot={
           <Link
             href="/"
-            className="inline-flex items-center gap-1 text-sm text-[hsl(var(--foreground-muted))] transition-colors hover:text-[hsl(var(--foreground))]"
+            className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
           >
             ← Back
           </Link>
@@ -52,19 +52,19 @@ export default function ChangelogPage() {
           {ENTRIES.map(({ version, date, badge, items }) => (
             <PublicCard key={version} className="p-8">
               <div className="mb-1 flex flex-wrap items-center gap-3">
-                <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">{version}</h2>
+                <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">{version}</h2>
                 <PublicLozenge appearance="new" isBold>
                   {badge}
                 </PublicLozenge>
               </div>
-              <p className="mb-6 text-xs leading-4 text-[hsl(var(--foreground-muted))]">{date}</p>
+              <p className="mb-6 text-label-12 text-[var(--ds-gray-900)]">{date}</p>
               <ul className="grid gap-3 sm:grid-cols-2">
                 {items.map((item) => (
                   <li
                     key={item}
-                    className="flex items-start gap-2.5 text-sm leading-5 text-[hsl(var(--foreground-muted))]"
+                    className="flex items-start gap-2.5 text-copy-14 text-[var(--ds-gray-900)]"
                   >
-                    <span className="mt-0.5 text-[hsl(var(--accent))]">✓</span>
+                    <span className="mt-0.5 text-[var(--ds-blue-600)]">✓</span>
                     <span>{item}</span>
                   </li>
                 ))}

@@ -1,14 +1,10 @@
 "use client";
 
-import AtlassianButton, { LinkButton } from "@atlaskit/button/new";
-import ProgressBar from "@atlaskit/progress-bar";
 import { useUser } from "@clerk/nextjs";
 import {
   Facebook,
   Instagram,
   Linkedin,
-  Minus,
-  Plus,
   Twitter,
   Youtube,
 } from "lucide-react";
@@ -19,14 +15,13 @@ import { useEffect, useState } from "react";
 import Navbar from "@/components/navbar/navbar";
 import { PricingGrid } from "@/components/public/pricing-grid";
 import { PublicSiteFooter } from "@/components/public/public-site-footer";
-import { Separator } from "@/components/ui/separator";
 
 const INTEGRATIONS = [
-  { name: "Instagram", icon: Instagram, tint: "text-pink-600", surface: "bg-pink-50 dark:bg-pink-500/10" },
-  { name: "X / Twitter", icon: Twitter, tint: "text-slate-700 dark:text-slate-200", surface: "bg-slate-100 dark:bg-slate-500/10" },
-  { name: "LinkedIn", icon: Linkedin, tint: "text-blue-700", surface: "bg-blue-50 dark:bg-blue-500/10" },
-  { name: "YouTube", icon: Youtube, tint: "text-red-600", surface: "bg-red-50 dark:bg-red-500/10" },
-  { name: "Facebook", icon: Facebook, tint: "text-blue-600", surface: "bg-blue-50 dark:bg-blue-500/10" },
+  { name: "Instagram", icon: Instagram },
+  { name: "X / Twitter", icon: Twitter },
+  { name: "LinkedIn", icon: Linkedin },
+  { name: "YouTube", icon: Youtube },
+  { name: "Facebook", icon: Facebook },
 ];
 
 const STATS = [
@@ -147,6 +142,13 @@ const FAQ = [
   },
 ];
 
+const sectionEyebrowClassName = "text-label-12 text-[var(--ds-gray-900)]";
+const sectionTitleClassName = "mt-3 text-heading-32 text-[var(--ds-gray-1000)]";
+const primaryActionClassName =
+  "inline-flex h-10 items-center justify-center rounded-md bg-[var(--ds-blue-600)] px-4 text-label-14 text-white transition-colors duration-150 hover:bg-[var(--ds-blue-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2";
+const secondaryActionClassName =
+  "inline-flex h-10 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 text-label-14 text-[var(--ds-gray-1000)] transition-colors duration-150 hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2";
+
 function SurfaceCard({
   className = "",
   children,
@@ -156,7 +158,7 @@ function SurfaceCard({
 }) {
   return (
     <div
-      className={`rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] ${className}`}
+      className={`rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] transition-colors duration-150 ${className}`}
     >
       {children}
     </div>
@@ -172,16 +174,16 @@ function StatusPill({
 }) {
   const toneClass = {
     accent:
-      "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]",
+      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
     success:
-      "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+      "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
     neutral:
-      "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]",
+      "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
   }[tone];
 
   return (
     <span
-      className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-medium leading-4 ${toneClass}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-1 text-label-12 ${toneClass}`}
     >
       {children}
     </span>
@@ -204,9 +206,10 @@ export default function LandingPage() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
+      <div className="min-h-screen bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
         <main>
-          <section className="border-b border-[hsl(var(--border-subtle))] bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)] pt-24 pb-16 lg:pb-20">
+          {/* Hero */}
+          <section className="border-b border-[var(--ds-gray-400)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-background-200)_100%)] pt-24 pb-16 lg:pb-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:items-stretch">
                 <div className="flex h-full flex-col justify-center space-y-7 text-center lg:pr-4 lg:text-left">
@@ -216,43 +219,46 @@ export default function LandingPage() {
                   </div>
 
                   <div className="space-y-4">
-                    <h1 className="max-w-3xl text-[2.5rem] leading-[2.75rem] font-bold tracking-[-0.025em] text-[hsl(var(--foreground))] md:text-[3rem] md:leading-[3.25rem] lg:text-[3.5rem] lg:leading-[3.75rem]">
+                    <h1 className="max-w-4xl text-5xl leading-[0.98] font-bold tracking-[-0.05em] text-[var(--ds-gray-1000)] md:text-6xl lg:text-6xl">
                       Your social media,
                       <br />
-                      <span className="text-[hsl(var(--accent))]">on autopilot.</span>
+                      <span className="text-[var(--ds-blue-600)]">on autopilot.</span>
                     </h1>
-                    <p className="max-w-2xl text-sm leading-5 text-[hsl(var(--foreground-muted))] md:text-[0.875rem] md:leading-5">
+                    <p className="max-w-2xl text-copy-16 text-[var(--ds-gray-900)]">
                       Schedule, publish, review, and track content across your social channels from one workspace.
                       Built for creators, agencies, and teams running recurring publishing operations.
                     </p>
                   </div>
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start">
-                    <LinkButton appearance="primary" href="/sign-up">
+                    <Link
+                      href="/sign-up"
+                      className={primaryActionClassName}
+                    >
                       Start free, no card needed
-                    </LinkButton>
-                    <AtlassianButton
-                      appearance="subtle"
+                    </Link>
+                    <button
                       onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
+                      className={secondaryActionClassName}
                     >
                       See how it works
-                    </AtlassianButton>
+                    </button>
                   </div>
 
-                  <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+                  <p className="text-copy-13 text-[var(--ds-gray-900)]">
                     14-day Pro trial · No credit card · GDPR compliant
                   </p>
                 </div>
 
                 <div className="flex h-full lg:pl-4">
-                  <SurfaceCard className="flex h-full w-full flex-col overflow-hidden shadow-sm">
-                    <div className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-5 py-3.5">
+                  <SurfaceCard className="flex h-full w-full flex-col overflow-hidden bg-[var(--ds-gray-100)]">
+                    <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-5 py-4">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                          <p className={sectionEyebrowClassName}>
                             Campaign overview
                           </p>
-                          <h2 className="mt-1 text-base leading-5 font-bold tracking-[-0.01em]">Q2 content operations</h2>
+                          <h2 className="mt-1 text-heading-16">Q2 content operations</h2>
                         </div>
                         <StatusPill tone="success">Live publishing</StatusPill>
                       </div>
@@ -267,20 +273,20 @@ export default function LandingPage() {
                         ].map((item) => (
                           <div
                             key={item.label}
-                            className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] p-3.5"
+                            className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4"
                           >
-                            <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">{item.label}</p>
-                            <p className="mt-1.5 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">{item.value}</p>
+                            <p className="text-label-12 text-[var(--ds-gray-900)]">{item.label}</p>
+                            <p className="mt-2 text-heading-24">{item.value}</p>
                           </div>
                         ))}
                       </div>
 
                       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-                        <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
+                        <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-sm font-bold leading-5">Workflow status</p>
-                              <p className="text-xs leading-4 text-[hsl(var(--foreground-muted))]">Last 7 days</p>
+                              <p className="text-heading-16">Workflow status</p>
+                              <p className="mt-1 text-copy-13 text-[var(--ds-gray-900)]">Last 7 days</p>
                             </div>
                             <StatusPill tone="success">Stable</StatusPill>
                           </div>
@@ -291,41 +297,52 @@ export default function LandingPage() {
                               { label: "Queue ready", value: 91 },
                             ].map((metric) => (
                               <div key={metric.label}>
-                                <div className="mb-2 flex items-center justify-between text-sm leading-5">
-                                  <span className="text-[hsl(var(--foreground-muted))]">{metric.label}</span>
-                                  <span className="font-medium text-[hsl(var(--foreground))]">{metric.value}%</span>
+                                <div className="mb-1.5 flex items-center justify-between">
+                                  <span className="text-label-13 text-[var(--ds-gray-900)]">{metric.label}</span>
+                                  <span className="text-label-13 text-[var(--ds-gray-1000)]">{metric.value}%</span>
                                 </div>
-                                <ProgressBar ariaLabel={metric.label} value={metric.value} appearance="default" />
+                                <div
+                                  role="progressbar"
+                                  aria-label={metric.label}
+                                  aria-valuenow={metric.value}
+                                  aria-valuemax={100}
+                                  className="h-1.5 w-full rounded-full bg-[var(--ds-gray-200)]"
+                                >
+                                  <div
+                                    className="h-full rounded-full bg-[var(--ds-blue-600)] transition-[width] duration-500"
+                                    style={{ width: `${metric.value}%` }}
+                                  />
+                                </div>
                               </div>
                             ))}
                           </div>
                         </div>
 
-                        <div className="rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))] p-4">
-                          <p className="text-sm font-bold leading-5">Next scheduled publish</p>
-                          <p className="mt-1 text-xs leading-4 text-[hsl(var(--foreground-muted))]">
+                        <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+                          <p className="text-heading-16">Next scheduled publish</p>
+                          <p className="mt-1 text-copy-13 text-[var(--ds-gray-900)]">
                             Today, 7:30 PM IST
                           </p>
 
                           <div className="mt-4 flex flex-wrap gap-2">
-                            {INTEGRATIONS.slice(0, 4).map(({ name, icon: Icon, tint, surface }) => (
+                            {INTEGRATIONS.slice(0, 4).map(({ name, icon: Icon }) => (
                               <div
                                 key={name}
-                                className={`flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] ${surface}`}
+                                className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                                 title={name}
                               >
-                                <Icon className={`h-4 w-4 ${tint}`} />
+                                <Icon className="h-4 w-4" />
                               </div>
                             ))}
                           </div>
 
-                          <Separator className="my-3.5 bg-[hsl(var(--border-subtle))]" />
+                          <hr className="my-3.5 border-t border-[var(--ds-gray-400)]" />
 
-                          <div className="rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] p-3">
-                            <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                          <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-3.5">
+                            <p className="text-label-12 text-[var(--ds-gray-900)]">
                               Review status
                             </p>
-                            <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                            <p className="mt-1 text-copy-13 text-[var(--ds-gray-900)]">
                               Internal review complete. The next publishing window is queued across connected accounts.
                             </p>
                           </div>
@@ -338,56 +355,59 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section className="border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-12">
+          {/* Stats */}
+          <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-14">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="grid gap-4 md:grid-cols-4">
                 {STATS.map((item) => (
-                  <SurfaceCard key={item.label} className="p-5">
-                    <p className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--foreground))]">{item.value}</p>
-                    <p className="mt-2 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{item.label}</p>
-                    <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{item.detail}</p>
+                  <SurfaceCard key={item.label} className="p-6">
+                    <p className="text-heading-32 text-[var(--ds-gray-1000)]">{item.value}</p>
+                    <p className="mt-2 text-label-14 text-[var(--ds-gray-1000)]">{item.label}</p>
+                    <p className="mt-2 text-copy-13 text-[var(--ds-gray-900)]">{item.detail}</p>
                   </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          <section id="integrations" className="bg-[hsl(var(--background))] py-16">
+          {/* Integrations */}
+          <section id="integrations" className="bg-[var(--ds-background-100)] py-16">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mx-auto max-w-3xl text-center">
-                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                <p className={sectionEyebrowClassName}>
                   Works with your platforms
                 </p>
-                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em] md:text-[1.5rem] md:leading-7">
+                <h2 className={sectionTitleClassName}>
                   Connect the channels your team already uses.
                 </h2>
               </div>
 
               <div className="mt-10 flex flex-wrap justify-center gap-3">
-                {INTEGRATIONS.map(({ name, icon: Icon, tint, surface }) => (
+                {INTEGRATIONS.map(({ name, icon: Icon }) => (
                   <SurfaceCard
                     key={name}
-                    className="flex items-center gap-3 rounded-full px-4 py-3 shadow-sm"
+                    className="flex items-center gap-3 rounded-full bg-[var(--ds-gray-100)] px-4 py-3"
                   >
                     <div
-                      className={`flex h-8 w-8 items-center justify-center rounded-full border border-[hsl(var(--border-subtle))] ${surface}`}
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
                     >
-                      <Icon className={`h-4 w-4 ${tint}`} />
+                      <Icon className="h-4 w-4" />
                     </div>
-                    <span className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{name}</span>
+                    <span className="text-label-14 text-[var(--ds-gray-1000)]">{name}</span>
                   </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          <section id="features" className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
+          {/* Features */}
+          <section id="features" className="border-y border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-12 max-w-2xl">
-                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                <p className={sectionEyebrowClassName}>
                   Features
                 </p>
-                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
+                <h2 className={sectionTitleClassName}>
                   Built for speed.
                   <br />
                   Designed for growth.
@@ -396,17 +416,17 @@ export default function LandingPage() {
 
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {FEATURES.map((feature, index) => (
-                  <SurfaceCard key={feature.title} className="p-6 shadow-sm">
+                  <SurfaceCard key={feature.title} className="bg-[var(--ds-background-100)] p-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                        <p className="text-label-12 text-[var(--ds-gray-900)]">
                           {String(index + 1).padStart(2, "0")}
                         </p>
-                        <h3 className="mt-3 text-base leading-5 font-bold tracking-[-0.01em]">{feature.title}</h3>
+                        <h3 className="mt-3 text-heading-16">{feature.title}</h3>
                       </div>
                       <StatusPill tone="accent">{feature.meta}</StatusPill>
                     </div>
-                    <p className="mt-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                    <p className="mt-4 text-copy-14 text-[var(--ds-gray-900)]">
                       {feature.description}
                     </p>
                   </SurfaceCard>
@@ -415,73 +435,76 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section id="how-it-works" className="bg-[hsl(var(--background))] py-20">
+          {/* How it works */}
+          <section id="how-it-works" className="bg-[var(--ds-background-100)] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-12 max-w-2xl">
-                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                <p className={sectionEyebrowClassName}>
                   How it works
                 </p>
-                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
+                <h2 className={sectionTitleClassName}>
                   Up and running in minutes
                 </h2>
               </div>
 
               <div className="grid gap-4 md:grid-cols-3">
                 {STEPS.map((step) => (
-                  <SurfaceCard key={step.step} className="p-6 shadow-sm">
+                  <SurfaceCard key={step.step} className="p-6">
                     <div className="flex items-center justify-between">
-                      <span className="text-[1.5rem] leading-7 font-bold tracking-[-0.02em] text-[hsl(var(--accent))]">{step.step}</span>
+                      <span className="text-heading-24 text-[var(--ds-blue-600)]">{step.step}</span>
                       <StatusPill tone="accent">Guided flow</StatusPill>
                     </div>
-                    <h3 className="mt-6 text-base leading-5 font-bold tracking-[-0.01em]">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-5 text-[hsl(var(--foreground-muted))]">{step.description}</p>
+                    <h3 className="mt-6 text-heading-16">{step.title}</h3>
+                    <p className="mt-3 text-copy-14 text-[var(--ds-gray-900)]">{step.description}</p>
                   </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          <section className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
+          {/* Workflows */}
+          <section className="border-y border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-12 max-w-2xl">
-                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                <p className={sectionEyebrowClassName}>
                   Workflows
                 </p>
-                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
+                <h2 className={sectionTitleClassName}>
                   Built for the way content teams actually operate.
                 </h2>
               </div>
 
               <div className="grid gap-4 md:grid-cols-3">
                 {WORKFLOWS.map((item) => (
-                  <SurfaceCard key={item.title} className="p-6 shadow-sm">
+                  <SurfaceCard key={item.title} className="p-6">
                     <StatusPill tone={item.tone === "success" ? "success" : "accent"}>Common workflow</StatusPill>
-                    <p className="mt-5 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                    <p className="mt-5 text-copy-14 text-[var(--ds-gray-900)]">
                       {item.description}
                     </p>
-                    <p className="mt-6 text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{item.title}</p>
+                    <p className="mt-6 text-label-14 text-[var(--ds-gray-1000)]">{item.title}</p>
                   </SurfaceCard>
                 ))}
               </div>
             </div>
           </section>
 
-          <section id="pricing" className="bg-[hsl(var(--background))] py-20">
+          {/* Pricing */}
+          <section id="pricing" className="bg-[var(--ds-background-100)] py-20">
             <div className="container mx-auto max-w-7xl px-6">
               <div className="mb-6 max-w-2xl">
-                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                <p className={sectionEyebrowClassName}>
                   Pricing
                 </p>
-                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
+                <h2 className={sectionTitleClassName}>
                   Simple, transparent pricing
                 </h2>
               </div>
 
-              <div className="rounded-xl border border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/8 px-5 py-4 text-[hsl(var(--foreground))]">
-                <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">
+              <div className="rounded-xl border border-[var(--ds-blue-300)] bg-[var(--ds-blue-100)] px-5 py-4">
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">
                   All plans include a 14-day free trial
                 </p>
-                <p className="mt-1 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
                   Start free and upgrade when you are ready.
                 </p>
               </div>
@@ -492,13 +515,14 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section className="border-y border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] py-20">
+          {/* FAQ */}
+          <section className="border-y border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-20">
             <div className="container mx-auto max-w-3xl px-6">
               <div className="text-center">
-                <p className="text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                <p className={sectionEyebrowClassName}>
                   FAQ
                 </p>
-                <h2 className="mt-3 text-[1.5rem] leading-7 font-bold tracking-[-0.02em]">
+                <h2 className={sectionTitleClassName}>
                   Common questions from teams evaluating the platform.
                 </h2>
               </div>
@@ -508,20 +532,24 @@ export default function LandingPage() {
                   const isOpen = openFaq === index;
 
                   return (
-                    <SurfaceCard key={item.question} className="overflow-hidden shadow-sm">
+                    <SurfaceCard key={item.question} className="overflow-hidden bg-[var(--ds-background-100)]">
                       <button
-                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
+                        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors duration-150 hover:bg-[var(--ds-gray-100)]"
                         onClick={() => setOpenFaq(isOpen ? null : index)}
                       >
-                        <span className="text-sm font-medium leading-5 text-[hsl(var(--foreground))]">{item.question}</span>
+                        <span className="text-label-14 text-[var(--ds-gray-1000)]">{item.question}</span>
                         {isOpen ? (
-                          <Minus className="h-4 w-4 shrink-0 text-[hsl(var(--foreground-muted))]" />
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0 text-[var(--ds-gray-900)]" aria-hidden="true">
+                            <path d="M2 8h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
                         ) : (
-                          <Plus className="h-4 w-4 shrink-0 text-[hsl(var(--foreground-muted))]" />
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0 text-[var(--ds-gray-900)]" aria-hidden="true">
+                            <path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                          </svg>
                         )}
                       </button>
                       {isOpen && (
-                        <div className="border-t border-[hsl(var(--border-subtle))] px-5 py-4 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+                        <div className="border-t border-[var(--ds-gray-400)] px-5 py-4 text-copy-14 text-[var(--ds-gray-900)]">
                           {item.answer}
                         </div>
                       )}
@@ -532,31 +560,32 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section className="bg-[#172B4D] py-24 text-white">
+          {/* CTA */}
+          <section className="border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-24">
             <div className="container mx-auto max-w-5xl px-6">
-              <div className="rounded-xl border border-white/15 bg-white/5 p-8 backdrop-blur-sm md:p-10">
+              <div className="rounded-xl border border-[var(--ds-blue-300)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-blue-100)_100%)] p-8 md:p-10">
                 <div className="grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
                   <div>
-                    <span className="inline-flex items-center rounded-md border border-white/15 bg-white/10 px-2.5 py-1 text-xs font-medium leading-4 text-white/80">
+                    <span className="inline-flex items-center rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-label-12 text-[var(--ds-blue-700)]">
                       Clear pricing and policy pages
                     </span>
-                    <h2 className="mt-5 text-[2rem] leading-9 font-bold tracking-[-0.02em]">
+                    <h2 className="mt-5 text-heading-32 text-[var(--ds-gray-1000)]">
                       Start planning in one workspace.
                     </h2>
-                    <p className="mt-4 max-w-2xl text-sm leading-5 text-white/70 md:text-[0.875rem] md:leading-5">
+                    <p className="mt-4 max-w-2xl text-copy-16 text-[var(--ds-gray-900)]">
                       Connect accounts, review the public pricing and policy pages, and see whether SocialRaven fits your publishing workflow.
                     </p>
                   </div>
                   <div className="flex flex-col gap-3 md:items-end">
                     <Link
                       href="/sign-up"
-                      className="inline-flex min-h-10 items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-[#172B4D] transition-colors hover:bg-white/90"
+                      className={primaryActionClassName}
                     >
                       Get started for free
                     </Link>
                     <Link
                       href="/contact"
-                      className="inline-flex min-h-10 items-center justify-center rounded-md border border-white/20 bg-transparent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+                      className={secondaryActionClassName}
                     >
                       Talk to sales
                     </Link>

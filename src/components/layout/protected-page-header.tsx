@@ -31,7 +31,7 @@ export function ProtectedPageHeader({
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {leading}
           {icon ? (
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] text-[hsl(var(--accent))] shadow-xs">
               {icon}
             </div>
           ) : null}

@@ -62,7 +62,7 @@ export function SurfaceSkeleton({
   return (
     <section
       className={cn(
-        "overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]",
+        "overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]",
         className
       )}
       {...props}
@@ -95,7 +95,7 @@ export function SurfaceHeaderSkeleton({
 
 export function MetricCardSkeleton() {
   return (
-    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 space-y-2">
           <Skeleton className="h-3 w-20 rounded-md" />

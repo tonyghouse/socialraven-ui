@@ -165,7 +165,7 @@ function StepCard({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-xl border bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)] transition-[border-color,box-shadow,opacity] duration-200",
+        "overflow-hidden rounded-xl border bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)] transition-[border-color,box-shadow,opacity] duration-200",
         locked
           ? "border-[hsl(var(--border-subtle))] opacity-55"
           : complete && isOpen
@@ -677,7 +677,7 @@ export default function DraftEditPage() {
   if (error || !collection) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[hsl(var(--background))] p-6">
-        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <div className="max-w-sm w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
             <AlertCircle className="h-7 w-7 text-[hsl(var(--destructive))]" />
           </div>
@@ -739,7 +739,7 @@ export default function DraftEditPage() {
       )}
 
       <div className="px-4 py-6 sm:px-6">
-        <div className="mb-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+        <div className="mb-5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-5 py-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <p className="text-sm font-semibold leading-5 text-[hsl(var(--foreground))]">{typeCfg.label} draft</p>
@@ -1075,7 +1075,7 @@ function LoadingSkeleton() {
       <div className="sticky top-0 z-10 h-[60px] border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95" />
       <div className="px-4 sm:px-6 py-6 space-y-4">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <div key={i} className="overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="flex items-start gap-4 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] px-6 py-4">
               <Skeleton className="w-7 h-7 rounded-lg flex-shrink-0" />
               <div className="flex-1 space-y-1.5">

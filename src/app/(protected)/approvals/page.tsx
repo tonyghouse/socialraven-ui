@@ -181,7 +181,7 @@ export default function ApprovalsPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-4 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+              <div className="mt-8 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-4 py-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -191,7 +191,7 @@ export default function ApprovalsPage() {
             )}
           </>
         ) : (
-          <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-12 text-center shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <section className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] px-6 py-12 text-center shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))]">
               <CheckCheck className="h-5 w-5 text-[hsl(var(--foreground-muted))]" />
             </div>

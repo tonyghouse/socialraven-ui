@@ -10,7 +10,7 @@ import {
   PublicPrimaryButton,
   PublicSectionMessage,
   PublicSubtleButton,
-} from "@/components/public/public-atlassian";
+} from "@/components/public/public-site-primitives";
 import { acceptInvitationApi } from "@/service/invitation";
 
 type State =
@@ -24,8 +24,8 @@ export default function InvitePage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)]">
-          <Loader2 className="h-8 w-8 animate-spin text-[hsl(var(--foreground-muted))]" />
+        <div className="flex min-h-screen items-center justify-center bg-[var(--ds-background-100)]">
+          <Loader2 className="h-8 w-8 animate-spin text-[var(--ds-gray-900)]" />
         </div>
       }
     >
@@ -81,8 +81,8 @@ function InvitePageContent() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[linear-gradient(180deg,hsl(var(--background))_0%,hsl(var(--surface-sunken))_100%)] p-4">
-      <div className="w-full max-w-sm rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-8 text-center shadow-[var(--shadow-sm)]">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--ds-background-100)] p-4">
+      <div className="w-full max-w-sm rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-8 text-center shadow-none">
         <Image
           src="/SocialRavenLogo.svg"
           alt="SocialRaven"
@@ -93,8 +93,8 @@ function InvitePageContent() {
 
         {state.status === "needs-auth" && (
           <div>
-            <h2 className="mb-2 text-base leading-5 font-bold text-[hsl(var(--foreground))]">Sign in to accept</h2>
-            <p className="mb-6 text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <h2 className="mb-2 text-heading-16 text-[var(--ds-gray-1000)]">Sign in to accept</h2>
+            <p className="mb-6 text-copy-14 text-[var(--ds-gray-900)]">
               Sign in or create an account to accept this workspace invitation.
             </p>
             <SignIn
@@ -106,17 +106,17 @@ function InvitePageContent() {
         )}
 
         {(state.status === "idle" || state.status === "loading") && (
-          <div className="flex flex-col items-center gap-3 text-[hsl(var(--foreground-muted))]">
+          <div className="flex flex-col items-center gap-3 text-[var(--ds-gray-900)]">
             <Loader2 className="h-8 w-8 animate-spin" />
-            <p className="text-sm leading-5">Accepting invitation…</p>
+            <p className="text-copy-14">Accepting invitation…</p>
           </div>
         )}
 
         {state.status === "success" && (
           <div className="flex flex-col items-center gap-4">
-            <CheckCircle className="h-12 w-12 text-[hsl(var(--success))]" />
-            <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">You&apos;re in!</h2>
-            <p className="text-sm leading-5 text-[hsl(var(--foreground-muted))]">
+            <CheckCircle className="h-12 w-12 text-[var(--ds-green-600)]" />
+            <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">You&apos;re in!</h2>
+            <p className="text-copy-14 text-[var(--ds-gray-900)]">
               You&apos;ve successfully joined the workspace.
             </p>
             <PublicPrimaryButton onClick={() => enterWorkspace(state.workspaceId)}>
@@ -128,9 +128,9 @@ function InvitePageContent() {
         {state.status === "error" && (
           <div className="space-y-4">
             <div className="flex justify-center">
-              <XCircle className="h-12 w-12 text-[hsl(var(--destructive))]" />
+              <XCircle className="h-12 w-12 text-[var(--ds-red-600)]" />
             </div>
-            <h2 className="text-base leading-5 font-bold text-[hsl(var(--foreground))]">Invitation error</h2>
+            <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Invitation error</h2>
             <PublicSectionMessage appearance="error" title={state.message}>
               <p>This invitation could not be accepted.</p>
             </PublicSectionMessage>

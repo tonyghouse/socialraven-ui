@@ -113,7 +113,7 @@ export default function RecoveryDraftPage() {
         )}
 
         <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <section className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <section className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <div className="flex flex-wrap items-center gap-2">
               <Lozenge appearance="removed">Failed Collection</Lozenge>
               <Lozenge appearance="moved">{collection.postCollectionType}</Lozenge>
@@ -158,7 +158,7 @@ export default function RecoveryDraftPage() {
             </div>
           </section>
 
-          <aside className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgba(9,30,66,0.08)]">
+          <aside className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-6 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
             <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-[hsl(var(--foreground-subtle))]">
               Next step
             </h3>

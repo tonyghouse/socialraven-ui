@@ -76,23 +76,23 @@ export function AppSidebar() {
   ];
 
   const navItemBase =
-    "group relative flex items-center gap-2.5 rounded-lg border text-sm font-medium leading-5 transition-[background-color,color,border-color,box-shadow] duration-150";
+    "group relative flex items-center gap-2.5 rounded-lg border text-label-14 transition-[background-color,color,border-color] duration-150";
   const navItemActive =
-    "border-[hsl(var(--accent))]/15 bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-accent-foreground))] shadow-xs";
+    "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
   const navItemIdle =
-    "border-transparent text-[hsl(var(--foreground-muted))] hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground))]";
+    "border-transparent text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]";
 
   return (
     <aside
       className={cn(
-        "relative z-30 flex h-screen shrink-0 flex-col border-r border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-background))]",
+        "relative z-30 flex h-screen shrink-0 flex-col border-r border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]",
         "transition-[width] duration-200 ease-out",
         isCollapsed ? "w-[68px]" : "w-[228px]"
       )}
     >
       <div
         className={cn(
-          "relative border-b border-[hsl(var(--border-subtle))]",
+          "relative border-b border-[var(--ds-gray-400)]",
           isCollapsed ? "px-2 py-2.5" : "px-2.5 py-2.5"
         )}
       >
@@ -107,11 +107,11 @@ export function AppSidebar() {
             className={cn(
               "group flex min-w-0 items-center rounded-xl border border-transparent transition-colors",
               isCollapsed
-                ? "justify-center p-1 hover:bg-[hsl(var(--surface-raised))]"
-                : "flex-1 gap-2 px-1 py-1 hover:bg-[hsl(var(--surface-raised))]"
+                ? "justify-center p-1 hover:bg-[var(--ds-gray-100)]"
+                : "flex-1 gap-2 px-1 py-1 hover:bg-[var(--ds-gray-100)]"
             )}
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-xs">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] shadow-none">
               <Image
                 src="/SocialRavenLogo.svg"
                 alt="SocialRaven"
@@ -123,7 +123,7 @@ export function AppSidebar() {
 
             {!isCollapsed && (
               <div className="min-w-0">
-                <p className="truncate text-base font-bold leading-5 text-[hsl(var(--foreground))]">
+                <p className="truncate text-heading-14 text-[var(--ds-gray-1000)]">
                   SocialRaven
                 </p>
               </div>
@@ -133,8 +133,8 @@ export function AppSidebar() {
           <button
             onClick={() => setIsCollapsed((v) => !v)}
             className={cn(
-              "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-transparent text-[hsl(var(--foreground-subtle))] transition-colors",
-              "hover:border-[hsl(var(--border-subtle))] hover:bg-[hsl(var(--surface-raised))] hover:text-[hsl(var(--foreground-muted))]"
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-transparent text-[var(--ds-gray-900)] transition-colors",
+              "hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
             )}
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
@@ -151,13 +151,13 @@ export function AppSidebar() {
 
       <div
         className={cn(
-          "border-b border-[hsl(var(--border-subtle))]",
+          "border-b border-[var(--ds-gray-400)]",
           isCollapsed ? "px-2 py-2.5" : "px-2.5 py-2.5"
         )}
       >
         <div
           className={cn(
-            "rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-sunken))]",
+            "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]",
             isCollapsed ? "flex justify-center px-2 py-2" : "p-2"
           )}
         >
@@ -178,11 +178,11 @@ export function AppSidebar() {
                 {label && (
                   <div className="pb-0.5">
                     {!isCollapsed ? (
-                      <p className="px-2.5 text-xs font-medium leading-4 text-[hsl(var(--foreground-subtle))]">
+                      <p className="px-2.5 text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
                         {label}
                       </p>
                     ) : (
-                      <div className="mx-auto w-6 border-t border-[hsl(var(--border-subtle))]" />
+                      <div className="mx-auto w-6 border-t border-[var(--ds-gray-400)]" />
                     )}
                   </div>
                 )}
@@ -216,12 +216,12 @@ export function AppSidebar() {
                       )}
 
                       <div
-                        className={cn(
-                          "flex shrink-0 items-center justify-center rounded-md transition-colors duration-150",
+                          className={cn(
+                            "flex shrink-0 items-center justify-center rounded-md transition-colors duration-150",
                           isCollapsed ? "h-6 w-6" : "h-5 w-5",
                           isActive
-                            ? "bg-white/70 text-[hsl(var(--accent))] dark:bg-[hsl(var(--surface))]"
-                            : "text-[hsl(var(--foreground-muted))] group-hover:text-[hsl(var(--foreground))]"
+                            ? "bg-[var(--ds-background-100)] text-[hsl(var(--accent))]"
+                            : "text-[var(--ds-gray-900)] group-hover:text-[var(--ds-gray-1000)]"
                         )}
                       >
                         <Icon size={16} />
@@ -256,13 +256,13 @@ export function AppSidebar() {
 
       <div
         className={cn(
-          "border-t border-[hsl(var(--border-subtle))]",
+          "border-t border-[var(--ds-gray-400)]",
           isCollapsed ? "px-2 py-2.5" : "px-2.5 py-2.5"
         )}
       >
         <div
           className={cn(
-            "rounded-xl border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-sunken))]",
+            "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]",
             isCollapsed
               ? "flex flex-col items-center gap-1.5 p-1.5"
               : "space-y-1.5 p-1.5"

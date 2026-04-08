@@ -93,7 +93,7 @@ export function PostCollaborationAnnotationView({
 
             {thread.mediaMarkerX !== null && thread.mediaMarkerY !== null && (
               <div
-                className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[hsl(var(--accent))] shadow-[0_0_0_3px_rgba(9,30,66,0.18)]"
+                className="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-[hsl(var(--accent))] shadow-[0_0_0_3px_rgb(0 0 0 / 0.18)]"
                 style={{
                   left: `${thread.mediaMarkerX * 100}%`,
                   top: `${thread.mediaMarkerY * 100}%`,
