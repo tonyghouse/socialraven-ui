@@ -1,8 +1,8 @@
 "use client";
 
 import type React from "react";
-import { DatePicker, TimePicker } from "@atlaskit/datetime-picker";
 import { Globe } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Props {
   date: string;
@@ -20,28 +20,7 @@ export default function ScheduleDateTimePicker({
   appearance = "default",
 }: Props) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  const minDate  = new Date().toISOString().split("T")[0];
-  const pickerThemeClassName = [
-    "w-full",
-    "[--ds-background-input:hsl(var(--surface))]",
-    "[--ds-background-input-hovered:hsl(var(--surface-raised))]",
-    "[--ds-background-input-pressed:hsl(var(--surface-raised))]",
-    "[--ds-background-disabled:hsl(var(--surface-raised))]",
-    "[--ds-border-input:hsl(var(--border))]",
-    "[--ds-border-focused:hsl(var(--accent))]",
-    "[--ds-border-danger:hsl(var(--destructive))]",
-    "[--ds-surface-overlay:hsl(var(--surface))]",
-    "[--ds-text:hsl(var(--foreground))]",
-    "[--ds-text-subtle:hsl(var(--foreground-muted))]",
-    "[--ds-text-subtlest:hsl(var(--foreground-subtle))]",
-    "[--ds-text-disabled:hsl(var(--foreground-subtle))]",
-    "[--ds-text-selected:hsl(var(--accent-foreground))]",
-    "[--ds-background-selected:hsl(var(--accent))]",
-    "[--ds-background-selected-hovered:hsl(var(--accent-hover))]",
-    "[--ds-background-neutral-subtle-hovered:hsl(var(--surface-raised))]",
-    "[--ds-background-neutral-subtle-pressed:hsl(var(--surface-raised))]",
-    "[--ds-shadow-overlay:var(--shadow-lg)]",
-  ].join(" ");
+  const minDate = new Date().toISOString().split("T")[0];
   const timeOptions = Array.from({ length: 24 * 4 }, (_, index) => {
     const hour = String(Math.floor(index / 4)).padStart(2, "0");
     const minute = String((index % 4) * 15).padStart(2, "0");
@@ -119,16 +98,17 @@ export default function ScheduleDateTimePicker({
           <label htmlFor="post-date" className="text-xs font-medium text-muted-foreground">
             Date
           </label>
-          <DatePicker
+          <input
             id="post-date"
+            type="date"
             value={date}
-            onChange={(value) => setDate(value)}
-            minDate={minDate}
-            locale="en-US"
-            placeholder="Select date"
-            shouldShowCalendarButton
-            label="Schedule date"
-            innerProps={{ className: `${pickerThemeClassName} schedule-date-picker` }}
+            min={minDate}
+            onChange={(event) => setDate(event.target.value)}
+            className={cn(
+              "flex h-10 w-full rounded-md border px-3 text-sm transition-colors",
+              "border-input bg-background text-foreground shadow-sm placeholder:text-muted-foreground",
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+            )}
           />
         </div>
 
@@ -136,18 +116,23 @@ export default function ScheduleDateTimePicker({
           <label htmlFor="post-time" className="text-xs font-medium text-muted-foreground">
             Time
           </label>
-          <TimePicker
+          <select
             id="post-time"
             value={time}
-            onChange={(value) => setTime(value)}
-            placeholder="Select time"
-            label="Schedule time"
-            locale="en-US"
-            timeFormat="HH:mm"
-            times={timeOptions}
-            timeIsEditable
-            innerProps={{ className: pickerThemeClassName }}
-          />
+            onChange={(event) => setTime(event.target.value)}
+            className={cn(
+              "flex h-10 w-full rounded-md border px-3 text-sm transition-colors",
+              "border-input bg-background text-foreground shadow-sm",
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+            )}
+          >
+            <option value="">Select time</option>
+            {timeOptions.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 

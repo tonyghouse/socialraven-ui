@@ -45,7 +45,7 @@ There are no test scripts configured.
 
 ### Styling
 
-TailwindCSS with CSS HSL variables for theming (supports dark mode via `class` strategy). Uses `cn()` from `@/lib/utils` everywhere for conditional class merging. Custom font: `heming` (local) alongside Inter.
+TailwindCSS with CSS HSL variables for theming (supports dark mode via `class` strategy). Uses `cn()` from `@/lib/utils` everywhere for conditional class merging. Product typography is wired through the Geist font variables exposed in `src/app/layout.tsx` and bridged in `src/app/globals.css`.
 
 ### Environment Variables
 
