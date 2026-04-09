@@ -72,12 +72,12 @@ function PlatformRequirementsTable({
             )}
             <div className="flex-1 min-w-0">
               <p className={cn(isGeist ? "text-copy-12 font-semibold text-[var(--ds-gray-1000)]" : "text-xs font-semibold text-foreground")}>{name}</p>
-              <p className={cn("mt-0.5 text-[11px] leading-relaxed", isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
+              <p className={cn("mt-0.5 text-[0.6875rem] leading-relaxed", isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
                 {c.summary}
               </p>
             </div>
             {unsupported && (
-              <span className={cn("flex-shrink-0 rounded border px-1.5 py-px text-[10px] font-semibold", isGeist ? "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]" : "border-warning/30 bg-warning/10 text-warning")}>
+              <span className={cn("flex-shrink-0 rounded border px-1.5 py-px text-[0.625rem] font-semibold", isGeist ? "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]" : "border-warning/30 bg-warning/10 text-warning")}>
                 N/A
               </span>
             )}
@@ -119,7 +119,7 @@ function ErrorList({
             <ul className="space-y-1.5 ml-4">
               {errs.map((err, i) => (
                 <li key={i} className="flex items-start gap-2">
-                  <span className={cn("mt-0.5 flex-shrink-0 whitespace-nowrap rounded border px-1.5 py-px text-[10px] font-semibold", isGeist ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
+                  <span className={cn("mt-0.5 flex-shrink-0 whitespace-nowrap rounded border px-1.5 py-px text-[0.625rem] font-semibold", isGeist ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
                     {ERROR_LABELS[err.code] ?? err.code}
                   </span>
                   <span className={cn("text-xs leading-relaxed", isGeist ? "text-[var(--ds-red-700)]" : "text-destructive")}>{err.message}</span>

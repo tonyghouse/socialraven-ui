@@ -70,7 +70,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--ds-gray-1000)",
     connectHref: "/api/auth/tiktok",
     enabled: false,
-    iconClassName: "h-[15px] w-[15px]",
+    iconClassName: "h-[0.9375rem] w-[0.9375rem]",
   },
   threads: {
     label: "Threads",
@@ -78,7 +78,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--ds-gray-1000)",
     connectHref: "/api/auth/threads",
     enabled: false,
-    iconClassName: "h-[15px] w-[15px]",
+    iconClassName: "h-[0.9375rem] w-[0.9375rem]",
   },
 };
 

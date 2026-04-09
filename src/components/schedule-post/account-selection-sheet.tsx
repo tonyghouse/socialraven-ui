@@ -97,7 +97,7 @@ function AccountChip({
           isGeist
             ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
             : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-offset-2",
-          "w-[72px]",
+          "w-[4.5rem]",
           isSelected
             ? isGeist
               ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] shadow-sm"
@@ -129,7 +129,7 @@ function AccountChip({
             ) : null}
             <AvatarFallback
               className={cn(
-                "text-[10px] font-semibold",
+                "text-[0.625rem] font-semibold",
                 isGeist
                   ? "bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                   : "bg-surface-raised text-foreground"
@@ -154,7 +154,7 @@ function AccountChip({
         {/* Username */}
         <span
           className={cn(
-            "w-full truncate text-center text-[10px] font-medium leading-tight",
+            "w-full truncate text-center text-[0.625rem] font-medium leading-tight",
             isGeist ? "text-[var(--ds-gray-1000)]" : "text-foreground"
           )}
         >
@@ -176,7 +176,7 @@ function AccountChip({
             isGeist
               ? "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
               : "bg-popover border border-border-subtle text-popover-foreground",
-            "w-max min-w-[140px] max-w-[200px]",
+            "w-max min-w-[8.75rem] max-w-[12.5rem]",
           )}>
             {/* Profile image */}
             <div className="relative flex-shrink-0">
@@ -186,7 +186,7 @@ function AccountChip({
                 ) : null}
                 <AvatarFallback
                   className={cn(
-                    "text-[10px] font-semibold",
+                    "text-[0.625rem] font-semibold",
                     isGeist
                       ? "bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                       : "bg-surface-raised text-foreground"
@@ -214,11 +214,11 @@ function AccountChip({
               <p className={cn("truncate text-xs font-semibold leading-tight", isGeist ? "text-[var(--ds-gray-1000)]" : "text-popover-foreground")}>
                 {acc.username}
               </p>
-              <p className={cn("mt-0.5 text-[10px] leading-tight", isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
+              <p className={cn("mt-0.5 text-[0.625rem] leading-tight", isGeist ? "text-[var(--ds-gray-900)]" : "text-muted-foreground")}>
                 {platformLabel}
               </p>
               {disabledReason && (
-                <p className={cn("mt-0.5 text-[10px] leading-tight", isGeist ? "text-[var(--ds-red-700)]" : "text-destructive")}>
+                <p className={cn("mt-0.5 text-[0.625rem] leading-tight", isGeist ? "text-[var(--ds-red-700)]" : "text-destructive")}>
                   {disabledReason}
                 </p>
               )}
@@ -229,14 +229,14 @@ function AccountChip({
           <span
             aria-hidden="true"
             className={cn(
-              "absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent",
+              "absolute top-full left-1/2 -translate-x-1/2 border-[0.3125rem] border-transparent",
               isGeist ? "border-t-[var(--ds-gray-400)]" : "border-t-border"
             )}
           />
           <span
             aria-hidden="true"
             className={cn(
-              "absolute top-full left-1/2 -translate-x-1/2 mt-[-1px] border-[5px] border-transparent",
+              "absolute top-full left-1/2 -translate-x-1/2 mt-[-0.0625rem] border-[0.3125rem] border-transparent",
               isGeist ? "border-t-[var(--ds-background-100)]" : "border-t-popover"
             )}
           />
@@ -306,7 +306,7 @@ export function AccountSelector({
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[72px] px-3 py-2.5"
+            className="flex-shrink-0 flex flex-col items-center gap-1.5 w-[4.5rem] px-3 py-2.5"
           >
             <Skeleton className={cn("w-9 h-9 rounded-full", isGeist && "bg-[var(--ds-gray-300)]")} />
             <Skeleton className={cn("w-10 h-2.5 rounded", isGeist && "bg-[var(--ds-gray-300)]")} />

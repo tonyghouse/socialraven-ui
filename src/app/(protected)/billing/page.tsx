@@ -386,7 +386,7 @@ function PlanRow({
           </ul>
         </div>
 
-        <div className="flex w-full shrink-0 flex-col gap-3 xl:w-[220px] xl:items-end xl:text-right">
+        <div className="flex w-full shrink-0 flex-col gap-3 xl:w-[13.75rem] xl:items-end xl:text-right">
           <div className="hidden sm:block">
             <PlanPrice plan={plan} align="right" />
           </div>
@@ -460,7 +460,7 @@ function InvoiceRow({ invoice }: { invoice: Invoice }) {
         </div>
       </div>
 
-      <div className="hidden gap-3 px-4 py-4 md:grid md:grid-cols-[minmax(0,1fr)_110px_120px_36px] md:items-center">
+      <div className="hidden gap-3 px-4 py-4 md:grid md:grid-cols-[minmax(0,1fr)_6.875rem_7.5rem_2.25rem] md:items-center">
         <div className="min-w-0">
           <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">{invoice.description}</p>
           <p className={cn("mt-1", quietTextClassName)}>{formatDate(invoice.date)}</p>
@@ -594,7 +594,7 @@ export default function BillingPage() {
         <div className="flex w-full flex-col gap-6">
           {!isOwner ? (
             <section className={sectionClassName}>
-              <div className={cn("flex items-center gap-3 px-4 py-4 sm:max-w-[640px]", insetPanelClassName)}>
+              <div className={cn("flex items-center gap-3 px-4 py-4 sm:max-w-[40rem]", insetPanelClassName)}>
                 <Lock className="h-4 w-4 shrink-0 text-[var(--ds-gray-900)]" />
                 <p className={subtleTextClassName}>
                   Subscription and billing details are only visible to the workspace owner.
@@ -609,17 +609,17 @@ export default function BillingPage() {
                 <div className="space-y-4">
                   {planLoading ? (
                     <>
-                      <Sk className="h-[248px] w-full rounded-2xl sm:h-[220px] lg:h-[164px]" />
+                      <Sk className="h-[15.5rem] w-full rounded-2xl sm:h-[13.75rem] lg:h-[10.25rem]" />
                       <div className="grid gap-0 overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] divide-y divide-[var(--ds-gray-400)] md:grid-cols-3 md:divide-x md:divide-y-0">
-                        <Sk className="h-[116px] rounded-none" />
-                        <Sk className="h-[116px] rounded-none" />
-                        <Sk className="h-[116px] rounded-none" />
+                        <Sk className="h-[7.25rem] rounded-none" />
+                        <Sk className="h-[7.25rem] rounded-none" />
+                        <Sk className="h-[7.25rem] rounded-none" />
                       </div>
                     </>
                   ) : userPlan && currentPlan ? (
                     <>
                       <div className="rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4 sm:p-5 lg:rounded-none lg:border-x-0 lg:border-t-0 lg:bg-transparent lg:px-0 lg:py-0 lg:pb-6">
-                        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-6">
+                        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-6">
                           <div className="min-w-0 space-y-3 lg:border-r lg:border-[var(--ds-gray-400)] lg:pr-6">
                             <div className="flex items-start gap-3">
                               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]">
@@ -885,7 +885,7 @@ export default function BillingPage() {
                 <div className="space-y-4">
                   <div
                     className={cn(
-                      "flex items-start gap-3 rounded-xl border px-4 py-3 sm:max-w-[760px]",
+                      "flex items-start gap-3 rounded-xl border px-4 py-3 sm:max-w-[47.5rem]",
                       noticeClassName("blue")
                     )}
                   >
@@ -897,8 +897,8 @@ export default function BillingPage() {
 
                   {billingLoading ? (
                     <div className="space-y-3">
-                      <Sk className="h-[96px] w-full rounded-xl" />
-                      <Sk className="h-[240px] w-full rounded-xl" />
+                      <Sk className="h-[6rem] w-full rounded-xl" />
+                      <Sk className="h-[15rem] w-full rounded-xl" />
                     </div>
                   ) : (
                     <>
@@ -925,7 +925,7 @@ export default function BillingPage() {
                       ) : null}
 
                       <div className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-                        <div className="hidden grid-cols-[minmax(0,1fr)_110px_120px_36px] items-center gap-4 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3 text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)] md:grid">
+                        <div className="hidden grid-cols-[minmax(0,1fr)_6.875rem_7.5rem_2.25rem] items-center gap-4 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3 text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)] md:grid">
                           <span>Invoice</span>
                           <span>Status</span>
                           <span>Amount</span>

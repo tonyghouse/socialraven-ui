@@ -71,7 +71,7 @@ function ApprovalsGridSkeleton() {
                 <Sk className="h-7 w-7 rounded-md" />
               </div>
             </div>
-            <Sk className="h-[156px] w-[104px] rounded-md" />
+            <Sk className="h-[9.75rem] w-[6.5rem] rounded-md" />
           </div>
 
           <div className="flex items-center justify-between border-t border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2.5">

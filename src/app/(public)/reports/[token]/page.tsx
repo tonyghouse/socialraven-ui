@@ -468,7 +468,7 @@ export default function PublicClientReportPage() {
         description="Key observations prepared for quick review in client meetings or email handoffs."
         surface="surface"
       >
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.95fr)]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,0.95fr)]">
           <PublicCard className="p-6">
             <div className="space-y-4">
               {report.highlights.map((highlight, index) => (
@@ -528,7 +528,7 @@ export default function PublicClientReportPage() {
             </p>
           </PublicSectionMessage>
         ) : (
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(300px,0.85fr)]">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18.75rem,0.85fr)]">
             <PublicCard className="p-6">
               <TrendChart series={timelineSeries} />
             </PublicCard>

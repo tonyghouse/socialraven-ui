@@ -18,13 +18,13 @@ export function PageHeaderSkeleton({
 }: PageHeaderSkeletonProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
-      <div className="flex h-[58px] items-center justify-between gap-3 px-4 sm:px-5">
+      <div className="flex h-[3.625rem] items-center justify-between gap-3 px-4 sm:px-5">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {showIcon ? (
             <Skeleton className="h-8 w-8 shrink-0 rounded-lg bg-[hsl(var(--surface-raised))]" />
           ) : null}
           <div className="min-w-0 space-y-2">
-            <Skeleton className={cn("h-[18px] rounded-md", titleWidth)} />
+            <Skeleton className={cn("h-[1.125rem] rounded-md", titleWidth)} />
             <Skeleton className={cn("h-3 rounded-md", descriptionWidth)} />
           </div>
         </div>
@@ -62,7 +62,7 @@ export function SurfaceSkeleton({
   return (
     <section
       className={cn(
-        "overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]",
+        "overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_0.0625rem_0.125rem_rgb(0 0 0 / 0.08)]",
         className
       )}
       {...props}
@@ -95,7 +95,7 @@ export function SurfaceHeaderSkeleton({
 
 export function MetricCardSkeleton() {
   return (
-    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]">
+    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface))] p-4 shadow-[0_0.0625rem_0.125rem_rgb(0 0 0 / 0.08)]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 space-y-2">
           <Skeleton className="h-3 w-20 rounded-md" />
@@ -117,7 +117,7 @@ export function CollectionCardSkeleton({ tone = "accent" }: { tone?: "accent" | 
 
   return (
     <SurfaceSkeleton className="overflow-hidden" bodyClassName="p-0">
-      <div className={cn("h-[3px]", toneClass)} />
+      <div className={cn("h-[0.1875rem]", toneClass)} />
       <div className="flex items-center justify-between px-5 pt-4">
         <Skeleton className="h-5 w-16 rounded-lg" />
         <Skeleton className="h-5 w-20 rounded-full" />
@@ -131,7 +131,7 @@ export function CollectionCardSkeleton({ tone = "accent" }: { tone?: "accent" | 
         <Skeleton className="h-7 w-44 rounded-xl" />
       </div>
       <div className="px-5 pb-4">
-        <Skeleton className="h-[180px] w-[180px] rounded-xl" />
+        <Skeleton className="h-[11.25rem] w-[11.25rem] rounded-xl" />
       </div>
       <div className="px-5">
         <div className="h-px bg-[hsl(var(--border-subtle))]" />

@@ -395,7 +395,10 @@ Defaults:
 ### 7.4 Accessibility and structure
 
 - Use semantic HTML headings that match the visual hierarchy.
-- Use `rem` or Geist's scale classes — do not hard-code px font sizes in one-off styles.
+- Prefer `rem` for typography, spacing, widths, heights, radii, and other dimensions that should follow the app's root scale.
+- Use `em` when a child element should scale relative to the parent text size.
+- Prefer `rem`/`em` over `px` by default. Do not hard-code `px` sizes in one-off styles unless the value is a true precision-only detail such as a 1px divider, border, or hairline.
+- Use Geist's type scale classes when they fit instead of inventing one-off sizes.
 - Keep long-form reading text at 16px equivalent minimum.
 - Treat 12px text (`text-label-12`) as fine print — use sparingly.
 - Use sentence case by default.

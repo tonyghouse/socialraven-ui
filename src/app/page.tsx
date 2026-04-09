@@ -148,6 +148,11 @@ const primaryActionClassName =
   "inline-flex h-10 items-center justify-center rounded-md bg-[var(--ds-blue-600)] px-4 text-label-14 text-white transition-colors duration-150 hover:bg-[var(--ds-blue-700)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2";
 const secondaryActionClassName =
   "inline-flex h-10 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 text-label-14 text-[var(--ds-gray-1000)] transition-colors duration-150 hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2";
+const landingWideSectionClassName = "mx-auto w-full max-w-[92rem] px-6 md:px-8";
+const landingFaqSectionClassName = "mx-auto w-full max-w-3xl px-6 md:px-8";
+const landingCtaSectionClassName = "mx-auto w-full max-w-5xl px-6 md:px-8";
+const landingChromeClassName = "max-w-[92rem] px-6 md:px-8";
+const landingFooterClassName = "max-w-[92rem] px-6 py-14 md:px-8";
 
 function SurfaceCard({
   className = "",
@@ -204,13 +209,13 @@ export default function LandingPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar contentClassName={landingChromeClassName} size="landing" />
 
       <div className="min-h-screen bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]">
         <main>
           {/* Hero */}
           <section className="border-b border-[var(--ds-gray-400)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-background-200)_100%)] pt-24 pb-16 lg:pb-20">
-            <div className="container mx-auto max-w-7xl px-6">
+            <div className={landingWideSectionClassName}>
               <div className="grid items-center gap-10 lg:grid-cols-[1.08fr_1fr] lg:items-stretch">
                 <div className="flex h-full flex-col justify-center space-y-7 text-center lg:pr-4 lg:text-left">
                   <div className="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
@@ -357,7 +362,7 @@ export default function LandingPage() {
 
           {/* Stats */}
           <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-14">
-            <div className="container mx-auto max-w-7xl px-6">
+            <div className={landingWideSectionClassName}>
               <div className="grid gap-4 md:grid-cols-4">
                 {STATS.map((item) => (
                   <SurfaceCard key={item.label} className="p-6">
@@ -372,7 +377,7 @@ export default function LandingPage() {
 
           {/* Integrations */}
           <section id="integrations" className="bg-[var(--ds-background-100)] py-16">
-            <div className="container mx-auto max-w-7xl px-6">
+            <div className={landingWideSectionClassName}>
               <div className="mx-auto max-w-3xl text-center">
                 <p className={sectionEyebrowClassName}>
                   Works with your platforms
@@ -402,7 +407,7 @@ export default function LandingPage() {
 
           {/* Features */}
           <section id="features" className="border-y border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-20">
-            <div className="container mx-auto max-w-7xl px-6">
+            <div className={landingWideSectionClassName}>
               <div className="mb-12 max-w-2xl">
                 <p className={sectionEyebrowClassName}>
                   Features
@@ -437,7 +442,7 @@ export default function LandingPage() {
 
           {/* How it works */}
           <section id="how-it-works" className="bg-[var(--ds-background-100)] py-20">
-            <div className="container mx-auto max-w-7xl px-6">
+            <div className={landingWideSectionClassName}>
               <div className="mb-12 max-w-2xl">
                 <p className={sectionEyebrowClassName}>
                   How it works
@@ -464,7 +469,7 @@ export default function LandingPage() {
 
           {/* Workflows */}
           <section className="border-y border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-20">
-            <div className="container mx-auto max-w-7xl px-6">
+            <div className={landingWideSectionClassName}>
               <div className="mb-12 max-w-2xl">
                 <p className={sectionEyebrowClassName}>
                   Workflows
@@ -490,7 +495,7 @@ export default function LandingPage() {
 
           {/* Pricing */}
           <section id="pricing" className="bg-[var(--ds-background-100)] py-20">
-            <div className="container mx-auto max-w-7xl px-6">
+            <div className={landingWideSectionClassName}>
               <div className="mb-6 max-w-2xl">
                 <p className={sectionEyebrowClassName}>
                   Pricing
@@ -517,7 +522,7 @@ export default function LandingPage() {
 
           {/* FAQ */}
           <section className="border-y border-[var(--ds-gray-400)] bg-[var(--ds-background-200)] py-20">
-            <div className="container mx-auto max-w-3xl px-6">
+            <div className={landingFaqSectionClassName}>
               <div className="text-center">
                 <p className={sectionEyebrowClassName}>
                   FAQ
@@ -562,7 +567,7 @@ export default function LandingPage() {
 
           {/* CTA */}
           <section className="border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-24">
-            <div className="container mx-auto max-w-5xl px-6">
+            <div className={landingCtaSectionClassName}>
               <div className="rounded-xl border border-[var(--ds-blue-300)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-blue-100)_100%)] p-8 md:p-10">
                 <div className="grid items-center gap-8 md:grid-cols-[1.2fr_0.8fr]">
                   <div>
@@ -596,7 +601,7 @@ export default function LandingPage() {
           </section>
         </main>
 
-        <PublicSiteFooter />
+        <PublicSiteFooter contentClassName={landingFooterClassName} />
       </div>
     </>
   );

@@ -84,7 +84,7 @@ export function MediaPreview({
           <div className="w-full h-full flex flex-col items-center justify-center p-2">
             <File className="h-6 w-6 text-muted-foreground mb-1" />
             {media.name && (
-              <p className="text-[10px] text-muted-foreground text-center line-clamp-2">
+              <p className="text-[0.625rem] text-muted-foreground text-center line-clamp-2">
                 {media.name}
               </p>
             )}

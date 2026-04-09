@@ -253,7 +253,7 @@ function FacebookPanel({
           placeholder="Add a first comment (great for hashtags or CTAs)..."
           value={config.firstComment ?? ""}
           onChange={(e) => onChange({ ...config, firstComment: e.target.value })}
-          className={cn("min-h-[72px] text-sm resize-none", textareaClassName(appearance))}
+          className={cn("min-h-[4.5rem] text-sm resize-none", textareaClassName(appearance))}
         />
       </ConfigRow>
     </div>
@@ -332,7 +332,7 @@ function InstagramPanel({
                         : "border-current"
                     )}
                   />
-                  <span className="text-[10px] font-semibold leading-none">{label}</span>
+                  <span className="text-[0.625rem] font-semibold leading-none">{label}</span>
                 </button>
               );
             })}
@@ -379,7 +379,7 @@ function InstagramPanel({
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-[hsl(var(--foreground)/0.38)] opacity-0 transition-opacity group-hover:opacity-100">
-                    <span className="text-[9px] font-bold text-white">Crop</span>
+                    <span className="text-[0.5625rem] font-bold text-white">Crop</span>
                   </div>
                 </button>
               ))}
@@ -401,7 +401,7 @@ function InstagramPanel({
           placeholder="Add hashtags in the first comment to keep captions clean..."
           value={config.firstComment ?? ""}
           onChange={(e) => onChange({ ...config, firstComment: e.target.value })}
-          className={cn("min-h-[72px] text-sm resize-none", textareaClassName(appearance))}
+          className={cn("min-h-[4.5rem] text-sm resize-none", textareaClassName(appearance))}
         />
       </ConfigRow>
       <ToggleRow
@@ -729,7 +729,7 @@ function PlatformAccordionCard({
           {Icon && <Icon className={cn("w-4 h-4 flex-shrink-0", styles.text)} />}
           <span className={cn(appearance === "geist" ? "text-label-14" : "text-sm font-semibold", styles.text)}>{name}</span>
           {hasError && (
-            <span className={cn("flex items-center gap-1 rounded-md border px-2 py-px text-[10px] font-semibold", appearance === "geist" ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
+            <span className={cn("flex items-center gap-1 rounded-md border px-2 py-px text-[0.625rem] font-semibold", appearance === "geist" ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
               <AlertCircle className="w-2.5 h-2.5" />
               Required field missing
             </span>

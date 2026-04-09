@@ -108,7 +108,7 @@ export function UserAvatar({
         side={collapsed ? "right" : "top"}
         align="start"
         sideOffset={10}
-        className="w-[272px] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
+        className="w-[17rem] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
       >
         <div className="space-y-2">
           <div className="rounded-xl bg-[var(--ds-gray-100)] p-2.5">

@@ -387,7 +387,7 @@ export default function ProfilePage() {
           </div>
 
           {profileLoading ? (
-            <div className="grid gap-3 px-3 py-3 sm:px-4 xl:grid-cols-[240px_minmax(0,1fr)]">
+            <div className="grid gap-3 px-3 py-3 sm:px-4 xl:grid-cols-[15rem_minmax(0,1fr)]">
               <Skeleton className="h-52 rounded-xl bg-[var(--ds-gray-300)]" />
               <div className="space-y-4">
                 <Skeleton className="h-32 rounded-xl bg-[var(--ds-gray-300)]" />
@@ -395,7 +395,7 @@ export default function ProfilePage() {
               </div>
             </div>
           ) : (
-            <div className="grid gap-3 px-3 py-3 sm:px-4 xl:grid-cols-[240px_minmax(0,1fr)]">
+            <div className="grid gap-3 px-3 py-3 sm:px-4 xl:grid-cols-[15rem_minmax(0,1fr)]">
               <Card className={cardClassName}>
                 <CardContent className="flex flex-col items-center gap-3 p-4 text-center">
                   {avatarUrl ? (

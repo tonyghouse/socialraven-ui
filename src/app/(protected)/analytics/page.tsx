@@ -231,7 +231,7 @@ function AccountChip({
       <div className="min-w-0">
         <p
           className={cn(
-            "max-w-[120px] truncate text-label-14",
+            "max-w-[7.5rem] truncate text-label-14",
             isSelected
               ? "text-[var(--ds-blue-700)]"
               : "text-[var(--ds-gray-1000)]"
@@ -535,7 +535,7 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {analyticsLoading ? (
             Array.from({ length: 6 }).map((_, index) => (
-              <Sk key={index} className="h-[112px] rounded-xl" />
+              <Sk key={index} className="h-[7rem] rounded-xl" />
             ))
           ) : (
             <>
@@ -689,7 +689,7 @@ export default function AnalyticsPage() {
 
           <div className="p-4">
             {analyticsLoading ? (
-              <Sk className="h-[220px] rounded-xl" />
+              <Sk className="h-[13.75rem] rounded-xl" />
             ) : filteredTimeline.length === 0 ? (
               <EmptyState text="No engagement data yet for the selected period." />
             ) : (
@@ -749,7 +749,7 @@ export default function AnalyticsPage() {
                   <Tooltip
                     contentStyle={{
                       background: "var(--ds-background-100)",
-                      border: "1px solid var(--ds-gray-400)",
+                      border: "0.0625rem solid var(--ds-gray-400)",
                       borderRadius: 8,
                       fontSize: 12,
                       color: "var(--ds-gray-1000)",
@@ -905,7 +905,7 @@ export default function AnalyticsPage() {
               {analyticsLoading ? (
                 <Sk className="h-40 rounded-xl" />
               ) : (
-                <div className="min-w-[560px]">
+                <div className="min-w-[35rem]">
                   <div className="mb-1 flex items-center">
                     <div className="w-10 shrink-0" />
                     {Array.from({ length: 24 }).map((_, hour) => (
@@ -949,7 +949,7 @@ export default function AnalyticsPage() {
                                   ? `${day} ${hour}:00 — avg ${Math.round(cell.avgEngagement)} eng (${cell.postCount} posts)`
                                   : `${day} ${hour}:00 — no data`
                               }
-                              className="mx-[1px] h-6 flex-1 rounded-sm border border-transparent"
+                              className="mx-[0.0625rem] h-6 flex-1 rounded-sm border border-transparent"
                               style={{
                                 backgroundColor: heatmapCellColor(intensity),
                               }}

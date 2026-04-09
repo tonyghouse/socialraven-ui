@@ -50,7 +50,7 @@ export default function RefundPolicyPage() {
       />
 
       <PublicSection>
-        <div className="items-start lg:grid lg:grid-cols-[220px_1fr] lg:gap-14">
+        <div className="items-start lg:grid lg:grid-cols-[13.75rem_1fr] lg:gap-14">
           <PublicToc items={TOC} />
 
           <div className="min-w-0 space-y-10">

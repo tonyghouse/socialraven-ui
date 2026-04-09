@@ -52,7 +52,7 @@ export function PublicHero({
 }) {
   return (
     <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] print:border-b-0 print:bg-white">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 md:px-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)] lg:items-start lg:py-16 print:gap-6 print:px-0 print:py-8">
+      <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 md:px-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(17.5rem,0.8fr)] lg:items-start lg:py-16 print:gap-6 print:px-0 print:py-8">
         <div className="space-y-4">
           {topSlot ? <div>{topSlot}</div> : null}
           <p className="text-label-12 text-[var(--ds-gray-900)]">

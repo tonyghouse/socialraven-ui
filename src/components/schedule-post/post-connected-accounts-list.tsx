@@ -94,14 +94,14 @@ function AccountItem({
               "text-xs text-muted-foreground text-center leading-tight",
               !isAllowed && "opacity-40"
             )}
-            style={{ maxWidth: "64px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+            style={{ maxWidth: "4rem", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
           >
             {acc.username}
           </span>
         </button>
       </TooltipTrigger>
 
-      <TooltipContent className="px-3 py-2 text-sm shadow-lg max-w-[200px]">
+      <TooltipContent className="px-3 py-2 text-sm shadow-lg max-w-[12.5rem]">
         <p className="font-semibold">{acc.username}</p>
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-1 capitalize">
           {Icon && <Icon className="w-3 h-3" />}

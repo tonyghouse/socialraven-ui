@@ -27,7 +27,7 @@ export function DraftDateTimePicker({ date, setDate, time, setTime }: Props) {
         <label className="text-label-14 text-[var(--ds-gray-1000)]">Schedule</label>
         <div className="flex items-center gap-1.5 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-gray-900)]">
           <Globe className="h-3 w-3 flex-shrink-0" />
-          <span className="max-w-[180px] truncate">{timezone}</span>
+          <span className="max-w-[11.25rem] truncate">{timezone}</span>
         </div>
       </div>
 

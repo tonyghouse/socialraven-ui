@@ -6,7 +6,7 @@ export function CalendarPageSkeleton() {
   return (
     <div className="flex min-h-screen flex-col bg-[var(--ds-background-200)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <Skeleton className={`h-8 w-8 rounded-lg ${skeletonClassName}`} />
             <div className="space-y-2">
@@ -38,7 +38,7 @@ export function CalendarPageSkeleton() {
       </div>
 
       <div className="flex-1 px-4 py-4 sm:px-6 sm:py-6">
-        <div className="flex h-full min-h-[640px] flex-col overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm">
+        <div className="flex h-full min-h-[40rem] flex-col overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm">
           <div className="grid grid-cols-7 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-3">
             {Array.from({ length: 7 }).map((_, index) => (
               <Skeleton key={index} className={`h-3 w-10 rounded-md ${skeletonClassName}`} />
@@ -49,7 +49,7 @@ export function CalendarPageSkeleton() {
             {Array.from({ length: 35 }).map((_, index) => (
               <div
                 key={index}
-                className="min-h-[108px] rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-3"
+                className="min-h-[6.75rem] rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-3"
               >
                 <Skeleton className={`mb-3 h-4 w-6 rounded-md ${skeletonClassName}`} />
                 <Skeleton className={`h-7 w-full rounded-lg ${skeletonClassName}`} />

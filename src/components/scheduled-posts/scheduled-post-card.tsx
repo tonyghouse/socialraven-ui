@@ -79,7 +79,7 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
           {/* Status Badge */}
           <span 
             className={cn(
-              "px-3 py-1 rounded-full text-[11px] font-semibold border whitespace-nowrap flex-shrink-0",
+              "px-3 py-1 rounded-full text-[0.6875rem] font-semibold border whitespace-nowrap flex-shrink-0",
               statusColors[post.postStatus] || statusColors.DRAFT
             )}
           >

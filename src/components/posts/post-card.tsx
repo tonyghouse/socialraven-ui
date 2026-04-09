@@ -68,7 +68,7 @@ export function PostCard({ post }: { post: PostResponse }) {
         "dark:bg-card dark:border-border/50"
       )}
       style={{
-        boxShadow: "0 2px 8px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06)",
+        boxShadow: "0 0.125rem 0.5rem rgba(0,0,0,0.04), 0 0.0625rem 0.125rem rgba(0,0,0,0.06)",
       }}
     >
 
@@ -90,7 +90,7 @@ export function PostCard({ post }: { post: PostResponse }) {
       <div className="absolute top-4 right-4 z-10">
         <span
           className={cn(
-            "px-3 py-1.5 rounded-full text-[10px] font-semibold tracking-wide uppercase border shadow-sm",
+            "px-3 py-1.5 rounded-full text-[0.625rem] font-semibold tracking-wide uppercase border shadow-sm",
             statusColors[post.postStatus]
           )}
         >
@@ -109,7 +109,7 @@ export function PostCard({ post }: { post: PostResponse }) {
                   src={profileImageSrc}
                   alt={post.connectedAccount.username}
                   fill
-                  sizes="44px"
+                  sizes="2.75rem"
                   className="object-cover"
                 />
               ) : (
@@ -120,7 +120,7 @@ export function PostCard({ post }: { post: PostResponse }) {
             </div>
 
             <div className="min-w-0">
-              <p className="text-[15px] font-semibold text-card-foreground truncate tracking-tight">
+              <p className="text-[0.9375rem] font-semibold text-card-foreground truncate tracking-tight">
                 {post.connectedAccount.username}
               </p>
               <p className="text-xs text-muted-foreground capitalize font-medium">
@@ -146,12 +146,12 @@ export function PostCard({ post }: { post: PostResponse }) {
 
       {/* Content */}
       <div className="relative p-6 pt-5 flex flex-col flex-1">
-        <h3 className="text-[17px] font-semibold text-card-foreground mb-2.5 line-clamp-2 group-hover:text-accent transition-colors tracking-tight leading-snug">
+        <h3 className="text-[1.0625rem] font-semibold text-card-foreground mb-2.5 line-clamp-2 group-hover:text-accent transition-colors tracking-tight leading-snug">
           {post.description}
         </h3>
 
         {post.description && (
-          <p className="text-[15px] text-muted-foreground/90 line-clamp-3 mb-5 leading-relaxed">
+          <p className="text-[0.9375rem] text-muted-foreground/90 line-clamp-3 mb-5 leading-relaxed">
             {post.description}
           </p>
         )}

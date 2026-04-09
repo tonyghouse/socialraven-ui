@@ -47,6 +47,8 @@ There are no test scripts configured.
 
 TailwindCSS with CSS HSL variables for theming (supports dark mode via `class` strategy). Uses `cn()` from `@/lib/utils` everywhere for conditional class merging. Product typography is wired through the Geist font variables exposed in `src/app/layout.tsx` and bridged in `src/app/globals.css`.
 
+- **Sizing units rule:** prefer `rem` for text, spacing, widths, heights, radii, and other dimensions that should follow the global app scale. Use `em` when something should scale relative to the parent text size. Avoid `px` unless it is a true precision-only detail such as a 1px border/divider, a hairline, or an unavoidable external/browser-specific value.
+
 ### Density & Scale Controls
 
 When the user asks to make the app feel bigger, smaller, denser, or more premium, do not resize random pages first. Start with the shared scale controls below, then only do page-level tightening/loosening if needed.
@@ -55,10 +57,10 @@ When the user asks to make the app feel bigger, smaller, denser, or more premium
   The desktop/tablet root `rem` scale is controlled in the `@media (min-width: 768px)` block on `html`.
   Current value:
   ```css
-  font-size: clamp(90%, calc(110% - 0.2083vw), 100%);
+  font-size: clamp(92%, calc(110% - 0.2083vw), 100%);
   ```
   This scales most Tailwind `rem`-based text, spacing, widths, heights, radii, and gaps together.
-  If the user asks for something like "go to 92%", usually change the first `clamp(...)` value from `90%` to `92%` first, then only adjust the middle `calc(...)` term if the interpolation feels off.
+  If the user asks for something like "go to 94%", usually change the first `clamp(...)` value from `92%` to `94%` first, then only adjust the middle `calc(...)` term if the interpolation feels off.
 
 - **Protected app header:** `src/components/layout/protected-page-header.tsx`
   This controls the shared top header used across protected pages.

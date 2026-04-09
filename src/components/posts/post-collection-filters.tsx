@@ -410,7 +410,7 @@ export function PostCollectionFilters({
               {accountFilterCount > 0 && (
                 <span
                   className={cn(
-                    "h-[18px] min-w-[18px] px-1 rounded-full text-[10px] font-bold flex items-center justify-center leading-none",
+                    "h-[1.125rem] min-w-[1.125rem] px-1 rounded-full text-[0.625rem] font-bold flex items-center justify-center leading-none",
                     isGeist
                       ? "bg-[var(--ds-blue-600)] text-white"
                       : "bg-primary text-primary-foreground"
@@ -480,13 +480,13 @@ export function PostCollectionFilters({
                 No connected accounts found.
               </div>
             ) : (
-              <ScrollArea className="max-h-[320px]">
+              <ScrollArea className="max-h-[20rem]">
                 <div className="p-2 space-y-1">
                   {accounts.length > 0 && (
                     <>
                       <p
                         className={cn(
-                          "px-2 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-wider",
+                          "px-2 pt-3 pb-1 text-[0.625rem] font-semibold uppercase tracking-wider",
                           isGeist
                             ? "text-[var(--ds-gray-900)]"
                             : "text-muted-foreground"
@@ -528,7 +528,7 @@ export function PostCollectionFilters({
                             <span className="flex-1 truncate font-medium">{account.username}</span>
                             <span
                               className={cn(
-                                "text-[11px] capitalize",
+                                "text-[0.6875rem] capitalize",
                                 isGeist
                                   ? "text-[var(--ds-gray-900)]"
                                   : "text-muted-foreground"
@@ -595,7 +595,7 @@ export function PostCollectionFilters({
               <span
                 key={uid}
                 className={cn(
-                  "inline-flex items-center gap-1.5 h-7 pl-2 pr-1.5 rounded-full border text-[11px] font-medium",
+                  "inline-flex items-center gap-1.5 h-7 pl-2 pr-1.5 rounded-full border text-[0.6875rem] font-medium",
                   isGeist
                     ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
                     : "bg-primary/10 border-primary/20 text-primary"

@@ -72,7 +72,7 @@ function ProfileAvatar({
   fallbackClass?: string;
 }) {
   const sizeClass = {
-    sm: "h-8 w-8 text-[10px]",
+    sm: "h-8 w-8 text-[0.625rem]",
     md: "h-10 w-10 text-xs",
     lg: "h-12 w-12 text-sm",
   }[size];
@@ -673,7 +673,7 @@ export default function PostDetailPage() {
                         src={profileImageSrc}
                         alt={post.connectedAccount.username}
                         fill
-                        sizes="48px"
+                        sizes="3rem"
                         className="object-cover"
                       />
                     ) : (

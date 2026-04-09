@@ -6,7 +6,7 @@ export function ScheduledPostsPageSkeleton() {
   return (
     <main className="min-h-screen bg-[var(--ds-background-200)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="space-y-2">
             <Skeleton className={`h-4 w-32 rounded-md ${skeletonClassName}`} />
             <Skeleton className={`h-3 w-80 rounded-md ${skeletonClassName}`} />
@@ -42,7 +42,7 @@ export function ScheduledPostsPageSkeleton() {
               key={index}
               className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm"
             >
-              <div className="h-[3px] bg-[var(--ds-blue-500)]" />
+              <div className="h-[0.1875rem] bg-[var(--ds-blue-500)]" />
               <div className="flex items-center justify-between px-5 pt-4">
                 <Skeleton className={`h-5 w-16 rounded-lg ${skeletonClassName}`} />
                 <Skeleton className={`h-5 w-20 rounded-full ${skeletonClassName}`} />
@@ -56,7 +56,7 @@ export function ScheduledPostsPageSkeleton() {
                 <Skeleton className={`h-7 w-44 rounded-xl ${skeletonClassName}`} />
               </div>
               <div className="px-5 pb-4">
-                <Skeleton className={`h-[180px] w-[180px] rounded-xl ${skeletonClassName}`} />
+                <Skeleton className={`h-[11.25rem] w-[11.25rem] rounded-xl ${skeletonClassName}`} />
               </div>
               <div className="px-5">
                 <div className="h-px bg-[var(--ds-gray-400)]" />

@@ -6,7 +6,7 @@ export function PostDetailPageSkeleton() {
   return (
     <main className="min-h-screen bg-[var(--ds-background-200)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="min-w-0 space-y-2">
             <Skeleton className={`h-4 w-56 rounded-md ${skeletonClassName}`} />
             <Skeleton className={`h-3 w-44 rounded-md ${skeletonClassName}`} />

@@ -59,7 +59,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
       )}
       aria-label={canSwitch ? "Switch workspace" : `Current workspace: ${displayName}`}
     >
-      <Buildings className="h-[18px] w-[18px]" />
+      <Buildings className="h-[1.125rem] w-[1.125rem]" />
     </button>
   );
 
@@ -85,7 +85,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
               side="right"
               align="start"
               sideOffset={10}
-              className="w-[264px] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
+              className="w-[16.5rem] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
             >
               <WorkspaceList
                 activeWorkspaceId={activeWorkspace?.id ?? null}
@@ -113,11 +113,11 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           )}
         >
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
-            <Buildings className="h-[18px] w-[18px]" />
+            <Buildings className="h-[1.125rem] w-[1.125rem]" />
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[14px] font-medium text-[var(--ds-gray-1000)]">{displayName}</p>
+            <p className="truncate text-[0.875rem] font-medium text-[var(--ds-gray-1000)]">{displayName}</p>
             <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
               {displayCompanyName ?? `${workspaces.length} workspace${workspaces.length === 1 ? "" : "s"}`}
             </p>
@@ -139,7 +139,7 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           align="start"
           side="bottom"
           sideOffset={8}
-          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[264px] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
+          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-[16.5rem] rounded-2xl border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-2 shadow-none"
         >
           <WorkspaceList
             activeWorkspaceId={activeWorkspace?.id ?? null}

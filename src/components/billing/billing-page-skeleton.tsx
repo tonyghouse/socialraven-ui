@@ -32,7 +32,7 @@ export function BillingPageSkeleton() {
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,var(--ds-background-200)_0%,var(--ds-background-100)_15rem,var(--ds-background-100)_100%)]">
       <div className="sticky top-0 z-20 border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <Sk className="h-8 w-8 shrink-0 rounded-lg" />
             <div className="min-w-0 space-y-2">
@@ -46,11 +46,11 @@ export function BillingPageSkeleton() {
       <div className="px-4 py-6 sm:px-6 lg:px-8">
         <div className="space-y-8">
           <SectionSkeleton labelWidth="w-24" titleWidth="w-28">
-            <Sk className="h-[248px] w-full rounded-2xl sm:h-[220px] lg:h-[164px]" />
+            <Sk className="h-[15.5rem] w-full rounded-2xl sm:h-[13.75rem] lg:h-[10.25rem]" />
             <div className="grid overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] divide-y divide-[var(--ds-gray-400)] md:grid-cols-3 md:divide-x md:divide-y-0">
-              <Sk className="h-[116px] rounded-none" />
-              <Sk className="h-[116px] rounded-none" />
-              <Sk className="h-[116px] rounded-none" />
+              <Sk className="h-[7.25rem] rounded-none" />
+              <Sk className="h-[7.25rem] rounded-none" />
+              <Sk className="h-[7.25rem] rounded-none" />
             </div>
           </SectionSkeleton>
 
@@ -75,7 +75,7 @@ export function BillingPageSkeleton() {
                           <Sk className="h-4 w-full rounded-md" />
                         </div>
                       </div>
-                      <div className="space-y-3 xl:w-[220px]">
+                      <div className="space-y-3 xl:w-[13.75rem]">
                         <Sk className="h-8 w-28 rounded-md" />
                         <Sk className="h-9 w-full rounded-md" />
                       </div>
@@ -87,8 +87,8 @@ export function BillingPageSkeleton() {
           </SectionSkeleton>
 
           <SectionSkeleton labelWidth="w-20" titleWidth="w-24">
-            <Sk className="h-[96px] w-full rounded-xl" />
-            <Sk className="h-[84px] w-full rounded-xl" />
+            <Sk className="h-[6rem] w-full rounded-xl" />
+            <Sk className="h-[5.25rem] w-full rounded-xl" />
             <div className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
               <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3">
                 <Sk className="h-3 w-40 rounded-md" />

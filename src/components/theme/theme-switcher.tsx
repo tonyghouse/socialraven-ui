@@ -46,7 +46,7 @@ export function ThemeSwitcher({
       data-align={align}
     >
       {!compact && (
-        <span className="text-[13px] font-medium text-foreground/80">
+        <span className="text-[0.8125rem] font-medium text-foreground/80">
           {isDark ? "Dark mode" : "Light mode"}
         </span>
       )}

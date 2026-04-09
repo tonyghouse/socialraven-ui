@@ -7,9 +7,9 @@ export function AuthPatternBackground() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,var(--ds-gray-200),transparent_35%),radial-gradient(circle_at_bottom_right,var(--ds-gray-200),transparent_32%),linear-gradient(180deg,var(--ds-background-100),var(--ds-gray-100))]" />
 
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-[12%] top-[6%] h-[500px] w-[500px] rounded-full bg-[var(--ds-gray-alpha-200)] blur-[150px]" />
-        <div className="absolute bottom-[6%] right-[14%] h-[420px] w-[420px] rounded-full bg-[var(--ds-gray-alpha-200)] blur-[150px]" />
-        <div className="absolute left-1/2 top-[34%] h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-[var(--ds-blue-100)]/60 blur-[170px]" />
+        <div className="absolute left-[12%] top-[6%] h-[31.25rem] w-[31.25rem] rounded-full bg-[var(--ds-gray-alpha-200)] blur-[9.375rem]" />
+        <div className="absolute bottom-[6%] right-[14%] h-[26.25rem] w-[26.25rem] rounded-full bg-[var(--ds-gray-alpha-200)] blur-[9.375rem]" />
+        <div className="absolute left-1/2 top-[34%] h-[31.25rem] w-[31.25rem] -translate-x-1/2 rounded-full bg-[var(--ds-blue-100)]/60 blur-[10.625rem]" />
       </div>
 
       <svg

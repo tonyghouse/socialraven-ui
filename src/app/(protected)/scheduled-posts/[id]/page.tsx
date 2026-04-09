@@ -507,7 +507,7 @@ function StepCard({
       <div
         className={cn(
           "overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "max-h-[9999px] opacity-100" : "max-h-0 opacity-0 pointer-events-none",
+          isOpen ? "max-h-[624.9375rem] opacity-100" : "max-h-0 opacity-0 pointer-events-none",
         )}
       >
         <div className="px-6 py-5">{children}</div>
@@ -577,7 +577,7 @@ function DeleteModal({
         onClick={onCancel}
       />
 
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-[0_8px_24px_rgb(0_0_0_/_0.16)] animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-[0_0.5rem_1.5rem_rgb(0_0_0_/_0.16)] animate-in fade-in zoom-in-95 duration-200">
         <div className="p-6">
           <div className="mb-5 flex items-start gap-4">
             <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg border border-[var(--ds-red-200)] bg-[var(--ds-red-100)]">
@@ -1037,7 +1037,7 @@ export default function ScheduledCollectionDetailPage() {
 
           <div className="space-y-4 px-4 py-5 pb-24 sm:px-5 sm:pb-8">
             <div className={surfaceClassName}>
-              <div className="h-[3px] w-full bg-[var(--ds-blue-600)]" />
+              <div className="h-[0.1875rem] w-full bg-[var(--ds-blue-600)]" />
               <div className="px-5 pt-5 pb-4">
                 <div className="mb-4 flex flex-wrap items-start gap-x-4 gap-y-3">
                   <h1 className="min-w-0 flex-1 text-title-20 text-[var(--ds-gray-1000)]">
@@ -1129,7 +1129,7 @@ export default function ScheduledCollectionDetailPage() {
               <ApprovalSafetyPanel collection={collection} appearance="geist" />
             ) : null}
 
-            <div className="grid items-start gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <div className="grid items-start gap-4 lg:grid-cols-[17.5rem_minmax(0,1fr)]">
               <div className="space-y-4">
                 <div className={surfaceClassName}>
                   <div className={surfaceHeaderClassName}>
@@ -1147,7 +1147,7 @@ export default function ScheduledCollectionDetailPage() {
                     {isScheduled && getCountdown(scheduledDate) && (
                       <div className="rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-4">
                         <p className="text-copy-12 text-[var(--ds-blue-700)]">Publishing in</p>
-                        <p className="mt-1 text-[26px] font-bold leading-8 tabular-nums text-[var(--ds-blue-700)]">{getCountdown(scheduledDate)}</p>
+                        <p className="mt-1 text-[1.625rem] font-bold leading-8 tabular-nums text-[var(--ds-blue-700)]">{getCountdown(scheduledDate)}</p>
                       </div>
                     )}
                     <div className="space-y-2.5">
@@ -1212,11 +1212,11 @@ export default function ScheduledCollectionDetailPage() {
                 <div className={surfaceClassName}>
                   <div className="flex items-center divide-x divide-[var(--ds-gray-400)] px-5 py-4">
                     <div className="flex-1 pr-4 text-center">
-                      <p className="text-[24px] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">{collection.posts.length}</p>
+                      <p className="text-[1.5rem] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">{collection.posts.length}</p>
                       <p className="mt-1.5 text-copy-12 text-[var(--ds-gray-900)]">Posts</p>
                     </div>
                     <div className="flex-1 pl-4 text-center">
-                      <p className="text-[24px] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">{platformCount}</p>
+                      <p className="text-[1.5rem] font-semibold leading-none tabular-nums text-[var(--ds-gray-1000)]">{platformCount}</p>
                       <p className="mt-1.5 text-copy-12 text-[var(--ds-gray-900)]">Platforms</p>
                     </div>
                   </div>
@@ -1446,7 +1446,7 @@ function EditModePanel({
 
   const step3Summary = (
     <span className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)]">
-      <span className="font-medium truncate max-w-[160px] sm:max-w-[260px]">
+      <span className="font-medium truncate max-w-[10rem] sm:max-w-[16.25rem]">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
       {postType !== "TEXT" && (keptCount + newFiles.length + selectedLibraryAssets.length) > 0 && (
@@ -1794,7 +1794,7 @@ function EditModePanel({
                   : "Write your post caption here. You can use emoji, hashtags, and mentions."
               }
               className={cn(
-                "min-h-[140px] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] p-4 text-label-14 leading-relaxed text-[var(--ds-gray-1000)] transition-all duration-200",
+                "min-h-[8.75rem] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] p-4 text-label-14 leading-relaxed text-[var(--ds-gray-1000)] transition-all duration-200",
                 "placeholder:text-[var(--ds-gray-900)]",
                 "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]",
                 overLimit || platformCharErrors.length > 0
@@ -2037,7 +2037,7 @@ function PreviewMediaCarousel({
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
-            <div className="absolute bottom-2 right-2 bg-black/65 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded-full backdrop-blur-sm tabular-nums">
+            <div className="absolute bottom-2 right-2 bg-black/65 text-white text-[0.5625rem] font-semibold px-1.5 py-0.5 rounded-full backdrop-blur-sm tabular-nums">
               {idx + 1}/{media.length}
             </div>
           </>
@@ -2076,7 +2076,7 @@ function XPreview({ caption, media, accountName, avatarSrc }: {
         <AccountAvatar src={avatarSrc} name={accountName} size={8} />
         <div className="flex-1 min-w-0">
           <div className="flex items-baseline gap-1 flex-wrap">
-            <span className="text-xs font-bold text-neutral-900 dark:text-white truncate max-w-[120px]">{accountName || "Your Account"}</span>
+            <span className="text-xs font-bold text-neutral-900 dark:text-white truncate max-w-[7.5rem]">{accountName || "Your Account"}</span>
             <span className="text-xs text-neutral-500 truncate">{handle}</span>
             <span className="text-neutral-400 text-xs">· now</span>
           </div>
@@ -2085,16 +2085,16 @@ function XPreview({ caption, media, accountName, avatarSrc }: {
           )}
           {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
           <div className="flex gap-4 mt-2 text-neutral-400">
-            <button className="flex items-center gap-1 text-[11px] hover:text-blue-400 transition-colors">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-blue-400 transition-colors">
               <MessageCircle className="h-3 w-3" /><span>Reply</span>
             </button>
-            <button className="flex items-center gap-1 text-[11px] hover:text-green-400 transition-colors">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-green-400 transition-colors">
               <Repeat2 className="h-3 w-3" /><span>Repost</span>
             </button>
-            <button className="flex items-center gap-1 text-[11px] hover:text-pink-400 transition-colors">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-pink-400 transition-colors">
               <Heart className="h-3 w-3" /><span>Like</span>
             </button>
-            <button className="flex items-center gap-1 text-[11px] hover:text-blue-400 transition-colors ml-auto">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-blue-400 transition-colors ml-auto">
               <MoreHorizontal className="h-3 w-3" />
             </button>
           </div>
@@ -2117,7 +2117,7 @@ function InstagramPreview({ caption, media, accountName, avatarSrc }: {
           <AccountAvatar src={avatarSrc} name={accountName} size={7} />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[11px] font-semibold text-neutral-900 dark:text-white truncate">{accountName || "your_account"}</p>
+          <p className="text-[0.6875rem] font-semibold text-neutral-900 dark:text-white truncate">{accountName || "your_account"}</p>
         </div>
         <MoreHorizontal className="h-3.5 w-3.5 text-neutral-400 flex-shrink-0" />
       </div>
@@ -2146,7 +2146,7 @@ function InstagramPreview({ caption, media, accountName, avatarSrc }: {
           </button>
         </div>
         {caption && (
-          <p className="text-[11px] text-neutral-900 dark:text-neutral-100 leading-relaxed line-clamp-2">
+          <p className="text-[0.6875rem] text-neutral-900 dark:text-neutral-100 leading-relaxed line-clamp-2">
             <span className="font-semibold">{accountName || "your_account"}</span>{" "}{caption}
           </p>
         )}
@@ -2167,10 +2167,10 @@ function LinkedInPreview({ caption, media, accountName, avatarSrc }: {
           <AccountAvatar src={avatarSrc} name={accountName} size={8} />
           <div className="flex-1 min-w-0">
             <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate">{accountName || "Your Name"}</p>
-            <p className="text-[10px] text-neutral-500 truncate">Your Title · 1st</p>
-            <p className="text-[10px] text-neutral-400">Just now · 🌐</p>
+            <p className="text-[0.625rem] text-neutral-500 truncate">Your Title · 1st</p>
+            <p className="text-[0.625rem] text-neutral-400">Just now · 🌐</p>
           </div>
-          <span className="text-blue-600 font-semibold text-[10px] self-start flex-shrink-0 cursor-default">+ Follow</span>
+          <span className="text-blue-600 font-semibold text-[0.625rem] self-start flex-shrink-0 cursor-default">+ Follow</span>
         </div>
         {caption && (
           <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-3 whitespace-pre-wrap">{caption}</p>
@@ -2184,7 +2184,7 @@ function LinkedInPreview({ caption, media, accountName, avatarSrc }: {
           { icon: Repeat2, label: "Repost" },
           { icon: Send, label: "Send" },
         ].map(({ icon: Icon, label }) => (
-          <button key={label} className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[10px] text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+          <button key={label} className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[0.625rem] text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
             <Icon className="h-3 w-3" /><span>{label}</span>
           </button>
         ))}
@@ -2205,7 +2205,7 @@ function FacebookPreview({ caption, media, accountName, avatarSrc }: {
           <AccountAvatar src={avatarSrc} name={accountName} size={8} />
           <div className="flex-1 min-w-0">
             <p className="text-xs font-semibold text-neutral-900 dark:text-white truncate">{accountName || "Your Page"}</p>
-            <p className="text-[10px] text-neutral-500">Just now · 🌐</p>
+            <p className="text-[0.625rem] text-neutral-500">Just now · 🌐</p>
           </div>
           <MoreHorizontal className="h-3.5 w-3.5 text-neutral-400 flex-shrink-0" />
         </div>
@@ -2220,7 +2220,7 @@ function FacebookPreview({ caption, media, accountName, avatarSrc }: {
           { icon: MessageCircle, label: "Comment" },
           { icon: Share2, label: "Share" },
         ].map(({ icon: Icon, label }) => (
-          <button key={label} className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[10px] text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+          <button key={label} className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[0.625rem] text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
             <Icon className="h-3 w-3" /><span>{label}</span>
           </button>
         ))}
@@ -2253,14 +2253,14 @@ function YouTubePreview({ caption, media, accountName, avatarSrc }: {
             <Play className="h-7 w-7 text-white/20" />
           </div>
         )}
-        <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[9px] font-semibold px-1 py-0.5 rounded tabular-nums">0:00</div>
+        <div className="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[0.5625rem] font-semibold px-1 py-0.5 rounded tabular-nums">0:00</div>
       </div>
       <div className="p-2.5 flex gap-2">
         <AccountAvatar src={avatarSrc} name={accountName} size={7} />
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-neutral-900 dark:text-white line-clamp-2 leading-snug">{title}</p>
-          <p className="text-[10px] text-neutral-500 mt-0.5 truncate">{accountName || "Your Channel"}</p>
-          <p className="text-[10px] text-neutral-400">0 views · Just now</p>
+          <p className="text-[0.625rem] text-neutral-500 mt-0.5 truncate">{accountName || "Your Channel"}</p>
+          <p className="text-[0.625rem] text-neutral-400">0 views · Just now</p>
         </div>
       </div>
     </div>
@@ -2299,15 +2299,15 @@ function TikTokPreview({ caption, media, accountName, avatarSrc }: {
         <div className="absolute right-2 bottom-3 flex flex-col items-center gap-3 text-white">
           <div className="flex flex-col items-center">
             <AccountAvatar src={avatarSrc} name={accountName} size={8} />
-            <div className="-mt-1.5 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[8px] text-white font-bold">+</div>
+            <div className="-mt-1.5 h-4 w-4 rounded-full bg-red-500 flex items-center justify-center text-[0.5rem] text-white font-bold">+</div>
           </div>
           <div className="flex flex-col items-center gap-0.5">
             <Heart className="h-5 w-5" />
-            <span className="text-[10px]">0</span>
+            <span className="text-[0.625rem]">0</span>
           </div>
           <div className="flex flex-col items-center gap-0.5">
             <MessageCircle className="h-5 w-5" />
-            <span className="text-[10px]">0</span>
+            <span className="text-[0.625rem]">0</span>
           </div>
         </div>
       </div>
@@ -2329,8 +2329,8 @@ function ThreadsPreview({ caption, media, accountName, avatarSrc }: {
         </div>
         <div className="flex-1 min-w-0 pb-1.5">
           <div className="flex items-center gap-1">
-            <span className="text-xs font-semibold text-neutral-900 dark:text-white truncate max-w-[130px]">{accountName || "your_account"}</span>
-            <span className="text-[10px] text-neutral-400 flex-shrink-0">· now</span>
+            <span className="text-xs font-semibold text-neutral-900 dark:text-white truncate max-w-[8.125rem]">{accountName || "your_account"}</span>
+            <span className="text-[0.625rem] text-neutral-400 flex-shrink-0">· now</span>
           </div>
           {caption && <p className="text-xs text-neutral-800 dark:text-neutral-200 mt-1 leading-relaxed whitespace-pre-wrap line-clamp-3">{caption}</p>}
           {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
@@ -2383,7 +2383,7 @@ function MediaCarousel({
             >
               <ChevronRight className="h-4 w-4" />
             </button>
-            <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
+            <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[0.625rem] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm">
               {idx + 1} / {media.length}
             </div>
           </>
@@ -2436,7 +2436,7 @@ function PlatformSection({
 
   return (
     <div className={cn("rounded-2xl border shadow-sm overflow-hidden", accent.cardBg, accent.cardBorder)}>
-      <div className="h-[3px] w-full" style={{ background: accent.bar }} />
+      <div className="h-[0.1875rem] w-full" style={{ background: accent.bar }} />
 
       {/* Platform header row */}
       <div className="flex items-center gap-3 border-b border-[var(--ds-gray-400)] px-5 py-4">
@@ -2481,14 +2481,14 @@ function PlatformSection({
             >
               <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
                 {src ? (
-                  <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="20px" className="object-cover" />
+                  <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="1.25rem" className="object-cover" />
                 ) : (
                   <div className="h-full w-full flex items-center justify-center">
                     <User className="h-2.5 w-2.5 text-[var(--ds-gray-900)]" />
                   </div>
                 )}
               </div>
-              <span className="max-w-[140px] truncate text-copy-12 leading-none text-[var(--ds-gray-1000)]">
+              <span className="max-w-[8.75rem] truncate text-copy-12 leading-none text-[var(--ds-gray-1000)]">
                 {post.connectedAccount?.username ?? "Account"}
               </span>
               <div className={cn(

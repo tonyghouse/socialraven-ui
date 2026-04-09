@@ -419,7 +419,7 @@ export default function ClientConnectionHandoffSection() {
             </div>
 
             {loading ? (
-              <div className="flex min-h-[220px] items-center justify-center">
+              <div className="flex min-h-[13.75rem] items-center justify-center">
                 <Loader2 className="h-5 w-5 animate-spin text-[var(--ds-gray-900)]" />
               </div>
             ) : sessions.length === 0 ? (

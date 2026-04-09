@@ -92,7 +92,7 @@ export function PostCollaborationAnnotationView({
             {isVideoMedia(targetMedia) ? (
               <video
                 src={targetMedia.fileUrl}
-                className="block max-h-[280px] max-w-full"
+                className="block max-h-[17.5rem] max-w-full"
                 muted
                 playsInline
               />
@@ -101,14 +101,14 @@ export function PostCollaborationAnnotationView({
               <img
                 src={targetMedia.fileUrl}
                 alt={targetMedia.fileName}
-                className="block max-h-[280px] max-w-full"
+                className="block max-h-[17.5rem] max-w-full"
               />
             )}
 
             {thread.mediaMarkerX !== null && thread.mediaMarkerY !== null && (
               <div
                 className={cn(
-                  "pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_3px_rgb(0_0_0_/_0.18)]",
+                  "pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_0.1875rem_rgb(0_0_0_/_0.18)]",
                   isGeist ? "bg-[var(--ds-blue-600)]" : "bg-[hsl(var(--accent))]"
                 )}
                 style={{

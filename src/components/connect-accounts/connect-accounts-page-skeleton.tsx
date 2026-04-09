@@ -6,7 +6,7 @@ export function ConnectAccountsPageSkeleton() {
   return (
     <main className="min-h-screen w-full bg-[var(--ds-background-200)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <Skeleton className={`h-8 w-8 rounded-lg ${skeletonClassName}`} />
             <div className="space-y-2">

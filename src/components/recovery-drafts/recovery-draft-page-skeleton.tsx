@@ -9,7 +9,7 @@ export function RecoveryDraftPageSkeleton() {
   return (
     <main className="min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="min-w-0 space-y-2">
             <Skeleton className={`h-4 w-32 rounded-md ${skeletonClassName}`} />
             <Skeleton className={`h-3 w-80 rounded-md ${skeletonClassName}`} />
@@ -19,7 +19,7 @@ export function RecoveryDraftPageSkeleton() {
       </div>
 
       <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <section className={cn(surfaceClassName, "p-6 space-y-5")}>
             <div className="flex flex-wrap items-center gap-2">
               <Skeleton className={`h-6 w-28 rounded-full ${skeletonClassName}`} />

@@ -108,7 +108,7 @@ export function AppSidebar() {
       className={cn(
         "relative z-30 flex h-screen shrink-0 flex-col border-r border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]",
         "transition-[width] duration-200 ease-out",
-        isCollapsed ? "w-[70px]" : "w-[232px]"
+        isCollapsed ? "w-[4.375rem]" : "w-[14.5rem]"
       )}
     >
       <div className={cn("px-2 pb-1 pt-2", isCollapsed && "px-1.5")}>
@@ -180,7 +180,7 @@ export function AppSidebar() {
                         <NextLink
                           href={item.url}
                           className={cn(
-                            "group flex items-center rounded-xl text-[14px] font-medium transition-colors",
+                            "group flex items-center rounded-xl text-[0.875rem] font-medium transition-colors",
                             isCollapsed
                               ? "h-10 justify-center px-0"
                               : "h-10 gap-2.5 px-3.5",
@@ -198,7 +198,7 @@ export function AppSidebar() {
                                 : "text-[var(--ds-gray-900)] group-hover:bg-[var(--ds-background-100)] group-hover:text-[var(--ds-gray-1000)]"
                             )}
                           >
-                            <item.icon className="h-[18px] w-[18px]" />
+                            <item.icon className="h-[1.125rem] w-[1.125rem]" />
                           </div>
 
                           {!isCollapsed ? (

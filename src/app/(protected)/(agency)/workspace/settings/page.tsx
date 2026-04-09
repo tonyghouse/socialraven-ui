@@ -156,7 +156,7 @@ const selectContentClassName =
 const selectItemClassName =
   "focus:bg-[var(--ds-gray-100)] focus:text-[var(--ds-gray-1000)]";
 const checkboxClassName =
-  "rounded-[6px] border-[var(--ds-gray-500)] bg-[var(--ds-background-100)] text-white focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] data-[state=checked]:border-[var(--ds-blue-600)] data-[state=checked]:bg-[var(--ds-blue-600)]";
+  "rounded-[0.375rem] border-[var(--ds-gray-500)] bg-[var(--ds-background-100)] text-white focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] data-[state=checked]:border-[var(--ds-blue-600)] data-[state=checked]:bg-[var(--ds-blue-600)]";
 const subtlePanelClassName =
   "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-3";
 const dashedNoticeClassName =
@@ -1113,7 +1113,7 @@ export default function WorkspaceSettingsPage() {
             </div>
           )}
 
-          <div className="grid gap-5 xl:grid-cols-[340px_minmax(0,1fr)]">
+          <div className="grid gap-5 xl:grid-cols-[21.25rem_minmax(0,1fr)]">
             <div className="space-y-4">
               <section className={surfaceClass}>
                 <SectionHeader
@@ -1418,7 +1418,7 @@ export default function WorkspaceSettingsPage() {
                               defaultApproverMembers.map((member) => (
                                 <span key={member.userId} className={pillClass}>
                                   {memberDisplayLabel(member)}
-                                  <span className="text-[11px] text-[var(--ds-gray-900)]">
+                                  <span className="text-[0.6875rem] text-[var(--ds-gray-900)]">
                                     {roleLabel(member.role)}
                                   </span>
                                 </span>
@@ -1498,7 +1498,7 @@ export default function WorkspaceSettingsPage() {
                               defaultPublisherMembers.map((member) => (
                                 <span key={member.userId} className={pillClass}>
                                   {memberDisplayLabel(member)}
-                                  <span className="text-[11px] text-[var(--ds-gray-900)]">
+                                  <span className="text-[0.6875rem] text-[var(--ds-gray-900)]">
                                     {roleLabel(member.role)}
                                   </span>
                                 </span>
@@ -1582,7 +1582,7 @@ export default function WorkspaceSettingsPage() {
                             {CONTENT_TYPE_RULE_TYPES.map((contentType) => (
                               <div
                                 key={contentType}
-                                className="grid gap-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3 sm:grid-cols-[130px_minmax(0,1fr)]"
+                                className="grid gap-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3 sm:grid-cols-[8.125rem_minmax(0,1fr)]"
                               >
                                 <div>
                                   <p className="text-label-14 font-medium text-[var(--ds-gray-1000)]">
@@ -1655,7 +1655,7 @@ export default function WorkspaceSettingsPage() {
                               {sortedConnectedAccounts.map((account) => (
                                 <div
                                   key={account.providerUserId}
-                                  className="grid gap-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3 sm:grid-cols-[minmax(0,1fr)_220px]"
+                                  className="grid gap-2 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-3 sm:grid-cols-[minmax(0,1fr)_13.75rem]"
                                 >
                                   <div className="min-w-0 space-y-1">
                                     <p className="truncate text-label-14 font-medium text-[var(--ds-gray-1000)]">
@@ -1939,7 +1939,7 @@ export default function WorkspaceSettingsPage() {
 
                     {showInviteForm && (
                       <div className="space-y-3">
-                        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_160px]">
+                        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_10rem]">
                           <Input
                             placeholder="colleague@company.com"
                             value={inviteEmail}
@@ -2098,7 +2098,7 @@ export default function WorkspaceSettingsPage() {
                                           }
                                         >
                                           <SelectTrigger
-                                            className={cn(selectTriggerClassName, "h-8 w-[132px]")}
+                                            className={cn(selectTriggerClassName, "h-8 w-[8.25rem]")}
                                           >
                                             <SelectValue />
                                           </SelectTrigger>

@@ -6,7 +6,7 @@ export function WorkspaceSettingsPageSkeleton() {
   return (
     <main className="min-h-screen bg-[var(--ds-background-200)]">
       <header className="sticky top-0 z-20 border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
               <Skeleton className={`h-4 w-4 rounded-md ${skeletonClassName}`} />
@@ -25,7 +25,7 @@ export function WorkspaceSettingsPageSkeleton() {
       </header>
 
       <div className="space-y-6 px-4 py-6 sm:px-6 md:px-8">
-        <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
+        <div className="grid gap-6 xl:grid-cols-[21.25rem_minmax(0,1fr)]">
           <div className="space-y-4">
             <section className="rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm">
               <div className="flex items-start gap-3 border-b border-[var(--ds-gray-400)] px-4 py-4">

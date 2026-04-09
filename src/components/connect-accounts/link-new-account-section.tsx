@@ -60,7 +60,7 @@ export default function LinkNewAccountSection() {
               if (!provider.enabled) e.preventDefault();
             }}
             className={cn(
-              "group relative flex min-h-[108px] flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-center transition-[border-color,background-color,transform,box-shadow]",
+              "group relative flex min-h-[6.75rem] flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-center transition-[border-color,background-color,transform,box-shadow]",
               "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]",
               provider.enabled
                 ? "cursor-pointer hover:-translate-y-0.5 hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] hover:shadow-sm"

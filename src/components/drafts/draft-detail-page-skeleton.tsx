@@ -6,7 +6,7 @@ export function DraftDetailPageSkeleton() {
   return (
     <main className="min-h-screen bg-[var(--ds-background-200)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="space-y-2">
             <Skeleton className={`h-4 w-56 rounded-md ${skeletonClassName}`} />
             <Skeleton className={`h-3 w-52 rounded-md ${skeletonClassName}`} />
@@ -28,7 +28,7 @@ export function DraftDetailPageSkeleton() {
       </div>
 
       <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8">
-        <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="grid gap-5 lg:grid-cols-[17.5rem_minmax(0,1fr)]">
           <div className="space-y-5">
             {Array.from({ length: 3 }).map((_, index) => (
               <div

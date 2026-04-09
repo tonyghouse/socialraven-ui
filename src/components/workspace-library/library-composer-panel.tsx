@@ -154,7 +154,7 @@ export function LibraryComposerPanel({
   }
 
   return (
-    <section className={cn("rounded-xl border shadow-sm", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)]")}>
+    <section className={cn("rounded-xl border shadow-sm", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_0.0625rem_0.125rem_rgb(0 0 0 / 0.08)]")}>
       <div className={cn("border-b px-4 py-3", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))]")}>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>

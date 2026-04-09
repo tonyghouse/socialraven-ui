@@ -6,7 +6,7 @@ export function SchedulePostPageSkeleton() {
   return (
     <main className="min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="min-w-0 space-y-2">
             <Skeleton className={`h-4 w-32 rounded-md ${skeletonClassName}`} />
             <Skeleton className={`h-3 w-72 rounded-md ${skeletonClassName}`} />
@@ -45,7 +45,7 @@ export function SchedulePostPageSkeleton() {
                   <div className="flex gap-2 overflow-hidden">
                     {Array.from({ length: 5 }).map((__, itemIndex) => (
                       <div key={itemIndex} className="space-y-2">
-                        <Skeleton className={`h-16 w-[72px] rounded-xl ${skeletonClassName}`} />
+                        <Skeleton className={`h-16 w-[4.5rem] rounded-xl ${skeletonClassName}`} />
                         <Skeleton className={`mx-auto h-2.5 w-10 rounded ${skeletonClassName}`} />
                       </div>
                     ))}

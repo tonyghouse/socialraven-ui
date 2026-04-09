@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 const FOOTER_GROUPS = [
   {
@@ -32,10 +33,14 @@ const FOOTER_GROUPS = [
   },
 ];
 
-export function PublicSiteFooter() {
+export function PublicSiteFooter({
+  contentClassName = "max-w-7xl px-6 py-14",
+}: {
+  contentClassName?: string;
+}) {
   return (
     <footer className="border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-      <div className="container mx-auto max-w-7xl px-6 py-14">
+      <div className={cn("mx-auto w-full", contentClassName)}>
         <div className="grid gap-10 md:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
           <div className="max-w-sm">
             <div className="flex items-center gap-3">

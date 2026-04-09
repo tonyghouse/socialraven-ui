@@ -66,7 +66,7 @@ export function MobileBottomBar() {
       <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
         <SheetContent
           side="bottom"
-          className="max-h-[88vh] rounded-t-[28px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-5 shadow-none"
+          className="max-h-[88vh] rounded-t-[1.75rem] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] pt-5 shadow-none"
         >
           <SheetHeader className="space-y-1 pr-10 text-left">
             <SheetTitle className="text-heading-20 text-[var(--ds-gray-1000)]">
@@ -220,7 +220,7 @@ export function MobileBottomBar() {
         </SheetContent>
       </Sheet>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-[200] border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] pb-[max(env(safe-area-inset-bottom),0px)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-[200] border-t border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] pb-[max(env(safe-area-inset-bottom),0)]">
         <div className="mx-auto grid h-16 max-w-lg grid-cols-5 items-center gap-1 px-2">
           <MobileNavTab item={primaryItems[0]} pathname={pathname} />
           <MobileNavTab item={primaryItems[1]} pathname={pathname} />

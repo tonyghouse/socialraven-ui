@@ -202,7 +202,7 @@ function SquarePreview({
 }: PreviewProps) {
   const isGeist = appearance === "geist";
   const mediaCount = media.length;
-  const previewSizeClass = "w-[104px] h-[156px]";
+  const previewSizeClass = "w-[6.5rem] h-[9.75rem]";
 
   if (type === "TEXT") {
     return (
@@ -217,7 +217,7 @@ function SquarePreview({
       >
         <p
           className={cn(
-            "flex-1 overflow-hidden text-[11px] leading-4 line-clamp-[8]",
+            "flex-1 overflow-hidden text-[0.6875rem] leading-4 line-clamp-[8]",
             isGeist
               ? "text-[var(--ds-gray-900)]"
               : "text-[hsl(var(--foreground-muted))]"
@@ -227,7 +227,7 @@ function SquarePreview({
         </p>
         <div
           className={cn(
-            "mt-2 flex items-center gap-1 text-[10px] font-medium",
+            "mt-2 flex items-center gap-1 text-[0.625rem] font-medium",
             isGeist
               ? "text-[var(--ds-gray-900)]"
               : "text-[hsl(var(--foreground-subtle))]"
@@ -308,7 +308,7 @@ function SquarePreview({
             <div key={m.id ?? i} className="relative overflow-hidden">
               <MediaThumb media={m} appearance={appearance} />
               {i === 3 && mediaCount > 4 && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-[11px] font-semibold text-white">
+                <div className="absolute inset-0 flex items-center justify-center bg-black/55 text-[0.6875rem] font-semibold text-white">
                   +{mediaCount - 4}
                 </div>
               )}
@@ -317,7 +317,7 @@ function SquarePreview({
         </div>
       )}
 
-      <div className="pointer-events-none absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded-full bg-black/55 px-1.5 py-0.5 text-[9px] font-semibold text-white backdrop-blur-sm">
+      <div className="pointer-events-none absolute bottom-1.5 right-1.5 flex items-center gap-1 rounded-full bg-black/55 px-1.5 py-0.5 text-[0.5625rem] font-semibold text-white backdrop-blur-sm">
         {hasVideo ? (
           <Play className="h-2.5 w-2.5 fill-white text-white" />
         ) : (
@@ -499,7 +499,7 @@ export function CollectionCard({
         "group flex h-full flex-col overflow-hidden rounded-lg border transition-[box-shadow,border-color,background-color] duration-150",
         isGeist
           ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
-          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0 0 0 / 0.08)] hover:border-[hsl(var(--accent))]/30 hover:shadow-[0_6px_12px_rgb(0 0 0 / 0.12)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))]/30 focus:ring-offset-2"
+          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_0.0625rem_0.125rem_rgb(0 0 0 / 0.08)] hover:border-[hsl(var(--accent))]/30 hover:shadow-[0_0.375rem_0.75rem_rgb(0 0 0 / 0.12)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))]/30 focus:ring-offset-2"
       )}
     >
       <div
@@ -513,7 +513,7 @@ export function CollectionCard({
         <div className="flex min-w-0 items-center gap-1.5 flex-wrap">
           <span
             className={cn(
-              "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold",
+              "inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[0.625rem] font-semibold",
               isGeist
                 ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                 : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground))]"
@@ -525,7 +525,7 @@ export function CollectionCard({
           {recoveryBadge && (
             <span
               className={cn(
-                "inline-flex items-center rounded-full border px-2 py-1 text-[10px] font-semibold",
+                "inline-flex items-center rounded-full border px-2 py-1 text-[0.625rem] font-semibold",
                 recoveryBadge.className
               )}
             >
@@ -536,7 +536,7 @@ export function CollectionCard({
 
         <span
           className={cn(
-            "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold",
+            "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[0.625rem] font-semibold",
             statusCfg.className
           )}
         >
@@ -552,7 +552,7 @@ export function CollectionCard({
         {approvalEscalated && (
           <span
             className={cn(
-              "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold",
+              "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[0.625rem] font-semibold",
               isGeist
                 ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]"
                 : "border-orange-200 bg-orange-50 text-orange-700"
@@ -564,7 +564,7 @@ export function CollectionCard({
         {approvalOverdue && (
           <span
             className={cn(
-              "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold",
+              "inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[0.625rem] font-semibold",
               isGeist
                 ? "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]"
                 : "border-amber-200 bg-amber-50 text-amber-700"
@@ -579,7 +579,7 @@ export function CollectionCard({
         <div className="min-w-0 flex-1">
           <p
             className={cn(
-              "line-clamp-2 text-[14px] font-semibold leading-5 transition-colors",
+              "line-clamp-2 text-[0.875rem] font-semibold leading-5 transition-colors",
               isGeist
                 ? "text-[var(--ds-gray-1000)] group-hover:text-[var(--ds-blue-700)]"
                 : "text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--accent))]"
@@ -590,7 +590,7 @@ export function CollectionCard({
 
           <div
             className={cn(
-              "mt-3 flex items-center gap-1.5 text-[11px]",
+              "mt-3 flex items-center gap-1.5 text-[0.6875rem]",
               isGeist
                 ? "text-[var(--ds-gray-900)]"
                 : "text-[hsl(var(--foreground-muted))]"
@@ -657,7 +657,7 @@ export function CollectionCard({
               {hiddenPlatformCount > 0 && (
                 <span
                   className={cn(
-                    "flex h-7 min-w-7 items-center justify-center rounded-md border px-1.5 text-[10px] font-semibold",
+                    "flex h-7 min-w-7 items-center justify-center rounded-md border px-1.5 text-[0.625rem] font-semibold",
                     isGeist
                       ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                       : "border-[hsl(var(--border))] bg-[hsl(var(--surface-raised))] text-[hsl(var(--foreground-muted))]"
@@ -693,7 +693,7 @@ export function CollectionCard({
                     ) : (
                       <div
                         className={cn(
-                          "flex h-full w-full items-center justify-center text-[9px] font-bold",
+                          "flex h-full w-full items-center justify-center text-[0.5625rem] font-bold",
                           isGeist
                             ? "text-[var(--ds-gray-900)]"
                             : "text-[hsl(var(--foreground-muted))]"
@@ -730,7 +730,7 @@ export function CollectionCard({
       >
         <span
           className={cn(
-            "text-[11px]",
+            "text-[0.6875rem]",
             isGeist
               ? "text-[var(--ds-gray-900)]"
               : "text-[hsl(var(--foreground-muted))]"
@@ -740,7 +740,7 @@ export function CollectionCard({
         </span>
         <span
           className={cn(
-            "flex items-center gap-1 text-[11px] font-semibold",
+            "flex items-center gap-1 text-[0.6875rem] font-semibold",
             isGeist
               ? "text-[var(--ds-blue-700)]"
               : "text-[hsl(var(--accent))]"

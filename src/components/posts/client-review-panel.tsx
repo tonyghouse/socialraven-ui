@@ -270,7 +270,7 @@ export function ClientReviewPanel({
         ) : null}
 
         <div className={cn(draftDetailSubtlePanelClassName, "space-y-4 p-4")}>
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_300px]">
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_18.75rem]">
             <div className="space-y-4">
               <div>
                 <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">

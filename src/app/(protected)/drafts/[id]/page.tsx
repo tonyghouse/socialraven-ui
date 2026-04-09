@@ -469,7 +469,7 @@ export default function DraftDetailPage() {
         </div>
 
         <div className="px-4 py-5 pb-24 sm:px-5 sm:pb-8">
-          <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+          <div className="grid gap-4 lg:grid-cols-[17.5rem_minmax(0,1fr)]">
             <aside className="space-y-4">
               <section className={draftDetailPanelClassName}>
                 <div className={draftDetailPanelHeaderClassName}>

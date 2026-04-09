@@ -137,7 +137,7 @@ export default function ConnectedAccountsSection({
             {Array.from({ length: 4 }).map((_, index) => (
               <Skeleton
                 key={index}
-                className="h-[208px] w-full rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-300)]"
+                className="h-[13rem] w-full rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-300)]"
               />
             ))}
           </div>

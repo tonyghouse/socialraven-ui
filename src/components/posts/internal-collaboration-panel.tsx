@@ -598,7 +598,7 @@ export function InternalCollaborationPanel({
                   ? "Write a client-visible comment for the review link..."
                   : "Add a comment for the team..."
               }
-              className="min-h-[112px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
+              className="min-h-[7rem] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
             />
 
             {composerType === "COMMENT" && composerVisibility === "CLIENT_VISIBLE" && (
@@ -627,7 +627,7 @@ export function InternalCollaborationPanel({
                       const text = (collection.description ?? "").slice(start, end);
                       setSelection({ start, end, text });
                     }}
-                    className="min-h-[140px] border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                    className="min-h-[8.75rem] border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                   />
                   <div className="rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2.5">
                     <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
@@ -648,7 +648,7 @@ export function InternalCollaborationPanel({
                     onChange={(event) => setComposerSuggestedText(event.target.value)}
                     disabled={!canWrite || creatingThread}
                     placeholder="Write the replacement copy here..."
-                    className="min-h-[112px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
+                    className="min-h-[7rem] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
                   />
                 </div>
 
@@ -940,7 +940,7 @@ export function InternalCollaborationPanel({
                         }
                         disabled={submittingReplyThreadId === thread.id}
                         placeholder="Reply in thread..."
-                        className="min-h-[92px] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
+                        className="min-h-[5.75rem] border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
                       />
                       {thread.visibility === "INTERNAL" && (
                         <MentionPicker

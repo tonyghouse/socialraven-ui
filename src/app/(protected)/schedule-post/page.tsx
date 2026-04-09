@@ -123,7 +123,7 @@ function StepCard({
         locked
           ? "border-[var(--ds-gray-400)] opacity-60"
           : complete && isOpen
-            ? "border-[var(--ds-blue-200)] shadow-[0_0_0_1px_var(--ds-blue-200)]"
+            ? "border-[var(--ds-blue-200)] shadow-[0_0_0_0.0625rem_var(--ds-blue-200)]"
             : complete
               ? "border-[var(--ds-gray-500)]"
               : "border-[var(--ds-gray-400)]",
@@ -193,7 +193,7 @@ function StepCard({
       <div
         className={cn(
           "transition-all duration-300 ease-in-out overflow-hidden",
-          isOpen ? "max-h-[9999px] opacity-100" : "max-h-0 opacity-0 pointer-events-none",
+          isOpen ? "max-h-[624.9375rem] opacity-100" : "max-h-0 opacity-0 pointer-events-none",
         )}
       >
         <div className="px-6 py-5">{children}</div>
@@ -681,7 +681,7 @@ export default function ScheduledPostCollectionPage() {
 
   const step3Summary = (
     <span className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)]">
-      <span className="truncate max-w-[160px] sm:max-w-[260px]">
+      <span className="truncate max-w-[10rem] sm:max-w-[16.25rem]">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
           {postType && postType !== "TEXT" && totalMediaCount > 0 && (
@@ -836,7 +836,7 @@ export default function ScheduledPostCollectionPage() {
                   : "Write your post caption here. You can use emoji, hashtags, and mentions."
               }
               className={cn(
-                "min-h-[160px] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] px-4 py-3 text-copy-14 leading-6 text-[var(--ds-gray-1000)] transition-[border-color,box-shadow,background-color] duration-150",
+                "min-h-[10rem] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] px-4 py-3 text-copy-14 leading-6 text-[var(--ds-gray-1000)] transition-[border-color,box-shadow,background-color] duration-150",
                 "placeholder:text-[var(--ds-gray-900)]",
                 focusRingClassName,
                 overLimit || platformCharErrors.length > 0

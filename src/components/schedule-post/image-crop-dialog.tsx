@@ -179,7 +179,7 @@ export default function ImageCropDialog({ file, open, onClose, onCrop }: Props) 
             )}
 
             {region && (
-              <p className="text-[11px] text-muted-foreground text-center">
+              <p className="text-[0.6875rem] text-muted-foreground text-center">
                 {region.w} × {region.h} px
               </p>
             )}

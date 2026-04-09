@@ -185,7 +185,7 @@ export function PostCollaborationAnnotationEditor({
               disabled={disabled}
               onSelect={handleCaptionSelection}
               className={cn(
-                "min-h-[140px]",
+                "min-h-[8.75rem]",
                 isGeist
                   ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                   : "bg-[hsl(var(--surface-raised))]"
@@ -278,7 +278,7 @@ export function PostCollaborationAnnotationEditor({
                       {isVideoMedia(selectedMedia) ? (
                         <video
                           src={selectedMedia.fileUrl}
-                          className="block max-h-[360px] max-w-full"
+                          className="block max-h-[22.5rem] max-w-full"
                           muted
                           playsInline
                         />
@@ -287,7 +287,7 @@ export function PostCollaborationAnnotationEditor({
                         <img
                           src={selectedMedia.fileUrl}
                           alt={selectedMedia.fileName}
-                          className="block max-h-[360px] max-w-full"
+                          className="block max-h-[22.5rem] max-w-full"
                         />
                       )}
 
@@ -296,7 +296,7 @@ export function PostCollaborationAnnotationEditor({
                         mediaAnnotation.mediaMarkerY !== null && (
                           <div
                             className={cn(
-                              "pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_3px_rgb(0_0_0_/_0.18)]",
+                              "pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_0.1875rem_rgb(0_0_0_/_0.18)]",
                               isGeist ? "bg-[var(--ds-blue-600)]" : "bg-[hsl(var(--accent))]"
                             )}
                             style={{

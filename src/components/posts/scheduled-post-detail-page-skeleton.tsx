@@ -8,7 +8,7 @@ export function ScheduledPostDetailPageSkeleton() {
   return (
     <main className="min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]">
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="min-w-0 space-y-2">
             <Skeleton className={`h-4 w-56 rounded-md ${skeletonClassName}`} />
             <Skeleton className={`h-3 w-40 rounded-md ${skeletonClassName}`} />
@@ -31,7 +31,7 @@ export function ScheduledPostDetailPageSkeleton() {
 
       <div className="space-y-5 px-4 py-6 pb-24 sm:px-6 sm:pb-8">
         <div className={surfaceClassName}>
-          <Skeleton className={`h-[3px] w-full rounded-none ${skeletonClassName}`} />
+          <Skeleton className={`h-[0.1875rem] w-full rounded-none ${skeletonClassName}`} />
           <div className="space-y-4 px-6 pt-6 pb-5">
             <div className="flex flex-wrap items-start gap-3">
               <Skeleton className={`h-7 min-w-0 flex-1 rounded-md ${skeletonClassName}`} />
@@ -54,7 +54,7 @@ export function ScheduledPostDetailPageSkeleton() {
           </div>
         </div>
 
-        <div className="grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="grid items-start gap-5 lg:grid-cols-[17.5rem_minmax(0,1fr)]">
           <div className="space-y-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <div key={index} className={surfaceClassName}>
@@ -104,7 +104,7 @@ export function ScheduledPostDetailPageSkeleton() {
           <div className="min-w-0 space-y-4">
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} className={surfaceClassName}>
-                <Skeleton className={`h-[3px] w-full rounded-none ${skeletonClassName}`} />
+                <Skeleton className={`h-[0.1875rem] w-full rounded-none ${skeletonClassName}`} />
                 <div className="space-y-4 p-4">
                   <div className="flex items-center gap-3">
                     <Skeleton className={`h-9 w-9 rounded-xl ${skeletonClassName}`} />

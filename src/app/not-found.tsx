@@ -37,8 +37,8 @@ export default function NotFound() {
         </div>
       </header>
 
-      <main className="mx-auto flex min-h-[calc(100vh-73px)] w-full max-w-7xl items-center px-6 py-12 md:px-8 md:py-16">
-        <section className="grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+      <main className="mx-auto flex min-h-[calc(100vh-4.5625rem)] w-full max-w-7xl items-center px-6 py-12 md:px-8 md:py-16">
+        <section className="grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
           <div className="overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none">
             <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-6 py-4">
               <div className="flex items-center gap-3">

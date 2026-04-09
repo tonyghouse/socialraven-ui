@@ -16,10 +16,10 @@ export const connectTitleClassName = "text-label-14 text-[var(--ds-gray-1000)]";
 export const connectBodyClassName = "text-label-14 leading-6 text-[var(--ds-gray-900)]";
 export const connectMetaClassName = "text-copy-12 text-[var(--ds-gray-900)]";
 export const connectEyebrowClassName =
-  "text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--ds-gray-800)]";
+  "text-[0.6875rem] font-medium uppercase tracking-[0.14em] text-[var(--ds-gray-800)]";
 export const connectInputClassName =
   "h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors placeholder:text-[var(--ds-gray-700)] focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
-export const connectTextareaClassName = cn(connectInputClassName, "min-h-[112px] py-2");
+export const connectTextareaClassName = cn(connectInputClassName, "min-h-[7rem] py-2");
 
 type ConnectButtonTone = "primary" | "secondary" | "ghost" | "danger";
 

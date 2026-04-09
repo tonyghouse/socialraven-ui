@@ -37,7 +37,7 @@ export default function ScheduleDateTimePicker({
           <label className="text-label-14 text-[var(--ds-gray-1000)]">Schedule</label>
           <div className="flex items-center gap-1.5 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-gray-900)]">
             <Globe className="w-3 h-3 flex-shrink-0" />
-            <span className="truncate max-w-[180px]">{timezone}</span>
+            <span className="truncate max-w-[11.25rem]">{timezone}</span>
           </div>
         </div>
 
@@ -89,7 +89,7 @@ export default function ScheduleDateTimePicker({
         <label className="text-sm font-semibold text-foreground">Schedule</label>
         <div className="flex items-center gap-1.5 rounded-md border border-border-subtle bg-surface-raised px-2.5 py-1 text-xs text-foreground-muted">
           <Globe className="w-3 h-3 flex-shrink-0" />
-          <span className="truncate max-w-[180px]">{timezone}</span>
+          <span className="truncate max-w-[11.25rem]">{timezone}</span>
         </div>
       </div>
 

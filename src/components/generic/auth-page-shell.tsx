@@ -38,8 +38,8 @@ export function AuthPageShell({
       <AuthPatternBackground />
 
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
-          <section className="rounded-[28px] border border-[var(--ds-gray-400)] bg-[color:color-mix(in_srgb,var(--ds-background-100)_88%,transparent)] p-6 shadow-none backdrop-blur-xl sm:p-8">
+        <div className="grid w-full gap-6 lg:grid-cols-[minmax(0,1fr)_26.25rem] lg:items-center">
+          <section className="rounded-[1.75rem] border border-[var(--ds-gray-400)] bg-[color:color-mix(in_srgb,var(--ds-background-100)_88%,transparent)] p-6 shadow-none backdrop-blur-xl sm:p-8">
             <span className="inline-flex items-center rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-3 py-1 text-label-12 text-[var(--ds-blue-700)]">
               {badge}
             </span>

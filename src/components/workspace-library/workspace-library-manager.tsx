@@ -818,7 +818,7 @@ export function WorkspaceLibraryManager() {
                             ? "Enter the reusable snippet text"
                             : "Enter the default caption or template body"
                         }
-                        className={cn("min-h-[140px]", inputClassName)}
+                        className={cn("min-h-[8.75rem]", inputClassName)}
                       />
                     </label>
                   )}
@@ -829,7 +829,7 @@ export function WorkspaceLibraryManager() {
                         value={itemEditor.platformConfigsText}
                         onChange={(event) => updateItemEditor("platformConfigsText", event.target.value)}
                         placeholder='{"instagram":{"firstComment":"Comment text"}}'
-                        className={cn("min-h-[140px] font-mono", inputClassName)}
+                        className={cn("min-h-[8.75rem] font-mono", inputClassName)}
                       />
                     </label>
                   )}
@@ -1040,7 +1040,7 @@ export function WorkspaceLibraryManager() {
                   )}
                 </div>
               </div>
-              <div className="grid gap-3 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_220px_220px_auto]">
+              <div className="grid gap-3 px-4 py-4 lg:grid-cols-[minmax(0,1fr)_13.75rem_13.75rem_auto]">
                 <div className="relative">
                   <Search className={searchIconClassName} />
                   <Input

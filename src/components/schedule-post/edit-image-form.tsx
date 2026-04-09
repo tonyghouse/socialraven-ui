@@ -270,7 +270,7 @@ export default function EditImageForm({
           placeholder="Write your post caption here. You can use emoji, hashtags, and mentions."
           className={cn(
             "w-full p-4 rounded-xl border text-sm bg-background text-foreground leading-relaxed",
-            "resize-none min-h-[140px] transition-all duration-200",
+            "resize-none min-h-[8.75rem] transition-all duration-200",
             "placeholder:text-muted-foreground/60",
             "focus:outline-none focus:ring-2 focus:ring-primary/20",
             overLimit || platformCharErrors.length > 0

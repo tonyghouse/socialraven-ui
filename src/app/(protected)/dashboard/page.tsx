@@ -745,7 +745,7 @@ function StatCard({
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="mb-1.5 text-copy-12 text-[var(--ds-gray-900)]">{label}</p>
-          <p className="mt-1 text-[28px] font-semibold leading-8 tracking-[-0.01em] tabular-nums text-[var(--ds-gray-1000)]">
+          <p className="mt-1 text-[1.75rem] font-semibold leading-8 tracking-[-0.01em] tabular-nums text-[var(--ds-gray-1000)]">
             {value}
           </p>
         </div>

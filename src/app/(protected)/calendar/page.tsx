@@ -387,7 +387,7 @@ function DayDetailSheet({
                         </div>
 
                         {hourPosts.length > 0 ? (
-                          <div className="space-y-1.5 px-4 pb-2 pl-[72px]">
+                          <div className="space-y-1.5 px-4 pb-2 pl-[4.5rem]">
                             {hourPosts.map((post) => (
                               <PostTimelineCard
                                 key={post.id}
@@ -401,7 +401,7 @@ function DayDetailSheet({
                           <button
                             onClick={() => scheduleAt(hour)}
                             className={cn(
-                              "group flex w-full items-center gap-1.5 pb-1 pl-[72px] pr-4 text-left text-label-12 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-blue-700)]",
+                              "group flex w-full items-center gap-1.5 pb-1 pl-[4.5rem] pr-4 text-left text-label-12 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-blue-700)]",
                               focusRingClassName
                             )}
                           >
@@ -628,8 +628,8 @@ function WeekView({
           {todayInView ? (
             <div className="pointer-events-none absolute z-20" style={{ top: nowTop, left: timeGutter, right: 0 }}>
               <div className="relative flex items-center">
-                <div className="absolute -left-[5px] h-2.5 w-2.5 rounded-full bg-[var(--ds-red-600)]" />
-                <div className="ml-1 h-[1.5px] flex-1 bg-[var(--ds-red-600)] opacity-75" />
+                <div className="absolute -left-[0.3125rem] h-2.5 w-2.5 rounded-full bg-[var(--ds-red-600)]" />
+                <div className="ml-1 h-[0.09375rem] flex-1 bg-[var(--ds-red-600)] opacity-75" />
               </div>
             </div>
           ) : null}
@@ -771,7 +771,7 @@ function FilterBar({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.97 }}
               transition={{ duration: 0.12 }}
-              className="absolute left-0 top-full z-30 mt-1.5 w-72 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-[0_16px_40px_rgba(15,23,42,0.12)]"
+              className="absolute left-0 top-full z-30 mt-1.5 w-72 overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-[0_1rem_2.5rem_rgba(15,23,42,0.12)]"
             >
               <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2">
                 <p className="text-label-12 text-[var(--ds-gray-900)]">
@@ -843,7 +843,7 @@ function FilterBar({
 
       <div className={cn(SUBTLE_BADGE_CLASS, "ml-auto")}>
         <Globe className="h-3 w-3 shrink-0" />
-        <span className="max-w-[160px] truncate">{timezone}</span>
+        <span className="max-w-[10rem] truncate">{timezone}</span>
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ export default function PlatformCharLimits({
   return (
     <div className={cn("overflow-hidden rounded-xl border", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-border-subtle bg-surface")}>
       <div className={cn("border-b px-3 py-2", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]" : "border-border-subtle bg-surface-raised")}>
-        <p className={cn("text-[10px] font-semibold uppercase tracking-[0.08em]", isGeist ? "text-[var(--ds-gray-900)]" : "text-foreground-muted")}>
+        <p className={cn("text-[0.625rem] font-semibold uppercase tracking-[0.08em]", isGeist ? "text-[var(--ds-gray-900)]" : "text-foreground-muted")}>
           Character limits by platform
         </p>
       </div>
@@ -63,14 +63,14 @@ export default function PlatformCharLimits({
                     {PLATFORM_DISPLAY_NAMES[platform] ?? platform}
                   </span>
                   {over && (
-                    <span className={cn("flex-shrink-0 rounded border px-1 py-px text-[9px] font-bold uppercase leading-none tracking-wide", isGeist ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
+                    <span className={cn("flex-shrink-0 rounded border px-1 py-px text-[0.5625rem] font-bold uppercase leading-none tracking-wide", isGeist ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]" : "border-destructive/20 bg-destructive/10 text-destructive")}>
                       Over limit
                     </span>
                   )}
                 </div>
                 <span
                   className={cn(
-                    "text-[11px] tabular-nums font-mono flex-shrink-0",
+                    "text-[0.6875rem] tabular-nums font-mono flex-shrink-0",
                     over
                       ? isGeist ? "font-semibold text-[var(--ds-red-700)]" : "font-semibold text-destructive"
                       : near

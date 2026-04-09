@@ -191,7 +191,7 @@ export default function RecoveryDraftPage() {
           </Notice>
         )}
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <section className={cn(surfaceClassName, "p-5")}>
             <div className="flex flex-wrap items-center gap-2">
               <ToneBadge className="border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]">
@@ -218,7 +218,7 @@ export default function RecoveryDraftPage() {
                   <p className="text-label-12 uppercase tracking-[0.18em] text-[var(--ds-green-700)]">
                     Published Channels
                   </p>
-                  <p className="mt-2 text-[24px] font-semibold leading-none text-[var(--ds-green-700)]">
+                  <p className="mt-2 text-[1.5rem] font-semibold leading-none text-[var(--ds-green-700)]">
                     {publishedChannelCount}
                   </p>
                 </div>
@@ -226,7 +226,7 @@ export default function RecoveryDraftPage() {
                   <p className="text-label-12 uppercase tracking-[0.18em] text-[var(--ds-amber-700)]">
                     Failed Channels
                   </p>
-                  <p className="mt-2 text-[24px] font-semibold leading-none text-[var(--ds-amber-700)]">
+                  <p className="mt-2 text-[1.5rem] font-semibold leading-none text-[var(--ds-amber-700)]">
                     {failedChannelCount}
                   </p>
                 </div>
@@ -258,7 +258,7 @@ export default function RecoveryDraftPage() {
                 <p className="text-label-12 uppercase tracking-[0.16em] text-[var(--ds-gray-900)]">
                   Reminder attempts sent
                 </p>
-                <p className="mt-2 text-[24px] font-semibold leading-none text-[var(--ds-gray-1000)]">
+                <p className="mt-2 text-[1.5rem] font-semibold leading-none text-[var(--ds-gray-1000)]">
                   {collection.recoveryNotificationAttemptCount ?? 0}
                 </p>
               </div>

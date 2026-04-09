@@ -18,7 +18,7 @@ export function AnalyticsPageSkeleton() {
   return (
     <main className={pageClassName}>
       <header className="sticky top-0 z-20 border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95 backdrop-blur-sm">
-        <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+        <div className="flex h-[3.75rem] items-center justify-between gap-4 px-4 sm:px-6">
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <Sk className="h-8 w-8 shrink-0 rounded-lg" />
             <div className="min-w-0 space-y-2">
@@ -87,7 +87,7 @@ export function AnalyticsPageSkeleton() {
               </div>
             </div>
             <div className="p-5">
-              <Sk className="h-[220px] w-full rounded-xl" />
+              <Sk className="h-[13.75rem] w-full rounded-xl" />
             </div>
           </section>
 

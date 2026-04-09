@@ -215,7 +215,7 @@ export function ApprovalSafetyPanel({
         "overflow-hidden rounded-xl border shadow-sm",
         isGeist
           ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
-          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_1px_2px_rgb(0_0_0_/_0.08)]"
+          : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_0.0625rem_0.125rem_rgb(0_0_0_/_0.08)]"
       )}
     >
       <div

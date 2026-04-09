@@ -12,7 +12,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
+  padding: 0.0625rem;
   background: linear-gradient(
     180deg,
     hsl(var(--border-subtle) / 0.96),
@@ -28,25 +28,25 @@
 
 .depth-soft {
   box-shadow:
-    0 1px 1px rgb(0 0 0 / 0.04),
-    0 4px 10px rgb(0 0 0 / 0.08);
+    0 0.0625rem 0.0625rem rgb(0 0 0 / 0.04),
+    0 0.25rem 0.625rem rgb(0 0 0 / 0.08);
 }
 
 .page-bg {
   background-color: hsl(var(--background));
   background-image: radial-gradient(
     circle,
-    hsl(var(--border) / 0.9) 1px,
-    transparent 1px
+    hsl(var(--border) / 0.9) 0.0625rem,
+    transparent 0.0625rem
   );
-  background-size: 22px 22px;
+  background-size: 1.375rem 1.375rem;
 }
 
 .dark .page-bg {
   background-image:
     linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-sunken))),
-    radial-gradient(circle, hsl(var(--border) / 0.45) 1px, transparent 1px);
-  background-size: auto, 24px 24px;
+    radial-gradient(circle, hsl(var(--border) / 0.45) 0.0625rem, transparent 0.0625rem);
+  background-size: auto, 1.5rem 1.5rem;
 }
 
 .card-hover {
@@ -56,7 +56,7 @@
 .card-hover:hover {
   border-color: hsl(var(--border));
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  transform: translateY(-0.0625rem);
 }
 
 :root {
@@ -195,12 +195,12 @@
   --sidebar-ring: var(--accent);
 
   --radius: 0.6875rem;
-  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.04);
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05), 0 1px 4px rgb(0 0 0 / 0.03);
-  --shadow-md: 0 3px 8px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 8px 18px rgb(0 0 0 / 0.10), 0 2px 5px rgb(0 0 0 / 0.05);
-  --shadow-xl: 0 14px 30px rgb(0 0 0 / 0.14);
-  --shadow-2xl: 0 20px 44px rgb(0 0 0 / 0.18);
+  --shadow-xs: 0 0.0625rem 0.125rem rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 0.0625rem 0.125rem rgb(0 0 0 / 0.05), 0 0.0625rem 0.25rem rgb(0 0 0 / 0.03);
+  --shadow-md: 0 0.1875rem 0.5rem rgb(0 0 0 / 0.08), 0 0.0625rem 0.125rem rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 0.5rem 1.125rem rgb(0 0 0 / 0.10), 0 0.125rem 0.3125rem rgb(0 0 0 / 0.05);
+  --shadow-xl: 0 0.875rem 1.875rem rgb(0 0 0 / 0.14);
+  --shadow-2xl: 0 1.25rem 2.75rem rgb(0 0 0 / 0.18);
 
   --tracking-normal: 0em;
   --spacing: 0.25rem;
@@ -347,9 +347,9 @@
     color-scheme: dark;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 48rem) {
     html {
-      font-size: clamp(90%, calc(110% - 0.2083vw), 100%);
+      font-size: clamp(92%, calc(110% - 0.2083vw), 100%);
     }
   }
 
@@ -370,8 +370,8 @@
   }
 
   :focus-visible {
-    outline: 2px solid hsl(var(--ring) / 0.9);
-    outline-offset: 2px;
+    outline: 0.125rem solid hsl(var(--ring) / 0.9);
+    outline-offset: 0.125rem;
   }
 }
 
@@ -392,8 +392,8 @@
   }
 
   .geist-scrollbar::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 0.625rem;
+    height: 0.625rem;
   }
 
   .geist-scrollbar::-webkit-scrollbar-track {
@@ -401,8 +401,8 @@
   }
 
   .geist-scrollbar::-webkit-scrollbar-thumb {
-    border: 3px solid transparent;
-    border-radius: 999px;
+    border: 0.1875rem solid transparent;
+    border-radius: 62.4375rem;
     background: transparent;
     background-clip: padding-box;
   }
@@ -444,15 +444,15 @@
     align-items: center;
     justify-content: center;
     gap: 0.125rem;
-    width: 18px;
-    height: 8px;
+    width: 1.125rem;
+    height: 0.5rem;
   }
 
   .sidebar-scroll-cue-line {
     display: block;
-    width: 7px;
-    height: 1.5px;
-    border-radius: 999px;
+    width: 0.4375rem;
+    height: 0.09375rem;
+    border-radius: 62.4375rem;
     background: var(--ds-gray-alpha-300);
   }
 

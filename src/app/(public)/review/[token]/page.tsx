@@ -460,7 +460,7 @@ export default function PublicReviewPage() {
         description="Your name and email are captured with any comment, approval, or rejection."
         surface="surface"
       >
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]">
           <PublicCard className="p-5">
             <div className="grid gap-4 md:grid-cols-2">
               <label className="space-y-2">
@@ -492,7 +492,7 @@ export default function PublicReviewPage() {
                   onChange={(event) => setCommentBody(event.target.value)}
                   placeholder="Share any feedback for the team..."
                   disabled={!review.canComment || commenting || acting !== null}
-                  className="min-h-[140px] bg-[var(--ds-gray-100)]"
+                  className="min-h-[8.75rem] bg-[var(--ds-gray-100)]"
                 />
                 <PostCollaborationAnnotationEditor
                   description={review.description ?? ""}
@@ -535,7 +535,7 @@ export default function PublicReviewPage() {
                       value={decisionNote}
                       onChange={(event) => setDecisionNote(event.target.value)}
                       placeholder="Optional context for your decision..."
-                      className="min-h-[140px] bg-[var(--ds-gray-100)]"
+                      className="min-h-[8.75rem] bg-[var(--ds-gray-100)]"
                     />
                     <div className="flex flex-wrap gap-3">
                       <PublicPrimaryButton
@@ -616,7 +616,7 @@ export default function PublicReviewPage() {
         title="Content details"
         description="Review the scheduled content and any client-visible conversation."
       >
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22.5rem]">
           <div className="space-y-6">
             {review.media.length > 0 && (
               <PublicCard className="p-5">

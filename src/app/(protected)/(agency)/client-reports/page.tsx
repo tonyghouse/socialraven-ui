@@ -123,10 +123,10 @@ const helperTextClassName = "text-copy-12 text-[var(--ds-gray-900)]";
 const inputBaseClassName =
   "w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors placeholder:text-[var(--ds-gray-700)] focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const inputClassName = cn(inputBaseClassName, "h-10");
-const textareaClassName = cn(inputBaseClassName, "min-h-[112px] py-2");
+const textareaClassName = cn(inputBaseClassName, "min-h-[7rem] py-2");
 const subtleMetaClassName = "text-copy-12 text-[var(--ds-gray-900)]";
 const footerEyebrowClassName =
-  "text-[11px] font-medium uppercase tracking-[0.16em] text-[var(--ds-gray-800)]";
+  "text-[0.6875rem] font-medium uppercase tracking-[0.16em] text-[var(--ds-gray-800)]";
 
 function ActionButton({
   variant = "secondary",
@@ -437,7 +437,7 @@ export default function ClientReportsPage() {
           </Notice>
         )}
 
-        <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+        <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
           <div className={surfaceClassName}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="space-y-1">
@@ -671,7 +671,7 @@ export default function ClientReportsPage() {
           </div>
         </section>
 
-        <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+        <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
           <div className={surfaceClassName}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="space-y-1">

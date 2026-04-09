@@ -28,7 +28,7 @@ export default function AccountDetail({ acc }: Props) {
           <div
             className={cn(
               "flex items-center gap-3",
-              "min-w-[220px] rounded-xl border border-border",
+              "min-w-[13.75rem] rounded-xl border border-border",
               "bg-card px-4 py-3",
               "transition-all",
               "hover:bg-muted/40 hover:border-primary/20",
