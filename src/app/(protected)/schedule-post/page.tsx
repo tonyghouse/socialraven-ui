@@ -29,6 +29,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { WorkspaceApprovalMode } from "@/model/Workspace";
 import {
@@ -235,6 +236,7 @@ export default function ScheduledPostCollectionPage() {
   const { isLoaded, getToken } = useAuth();
   const searchParams = useSearchParams();
   const { activeWorkspace } = useWorkspace();
+  const { isAgency } = usePlan();
   const { canManageApprovalRules, canPublishPosts } = useRole();
 
   const initialDate = searchParams.get("date") ?? "";
@@ -797,14 +799,16 @@ export default function ScheduledPostCollectionPage() {
           onToggle={reachedStep >= 3 ? () => toggleStep(3) : undefined}
           summary={step3Summary}
         >
-          <div className="mb-6">
-            <LibraryComposerPanel
-              postType={postType}
-              onApplyItem={handleApplyLibraryItem}
-              onApplyBundle={handleApplyLibraryBundle}
-              appearance="geist"
-            />
-          </div>
+          {isAgency ? (
+            <div className="mb-6">
+              <LibraryComposerPanel
+                postType={postType}
+                onApplyItem={handleApplyLibraryItem}
+                onApplyBundle={handleApplyLibraryBundle}
+                appearance="geist"
+              />
+            </div>
+          ) : null}
 
           {/* Caption */}
           <div className="space-y-2">
@@ -875,18 +879,20 @@ export default function ScheduledPostCollectionPage() {
                 />
               ) : (
                 <p className="text-copy-12 text-[var(--ds-gray-900)]">
-                  Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove a library asset to upload more files.
+                  Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. {isAgency ? "Remove a library asset or uploaded file to add more." : "Remove an uploaded file to add more."}
                 </p>
               )}
-              <SelectedLibraryAssets
-                assets={selectedLibraryAssets}
-                onRemove={(fileKey) =>
-                  setSelectedLibraryAssets((current) =>
-                    current.filter((asset) => asset.fileKey !== fileKey)
-                  )
-                }
-                appearance="geist"
-              />
+              {isAgency ? (
+                <SelectedLibraryAssets
+                  assets={selectedLibraryAssets}
+                  onRemove={(fileKey) =>
+                    setSelectedLibraryAssets((current) =>
+                      current.filter((asset) => asset.fileKey !== fileKey)
+                    )
+                  }
+                  appearance="geist"
+                />
+              ) : null}
               {selectedPlatforms.length > 0 && (
                 <MediaValidationPanel
                   platforms={selectedPlatforms}
