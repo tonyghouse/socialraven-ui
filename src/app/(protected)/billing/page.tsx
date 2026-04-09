@@ -590,8 +590,8 @@ export default function BillingPage() {
         icon={<CreditCard className="h-4 w-4" />}
       />
 
-      <div className="px-4 py-6 sm:px-6 lg:px-8">
-        <div className="flex w-full flex-col gap-8">
+      <div className="px-4 py-5 sm:px-5 lg:px-6">
+        <div className="flex w-full flex-col gap-6">
           {!isOwner ? (
             <section className={sectionClassName}>
               <div className={cn("flex items-center gap-3 px-4 py-4 sm:max-w-[640px]", insetPanelClassName)}>
@@ -619,10 +619,10 @@ export default function BillingPage() {
                   ) : userPlan && currentPlan ? (
                     <>
                       <div className="rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4 sm:p-5 lg:rounded-none lg:border-x-0 lg:border-t-0 lg:bg-transparent lg:px-0 lg:py-0 lg:pb-6">
-                        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-8">
-                          <div className="min-w-0 space-y-4 lg:pr-8 lg:border-r lg:border-[var(--ds-gray-400)]">
+                        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px] lg:gap-6">
+                          <div className="min-w-0 space-y-3 lg:border-r lg:border-[var(--ds-gray-400)] lg:pr-6">
                             <div className="flex items-start gap-3">
-                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]">
                                 {(() => {
                                   const Icon = PLAN_ICONS[userPlan.currentPlan];
                                   return <Icon className="h-4 w-4" />;
@@ -659,7 +659,7 @@ export default function BillingPage() {
                               </div>
                             </div>
 
-                            <div className="grid gap-4 border-t border-[var(--ds-gray-400)] pt-4 sm:grid-cols-3 sm:gap-6">
+                            <div className="grid gap-4 border-t border-[var(--ds-gray-400)] pt-4 sm:grid-cols-3 sm:gap-5">
                               <OverviewMeta
                                 label={isTrialing ? "Trial" : "Plan"}
                                 value={

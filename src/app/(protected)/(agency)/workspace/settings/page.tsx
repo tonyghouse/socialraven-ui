@@ -922,8 +922,8 @@ export default function WorkspaceSettingsPage() {
 
   if (!activeWorkspace && !loading) {
     return (
-      <div className="w-full px-6 py-6 md:px-8 md:py-8">
-          <div className="space-y-6">
+      <div className="w-full px-5 py-5 md:px-6 md:py-6">
+          <div className="space-y-5">
           <div className="space-y-2">
             <p className={cn("text-xs", subtleTextClass)}>Workspace settings</p>
             <h1 className="text-title-20 leading-6 text-[var(--ds-gray-1000)]">
@@ -1105,15 +1105,15 @@ export default function WorkspaceSettingsPage() {
         }
       />
 
-      <div className="w-full px-6 py-6 md:px-8 md:py-8">
-        <div className="space-y-6">
+      <div className="w-full px-5 py-5 md:px-6 md:py-6">
+        <div className="space-y-5">
           {error && (
             <div className="rounded-xl border border-[var(--ds-red-200)] bg-[var(--ds-red-100)] px-4 py-3 text-label-14 text-[var(--ds-red-700)]">
               {error}
             </div>
           )}
 
-          <div className="grid gap-6 xl:grid-cols-[340px_minmax(0,1fr)]">
+          <div className="grid gap-5 xl:grid-cols-[340px_minmax(0,1fr)]">
             <div className="space-y-4">
               <section className={surfaceClass}>
                 <SectionHeader

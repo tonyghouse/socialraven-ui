@@ -18,13 +18,13 @@ export function PageHeaderSkeleton({
 }: PageHeaderSkeletonProps) {
   return (
     <header className="sticky top-0 z-20 border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background))]/95 backdrop-blur-sm">
-      <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="flex h-[58px] items-center justify-between gap-3 px-4 sm:px-5">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {showIcon ? (
             <Skeleton className="h-8 w-8 shrink-0 rounded-lg bg-[hsl(var(--surface-raised))]" />
           ) : null}
           <div className="min-w-0 space-y-2">
-            <Skeleton className={cn("h-4 rounded-md", titleWidth)} />
+            <Skeleton className={cn("h-[18px] rounded-md", titleWidth)} />
             <Skeleton className={cn("h-3 rounded-md", descriptionWidth)} />
           </div>
         </div>
@@ -35,8 +35,8 @@ export function PageHeaderSkeleton({
               <Skeleton
                 key={index}
                 className={cn(
-                  "h-9 rounded-lg",
-                  index === actions - 1 ? "w-24" : "w-9"
+                  "h-8 rounded-lg",
+                  index === actions - 1 ? "w-20" : "w-8"
                 )}
               />
             ))}

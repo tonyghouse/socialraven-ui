@@ -743,8 +743,8 @@ export default function DraftEditPage() {
         </div>
       )}
 
-      <div className="px-4 py-6 pb-8 sm:px-6">
-        <div className="mb-5 rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-5 py-5 shadow-sm">
+      <div className="px-4 py-5 pb-8 sm:px-5">
+        <div className="mb-4 rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-4 shadow-sm">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-start gap-3">
               <div className={cn("flex h-10 w-10 items-center justify-center rounded-xl border", typeCfg.className)}>

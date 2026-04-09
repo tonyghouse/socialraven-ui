@@ -444,7 +444,7 @@ export default function AnalyticsPage() {
         }
       />
 
-      <main className="w-full space-y-6 px-4 py-6 sm:px-6">
+      <main className="w-full space-y-5 px-4 py-5 sm:px-5">
         <section className={cn(surfaceClassName, "p-4")}>
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="space-y-1">
@@ -590,7 +590,7 @@ export default function AnalyticsPage() {
             <SectionHeader icon={BarChart2} title="Platform Breakdown" />
 
             {analyticsLoading ? (
-              <div className="space-y-3 p-5">
+              <div className="space-y-3 p-4">
                 {Array.from({ length: 3 }).map((_, index) => (
                   <Sk key={index} className="h-14 rounded-xl" />
                 ))}
@@ -611,7 +611,7 @@ export default function AnalyticsPage() {
                   );
 
                   return (
-                    <div key={stat.provider} className="px-5 py-4">
+                    <div key={stat.provider} className="px-4 py-3.5">
                       <div className="mb-2 flex items-center gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
                           <PlatformIcon className="h-4 w-4" />
@@ -687,7 +687,7 @@ export default function AnalyticsPage() {
             sub="likes + comments + shares per day"
           />
 
-          <div className="p-5">
+          <div className="p-4">
             {analyticsLoading ? (
               <Sk className="h-[220px] rounded-xl" />
             ) : filteredTimeline.length === 0 ? (
@@ -793,7 +793,7 @@ export default function AnalyticsPage() {
         <section className={surfaceClassName}>
           <div
             className={cn(
-              "flex flex-wrap items-center justify-between gap-3 px-5 py-4",
+              "flex flex-wrap items-center justify-between gap-3 px-4 py-3.5",
               "border-b",
               dividerClassName
             )}
@@ -827,7 +827,7 @@ export default function AnalyticsPage() {
           </div>
 
           {analyticsLoading ? (
-            <div className="space-y-3 p-5">
+            <div className="space-y-3 p-4">
               {Array.from({ length: 3 }).map((_, index) => (
                 <Sk key={index} className="h-16 rounded-xl" />
               ))}
@@ -845,7 +845,7 @@ export default function AnalyticsPage() {
                 return (
                   <div
                     key={`${post.postId}-${post.provider}`}
-                    className="flex items-start gap-4 px-5 py-4 transition-colors hover:bg-[var(--ds-gray-100)]"
+                    className="flex items-start gap-3 px-4 py-3.5 transition-colors hover:bg-[var(--ds-gray-100)]"
                   >
                     <span className="mt-0.5 w-5 shrink-0 text-label-12 text-[var(--ds-gray-900)]">
                       {index + 1}
@@ -901,7 +901,7 @@ export default function AnalyticsPage() {
               sub="based on your published post performance"
             />
 
-            <div className="overflow-x-auto p-5">
+            <div className="overflow-x-auto p-4">
               {analyticsLoading ? (
                 <Sk className="h-40 rounded-xl" />
               ) : (
@@ -1051,7 +1051,7 @@ function SectionHeader({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center gap-2 px-5 py-4",
+        "flex flex-wrap items-center gap-2 px-4 py-3.5",
         "border-b",
         dividerClassName
       )}
@@ -1069,7 +1069,7 @@ function SectionHeader({
 
 function EmptyState({ text }: { text: string }) {
   return (
-    <div className="px-5 py-10 text-center">
+    <div className="px-4 py-8 text-center">
       <p className="text-copy-14 text-[var(--ds-gray-900)]">{text}</p>
     </div>
   );

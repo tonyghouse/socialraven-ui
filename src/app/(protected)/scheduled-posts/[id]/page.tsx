@@ -1016,7 +1016,7 @@ export default function ScheduledCollectionDetailPage() {
             }
           />
 
-          <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-6">
+          <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-5">
             <nav className="flex min-w-0 items-center gap-1.5 text-label-14">
               <button
                 onClick={() => router.push("/scheduled-posts")}
@@ -1035,10 +1035,10 @@ export default function ScheduledCollectionDetailPage() {
             </nav>
           </div>
 
-          <div className="space-y-5 px-4 py-6 pb-24 sm:px-6 sm:pb-8">
+          <div className="space-y-4 px-4 py-5 pb-24 sm:px-5 sm:pb-8">
             <div className={surfaceClassName}>
               <div className="h-[3px] w-full bg-[var(--ds-blue-600)]" />
-              <div className="px-6 pt-6 pb-5">
+              <div className="px-5 pt-5 pb-4">
                 <div className="mb-4 flex flex-wrap items-start gap-x-4 gap-y-3">
                   <h1 className="min-w-0 flex-1 text-title-20 text-[var(--ds-gray-1000)]">
                     {collection.description}
@@ -1129,7 +1129,7 @@ export default function ScheduledCollectionDetailPage() {
               <ApprovalSafetyPanel collection={collection} appearance="geist" />
             ) : null}
 
-            <div className="grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <div className="grid items-start gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
               <div className="space-y-4">
                 <div className={surfaceClassName}>
                   <div className={surfaceHeaderClassName}>

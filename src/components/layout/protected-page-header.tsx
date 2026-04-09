@@ -27,7 +27,7 @@ export function ProtectedPageHeader({
         className
       )}
     >
-      <div className="flex h-[60px] items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="flex h-[58px] items-center justify-between gap-3 px-4 sm:px-5">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           {leading}
           {icon ? (
@@ -40,7 +40,7 @@ export function ProtectedPageHeader({
               {title}
             </h1>
             {description ? (
-              <p className="truncate text-[13px] leading-5 text-[hsl(var(--foreground-muted))]">
+              <p className="truncate text-[13px] leading-4 text-[hsl(var(--foreground-muted))]">
                 {description}
               </p>
             ) : null}

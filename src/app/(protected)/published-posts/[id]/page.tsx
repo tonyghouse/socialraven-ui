@@ -389,10 +389,10 @@ export default function PublishedCollectionDetailPage() {
         </nav>
       </div>
 
-      <div className="space-y-5 px-4 py-6 pb-24 sm:px-6 sm:pb-8">
+      <div className="space-y-4 px-4 py-5 pb-24 sm:px-5 sm:pb-8">
         <div className={surfaceClassName}>
           <div className="h-[3px] w-full bg-[var(--ds-green-600)]" />
-          <div className="px-6 pt-6 pb-5">
+          <div className="px-5 pt-5 pb-4">
             <div className="mb-4 flex flex-wrap items-start gap-x-4 gap-y-3">
               <h1 className="min-w-0 flex-1 text-title-20 text-[var(--ds-gray-1000)]">
                 {collection.description}
@@ -452,11 +452,11 @@ export default function PublishedCollectionDetailPage() {
         </div>
 
         {/* Main layout: sidebar + platform sections */}
-        <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)] items-start">
+        <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)] items-start">
           <div className="space-y-4">
             {canOpenChannelRecovery && (
               <div className="overflow-hidden rounded-2xl border border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] shadow-sm">
-                <div className="flex items-start gap-3 px-5 py-4">
+                <div className="flex items-start gap-3 px-4 py-3.5">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ds-amber-700)]" />
                   <div className="min-w-0 flex-1">
                     <p className="text-label-14 text-[var(--ds-amber-800)]">

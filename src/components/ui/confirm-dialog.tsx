@@ -33,7 +33,7 @@ export function ConfirmDialog({
         <DialogPrimitive.Content
           className={cn(
             "fixed left-[50%] top-[50%] z-50 translate-x-[-50%] translate-y-[-50%]",
-            "w-full max-w-sm rounded-2xl border bg-background p-6 shadow-xl",
+            "w-full max-w-sm rounded-2xl border bg-background p-5 shadow-lg",
             "data-[state=open]:animate-in data-[state=closed]:animate-out",
             "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
             "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -44,7 +44,7 @@ export function ConfirmDialog({
           <DialogPrimitive.Title className="text-base font-semibold text-foreground mb-1.5">
             {title}
           </DialogPrimitive.Title>
-          <DialogPrimitive.Description className="text-sm text-muted-foreground mb-5">
+          <DialogPrimitive.Description className="mb-4 text-sm text-muted-foreground">
             {description}
           </DialogPrimitive.Description>
           <div className="flex gap-2 justify-end">

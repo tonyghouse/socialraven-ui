@@ -723,7 +723,7 @@ export default function ScheduledPostCollectionPage() {
       />
 
       {selectedPlatformKeys.length > 0 && (
-        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-6">
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-5">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-copy-12 text-[var(--ds-gray-900)]">Posting to:</span>
             {selectedPlatformKeys.map((p) => (
@@ -743,7 +743,7 @@ export default function ScheduledPostCollectionPage() {
       )}
 
       {/* ── Steps ── */}
-      <div className="space-y-4 px-4 py-6 sm:px-6">
+      <div className="space-y-4 px-4 py-5 sm:px-5">
 
         {/* ── Step 1: Content Type ── */}
         <StepCard

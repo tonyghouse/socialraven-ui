@@ -215,7 +215,7 @@ function StatCard({
 function PageSkeleton() {
   return (
     <main className={pageClassName}>
-      <div className="space-y-6 px-4 py-6 sm:px-6">
+      <div className="space-y-5 px-4 py-5 sm:px-5">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <section key={index} className={cn(surfaceClassName, "p-4")}>
@@ -244,7 +244,7 @@ function PageSkeleton() {
           </div>
         </section>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.7fr_1fr]">
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.7fr_1fr]">
           <section className={surfaceClassName}>
             <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
               <Skeleton className="h-4 w-56 rounded-md bg-[var(--ds-gray-200)]" />
@@ -266,7 +266,7 @@ function PageSkeleton() {
             </div>
           </section>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
             {Array.from({ length: 2 }).map((_, index) => (
               <section key={index} className={surfaceClassName}>
                 <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
@@ -388,7 +388,7 @@ export default function AgencyOpsPage() {
         }
       />
 
-      <div className="space-y-6 px-4 py-6 pb-24 sm:px-6 sm:pb-10">
+      <div className="space-y-5 px-4 py-5 pb-24 sm:px-5 sm:pb-10">
         {error && (
           <InlineNotice tone="error" title={error}>
             <div className="mt-3">
@@ -498,9 +498,9 @@ export default function AgencyOpsPage() {
               </div>
             </section>
 
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.7fr_1fr]">
+            <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1.7fr_1fr]">
               <section className={surfaceClassName}>
-                <div className={cn("flex items-center justify-between px-5 py-4", "border-b", dividerClassName)}>
+                <div className={cn("flex items-center justify-between px-4 py-3.5", "border-b", dividerClassName)}>
                   <div>
                     <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Cross-Workspace Approval Queue</h2>
                     <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
@@ -520,7 +520,7 @@ export default function AgencyOpsPage() {
                       <Link
                         key={item.collectionId}
                         href={detailHref(item)}
-                        className="block px-5 py-4 transition-colors hover:bg-[var(--ds-gray-100)]"
+                        className="block px-4 py-3.5 transition-colors hover:bg-[var(--ds-gray-100)]"
                       >
                         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                           <div className="min-w-0">
@@ -557,7 +557,7 @@ export default function AgencyOpsPage() {
                 )}
               </section>
 
-              <div className="space-y-6">
+              <div className="space-y-5">
                 <section className={surfaceClassName}>
                   <div className={cn("px-5 py-4", "border-b", dividerClassName)}>
                     <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">Overdue Review Board</h2>

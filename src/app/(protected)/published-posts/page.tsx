@@ -277,7 +277,7 @@ export default function PublishedPostsPage() {
       />
 
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 sm:px-6">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 sm:px-5">
           <StatusBadge variant="success">Refreshed {formatLastRefresh()}</StatusBadge>
           <StatusBadge>
             {loading && collections.length === 0
@@ -290,12 +290,12 @@ export default function PublishedPostsPage() {
       </div>
 
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-        <div className="px-4 py-3 sm:px-6">
+        <div className="px-4 py-3 sm:px-5">
           <PostCollectionFilters onFiltersChange={handleFiltersChange} appearance="geist" />
         </div>
       </div>
 
-      <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-10">
+      <div className="px-4 py-5 pb-24 sm:px-5 sm:pb-10">
         {error && (
           <div className="mb-6">
             <ErrorNotice message={error} onRetry={() => void loadCollections(currentPage)} />
@@ -304,7 +304,7 @@ export default function PublishedPostsPage() {
 
         {!isEmpty ? (
           <>
-            <div className="grid grid-cols-1 gap-5 pt-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 pt-1 md:grid-cols-2 lg:grid-cols-3">
               {collections.map((collection) => (
                 <CollectionCard
                   key={collection.id}
@@ -316,7 +316,7 @@ export default function PublishedPostsPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-4 shadow-sm">
+              <div className="mt-6 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3.5 shadow-sm">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -349,7 +349,7 @@ export default function PublishedPostsPage() {
 
 function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
   return (
-    <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-6 py-16 text-center shadow-sm">
+    <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-5 py-12 text-center shadow-sm">
       <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]">
         <CalendarCheck2 className="h-5 w-5" />
       </div>
@@ -360,7 +360,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
         Once your scheduled posts go live across platforms, they&apos;ll
         appear here automatically.
       </p>
-      <div className="mt-6 flex justify-center">
+      <div className="mt-5 flex justify-center">
         <ActionButton tone="primary" onClick={onCreatePost}>
           <span className="inline-flex items-center gap-1.5">
             <Plus className="h-4 w-4" />
@@ -368,7 +368,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
           </span>
         </ActionButton>
       </div>
-      <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
+      <p className="mt-3 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
         Posts go out automatically — no need to stay online.
       </p>
     </div>

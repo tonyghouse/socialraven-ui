@@ -111,11 +111,11 @@ function formatTemplateLabel(value: string) {
 
 const pageClassName = "min-h-screen bg-[var(--ds-background-200)]";
 const surfaceClassName =
-  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-5 shadow-sm";
+  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4 shadow-sm";
 const insetSurfaceClassName =
   "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4";
 const emptyStateClassName =
-  "rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-8 text-center text-label-14 text-[var(--ds-gray-900)]";
+  "rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-6 text-center text-label-14 text-[var(--ds-gray-900)]";
 const sectionTitleClassName = "text-label-14 text-[var(--ds-gray-1000)]";
 const sectionDescriptionClassName = "text-label-14 leading-6 text-[var(--ds-gray-900)]";
 const labelClassName = "text-label-14 text-[var(--ds-gray-1000)]";
@@ -423,7 +423,7 @@ export default function ClientReportsPage() {
         }
       />
 
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-5">
         {!canExportClientReports && (
           <Notice tone="warning" title="Client reporting is restricted">
             Only workspaces with the client-report export capability can create branded report links
@@ -437,7 +437,7 @@ export default function ClientReportsPage() {
           </Notice>
         )}
 
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+        <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
           <div className={surfaceClassName}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="space-y-1">
@@ -671,7 +671,7 @@ export default function ClientReportsPage() {
           </div>
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+        <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
           <div className={surfaceClassName}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="space-y-1">

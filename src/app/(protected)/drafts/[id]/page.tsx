@@ -450,7 +450,7 @@ export default function DraftDetailPage() {
           }
         />
 
-        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-2.5 sm:px-6">
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-2.5 sm:px-5">
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => router.push("/drafts")}
@@ -468,14 +468,14 @@ export default function DraftDetailPage() {
           </div>
         </div>
 
-        <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-8">
-          <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
-            <aside className="space-y-5">
+        <div className="px-4 py-5 pb-24 sm:px-5 sm:pb-8">
+          <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
+            <aside className="space-y-4">
               <section className={draftDetailPanelClassName}>
                 <div className={draftDetailPanelHeaderClassName}>
                   <p className="text-title-16 text-[var(--ds-gray-1000)]">Platforms</p>
                 </div>
-                <div className="space-y-3 px-5 py-4">
+                <div className="space-y-3 px-4 py-3.5">
                   {hasAccounts ? (
                     uniquePlatforms.map((platform) => {
                       const Icon = PLATFORM_ICONS[platform] ?? PLATFORM_ICONS[platform.toLowerCase()];
@@ -515,7 +515,7 @@ export default function DraftDetailPage() {
                     <FileText className="h-4 w-4 text-[var(--ds-gray-900)]" />
                     <p className="text-title-16 text-[var(--ds-gray-1000)]">Caption</p>
                   </div>
-                  <div className="px-5 py-4">
+                  <div className="px-4 py-3.5">
                     <p className="whitespace-pre-wrap text-label-14 leading-6 text-[var(--ds-gray-900)]">
                       {captionText}
                     </p>

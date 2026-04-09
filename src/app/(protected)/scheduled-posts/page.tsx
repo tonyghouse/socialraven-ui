@@ -283,7 +283,7 @@ export default function ScheduledPostsPage() {
       />
 
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 sm:px-6">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 sm:px-5">
           <StatusBadge variant="accent">Refreshed {formatLastRefresh()}</StatusBadge>
           <StatusBadge>
             {loading && collections.length === 0
@@ -296,12 +296,12 @@ export default function ScheduledPostsPage() {
       </div>
 
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-        <div className="px-4 py-3 sm:px-6">
+        <div className="px-4 py-3 sm:px-5">
           <PostCollectionFilters onFiltersChange={handleFiltersChange} appearance="geist" />
         </div>
       </div>
 
-      <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-10">
+      <div className="px-4 py-5 pb-24 sm:px-5 sm:pb-10">
         {error && (
           <div className="mb-6">
             <ErrorNotice message={error} onRetry={() => void loadCollections(currentPage)} />
@@ -310,7 +310,7 @@ export default function ScheduledPostsPage() {
 
         {!isEmpty ? (
           <>
-            <div className="grid grid-cols-1 gap-5 pt-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 pt-1 md:grid-cols-2 lg:grid-cols-3">
               {collections.map((collection) => (
                 <CollectionCard
                   key={collection.id}
@@ -322,7 +322,7 @@ export default function ScheduledPostsPage() {
             </div>
 
             {totalPages > 1 && (
-              <div className="mt-8 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-4 shadow-sm">
+              <div className="mt-6 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3.5 shadow-sm">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -354,9 +354,9 @@ export default function ScheduledPostsPage() {
 
 function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
   return (
-    <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-6 py-16 text-center shadow-sm">
+    <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-5 py-12 text-center shadow-sm">
       <div className="mx-auto flex max-w-sm flex-col items-center text-center">
-        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
           <CalendarDays className="h-5 w-5" />
         </div>
         <h3 className="text-title-16 text-[var(--ds-gray-1000)]">
@@ -365,7 +365,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
         <p className="mt-2 text-label-14 leading-6 text-[var(--ds-gray-900)]">
           Create a scheduled post to start your queue.
         </p>
-        <div className="mt-5">
+        <div className="mt-4">
           <ActionButton tone="primary" onClick={onCreatePost}>
             <span className="inline-flex items-center gap-1.5">
               <Plus className="h-4 w-4" />

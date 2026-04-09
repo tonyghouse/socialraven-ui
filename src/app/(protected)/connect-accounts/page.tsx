@@ -75,8 +75,8 @@ export default function ManageAccountsPage() {
         }
       />
 
-      <main className="px-4 py-6 sm:px-6 sm:py-8">
-        <section className="space-y-6">
+      <main className="px-4 py-5 sm:px-5 sm:py-6">
+        <section className="space-y-5">
           <div>
             <ConnectedAccountsSection
               canWrite={canWrite}

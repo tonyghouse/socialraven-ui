@@ -208,7 +208,7 @@ export default function ApprovalsPage() {
       />
 
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 text-label-14 text-[var(--ds-gray-900)] sm:px-6">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 text-label-14 text-[var(--ds-gray-900)] sm:px-5">
           <QueuePill>
             {loading && collections.length === 0
               ? "Loading queue"
@@ -220,7 +220,7 @@ export default function ApprovalsPage() {
       </div>
 
       <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
-        <div className="px-4 py-3 sm:px-6">
+        <div className="px-4 py-3 sm:px-5">
           <PostCollectionFilters
             onFiltersChange={handleFiltersChange}
             hidePeriod
@@ -229,7 +229,7 @@ export default function ApprovalsPage() {
         </div>
       </div>
 
-      <div className="px-4 py-6 pb-24 sm:px-6 sm:pb-10">
+      <div className="px-4 py-5 pb-24 sm:px-5 sm:pb-10">
         {error && (
           <div className="mb-6">
             <InlineNotice title={error}>
@@ -252,7 +252,7 @@ export default function ApprovalsPage() {
           <ApprovalsGridSkeleton />
         ) : !isEmpty ? (
           <>
-            <div className="grid grid-cols-1 gap-5 pt-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 pt-1 md:grid-cols-2 lg:grid-cols-3">
               {collections.map((collection) => (
                 <CollectionCard
                   key={collection.id}
@@ -275,7 +275,7 @@ export default function ApprovalsPage() {
             )}
           </>
         ) : (
-          <section className={cn("px-6 py-12 text-center", surfaceClassName)}>
+          <section className={cn("px-5 py-10 text-center", surfaceClassName)}>
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
               <CheckCheck className="h-5 w-5 text-[var(--ds-gray-900)]" />
             </div>

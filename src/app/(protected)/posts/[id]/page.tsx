@@ -537,11 +537,11 @@ export default function PostDetailPage() {
       </div>
 
       {/* Page Body */}
-      <div className="px-4 sm:px-6 py-8">
-        <div className="grid lg:grid-cols-5 gap-6">
+      <div className="px-4 py-6 sm:px-5">
+        <div className="grid gap-5 lg:grid-cols-5">
 
           {/* ── Left: Preview ── */}
-          <div className="lg:col-span-3 space-y-5">
+          <div className="space-y-4 lg:col-span-3">
 
             {/* Platform preview — hero */}
             <div className={cn(surfaceClassName, "overflow-hidden")}>
@@ -578,7 +578,7 @@ export default function PostDetailPage() {
                     {preview}
                   </div>
                 ) : (
-                  <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-6">
+                  <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-5">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="h-10 w-10 shrink-0 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-200)]" />
                       <div className="space-y-1.5 flex-1">
@@ -602,7 +602,7 @@ export default function PostDetailPage() {
 
             {/* Caption — compact, below preview */}
             {post.description && (
-              <div className={cn(surfaceClassName, "p-5")}>
+              <div className={cn(surfaceClassName, "p-4")}>
                 <div className="flex items-center gap-2 mb-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
                     <FileText className="h-4 w-4 text-[var(--ds-gray-900)]" />
@@ -617,7 +617,7 @@ export default function PostDetailPage() {
 
             {/* Extra media files (beyond the first, which is shown in preview) */}
             {extraMedia.length > 0 && (
-              <div className={cn(surfaceClassName, "p-5")}>
+              <div className={cn(surfaceClassName, "p-4")}>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
                     <FileImage className="h-4 w-4 text-[var(--ds-gray-900)]" />

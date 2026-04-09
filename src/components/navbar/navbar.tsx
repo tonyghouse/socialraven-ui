@@ -19,20 +19,20 @@ export default function Navbar() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex justify-center border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background)/0.92)] backdrop-blur-xl">
-      <div className="w-full max-w-7xl px-4 sm:px-6">
-        <nav className="flex h-16 items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
+      <div className="w-full max-w-7xl px-4 sm:px-5">
+        <nav className="flex h-14 items-center justify-between gap-4">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm">
               <Image
                 src="/SocialRavenLogo.svg"
                 alt="SocialRaven logo"
                 width={22}
                 height={22}
-                className="h-[22px] w-[22px]"
+                className="h-5 w-5"
               />
             </div>
             <div className="hidden sm:block">
-              <p className="text-sm font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">SocialRaven</p>
+              <p className="text-[13px] font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]">SocialRaven</p>
             </div>
           </Link>
 

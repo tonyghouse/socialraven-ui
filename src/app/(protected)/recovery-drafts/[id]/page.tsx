@@ -147,7 +147,7 @@ export default function RecoveryDraftPage() {
 
   if (error || !collection) {
     return (
-      <main className={cn(pageClassName, "px-4 py-6 sm:px-6")}>
+      <main className={cn(pageClassName, "px-4 py-5 sm:px-5")}>
         <div className="mx-auto max-w-3xl">
           <Notice tone="red" title="Recovery Draft">
             <p>{error ?? "Recovery details are unavailable."}</p>
@@ -180,7 +180,7 @@ export default function RecoveryDraftPage() {
         )}
       />
 
-      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6">
+      <div className="mx-auto max-w-4xl px-4 py-5 sm:px-5">
         {(!canRecover || !partialRecoveryReady) && (
           <Notice tone="amber" title="Recovery unavailable">
             <p>
@@ -191,8 +191,8 @@ export default function RecoveryDraftPage() {
           </Notice>
         )}
 
-        <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <section className={cn(surfaceClassName, "p-6")}>
+        <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <section className={cn(surfaceClassName, "p-5")}>
             <div className="flex flex-wrap items-center gap-2">
               <ToneBadge className="border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]">
                 Failed Collection
@@ -243,7 +243,7 @@ export default function RecoveryDraftPage() {
             </div>
           </section>
 
-          <aside className={cn(surfaceClassName, "p-6")}>
+          <aside className={cn(surfaceClassName, "p-5")}>
             <h3 className="text-label-12 uppercase tracking-[0.18em] text-[var(--ds-gray-900)]">
               Next step
             </h3>

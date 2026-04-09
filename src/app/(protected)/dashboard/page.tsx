@@ -89,7 +89,7 @@ const TYPE_META = {
 const pageClassName = "min-h-screen bg-[var(--ds-background-200)]";
 const sectionClassName =
   "overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm";
-const sectionHeaderClassName = "flex items-center justify-between border-b border-[var(--ds-gray-400)] px-5 py-4";
+const sectionHeaderClassName = "flex items-center justify-between border-b border-[var(--ds-gray-400)] px-4 py-3.5";
 const sectionTitleClassName = "text-label-14 text-[var(--ds-gray-1000)]";
 const bodyTextClassName = "text-label-14 leading-6 text-[var(--ds-gray-900)]";
 const metaTextClassName = "text-copy-12 text-[var(--ds-gray-900)]";
@@ -376,7 +376,7 @@ export default function DashboardPage() {
         </div>
       ) : null}
 
-      <div className="space-y-6 px-4 py-6 sm:px-6">
+      <div className="space-y-5 px-4 py-5 sm:px-5">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <StatCard icon={Calendar} label="Scheduled Today" value={scheduledToday} accent />
           <StatCard icon={Clock} label="This Week" value={scheduledThisWeek} />
@@ -384,8 +384,8 @@ export default function DashboardPage() {
           <StatCard icon={Link2} label="Accounts" value={accounts.length} />
         </div>
 
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-          <div className="space-y-5 lg:col-span-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-2">
             <section className={sectionClassName}>
               <div className={sectionHeaderClassName}>
                 <div className="flex items-center gap-2">
@@ -418,7 +418,7 @@ export default function DashboardPage() {
 
                     return (
                       <Link key={post.id} href="/scheduled-posts" className="block">
-                        <div className={cn("group flex items-center gap-3.5 px-5 py-3.5", rowHoverClassName)}>
+                        <div className={cn("group flex items-center gap-3.5 px-4 py-3", rowHoverClassName)}>
                           <div
                             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border"
                             style={platformSurfaceStyle(post.provider)}
@@ -462,7 +462,7 @@ export default function DashboardPage() {
                   </span>
                 </div>
 
-                <div className="space-y-4 p-5">
+                <div className="space-y-3 p-4">
                   {topPlatforms.map(([platform, count]) => {
                     const PlatformIcon = PLATFORM_ICONS[platform];
                     const percent = Math.round((count / scheduledPosts.length) * 100);
@@ -519,7 +519,7 @@ export default function DashboardPage() {
 
                     return (
                       <Link key={collection.id} href={`/published-posts/${collection.id}`} className="block">
-                        <div className={cn("group flex items-center gap-4 px-5 py-3.5", rowHoverClassName)}>
+                        <div className={cn("group flex items-center gap-4 px-4 py-3", rowHoverClassName)}>
                           <div
                             className="flex shrink-0 items-center"
                             style={{ width: Math.min(platforms.length, 3) * 18 + 10 }}
@@ -575,12 +575,12 @@ export default function DashboardPage() {
           <div className="space-y-4">
             {usageStats ? (
               <section className={sectionClassName}>
-                <div className="flex items-center gap-2 border-b border-[var(--ds-gray-400)] px-5 py-4">
+                <div className="flex items-center gap-2 border-b border-[var(--ds-gray-400)] px-4 py-3.5">
                   <SectionIcon icon={Activity} />
                   <h2 className={sectionTitleClassName}>Usage This Month</h2>
                 </div>
 
-                <div className="space-y-4 p-5">
+                <div className="space-y-3 p-4">
                   <UsageBar
                     label="Posts published"
                     used={usageStats.postsUsedThisMonth}
@@ -618,12 +618,12 @@ export default function DashboardPage() {
             ) : null}
 
             <section className={sectionClassName}>
-              <div className="flex items-center gap-2 border-b border-[var(--ds-gray-400)] px-5 py-4">
+              <div className="flex items-center gap-2 border-b border-[var(--ds-gray-400)] px-4 py-3.5">
                 <SectionIcon icon={Globe} />
                 <h2 className={sectionTitleClassName}>Connected Accounts</h2>
               </div>
 
-              <div className="p-5">
+              <div className="p-4">
                 {accounts.length === 0 ? (
                   <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-4">
                     <div className="flex flex-col gap-3">
@@ -689,7 +689,7 @@ export default function DashboardPage() {
             </section>
 
             <section className={sectionClassName}>
-              <div className="flex items-center gap-2 border-b border-[var(--ds-gray-400)] px-5 py-4">
+              <div className="flex items-center gap-2 border-b border-[var(--ds-gray-400)] px-4 py-3.5">
                 <SectionIcon icon={Zap} />
                 <h2 className={sectionTitleClassName}>Quick Actions</h2>
               </div>
@@ -778,8 +778,8 @@ function EmptyState({
   href: string;
 }) {
   return (
-    <div className="px-5 py-8">
-      <div className="rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-8 text-center">
+    <div className="px-4 py-6">
+      <div className="rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-6 text-center">
         <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]">
           <Icon className="h-4 w-4" />
         </div>
