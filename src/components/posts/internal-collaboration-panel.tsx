@@ -35,6 +35,7 @@ import {
   resolvePostCollaborationThreadApi,
 } from "@/service/postCollaboration";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import {
   buildFullCaptionSelection,
@@ -170,6 +171,7 @@ export function InternalCollaborationPanel({
 }: Props) {
   const { getToken } = useAuth();
   const { activeWorkspace } = useWorkspace();
+  const { isAgency } = usePlan();
   const { canWrite } = useRole();
   const defaultMediaId = collection.media[0]?.id ?? null;
 
@@ -213,6 +215,13 @@ export function InternalCollaborationPanel({
   }, [collection.description, collection.id, defaultMediaId]);
 
   useEffect(() => {
+    if (!isAgency) {
+      setThreads([]);
+      setThreadError(null);
+      setLoadingThreads(false);
+      return;
+    }
+
     let ignore = false;
 
     async function loadThreads() {
@@ -238,9 +247,15 @@ export function InternalCollaborationPanel({
     return () => {
       ignore = true;
     };
-  }, [collection.id, getToken]);
+  }, [collection.id, getToken, isAgency]);
 
   useEffect(() => {
+    if (!isAgency) {
+      setMembers([]);
+      setLoadingMembers(false);
+      return;
+    }
+
     const resolvedWorkspaceId: string = activeWorkspace?.id ?? "";
     if (!resolvedWorkspaceId) return;
 
@@ -267,7 +282,11 @@ export function InternalCollaborationPanel({
     return () => {
       ignore = true;
     };
-  }, [activeWorkspace?.id, getToken]);
+  }, [activeWorkspace?.id, getToken, isAgency]);
+
+  if (!isAgency) {
+    return null;
+  }
 
   async function refreshThreads() {
     try {

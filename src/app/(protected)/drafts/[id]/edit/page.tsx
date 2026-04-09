@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import { fetchAllConnectedAccountsApi } from "@/service/allConnectedAccounts";
@@ -278,6 +279,7 @@ export default function DraftEditPage() {
   const { id } = useParams<{ id: string }>();
   const { getToken, isLoaded } = useAuth();
   const { activeWorkspace } = useWorkspace();
+  const { isAgency } = usePlan();
   const { canManageApprovalRules } = useRole();
 
   /* ── Load state ── */
@@ -832,13 +834,15 @@ export default function DraftEditPage() {
           onToggle={reachedStep >= 3 ? () => toggleStep(3) : undefined}
           summary={step3Summary}
         >
-          <div className="mb-6">
-            <LibraryComposerPanel
-              postType={postType as "IMAGE" | "VIDEO" | "TEXT"}
-              onApplyItem={handleApplyLibraryItem}
-              onApplyBundle={handleApplyLibraryBundle}
-            />
-          </div>
+          {isAgency ? (
+            <div className="mb-6">
+              <LibraryComposerPanel
+                postType={postType as "IMAGE" | "VIDEO" | "TEXT"}
+                onApplyItem={handleApplyLibraryItem}
+                onApplyBundle={handleApplyLibraryBundle}
+              />
+            </div>
+          ) : null}
 
           {/* Caption */}
           <div className="space-y-2">
@@ -957,14 +961,16 @@ export default function DraftEditPage() {
                   maxFilesLabel={restrictivePlatformLabel}
                 />
               )}
-              <SelectedLibraryAssets
-                assets={selectedLibraryAssets}
-                onRemove={(fileKey) =>
-                  setSelectedLibraryAssets((current) =>
-                    current.filter((asset) => asset.fileKey !== fileKey)
-                  )
-                }
-              />
+              {isAgency ? (
+                <SelectedLibraryAssets
+                  assets={selectedLibraryAssets}
+                  onRemove={(fileKey) =>
+                    setSelectedLibraryAssets((current) =>
+                      current.filter((asset) => asset.fileKey !== fileKey)
+                    )
+                  }
+                />
+              ) : null}
               {slotsForNew === 0 && newFiles.length === 0 && (
                 <p className="text-copy-12 text-[var(--ds-gray-900)]">
                   Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove an existing file to add new ones.
@@ -1016,48 +1022,50 @@ export default function DraftEditPage() {
         >
           <DraftDateTimePicker date={date} setDate={setDate} time={time} setTime={setTime} />
 
-          <div className="mt-4 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4">
-            <p className="text-label-14 text-[var(--ds-gray-1000)]">
-              Effective approval mode
-            </p>
-            <p className="mt-1 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
-              {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
-            </p>
-
-            {canManageApprovalRules ? (
-              <div className="mt-4 space-y-2">
-                <label className="text-copy-12 font-semibold uppercase tracking-[0.08em] text-[var(--ds-gray-900)]">
-                  Campaign override
-                </label>
-                <select
-                  value={approvalModeOverrideInput}
-                  onChange={(event) =>
-                    setApprovalModeOverrideInput(
-                      event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
-                    )
-                  }
-                  className={cn(
-                    "flex h-10 w-full rounded-md border px-3 text-sm transition-colors",
-                    "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
-                    focusRingClassName,
-                  )}
-                >
-                  <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
-                  <option value="NONE">No approval required</option>
-                  <option value="OPTIONAL">Optional approval</option>
-                  <option value="REQUIRED">Required approval</option>
-                  <option value="MULTI_STEP">Multi-step approval</option>
-                </select>
-                <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
-                  Campaign overrides beat account and content-type rules for this collection only.
-                </p>
-              </div>
-            ) : (
-              <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
-                Approval is resolved automatically from workspace policy, account rules, and content type.
+          {isAgency ? (
+            <div className="mt-4 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4">
+              <p className="text-label-14 text-[var(--ds-gray-1000)]">
+                Effective approval mode
               </p>
-            )}
-          </div>
+              <p className="mt-1 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
+                {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
+              </p>
+
+              {canManageApprovalRules ? (
+                <div className="mt-4 space-y-2">
+                  <label className="text-copy-12 font-semibold uppercase tracking-[0.08em] text-[var(--ds-gray-900)]">
+                    Campaign override
+                  </label>
+                  <select
+                    value={approvalModeOverrideInput}
+                    onChange={(event) =>
+                      setApprovalModeOverrideInput(
+                        event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
+                      )
+                    }
+                    className={cn(
+                      "flex h-10 w-full rounded-md border px-3 text-sm transition-colors",
+                      "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
+                      focusRingClassName,
+                    )}
+                  >
+                    <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
+                    <option value="NONE">No approval required</option>
+                    <option value="OPTIONAL">Optional approval</option>
+                    <option value="REQUIRED">Required approval</option>
+                    <option value="MULTI_STEP">Multi-step approval</option>
+                  </select>
+                  <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
+                    Campaign overrides beat account and content-type rules for this collection only.
+                  </p>
+                </div>
+              ) : (
+                <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
+                  Approval is resolved automatically from workspace policy, account rules, and content type.
+                </p>
+              )}
+            </div>
+          ) : null}
 
           <div className="mt-6">
             <DraftDetailActionButton

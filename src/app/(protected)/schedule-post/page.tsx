@@ -358,9 +358,9 @@ export default function ScheduledPostCollectionPage() {
     effectiveApprovalMode,
     canPublishPosts
   );
-  const submitActionLabel = canDirectSchedule ? "Schedule" : "Submit for Review";
-  const step4Title = canDirectSchedule ? "Schedule & Publish" : "Schedule & Review";
-  const step4Description = canDirectSchedule
+  const submitActionLabel = !isAgency || canDirectSchedule ? "Schedule" : "Submit for Review";
+  const step4Title = !isAgency || canDirectSchedule ? "Schedule & Publish" : "Schedule & Review";
+  const step4Description = !isAgency || canDirectSchedule
     ? "Set when your post should go live, or save it as a draft."
     : "Set when your post should go live, then send it into the approval workflow.";
 
@@ -946,47 +946,49 @@ export default function ScheduledPostCollectionPage() {
             appearance="geist"
           />
 
-          <div className={cn(insetSurfaceClassName, "mt-4 p-4")}>
-            <div className="space-y-1">
-              <p className="text-label-14 text-[var(--ds-gray-1000)]">Effective approval mode</p>
-              <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
-                {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
-              </p>
-            </div>
-
-            {canManageApprovalRules ? (
-              <div className="mt-4 space-y-2">
-                <label className="text-label-12 uppercase tracking-wide text-[var(--ds-gray-900)]">
-                  Campaign override
-                </label>
-                <select
-                  value={approvalModeOverrideInput}
-                  onChange={(event) =>
-                    setApprovalModeOverrideInput(
-                      event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
-                    )
-                  }
-                  className={cn(
-                    "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] transition-colors",
-                    focusRingClassName
-                  )}
-                >
-                  <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
-                  <option value="NONE">No approval required</option>
-                  <option value="OPTIONAL">Optional approval</option>
-                  <option value="REQUIRED">Required approval</option>
-                  <option value="MULTI_STEP">Multi-step approval</option>
-                </select>
+          {isAgency ? (
+            <div className={cn(insetSurfaceClassName, "mt-4 p-4")}>
+              <div className="space-y-1">
+                <p className="text-label-14 text-[var(--ds-gray-1000)]">Effective approval mode</p>
                 <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
-                  Campaign overrides beat account and content-type rules for this collection only.
+                  {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
                 </p>
               </div>
-            ) : (
-              <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
-                Approval is resolved automatically from workspace policy, account rules, and content type.
-              </p>
-            )}
-          </div>
+
+              {canManageApprovalRules ? (
+                <div className="mt-4 space-y-2">
+                  <label className="text-label-12 uppercase tracking-wide text-[var(--ds-gray-900)]">
+                    Campaign override
+                  </label>
+                  <select
+                    value={approvalModeOverrideInput}
+                    onChange={(event) =>
+                      setApprovalModeOverrideInput(
+                        event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
+                      )
+                    }
+                    className={cn(
+                      "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] transition-colors",
+                      focusRingClassName
+                    )}
+                  >
+                    <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
+                    <option value="NONE">No approval required</option>
+                    <option value="OPTIONAL">Optional approval</option>
+                    <option value="REQUIRED">Required approval</option>
+                    <option value="MULTI_STEP">Multi-step approval</option>
+                  </select>
+                  <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
+                    Campaign overrides beat account and content-type rules for this collection only.
+                  </p>
+                </div>
+              ) : (
+                <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">
+                  Approval is resolved automatically from workspace policy, account rules, and content type.
+                </p>
+              )}
+            </div>
+          ) : null}
 
           <div className="flex gap-2 mt-6">
             <Button

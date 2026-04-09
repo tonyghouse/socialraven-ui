@@ -46,6 +46,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import { toast } from "sonner";
+import { usePlan } from "@/hooks/usePlan";
 import { fetchPostCollectionByIdApi } from "@/service/fetchPostCollectionByIdApi";
 import { deletePostCollectionApi } from "@/service/deletePostCollectionApi";
 import { updatePostCollectionApi } from "@/service/updatePostCollectionApi";
@@ -728,6 +729,7 @@ export default function ScheduledCollectionDetailPage() {
   const router = useRouter();
   const params = useParams();
   const { getToken, isLoaded } = useAuth();
+  const { isAgency } = usePlan();
   const collectionId = params.id as string;
 
   const [collection, setCollection] =
@@ -1123,7 +1125,9 @@ export default function ScheduledCollectionDetailPage() {
               </Notice>
             )}
 
-            <ApprovalSafetyPanel collection={collection} appearance="geist" />
+            {isAgency ? (
+              <ApprovalSafetyPanel collection={collection} appearance="geist" />
+            ) : null}
 
             <div className="grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
               <div className="space-y-4">
@@ -1292,6 +1296,7 @@ function EditModePanel({
   onCancel: () => void;
 }) {
   const { getToken } = useAuth();
+  const { isAgency } = usePlan();
 
   /* ── Form state ── */
   const [description, setDescription]         = useState("");
@@ -1676,7 +1681,7 @@ function EditModePanel({
       )}
 
       <div className="space-y-4 px-4 py-6 sm:px-6">
-        {collection.approvalLocked && (
+        {isAgency && collection.approvalLocked && (
           <Notice title="Approval lock acknowledged" variant="warning">
             <p>
               Saving material edits will remove this collection from the publishing queue and send it back into
@@ -1756,14 +1761,16 @@ function EditModePanel({
           onToggle={reachedStep >= 3 ? () => toggleStep(3) : undefined}
           summary={step3Summary}
         >
-          <div className="mb-6">
-            <LibraryComposerPanel
-              postType={postType as "IMAGE" | "VIDEO" | "TEXT"}
-              onApplyItem={handleApplyLibraryItem}
-              onApplyBundle={handleApplyLibraryBundle}
-              appearance="geist"
-            />
-          </div>
+          {isAgency ? (
+            <div className="mb-6">
+              <LibraryComposerPanel
+                postType={postType as "IMAGE" | "VIDEO" | "TEXT"}
+                onApplyItem={handleApplyLibraryItem}
+                onApplyBundle={handleApplyLibraryBundle}
+                appearance="geist"
+              />
+            </div>
+          ) : null}
 
           {/* Caption */}
           <div className="space-y-2">
@@ -1873,15 +1880,17 @@ function EditModePanel({
                   appearance="geist"
                 />
               )}
-              <SelectedLibraryAssets
-                assets={selectedLibraryAssets}
-                onRemove={(fileKey) =>
-                  setSelectedLibraryAssets((current) =>
-                    current.filter((asset) => asset.fileKey !== fileKey)
-                  )
-                }
-                appearance="geist"
-              />
+              {isAgency ? (
+                <SelectedLibraryAssets
+                  assets={selectedLibraryAssets}
+                  onRemove={(fileKey) =>
+                    setSelectedLibraryAssets((current) =>
+                      current.filter((asset) => asset.fileKey !== fileKey)
+                    )
+                  }
+                  appearance="geist"
+                />
+              ) : null}
               {slotsForNew === 0 && newFiles.length === 0 && (
                 <p className="text-copy-12 text-[var(--ds-gray-900)]">
                   Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. Remove an existing file to add new ones.

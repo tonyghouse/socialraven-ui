@@ -23,6 +23,7 @@ import {
   getPostCollectionReviewLinksApi,
   revokePostCollectionReviewLinkApi,
 } from "@/service/reviewLinks";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import {
   DraftDetailActionButton,
@@ -99,6 +100,7 @@ export function ClientReviewPanel({
   collection: PostCollectionResponse;
 }) {
   const { getToken } = useAuth();
+  const { isAgency } = usePlan();
   const { canShareReviewLinks } = useRole();
   const [links, setLinks] = useState<PostCollectionReviewLink[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,7 +113,7 @@ export function ClientReviewPanel({
   const [passcode, setPasscode] = useState("");
 
   useEffect(() => {
-    if (!canShareReviewLinks) return;
+    if (!isAgency || !canShareReviewLinks) return;
     let ignore = false;
 
     async function loadLinks() {
@@ -137,7 +139,7 @@ export function ClientReviewPanel({
     return () => {
       ignore = true;
     };
-  }, [canShareReviewLinks, collection.id, getToken]);
+  }, [canShareReviewLinks, collection.id, getToken, isAgency]);
 
   useEffect(() => {
     setShareScope("CAMPAIGN");
@@ -145,7 +147,7 @@ export function ClientReviewPanel({
     setPasscode("");
   }, [collection.id, collection.posts]);
 
-  if (!canShareReviewLinks) {
+  if (!isAgency || !canShareReviewLinks) {
     return null;
   }
 

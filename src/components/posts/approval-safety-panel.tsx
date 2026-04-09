@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Download, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { usePlan } from "@/hooks/usePlan";
 import { cn } from "@/lib/utils";
 import type {
   PostCollectionActivityTimelineEntryResponse,
@@ -171,6 +172,7 @@ export function ApprovalSafetyPanel({
   appearance?: "default" | "geist";
 }) {
   const { getToken } = useAuth();
+  const { isAgency } = usePlan();
   const [exporting, setExporting] = useState(false);
   const isGeist = appearance === "geist";
 
@@ -184,7 +186,7 @@ export function ApprovalSafetyPanel({
   const shouldRender =
     collection.approvalLocked || hasReminderState || hasDiff || activityTimeline.length > 0;
 
-  if (!shouldRender) {
+  if (!isAgency || !shouldRender) {
     return null;
   }
 

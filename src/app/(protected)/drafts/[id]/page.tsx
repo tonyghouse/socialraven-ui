@@ -34,6 +34,7 @@ import { localToUTC } from "@/lib/timeUtil";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
+import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { useWorkspace } from "@/context/WorkspaceContext";
 import { InternalCollaborationPanel } from "@/components/posts/internal-collaboration-panel";
@@ -130,6 +131,7 @@ export default function DraftDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { getToken } = useAuth();
   const { activeWorkspace } = useWorkspace();
+  const { isAgency } = usePlan();
   const {
     canApprovePosts,
     canManageApprovalRules,
@@ -330,19 +332,19 @@ export default function DraftDetailPage() {
   const canApproveCurrentStage =
     canApprovePosts && (!isAwaitingOwnerFinal || isOwner);
   const autoScheduleAfterApproval = activeWorkspace?.autoScheduleAfterApproval ?? true;
-  const primaryActionLabel = canDirectSchedule
+  const primaryActionLabel = !isAgency || canDirectSchedule
     ? "Schedule"
     : isChangesRequested
     ? "Resubmit for Review"
     : "Submit for Review";
   const scheduleSectionTitle = isApprovedAwaitingSchedule
     ? "Approved and awaiting scheduling"
-    : canDirectSchedule
+    : !isAgency || canDirectSchedule
     ? "Ready to schedule?"
     : "Ready for review?";
   const scheduleSectionDescription = isApprovedAwaitingSchedule
     ? "Final approval is complete. Activate the existing scheduled time when you are ready to publish."
-    : canDirectSchedule
+    : !isAgency || canDirectSchedule
     ? "Pick a date and time to add this content to the publishing queue."
     : "Pick a date and time and send this content through the approval workflow.";
   const scheduledLabel = collection.scheduledTime
@@ -665,43 +667,45 @@ export default function DraftDetailPage() {
                         time={scheduleTime}
                         setTime={setScheduleTime}
                       />
-                      <div className={cn(draftDetailSubtlePanelClassName, "p-4")}>
-                        <p className="text-label-14 text-[var(--ds-gray-1000)]">
-                          Effective approval mode
-                        </p>
-                        <p className={cn("mt-1", draftDetailMetaTextClassName)}>
-                          {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
-                        </p>
-                        {canManageApprovalRules ? (
-                          <div className="mt-4 space-y-2">
-                            <label className="text-copy-12 uppercase tracking-wide text-[var(--ds-gray-900)]">
-                              Campaign override
-                            </label>
-                            <select
-                              value={approvalModeOverrideInput}
-                              onChange={(event) =>
-                                setApprovalModeOverrideInput(
-                                  event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
-                                )
-                              }
-                              className={selectClassName}
-                            >
-                              <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
-                              <option value="NONE">No approval required</option>
-                              <option value="OPTIONAL">Optional approval</option>
-                              <option value="REQUIRED">Required approval</option>
-                              <option value="MULTI_STEP">Multi-step approval</option>
-                            </select>
-                            <p className={draftDetailMetaTextClassName}>
-                              Campaign overrides beat account and content-type rules for this collection only.
-                            </p>
-                          </div>
-                        ) : (
-                          <p className={cn("mt-4", draftDetailMetaTextClassName)}>
-                            Approval is resolved automatically from workspace policy, account rules, and content type.
+                      {isAgency ? (
+                        <div className={cn(draftDetailSubtlePanelClassName, "p-4")}>
+                          <p className="text-label-14 text-[var(--ds-gray-1000)]">
+                            Effective approval mode
                           </p>
-                        )}
-                      </div>
+                          <p className={cn("mt-1", draftDetailMetaTextClassName)}>
+                            {approvalModeLabel(effectiveApprovalMode)}. {approvalModeDescription(effectiveApprovalMode)}
+                          </p>
+                          {canManageApprovalRules ? (
+                            <div className="mt-4 space-y-2">
+                              <label className="text-copy-12 uppercase tracking-wide text-[var(--ds-gray-900)]">
+                                Campaign override
+                              </label>
+                              <select
+                                value={approvalModeOverrideInput}
+                                onChange={(event) =>
+                                  setApprovalModeOverrideInput(
+                                    event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
+                                  )
+                                }
+                                className={selectClassName}
+                              >
+                                <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
+                                <option value="NONE">No approval required</option>
+                                <option value="OPTIONAL">Optional approval</option>
+                                <option value="REQUIRED">Required approval</option>
+                                <option value="MULTI_STEP">Multi-step approval</option>
+                              </select>
+                              <p className={draftDetailMetaTextClassName}>
+                                Campaign overrides beat account and content-type rules for this collection only.
+                              </p>
+                            </div>
+                          ) : (
+                            <p className={cn("mt-4", draftDetailMetaTextClassName)}>
+                              Approval is resolved automatically from workspace policy, account rules, and content type.
+                            </p>
+                          )}
+                        </div>
+                      ) : null}
                       <DraftDetailActionButton
                         tone="primary"
                         onClick={handleSchedule}
@@ -727,14 +731,18 @@ export default function DraftDetailPage() {
                 </div>
               </section>
 
-              <InternalCollaborationPanel
-                collection={collection}
-                onCollectionRefresh={refreshCollection}
-              />
+              {isAgency ? (
+                <>
+                  <InternalCollaborationPanel
+                    collection={collection}
+                    onCollectionRefresh={refreshCollection}
+                  />
 
-              <ClientReviewPanel collection={collection} />
+                  <ClientReviewPanel collection={collection} />
 
-              <ApprovalSafetyPanel collection={collection} appearance="geist" />
+                  <ApprovalSafetyPanel collection={collection} appearance="geist" />
+                </>
+              ) : null}
 
               {!hasAccounts && (
                 <section className={cn(draftDetailPanelClassName, "px-6 py-10 text-center")}>
