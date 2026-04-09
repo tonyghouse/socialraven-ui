@@ -213,12 +213,24 @@ const KEYFRAMES = `
     from { top: -50%; }
     to   { top: 110%; }
   }
-  @keyframes fiberRight {
-    from { left: -9rem; }
-    to   { left: 100%; }
+  @keyframes fiberOut {
+    0% {
+      opacity: 0;
+      transform: translateX(-50%) scaleX(0.08);
+    }
+    20% {
+      opacity: 0.95;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-50%) scaleX(1);
+    }
   }
   .fiber-v { animation: fiberDown 1.6s linear infinite; }
-  .fiber-h { animation: fiberRight 3s linear infinite; }
+  .fiber-h {
+    animation: fiberOut 2.2s ease-out infinite;
+    transform-origin: center;
+  }
 `;
 
 /* ───────────────────────── Motion ──────────────────────────────────────── */
@@ -282,35 +294,39 @@ function DashboardMock() {
         </div>
         {/* Main */}
         <div className="flex-1 p-4">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Scheduled posts</p>
               <p className="mt-0.5 text-[0.625rem] text-[var(--ds-gray-500)]">April 2026 · 48 posts queued</p>
             </div>
-            <button tabIndex={-1} className="rounded-lg bg-[hsl(212_86%_50%)] px-2.5 py-1.5 text-[0.6875rem] font-semibold text-white">+ New post</button>
+            <button tabIndex={-1} className="self-start rounded-lg bg-[hsl(212_86%_50%)] px-2.5 py-1.5 text-[0.6875rem] font-semibold text-white sm:self-auto">+ New post</button>
           </div>
           <div className="space-y-1.5">
             {MOCK_POSTS.map((post, i) => {
               const cfg = STATUS_CONFIG[post.status];
               return (
-                <div key={i} className="flex items-center gap-3 rounded-xl border border-[var(--ds-gray-100)] bg-white px-3 py-2.5 hover:bg-[var(--ds-gray-50)] dark:border-white/[0.05] dark:bg-white/[0.025] dark:hover:bg-white/[0.05]">
-                  <div className="flex shrink-0 gap-1">
-                    {post.platforms.slice(0, 3).map((Icon, j) => (
-                      <div key={j} className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)] dark:border-white/10 dark:bg-white/[0.06]">
-                        <Icon className="h-2.5 w-2.5 text-[var(--ds-gray-600)] dark:text-white/55" />
-                      </div>
-                    ))}
-                    {post.platforms.length > 3 && (
-                      <div className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)] dark:border-white/10 dark:bg-white/[0.06]">
-                        <span className="text-[0.5rem] text-[var(--ds-gray-500)] dark:text-white/40">+{post.platforms.length - 3}</span>
-                      </div>
-                    )}
+                <div key={i} className="flex flex-col gap-2 rounded-xl border border-[var(--ds-gray-100)] bg-white px-3 py-2.5 hover:bg-[var(--ds-gray-50)] dark:border-white/[0.05] dark:bg-white/[0.025] dark:hover:bg-white/[0.05] sm:flex-row sm:items-center sm:gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex shrink-0 gap-1">
+                      {post.platforms.slice(0, 3).map((Icon, j) => (
+                        <div key={j} className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)] dark:border-white/10 dark:bg-white/[0.06]">
+                          <Icon className="h-2.5 w-2.5 text-[var(--ds-gray-600)] dark:text-white/55" />
+                        </div>
+                      ))}
+                      {post.platforms.length > 3 && (
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)] dark:border-white/10 dark:bg-white/[0.06]">
+                          <span className="text-[0.5rem] text-[var(--ds-gray-500)] dark:text-white/40">+{post.platforms.length - 3}</span>
+                        </div>
+                      )}
+                    </div>
+                    <p className="min-w-0 flex-1 truncate text-[0.6875rem] text-[var(--ds-gray-900)] dark:text-white/65">{post.title}</p>
                   </div>
-                  <p className="flex-1 truncate text-[0.6875rem] text-[var(--ds-gray-900)] dark:text-white/65">{post.title}</p>
-                  <span className="hidden shrink-0 text-[0.625rem] text-[var(--ds-gray-400)] dark:text-white/28 sm:block">{post.time}</span>
-                  <div className="flex shrink-0 items-center gap-1">
-                    <div className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
-                    <span className={`text-[0.625rem] font-medium ${cfg.text}`}>{cfg.label}</span>
+                  <div className="flex w-full items-center justify-between gap-3 pl-7 sm:ml-auto sm:w-auto sm:pl-0">
+                    <span className="min-w-0 truncate text-[0.625rem] text-[var(--ds-gray-400)] dark:text-white/28">{post.time}</span>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <div className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
+                      <span className={`text-[0.625rem] font-medium ${cfg.text}`}>{cfg.label}</span>
+                    </div>
                   </div>
                 </div>
               );
@@ -352,13 +368,15 @@ export default function LandingPage() {
         {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
         <section className="relative mx-auto max-w-[88rem] overflow-hidden pb-0 pt-28">
           {/* Light bloom */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(212 86% 82% / 0.20) 0%, transparent 60%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(212 86% 82% / 0.20) 0%, transparent 56%)" }} aria-hidden="true" />
           {/* Dark bloom */}
-          <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(212 86% 54% / 0.22) 0%, transparent 65%)" }} aria-hidden="true" />
-          {/* Dot grid — light mode */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.22] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(215 15% 50%) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 60%, transparent 85%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 60%, transparent 85%)" }} aria-hidden="true" />
+          <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(212 86% 54% / 0.22) 0%, transparent 61%)" }} aria-hidden="true" />
+          {/* Dot grid — light mode base */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.28] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(214 18% 46% / 0.68) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)" }} aria-hidden="true" />
+          {/* Dot grid — light mode subtle glow */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-[0.34] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(212 82% 66% / 0.44) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", WebkitMaskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", filter: "blur(0.55px) drop-shadow(0 0 8px hsl(212 86% 66% / 0.16))" }} aria-hidden="true" />
           {/* Dot grid — dark mode with glow */}
-          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(212 86% 72% / 0.55) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 72%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 72%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(212 86% 65% / 0.6))" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(212 86% 72% / 0.55) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(212 86% 65% / 0.6))" }} aria-hidden="true" />
 
           <div className={`${W} relative`}>
 
@@ -608,17 +626,17 @@ export default function LandingPage() {
 
               {/* Horizontal bus + drops + tiles */}
               <div className="w-full">
-                {/* Horizontal bus (desktop only) */}
-                <div className="relative hidden h-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08] md:block">
-                  <div className="fiber-h absolute inset-y-0 w-36 bg-gradient-to-r from-transparent via-[hsl(212_86%_58%)] to-transparent" />
+                {/* Horizontal bus */}
+                <div className="relative mx-[calc((100%-1.5rem)/14)] h-px overflow-hidden bg-[var(--ds-gray-200)] sm:mx-[calc((100%-3rem)/14)] md:mx-[calc((100%-4.5rem)/14)] dark:bg-white/[0.08]">
+                  <div className="fiber-h absolute inset-y-0 left-1/2 w-full bg-gradient-to-r from-transparent via-[hsl(212_86%_58%)] to-transparent" />
                 </div>
 
                 {/* Platform tiles grid */}
-                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-7">
+                <div className="grid grid-cols-7 gap-1 pt-2 sm:gap-2 md:gap-3">
                   {PLATFORMS.map(({ Icon, name, color, bg, soon }, i) => (
                     <div key={name} className="flex flex-col items-center">
-                      {/* Drop line (desktop only) */}
-                      <div className="relative hidden h-8 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08] md:block">
+                      {/* Drop line */}
+                      <div className="relative h-4 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08] md:h-8">
                         <div
                           className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(212_86%_58%)] to-transparent"
                           style={{ animationDelay: `${i * 0.22}s` }}
@@ -628,19 +646,21 @@ export default function LandingPage() {
                       {/* Tile */}
                       <motion.div
                         variants={FV}
-                        className={`group flex w-full flex-col items-center gap-3 rounded-2xl border p-5 transition-all duration-200 ${
+                        className={`group flex aspect-square w-full items-center justify-center rounded-xl border p-1 transition-all duration-200 md:aspect-auto md:flex-col md:gap-3 md:rounded-2xl md:p-5 ${
                           soon
                             ? "border-[var(--ds-gray-200)] bg-[var(--ds-gray-50)] opacity-50 dark:bg-white/[0.02]"
                             : "border-[var(--ds-gray-200)] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)] dark:bg-[var(--ds-background-100)]"
                         }`}
+                        aria-label={soon ? `${name} coming soon` : name}
                       >
-                        <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${bg}`}>
-                          <Icon className={`h-5 w-5 ${color}`} />
+                        <div className={`flex h-5 w-5 items-center justify-center rounded-md md:h-11 md:w-11 md:rounded-xl ${bg}`}>
+                          <Icon className={`h-3 w-3 md:h-5 md:w-5 ${color}`} />
                         </div>
-                        <div className="text-center">
+                        <div className="hidden text-center md:block">
                           <p className={`text-[0.6875rem] font-semibold ${soon ? "text-[var(--ds-gray-400)]" : "text-[var(--ds-gray-900)]"}`}>{name}</p>
                           {soon && <p className="mt-0.5 text-[0.5625rem] font-medium text-[var(--ds-gray-400)]">Soon</p>}
                         </div>
+                        <span className="sr-only">{soon ? `${name} coming soon` : name}</span>
                       </motion.div>
                     </div>
                   ))}
