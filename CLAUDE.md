@@ -47,6 +47,63 @@ There are no test scripts configured.
 
 TailwindCSS with CSS HSL variables for theming (supports dark mode via `class` strategy). Uses `cn()` from `@/lib/utils` everywhere for conditional class merging. Product typography is wired through the Geist font variables exposed in `src/app/layout.tsx` and bridged in `src/app/globals.css`.
 
+### Density & Scale Controls
+
+When the user asks to make the app feel bigger, smaller, denser, or more premium, do not resize random pages first. Start with the shared scale controls below, then only do page-level tightening/loosening if needed.
+
+- **Global desktop scale:** `src/app/globals.css`
+  The desktop/tablet root `rem` scale is controlled in the `@media (min-width: 768px)` block on `html`.
+  Current value:
+  ```css
+  font-size: clamp(90%, calc(110% - 0.2083vw), 100%);
+  ```
+  This scales most Tailwind `rem`-based text, spacing, widths, heights, radii, and gaps together.
+  If the user asks for something like "go to 92%", usually change the first `clamp(...)` value from `90%` to `92%` first, then only adjust the middle `calc(...)` term if the interpolation feels off.
+
+- **Protected app header:** `src/components/layout/protected-page-header.tsx`
+  This controls the shared top header used across protected pages.
+  Current key values:
+  `h-[58px]`, icon `h-8 w-8`, title `text-[17px]`, description `text-[13px]`
+  Keep `src/components/layout/page-skeleton-primitives.tsx` aligned with the same sizing.
+
+- **Protected sidebar readability:** `src/components/sidebar/app-sidebar.tsx`
+  This controls the protected desktop sidebar density.
+  Current key values:
+  expanded width `w-[232px]`, collapsed width `w-[70px]`
+  brand icon box `h-9 w-9`, brand title `text-base`
+  nav rows `h-10`, nav text `text-[14px]`, nav icons `h-[18px] w-[18px]`
+  If the app scale should stay the same but the sidebar needs to feel easier to read, tweak these values instead of changing the global scale.
+
+- **Workspace switcher inside sidebar:** `src/components/sidebar/WorkspaceSwitcher.tsx`
+  This should stay visually aligned with the sidebar brand row and nav items.
+  Current key values:
+  trigger icon box `h-10 w-10`, workspace title `text-[14px]`
+
+- **Public navbar brand sizing:** `src/components/navbar/navbar.tsx`
+  If the public site brand text looks too small or too large relative to `Pricing` / `Sign up`, fix it here instead of changing the whole navbar scale.
+
+- **Global "compactness" primitives:** shared UI components
+  These affect perceived density across most pages:
+  `src/components/ui/button.tsx`
+  `src/components/ui/card.tsx`
+  `src/components/ui/input.tsx`
+  `src/components/ui/textarea.tsx`
+  `src/components/ui/tabs.tsx`
+  `src/components/ui/sheet.tsx`
+  `src/components/ui/confirm-dialog.tsx`
+  If the app feels too chunky or too tiny everywhere, adjust these before patching dozens of individual screens.
+
+- **Page-level density pass:** protected route files
+  Only after shared controls are correct, tweak local wrappers like:
+  `space-y-*`, `gap-*`, `p-*`, `px-*`, `py-*`, empty-state heights, and large detail panel paddings in `src/app/(protected)/**`.
+  Prefer small one-step changes such as:
+  `space-y-6 -> space-y-5`
+  `gap-6 -> gap-5`
+  `p-6 -> p-5`
+  `py-16 -> py-12`
+
+- **Important rule:** if the user says the current scale is correct, do not touch the global `html` scale in `globals.css`. Adjust only the local chrome they mention, such as the sidebar, top header, or a specific page family.
+
 ### Environment Variables
 
 Key variables expected in `.env.local`:
