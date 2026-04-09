@@ -108,7 +108,7 @@ export function AppSidebar() {
       className={cn(
         "relative z-30 flex h-screen shrink-0 flex-col border-r border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]",
         "transition-[width] duration-200 ease-out",
-        isCollapsed ? "w-[68px]" : "w-[224px]"
+        isCollapsed ? "w-[70px]" : "w-[232px]"
       )}
     >
       <div className={cn("px-2 pb-1 pt-2", isCollapsed && "px-1.5")}>
@@ -117,22 +117,22 @@ export function AppSidebar() {
             href="/dashboard"
             className={cn(
               "group flex min-w-0 items-center rounded-xl transition-colors hover:bg-[var(--ds-gray-100)]",
-              isCollapsed ? "w-full justify-center px-0 py-1" : "flex-1 gap-2 px-2 py-1.5"
+              isCollapsed ? "w-full justify-center px-0 py-1" : "flex-1 gap-2.5 px-2.5 py-1.5"
             )}
           >
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)]">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)]">
               <Image
                 src="/SocialRavenLogo.svg"
                 alt="SocialRaven"
                 width={20}
                 height={20}
-                className="h-[18px] w-[18px] shrink-0"
+                className="h-5 w-5 shrink-0"
               />
             </div>
 
             {!isCollapsed ? (
               <div className="min-w-0">
-                <p className="truncate text-[15px] font-semibold tracking-[-0.01em] text-[var(--ds-gray-1000)]">
+                <p className="truncate text-base font-semibold tracking-[-0.01em] text-[var(--ds-gray-1000)]">
                   SocialRaven
                 </p>
               </div>
@@ -142,7 +142,7 @@ export function AppSidebar() {
           <button
             type="button"
             onClick={() => setIsCollapsed((value) => !value)}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-[var(--ds-gray-900)] transition-colors hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
           >
             <ChevronLeft
@@ -180,10 +180,10 @@ export function AppSidebar() {
                         <NextLink
                           href={item.url}
                           className={cn(
-                            "group flex items-center rounded-xl text-label-13 transition-colors",
+                            "group flex items-center rounded-xl text-[14px] font-medium transition-colors",
                             isCollapsed
-                              ? "h-9 justify-center px-0"
-                              : "h-9 gap-2 px-3",
+                              ? "h-10 justify-center px-0"
+                              : "h-10 gap-2.5 px-3.5",
                             isActive
                               ? "bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
                               : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
@@ -192,13 +192,13 @@ export function AppSidebar() {
                           <div
                             className={cn(
                               "flex shrink-0 items-center justify-center rounded-lg transition-colors",
-                              isCollapsed ? "h-7 w-7" : "h-7 w-7",
+                              isCollapsed ? "h-8 w-8" : "h-8 w-8",
                               isActive
                                 ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
                                 : "text-[var(--ds-gray-900)] group-hover:bg-[var(--ds-background-100)] group-hover:text-[var(--ds-gray-1000)]"
                             )}
                           >
-                            <item.icon className="h-4 w-4" />
+                            <item.icon className="h-[18px] w-[18px]" />
                           </div>
 
                           {!isCollapsed ? (

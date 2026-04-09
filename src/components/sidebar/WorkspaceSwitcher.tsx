@@ -52,14 +52,14 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
       type="button"
       disabled={!canSwitch}
       className={cn(
-        "flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
+        "flex h-10 w-10 items-center justify-center rounded-xl transition-colors",
         canSwitch
           ? "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-200)] hover:text-[var(--ds-gray-1000)]"
           : "cursor-default bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
       )}
       aria-label={canSwitch ? "Switch workspace" : `Current workspace: ${displayName}`}
     >
-      <Buildings className="h-4 w-4" />
+      <Buildings className="h-[18px] w-[18px]" />
     </button>
   );
 
@@ -106,18 +106,18 @@ export function WorkspaceSwitcher({ collapsed }: WorkspaceSwitcherProps) {
           type="button"
           disabled={!canSwitch}
           className={cn(
-            "group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors",
+            "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
             canSwitch
               ? "hover:bg-[var(--ds-gray-100)]"
               : "cursor-default"
           )}
         >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
-            <Buildings className="h-4 w-4" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">
+            <Buildings className="h-[18px] w-[18px]" />
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate text-label-13 text-[var(--ds-gray-1000)]">{displayName}</p>
+            <p className="truncate text-[14px] font-medium text-[var(--ds-gray-1000)]">{displayName}</p>
             <p className="mt-0.5 truncate text-label-12 text-[var(--ds-gray-900)]">
               {displayCompanyName ?? `${workspaces.length} workspace${workspaces.length === 1 ? "" : "s"}`}
             </p>
