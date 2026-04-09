@@ -119,34 +119,24 @@ const STEPS = [
 
 const PERSONAS = [
   {
-    tag: "Agencies",
-    headline: "One workspace. Every client.",
-    body: "Stop juggling tabs and logins. Manage every brand, account, and approval flow from a single operational hub.",
-    points: ["Multi-client workspace management", "Shareable review links for client approvals", "Team roles and access controls", "Full post history per brand"],
-    chip: "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/20 dark:border-blue-700/40 dark:text-blue-300",
-    checkCls: "text-blue-500",
-    accent: "hover:border-blue-300 dark:hover:border-blue-700",
-    link: "text-[var(--ds-blue-600)] hover:text-[var(--ds-blue-700)]",
-  },
-  {
-    tag: "Creators",
+    tag: "Influencer",
     headline: "Create once. Reach everywhere.",
     body: "Write captions, schedule, and publish to every platform in one sitting. Spend time making content, not copy-pasting it.",
-    points: ["7 platforms from one dashboard", "Image, video, and text support", "14-day trial, no card needed", "Simple scheduling interface"],
+    points: ["5 platforms from one dashboard", "Image, video, and text post types", "Visual content calendar", "14-day trial, no card needed"],
     chip: "bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-900/20 dark:border-purple-700/40 dark:text-purple-300",
     checkCls: "text-purple-500",
     accent: "hover:border-purple-300 dark:hover:border-purple-700",
     link: "text-purple-600 hover:text-purple-700 dark:text-purple-400",
   },
   {
-    tag: "Teams",
-    headline: "Built-in review. Zero chaos.",
-    body: "Share a review link, collect approvals, keep stakeholders aligned — without giving everyone dashboard access.",
-    points: ["Internal review workflows", "Approval before publishing", "Workspace-scoped access", "Post collection grouping"],
-    chip: "bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-700/40 dark:text-emerald-300",
-    checkCls: "text-emerald-500",
-    accent: "hover:border-emerald-300 dark:hover:border-emerald-700",
-    link: "text-emerald-600 hover:text-emerald-700 dark:text-emerald-400",
+    tag: "Agency",
+    headline: "One workspace. Every client.",
+    body: "Manage multiple brands, teams, and approval flows from a single operational hub. Built for agencies running at scale.",
+    points: ["Multi-workspace management", "Team members with role-based access", "Client approval workflows", "Post history and analytics per brand"],
+    chip: "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/20 dark:border-blue-700/40 dark:text-blue-300",
+    checkCls: "text-blue-500",
+    accent: "hover:border-blue-300 dark:hover:border-blue-700",
+    link: "text-[var(--ds-blue-600)] hover:text-[var(--ds-blue-700)]",
   },
 ];
 
@@ -219,6 +209,16 @@ const KEYFRAMES = `
   .glow-pulse  { animation: glowPulse 9s ease-in-out infinite; }
   .float-a     { animation: floatA 6s ease-in-out infinite; }
   .float-b     { animation: floatB 8s ease-in-out infinite; }
+  @keyframes fiberDown {
+    from { top: -50%; }
+    to   { top: 110%; }
+  }
+  @keyframes fiberRight {
+    from { left: -9rem; }
+    to   { left: 100%; }
+  }
+  .fiber-v { animation: fiberDown 1.6s linear infinite; }
+  .fiber-h { animation: fiberRight 3s linear infinite; }
 `;
 
 /* ───────────────────────── Motion ──────────────────────────────────────── */
@@ -345,18 +345,20 @@ export default function LandingPage() {
   return (
     <>
       <style>{KEYFRAMES}</style>
-      <Navbar contentClassName="max-w-[88rem] px-6 md:px-10" size="landing" />
+      <Navbar contentClassName="max-w-[88rem] px-4 sm:px-6" size="landing" />
 
       <div className="overflow-x-hidden bg-[hsl(40_6%_96%)] text-[var(--ds-gray-1000)] dark:bg-[var(--ds-background-100)]">
 
         {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
-        <section className="relative overflow-hidden pb-0 pt-28">
+        <section className="relative mx-auto max-w-[88rem] overflow-hidden pb-0 pt-28">
           {/* Light bloom */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(212 86% 82% / 0.20) 0%, transparent 60%)" }} aria-hidden="true" />
           {/* Dark bloom */}
           <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(212 86% 54% / 0.22) 0%, transparent 65%)" }} aria-hidden="true" />
-          {/* Dot grid — hero section only */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.20] dark:opacity-[0.10]" style={{ backgroundImage: "radial-gradient(circle, hsl(215 15% 50%) 1px, transparent 1px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, transparent 52%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, transparent 52%)" }} aria-hidden="true" />
+          {/* Dot grid — light mode */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.22] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(215 15% 50%) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 60%, transparent 85%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 60%, transparent 85%)" }} aria-hidden="true" />
+          {/* Dot grid — dark mode with glow */}
+          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(212 86% 72% / 0.55) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 72%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 50%, transparent 72%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(212 86% 65% / 0.6))" }} aria-hidden="true" />
 
           <div className={`${W} relative`}>
 
@@ -369,9 +371,9 @@ export default function LandingPage() {
               style={{ animationDelay: "0s" }}
               aria-hidden="true"
             >
-              <div className="w-56 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)]">
+              <div className="w-56 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/40">
                     <CheckCircle2 className="h-4.5 w-4.5 h-[1.125rem] w-[1.125rem] text-emerald-600" />
                   </span>
                   <div>
@@ -399,9 +401,9 @@ export default function LandingPage() {
               style={{ animationDelay: "1.5s" }}
               aria-hidden="true"
             >
-              <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)]">
+              <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-100">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
                     <Clock className="h-4 w-4 text-amber-600" />
                   </span>
                   <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Review needed</p>
@@ -423,7 +425,7 @@ export default function LandingPage() {
               style={{ animationDelay: "3s" }}
               aria-hidden="true"
             >
-              <div className="w-48 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)]">
+              <div className="w-48 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-700)]">Posts this week</p>
                 <p className="mt-0.5 text-[1.5rem] font-black tracking-tight text-[var(--ds-gray-1000)]">48</p>
                 <div className="mt-2.5 flex items-end gap-1" style={{ height: "2.5rem" }}>
@@ -444,7 +446,7 @@ export default function LandingPage() {
               style={{ animationDelay: "4s" }}
               aria-hidden="true"
             >
-              <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)]">
+              <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <div className="mb-3 flex items-center gap-2">
                   <Globe className="h-4 w-4 text-[hsl(212_86%_50%)]" />
                   <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-900)]">Connected accounts</p>
@@ -468,7 +470,7 @@ export default function LandingPage() {
             {/* Center copy */}
             <motion.div initial="hidden" animate="visible" variants={STAGGER} className="mx-auto flex max-w-2xl flex-col items-center text-center">
               <motion.div variants={FV}>
-                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-300)] bg-white/90 px-3.5 py-1.5 text-[0.75rem] font-medium text-[var(--ds-gray-900)] backdrop-blur-sm">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-300)] bg-white/90 px-3.5 py-1.5 text-[0.75rem] font-medium text-[var(--ds-gray-900)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.06] dark:text-white/80">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
                   Live on 5 platforms · 14-day trial, no card needed
                 </span>
@@ -530,7 +532,6 @@ export default function LandingPage() {
               {[
                 { v: "5",      l: "Live platforms"       },
                 { v: "7",      l: "Platforms by 2025"    },
-                { v: "3",      l: "Post types supported" },
                 { v: "14-day", l: "Free trial"           },
                 { v: "OAuth",  l: "Secure connections"   },
               ].map(({ v, l }) => (
@@ -593,34 +594,59 @@ export default function LandingPage() {
               </motion.p>
             </motion.div>
 
-            <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="flex flex-col items-center gap-8">
-              {/* Central icon */}
+            <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="flex flex-col items-center">
+
+              {/* Globe hub */}
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-[hsl(212_86%_48%)] bg-white shadow-[0_0_0_8px_hsl(212_86%_48%/0.08)] dark:bg-[var(--ds-background-100)]">
                 <Globe className="h-7 w-7 text-[hsl(212_86%_48%)]" />
               </div>
 
-              {/* Platform tiles */}
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-7">
-                {PLATFORMS.map(({ Icon, name, color, bg, soon }) => (
-                  <motion.div
-                    key={name}
-                    variants={FV}
-                    className={`group flex flex-col items-center gap-3 rounded-2xl border p-5 transition-all duration-200 ${
-                      soon
-                        ? "border-[var(--ds-gray-200)] bg-[var(--ds-gray-50)] opacity-50 dark:bg-white/[0.02]"
-                        : "border-[var(--ds-gray-200)] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)] dark:bg-[var(--ds-background-100)]"
-                    }`}
-                  >
-                    <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${bg}`}>
-                      <Icon className={`h-5 w-5 ${color}`} />
-                    </div>
-                    <div className="text-center">
-                      <p className={`text-[0.6875rem] font-semibold ${soon ? "text-[var(--ds-gray-400)]" : "text-[var(--ds-gray-900)]"}`}>{name}</p>
-                      {soon && <p className="mt-0.5 text-[0.5625rem] font-medium text-[var(--ds-gray-400)]">Soon</p>}
-                    </div>
-                  </motion.div>
-                ))}
+              {/* Vertical trunk */}
+              <div className="relative h-10 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08]">
+                <div className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(212_86%_58%)] to-transparent" />
               </div>
+
+              {/* Horizontal bus + drops + tiles */}
+              <div className="w-full">
+                {/* Horizontal bus (desktop only) */}
+                <div className="relative hidden h-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08] md:block">
+                  <div className="fiber-h absolute inset-y-0 w-36 bg-gradient-to-r from-transparent via-[hsl(212_86%_58%)] to-transparent" />
+                </div>
+
+                {/* Platform tiles grid */}
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-7">
+                  {PLATFORMS.map(({ Icon, name, color, bg, soon }, i) => (
+                    <div key={name} className="flex flex-col items-center">
+                      {/* Drop line (desktop only) */}
+                      <div className="relative hidden h-8 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08] md:block">
+                        <div
+                          className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(212_86%_58%)] to-transparent"
+                          style={{ animationDelay: `${i * 0.22}s` }}
+                        />
+                      </div>
+
+                      {/* Tile */}
+                      <motion.div
+                        variants={FV}
+                        className={`group flex w-full flex-col items-center gap-3 rounded-2xl border p-5 transition-all duration-200 ${
+                          soon
+                            ? "border-[var(--ds-gray-200)] bg-[var(--ds-gray-50)] opacity-50 dark:bg-white/[0.02]"
+                            : "border-[var(--ds-gray-200)] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.10)] dark:bg-[var(--ds-background-100)]"
+                        }`}
+                      >
+                        <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${bg}`}>
+                          <Icon className={`h-5 w-5 ${color}`} />
+                        </div>
+                        <div className="text-center">
+                          <p className={`text-[0.6875rem] font-semibold ${soon ? "text-[var(--ds-gray-400)]" : "text-[var(--ds-gray-900)]"}`}>{name}</p>
+                          {soon && <p className="mt-0.5 text-[0.5625rem] font-medium text-[var(--ds-gray-400)]">Soon</p>}
+                        </div>
+                      </motion.div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </motion.div>
           </div>
         </section>
@@ -636,12 +662,12 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="relative grid gap-6 md:grid-cols-3">
-              <div className="pointer-events-none absolute left-[calc(16.67%+2.25rem)] top-8 hidden h-px w-[calc(66.67%-4.5rem)] border-t-2 border-dashed border-[var(--ds-gray-300)] md:block" aria-hidden="true" />
+              <div className="pointer-events-none absolute left-[calc((100%-3rem)/6)] top-8 hidden h-px w-[calc((200%+3rem)/3)] border-t-2 border-dashed border-[var(--ds-gray-300)] md:block" aria-hidden="true" />
               {STEPS.map(({ n, Icon, title, body }) => (
-                <motion.div key={n} variants={FV} className="flex flex-col items-center text-center md:items-start md:text-left">
+                <motion.div key={n} variants={FV} className="flex flex-col items-center text-center">
                   <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--ds-gray-200)] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:bg-[var(--ds-background-100)]">
                     <Icon className="h-6 w-6 text-[hsl(212_86%_48%)]" />
-                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--ds-gray-1000)] text-[0.5625rem] font-bold text-white dark:bg-white dark:text-[var(--ds-gray-1000)]">{n}</span>
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(212_86%_48%)] text-[0.5625rem] font-bold text-white">{n}</span>
                   </div>
                   <h3 className="mt-5 text-[1.0625rem] font-bold tracking-[-0.02em] text-[var(--ds-gray-1000)]">{title}</h3>
                   <p className="mt-2 text-[0.875rem] leading-[1.65] text-[var(--ds-gray-700)]">{body}</p>
@@ -660,7 +686,7 @@ export default function LandingPage() {
                 Different workflows, one platform.
               </motion.h2>
             </motion.div>
-            <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="grid gap-4 lg:grid-cols-3">
+            <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="grid gap-4 lg:grid-cols-2">
               {PERSONAS.map((p) => (
                 <motion.div
                   key={p.tag}
@@ -690,65 +716,63 @@ export default function LandingPage() {
         </section>
 
         {/* ════════════════════ UNIFIED INBOX TEASER ══════════════════════════ */}
-        <section className="relative overflow-hidden bg-[hsl(222_22%_8%)] py-24">
-          <div className="glow-pulse pointer-events-none absolute left-1/2 top-0 h-[32rem] w-[60rem] -translate-x-1/2" style={{ background: "radial-gradient(ellipse 60% 50% at 50% -5%, hsl(212 86% 54% / 0.22) 0%, transparent 70%)" }} aria-hidden="true" />
-
+        <section className="relative overflow-hidden border-y border-[var(--ds-gray-200)] bg-white py-24 dark:border-[var(--ds-gray-400)] dark:bg-[var(--ds-background-200)]">
           <div className={`${W} relative`}>
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="grid items-center gap-12 lg:grid-cols-2">
               <div>
                 <motion.div variants={FV}>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(212_86%_54%/0.3)] bg-[hsl(212_86%_54%/0.10)] px-3 py-1 text-[0.75rem] font-medium text-[hsl(212_86%_78%)]">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(212_86%_68%)]" />
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(212_86%_54%/0.3)] bg-[hsl(212_86%_54%/0.08)] px-3 py-1 text-[0.75rem] font-medium text-[hsl(212_86%_42%)] dark:text-[hsl(212_86%_72%)]">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(212_86%_52%)]" />
                     Coming soon
                   </span>
                 </motion.div>
-                <motion.h2 variants={FV} className="mt-6 text-[clamp(1.875rem,4vw,2.875rem)] font-black leading-[1.04] tracking-[-0.04em] text-white">
+                <motion.h2 variants={FV} className="mt-6 text-[clamp(1.875rem,4vw,2.875rem)] font-black leading-[1.04] tracking-[-0.04em] text-[var(--ds-gray-1000)]">
                   One inbox for every
                   <br />
                   <span className="gradient-text">comment and message.</span>
                 </motion.h2>
-                <motion.p variants={FV} className="mt-5 max-w-md text-[1rem] leading-[1.7] text-white/50">
+                <motion.p variants={FV} className="mt-5 max-w-md text-[1rem] leading-[1.7] text-[var(--ds-gray-700)]">
                   Stop switching apps to manage replies. SocialRaven&apos;s unified inbox will consolidate comments and DMs from all your platforms into one actionable workspace.
                 </motion.p>
                 <motion.div variants={FV} className="mt-7 flex flex-wrap gap-2">
                   {["Instagram DMs", "X replies", "LinkedIn messages", "FB comments", "YouTube comments", "TikTok comments"].map((p) => (
-                    <span key={p} className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-[0.75rem] text-white/50">{p}</span>
+                    <span key={p} className="rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-gray-100)] px-3 py-1.5 text-[0.75rem] text-[var(--ds-gray-700)] dark:border-white/10 dark:bg-white/[0.05]">{p}</span>
                   ))}
                 </motion.div>
                 <motion.div variants={FV} className="mt-8">
-                  <Link href="/sign-up" className="inline-flex h-11 items-center gap-2 rounded-xl border border-white/15 bg-white/[0.08] px-6 text-[0.9rem] font-semibold text-white backdrop-blur-sm transition-all duration-150 hover:border-white/25 hover:bg-white/14">
+                  <Link href="/sign-up" className="inline-flex h-11 items-center gap-2 rounded-xl border border-[var(--ds-gray-300)] bg-[var(--ds-gray-100)] px-6 text-[0.9rem] font-semibold text-[var(--ds-gray-1000)] transition-all duration-150 hover:border-[var(--ds-gray-400)] hover:bg-[var(--ds-gray-200)] dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:hover:border-white/20 dark:hover:bg-white/10">
                     Get early access <ArrowRight className="h-4 w-4" />
                   </Link>
                 </motion.div>
               </div>
 
               <motion.div variants={FV}>
-                <div className="overflow-hidden rounded-2xl border border-white/10 bg-[hsl(222_28%_10%)] shadow-[0_24px_80px_rgba(0,0,0,0.50)]">
-                  <div className="flex items-center gap-3 border-b border-white/[0.07] px-4 py-3.5">
-                    <MessageSquare className="h-4 w-4 text-white/40" />
-                    <span className="text-[0.8125rem] font-semibold text-white/80">Unified Inbox</span>
-                    <span className="ml-auto rounded-full bg-[hsl(212_86%_48%/0.25)] px-2 py-0.5 text-[0.625rem] font-bold text-[hsl(212_86%_75%)]">12 new</span>
+                <div className="overflow-hidden rounded-2xl border border-[var(--ds-gray-200)] bg-[var(--ds-gray-50)] shadow-[0_8px_32px_rgba(0,0,0,0.08)] dark:border-white/10 dark:bg-[var(--ds-background-100)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.40)]">
+                  <div className="flex items-center gap-3 border-b border-[var(--ds-gray-200)] px-4 py-3.5 dark:border-white/[0.07]">
+                    <MessageSquare className="h-4 w-4 text-[var(--ds-gray-500)]" />
+                    <span className="text-[0.8125rem] font-semibold text-[var(--ds-gray-900)]">Unified Inbox</span>
+                    <span className="ml-auto rounded-full bg-[hsl(212_86%_48%/0.12)] px-2 py-0.5 text-[0.625rem] font-bold text-[hsl(212_86%_42%)] dark:bg-[hsl(212_86%_48%/0.25)] dark:text-[hsl(212_86%_75%)]">12 new</span>
                   </div>
                   {[
-                    { Icon: Instagram, name: "@sarah.design",  msg: "Love this post! Can I reshare it?",      time: "2m",  dot: "bg-pink-500" },
-                    { Icon: Twitter,   name: "@dev_marcus",    msg: "This is exactly what I needed, thanks!", time: "5m",  dot: "bg-sky-400"  },
-                    { Icon: Linkedin,  name: "Priya N.",       msg: "Great insight — sharing with my team.",  time: "12m", dot: "bg-blue-500" },
-                    { Icon: Facebook,  name: "John D.",        msg: "When is the next update coming out?",    time: "18m", dot: "bg-blue-400" },
-                    { Icon: Youtube,   name: "@channel_xyz",   msg: "Subscribed! Amazing content 🎉",        time: "24m", dot: "bg-red-500"  },
+                    { Icon: Instagram, name: "@sarah.design",  msg: "Love this post! Can I reshare it?",      time: "2m",  dot: "bg-pink-500"  },
+                    { Icon: Twitter,   name: "@dev_marcus",    msg: "This is exactly what I needed, thanks!", time: "5m",  dot: "bg-sky-400"   },
+                    { Icon: Linkedin,  name: "Priya N.",       msg: "Great insight — sharing with my team.",  time: "12m", dot: "bg-blue-500"  },
+                    { Icon: Facebook,  name: "John D.",        msg: "When is the next update coming out?",    time: "18m", dot: "bg-blue-400"  },
+                    { Icon: Youtube,   name: "@channel_xyz",   msg: "Subscribed! Amazing content 🎉",        time: "24m", dot: "bg-red-500"   },
                   ].map((row, i) => (
-                    <div key={i} className="flex items-start gap-3 border-b border-white/[0.05] px-4 py-3.5 transition-colors hover:bg-white/[0.03]">
-                      <div className="relative mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.06]">
-                        <row.Icon className="h-3.5 w-3.5 text-white/55" />
-                        <span className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[hsl(222_28%_10%)] ${row.dot}`} />
+                    <div key={i} className="flex items-start gap-3 border-b border-[var(--ds-gray-200)] px-4 py-3.5 transition-colors hover:bg-[var(--ds-gray-100)] dark:border-white/[0.05] dark:hover:bg-white/[0.03]">
+                      <div className="relative mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-white dark:border-white/10 dark:bg-white/[0.06]">
+                        <row.Icon className="h-3.5 w-3.5 text-[var(--ds-gray-600)] dark:text-white/55" />
+                        <span className={`absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--ds-gray-50)] dark:border-[var(--ds-background-100)] ${row.dot}`} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-[0.6875rem] font-semibold text-white/75">{row.name}</p>
-                        <p className="mt-0.5 truncate text-[0.6875rem] text-white/38">{row.msg}</p>
+                        <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-900)]">{row.name}</p>
+                        <p className="mt-0.5 truncate text-[0.6875rem] text-[var(--ds-gray-600)]">{row.msg}</p>
                       </div>
-                      <span className="shrink-0 text-[0.5625rem] text-white/25">{row.time}</span>
+                      <span className="shrink-0 text-[0.5625rem] text-[var(--ds-gray-400)]">{row.time}</span>
                     </div>
                   ))}
-                  <div className="px-4 py-3 text-center text-[0.625rem] text-white/20">and 7 more messages across 6 platforms</div>
+                  <div className="px-4 py-3 text-center text-[0.625rem] text-[var(--ds-gray-400)]">and 7 more messages across 6 platforms</div>
                 </div>
               </motion.div>
             </motion.div>

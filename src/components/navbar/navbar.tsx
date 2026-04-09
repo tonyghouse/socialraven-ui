@@ -66,23 +66,21 @@ export default function Navbar({
             <p className={cn("hidden sm:block", brandText)}>SocialRaven</p>
           </Link>
 
-          {/* ── Center: Nav links (landing only) ────────────────────── */}
-          {isLanding && (
-            <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-0.5 lg:flex" aria-label="Primary">
-              {LANDING_NAV.map(({ label, href }) => (
-                <Link
-                  key={label}
-                  href={href}
-                  className="inline-flex h-9 items-center rounded-lg px-3.5 text-[0.875rem] font-medium text-[var(--ds-gray-900)] transition-colors duration-100 hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
-                >
-                  {label}
-                </Link>
-              ))}
-            </nav>
-          )}
-
-          {/* ── Right: CTA area ─────────────────────────────────────── */}
+          {/* ── Right: Nav links + CTA area ─────────────────────────── */}
           <div className={cn("ml-auto flex items-center gap-2", isLanding && "gap-2.5")}>
+            {isLanding && (
+              <nav className="hidden items-center gap-0.5 lg:flex mr-1" aria-label="Primary">
+                {LANDING_NAV.map(({ label, href }) => (
+                  <Link
+                    key={label}
+                    href={href}
+                    className="inline-flex h-9 items-center rounded-lg px-3.5 text-[0.875rem] font-medium text-[var(--ds-gray-900)] transition-colors duration-100 hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </nav>
+            )}
             {isSignedIn ? (
               <>
                 <Button asChild variant="ghost" size="sm" className={secondaryBtn}>
@@ -96,14 +94,9 @@ export default function Navbar({
                 </div>
               </>
             ) : (
-              <>
-                <Button asChild variant="ghost" size="sm" className={secondaryBtn}>
-                  <Link href="/sign-in">Sign in</Link>
-                </Button>
-                <Button asChild size="sm" className={primaryBtn}>
-                  <Link href="/sign-up">Get started</Link>
-                </Button>
-              </>
+              <Button asChild size="sm" className={primaryBtn}>
+                <Link href="/sign-up">Get started</Link>
+              </Button>
             )}
             <ThemeSwitcher compact className={themeClass} />
           </div>
