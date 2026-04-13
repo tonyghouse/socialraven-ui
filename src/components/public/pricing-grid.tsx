@@ -4,6 +4,7 @@ import { PLANS } from "@/constants/plans";
 import { PublicCard } from "@/components/public/public-layout";
 
 const PAID_PLANS = PLANS.filter((plan) => !plan.type.endsWith("_TRIAL"));
+const AGENCY_CUSTOM_PRICING_SHEET_HREF = "/docs/agency-custom-pricing-sheet.pdf";
 
 function ctaClasses(isPrimary: boolean) {
   return isPrimary
@@ -55,10 +56,13 @@ export function PricingGrid() {
               {plan.customPricing ? (
                 <div className="space-y-1">
                   <p className="text-heading-32 text-[var(--ds-gray-1000)]">
-                    $399+
+                    $300+
                   </p>
                   <p className="text-copy-13 text-[var(--ds-gray-900)]">
-                    custom monthly pricing
+                    includes 30 workspaces
+                  </p>
+                  <p className="text-copy-12 text-[var(--ds-blue-700)]">
+                    $3 per additional workspace / month
                   </p>
                 </div>
               ) : (
@@ -86,6 +90,15 @@ export function PricingGrid() {
               <Link href={ctaHref} className={ctaClasses(Boolean(plan.popular))}>
                 {isAgencyCustom ? "Contact sales" : "Create trial workspace"}
               </Link>
+              {isAgencyCustom ? (
+                <a
+                  href={AGENCY_CUSTOM_PRICING_SHEET_HREF}
+                  download
+                  className="mt-3 inline-flex text-copy-13 text-[var(--ds-blue-700)] underline underline-offset-2 transition-colors hover:text-[var(--ds-blue-800)]"
+                >
+                  Download pricing sheet (PDF)
+                </a>
+              ) : null}
             </div>
           </PublicCard>
         );

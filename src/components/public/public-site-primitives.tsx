@@ -73,14 +73,16 @@ function sectionToneClassName(
 export function PublicPrimaryLinkButton({
   href,
   children,
+  download,
 }: {
   href: string;
   children: ReactNode;
+  download?: boolean;
 }) {
-  if (isExternalHref(href)) {
+  if (download || isExternalHref(href)) {
     return (
       <Button asChild size="sm" className={publicPrimaryButtonClassName}>
-        <a href={href}>{children}</a>
+        <a href={href} download={download}>{children}</a>
       </Button>
     );
   }
@@ -95,14 +97,16 @@ export function PublicPrimaryLinkButton({
 export function PublicSubtleLinkButton({
   href,
   children,
+  download,
 }: {
   href: string;
   children: ReactNode;
+  download?: boolean;
 }) {
-  if (isExternalHref(href)) {
+  if (download || isExternalHref(href)) {
     return (
       <Button asChild variant="ghost" size="sm" className={publicSubtleButtonClassName}>
-        <a href={href}>{children}</a>
+        <a href={href} download={download}>{children}</a>
       </Button>
     );
   }

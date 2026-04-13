@@ -125,13 +125,13 @@ export const PLANS: Plan[] = [
     name: "Agency Custom",
     price: 0,
     customPricing: true,
-    description: "Tailored for large agencies",
+    description: "Starts at $300/month and includes 30 workspaces",
     features: [
-      "Unlimited workspaces",
-      "Unlimited posts per workspace",
-      "Unlimited connected accounts",
+      "Base custom price: $300 / month for 30 workspaces",
+      "$3 per additional workspace / month",
+      "Provider limits apply across all channels",
+      "X.com capped at 1000 posts / workspace",
       "Dedicated account manager",
-      "Custom SLA & onboarding",
     ],
     limits: {
       scheduledPostsPerMonth: "Unlimited",

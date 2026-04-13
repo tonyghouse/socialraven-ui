@@ -17,8 +17,10 @@ import {
 export const metadata: Metadata = {
   title: "Pricing | Social Raven",
   description:
-    "Simple Social Raven pricing for creators, brands, and agencies. Compare plans, refund terms, and agency custom pricing guidance.",
+    "Simple Social Raven pricing for creators, brands, and agencies. Compare plans, refund terms, and download the Agency Custom pricing sheet.",
 };
+
+const AGENCY_CUSTOM_PRICING_SHEET_HREF = "/docs/agency-custom-pricing-sheet.pdf";
 
 const INCLUDED_WITH_EVERY_PLAN = [
   "14-day free trial on standard self-serve plans",
@@ -51,7 +53,7 @@ const BILLING_NOTES = [
   {
     title: "Agency Custom pricing",
     description:
-      "Agency Custom plans generally range from $399 to $999+ per month, depending on workspace count, posting volume, onboarding scope, SLA requirements, and support needs. Final quotes are confirmed before purchase.",
+      "Agency Custom starts at USD 300 per month and includes 30 workspaces. Each additional workspace is USD 3 per month. Provider-side limits still apply, including a 1000-post cap per workspace for X.com.",
   },
   {
     title: "Product scope",
@@ -76,13 +78,16 @@ export default function PricingPage() {
         title="Clear pricing for creators, teams, and agencies."
         meta={
           <>
-            Last updated: <span className="font-medium text-[var(--ds-gray-1000)]">April 7, 2026</span>
+            Last updated: <span className="font-medium text-[var(--ds-gray-1000)]">April 13, 2026</span>
           </>
         }
         description="Choose a plan based on how many brands, accounts, and campaigns you need to manage. Trial signup is available now; paid self-serve billing is still being finalized."
         actions={
           <>
             <PublicPrimaryLinkButton href="/sign-up">Create trial workspace</PublicPrimaryLinkButton>
+            <PublicSubtleLinkButton href={AGENCY_CUSTOM_PRICING_SHEET_HREF} download>
+              Download Agency Custom PDF
+            </PublicSubtleLinkButton>
             <PublicSubtleLinkButton href="/refund-policy">View refund policy</PublicSubtleLinkButton>
           </>
         }
@@ -101,7 +106,7 @@ export default function PricingPage() {
                 "USD pricing",
                 "Trial signup available now",
                 "Paid self-serve billing in progress",
-                "Agency custom plans from $399 / month",
+                "Agency Custom: $300 / month for 30 workspaces",
               ].map((item) => (
                 <PublicInsetCard key={item} className="px-4 py-3 text-copy-14 text-[var(--ds-gray-900)]">
                   {item}
@@ -136,9 +141,23 @@ export default function PricingPage() {
             14-day free trial available on standard plans
           </p>
           <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
-            Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Agency Custom plans generally range from $399 to $999+ per month based on workspace count, volume, onboarding, and SLA requirements.
+            Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Agency Custom starts at USD 300 per month for 30 workspaces, and each additional workspace is USD 3 per month. Provider-side limits still apply across channels, and X.com is capped at 1000 posts per workspace.
           </p>
         </div>
+
+        <PublicInsetCard className="mt-4 flex flex-col gap-3 px-5 py-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-label-14 text-[var(--ds-gray-1000)]">
+              Agency Custom pricing sheet
+            </p>
+            <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+              Download the PDF used for Paddle review. It shows the base custom price, the per-workspace pricing rule, and the platform-limit note.
+            </p>
+          </div>
+          <PublicSubtleLinkButton href={AGENCY_CUSTOM_PRICING_SHEET_HREF} download>
+            Download PDF
+          </PublicSubtleLinkButton>
+        </PublicInsetCard>
 
         <div className="mt-6">
           <PricingGrid />
