@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "Simple Social Raven pricing for creators, brands, and agencies. Compare plans, refund terms, and download the Agency Custom pricing sheet.",
 };
 
-const AGENCY_CUSTOM_PRICING_SHEET_HREF = "/docs/agency-custom-pricing-sheet.pdf";
+const AGENCY_CUSTOM_PRICING_SHEET_HREF = "/downloads/agency-custom-pricing-sheet.pdf";
 
 const INCLUDED_WITH_EVERY_PLAN = [
   "14-day free trial on standard self-serve plans",
@@ -85,7 +85,7 @@ export default function PricingPage() {
         actions={
           <>
             <PublicPrimaryLinkButton href="/sign-up">Create trial workspace</PublicPrimaryLinkButton>
-            <PublicSubtleLinkButton href={AGENCY_CUSTOM_PRICING_SHEET_HREF} download>
+            <PublicSubtleLinkButton href={AGENCY_CUSTOM_PRICING_SHEET_HREF}>
               Download Agency Custom PDF
             </PublicSubtleLinkButton>
             <PublicSubtleLinkButton href="/refund-policy">View refund policy</PublicSubtleLinkButton>
@@ -154,7 +154,7 @@ export default function PricingPage() {
               Download the PDF used for Paddle review. It shows the base custom price, the per-workspace pricing rule, and the platform-limit note.
             </p>
           </div>
-          <PublicSubtleLinkButton href={AGENCY_CUSTOM_PRICING_SHEET_HREF} download>
+          <PublicSubtleLinkButton href={AGENCY_CUSTOM_PRICING_SHEET_HREF}>
             Download PDF
           </PublicSubtleLinkButton>
         </PublicInsetCard>
