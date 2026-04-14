@@ -8,7 +8,7 @@ const AGENCY_CUSTOM_PRICING_SHEET_HREF = "/downloads/agency-custom-pricing-sheet
 
 function ctaClasses(isPrimary: boolean) {
   return isPrimary
-    ? "inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--ds-blue-600)] px-4 py-2 text-label-14 text-white transition-colors duration-150 hover:bg-[var(--ds-blue-700)]"
+    ? "inline-flex min-h-10 items-center justify-center rounded-md bg-[var(--ds-orange-600)] px-4 py-2 text-label-14 text-white transition-colors duration-150 hover:bg-[var(--ds-orange-700)]"
     : "inline-flex min-h-10 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-2 text-label-14 text-[var(--ds-gray-1000)] transition-colors duration-150 hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 }
 
@@ -30,7 +30,7 @@ export function PricingGrid() {
         return (
           <PublicCard
             key={plan.type}
-            className={`p-6 shadow-none ${centeredLastRowClass} ${plan.popular ? "border-[var(--ds-blue-400)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-blue-100)_100%)]" : "bg-[var(--ds-background-100)]"}`}
+            className={`p-6 shadow-none ${centeredLastRowClass} ${plan.popular ? "border-[var(--ds-orange-400)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-orange-100)_100%)]" : "bg-[var(--ds-background-100)]"}`}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -44,7 +44,7 @@ export function PricingGrid() {
               <span
                 className={`inline-flex items-center rounded-full border px-2.5 py-1 text-label-12 ${
                   plan.popular
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    ? "border-[var(--ds-orange-200)] bg-[var(--ds-orange-100)] text-[var(--ds-orange-700)]"
                     : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                 }`}
               >
@@ -61,7 +61,7 @@ export function PricingGrid() {
                   <p className="text-copy-13 text-[var(--ds-gray-900)]">
                     includes 30 workspaces
                   </p>
-                  <p className="text-copy-12 text-[var(--ds-blue-700)]">
+                  <p className="text-copy-12 text-[var(--ds-orange-700)]">
                     $3 per additional workspace / month
                   </p>
                 </div>
@@ -80,7 +80,7 @@ export function PricingGrid() {
             <ul className="mt-6 space-y-3">
               {plan.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-3 text-copy-13 text-[var(--ds-gray-900)]">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--ds-blue-600)]" />
+                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--ds-orange-600)]" />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -93,7 +93,7 @@ export function PricingGrid() {
               {isAgencyCustom ? (
                 <a
                   href={AGENCY_CUSTOM_PRICING_SHEET_HREF}
-                  className="inline-flex text-copy-13 text-[var(--ds-blue-700)] underline underline-offset-2 transition-colors hover:text-[var(--ds-blue-800)]"
+                  className="inline-flex text-copy-13 text-[var(--ds-orange-700)] underline underline-offset-2 transition-colors hover:text-[var(--ds-orange-800)]"
                 >
                   Download pricing sheet
                 </a>

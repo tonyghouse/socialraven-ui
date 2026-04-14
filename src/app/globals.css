@@ -84,7 +84,7 @@
   --ds-gray-alpha-300: rgb(0 0 0 / 0.12);
   --ds-gray-alpha-400: rgb(0 0 0 / 0.20);
 
-  /* Blue (brand / primary accent) */
+  /* Blue (platform palette — LinkedIn, X, etc.) */
   --ds-blue-100: hsl(212 100% 97%);
   --ds-blue-200: hsl(212 96% 93%);
   --ds-blue-300: hsl(212 94% 87%);
@@ -122,15 +122,27 @@
   --ds-purple-600: hsl(270 60% 48%);
   --ds-pink-600: hsl(328 60% 48%);
 
+  /* Orange (brand primary) */
+  --ds-orange-100: hsl(22 100% 96%);
+  --ds-orange-200: hsl(22 100% 90%);
+  --ds-orange-300: hsl(22 96% 82%);
+  --ds-orange-400: hsl(22 94% 70%);
+  --ds-orange-500: hsl(22 92% 60%);
+  --ds-orange-600: hsl(22 92% 52%);
+  --ds-orange-700: hsl(22 94% 44%);
+  --ds-orange-800: hsl(22 96% 36%);
+  --ds-orange-900: hsl(22 96% 28%);
+  --ds-orange-1000: hsl(22 96% 18%);
+
   /* Semantic aliases */
   --geist-success: var(--ds-green-600);
   --geist-error: var(--ds-red-600);
   --geist-warning: var(--ds-amber-600);
 
   /* Chart tokens */
-  --chart-brand: var(--ds-blue-600);
+  --chart-brand: var(--ds-orange-600);
   --chart-neutral: var(--ds-gray-700);
-  --chart-categorical-1: var(--ds-blue-600);
+  --chart-categorical-1: var(--ds-orange-600);
   --chart-categorical-2: var(--ds-teal-600);
   --chart-categorical-3: var(--ds-purple-600);
   --chart-categorical-4: var(--ds-pink-600);
@@ -156,11 +168,11 @@
   --popover: var(--surface);
   --popover-foreground: var(--foreground);
 
-  --primary: 212 86% 54%;
+  --primary: 22 92% 52%;
   --primary-foreground: 0 0% 100%;
-  --accent: 212 86% 54%;
-  --accent-hover: 212 88% 46%;
-  --accent-active: 212 92% 40%;
+  --accent: 22 92% 52%;
+  --accent-hover: 22 94% 44%;
+  --accent-active: 22 96% 38%;
   --accent-foreground: 0 0% 100%;
 
   --secondary: var(--surface-raised);
@@ -172,17 +184,17 @@
   --destructive-foreground: 0 0% 100%;
   --success: 155 54% 46%;
   --warning: 40 100% 50%;
-  --info: 212 86% 54%;
+  --info: 22 92% 52%;
 
   --border: 0 0% 86%;
   --border-subtle: 0 0% 92%;
   --input: 0 0% 86%;
   --ring: var(--accent);
 
-  --chart-1: 212 86% 54%;
+  --chart-1: 22 92% 52%;
   --chart-2: 155 54% 46%;
   --chart-3: 40 100% 50%;
-  --chart-4: 212 92% 78%;
+  --chart-4: 22 94% 70%;
   --chart-5: 0 0% 35%;
 
   --sidebar-background: var(--surface);
@@ -259,6 +271,18 @@
   --ds-purple-600: hsl(270 60% 66%);
   --ds-pink-600: hsl(328 60% 64%);
 
+  /* Orange (brand primary — dark) */
+  --ds-orange-100: hsl(22 60% 14%);
+  --ds-orange-200: hsl(22 64% 20%);
+  --ds-orange-300: hsl(22 68% 28%);
+  --ds-orange-400: hsl(22 72% 40%);
+  --ds-orange-500: hsl(22 82% 52%);
+  --ds-orange-600: hsl(22 92% 62%);
+  --ds-orange-700: hsl(22 96% 70%);
+  --ds-orange-800: hsl(22 100% 80%);
+  --ds-orange-900: hsl(22 100% 88%);
+  --ds-orange-1000: hsl(22 100% 94%);
+
   --ds-surface-invert: hsl(0 0% 14%);
 
   /* === Existing tokens (used by protected app) === */
@@ -274,11 +298,11 @@
   --popover: var(--surface);
   --popover-foreground: var(--foreground);
 
-  --primary: 212 88% 68%;
+  --primary: 22 92% 62%;
   --primary-foreground: 0 0% 100%;
-  --accent: 212 88% 68%;
-  --accent-hover: 212 94% 76%;
-  --accent-active: 212 82% 60%;
+  --accent: 22 92% 62%;
+  --accent-hover: 22 96% 70%;
+  --accent-active: 22 88% 56%;
   --accent-foreground: 0 0% 100%;
 
   --secondary: var(--surface-raised);
@@ -290,17 +314,17 @@
   --destructive-foreground: 0 0% 100%;
   --success: 155 54% 46%;
   --warning: 40 100% 50%;
-  --info: 212 88% 68%;
+  --info: 22 92% 62%;
 
   --border: 0 0% 20%;
   --border-subtle: 0 0% 15%;
   --input: 0 0% 20%;
   --ring: var(--accent);
 
-  --chart-1: 212 88% 68%;
+  --chart-1: 22 92% 62%;
   --chart-2: 155 54% 46%;
   --chart-3: 40 100% 50%;
-  --chart-4: 212 94% 76%;
+  --chart-4: 22 96% 70%;
   --chart-5: 0 0% 60%;
 
   --sidebar-background: var(--surface);

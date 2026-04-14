@@ -69,7 +69,7 @@ export default function Navbar({
           {/* ── Right: Nav links + CTA area ─────────────────────────── */}
           <div className={cn("ml-auto flex items-center gap-2", isLanding && "gap-2.5")}>
             {isLanding && (
-              <nav className="hidden items-center gap-0.5 lg:flex mr-1" aria-label="Primary">
+              <div className="hidden items-center gap-0.5 lg:flex mr-1">
                 {LANDING_NAV.map(({ label, href }) => (
                   <Link
                     key={label}
@@ -79,26 +79,28 @@ export default function Navbar({
                     {label}
                   </Link>
                 ))}
-              </nav>
+              </div>
             )}
-            {isSignedIn ? (
-              <>
-                <Button asChild variant="ghost" size="sm" className={secondaryBtn}>
-                  <Link href="/dashboard">Dashboard</Link>
+            <div className={cn("relative z-10 flex items-center gap-2", isLanding && "gap-2.5")}>
+              {isSignedIn ? (
+                <>
+                  <Button asChild variant="ghost" size="sm" className={cn(secondaryBtn, "relative shrink-0")}>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </Button>
+                  <div className={cn(
+                    "flex items-center justify-center overflow-hidden border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]",
+                    avatarBox,
+                  )}>
+                    <UserButton appearance={{ elements: { avatarBox: avatarBox } }} />
+                  </div>
+                </>
+              ) : (
+                <Button asChild size="sm" className={cn(primaryBtn, "relative shrink-0")}>
+                  <Link href="/sign-up">Get started</Link>
                 </Button>
-                <div className={cn(
-                  "flex items-center justify-center overflow-hidden border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]",
-                  avatarBox,
-                )}>
-                  <UserButton appearance={{ elements: { avatarBox: avatarBox } }} />
-                </div>
-              </>
-            ) : (
-              <Button asChild size="sm" className={primaryBtn}>
-                <Link href="/sign-up">Get started</Link>
-              </Button>
-            )}
-            <ThemeSwitcher compact className={themeClass} />
+              )}
+              <ThemeSwitcher compact className={cn(themeClass, "relative z-10")} />
+            </div>
           </div>
 
         </nav>

@@ -67,7 +67,7 @@ const MOCK_POSTS = [
 
 const STATUS_CONFIG = {
   live:   { label: "Live",   dot: "bg-emerald-400", text: "text-emerald-700 dark:text-emerald-400" },
-  queued: { label: "Queued", dot: "bg-blue-400",    text: "text-blue-700 dark:text-blue-400"       },
+  queued: { label: "Queued", dot: "bg-orange-400",   text: "text-orange-700 dark:text-orange-400"   },
   review: { label: "Review", dot: "bg-amber-400",   text: "text-amber-700 dark:text-amber-400"     },
   draft:  { label: "Draft",  dot: "bg-[var(--ds-gray-400)]", text: "text-[var(--ds-gray-600)]"    },
 };
@@ -76,8 +76,8 @@ const FEATURES = [
   {
     Icon: Calendar, tag: "Planning", title: "Visual content calendar",
     description: "See every scheduled post across all platforms at a glance. Drag, reorder, and batch-schedule without losing track of what's live.",
-    iconCls: "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400",
-    mockBg: "from-blue-50 to-sky-50/60 dark:from-blue-900/20 dark:to-blue-900/5",
+    iconCls: "bg-orange-100 text-orange-600 dark:bg-orange-900/40 dark:text-orange-400",
+    mockBg: "from-orange-50 to-amber-50/60 dark:from-orange-900/20 dark:to-orange-900/5",
   },
   {
     Icon: Zap, tag: "Publishing", title: "One post. All platforms.",
@@ -106,8 +106,8 @@ const FEATURES = [
   {
     Icon: Globe, tag: "Scale", title: "Multi-account management",
     description: "Organize brands, workspaces, and connected profiles in one place. Built for agencies and multi-brand teams from day one.",
-    iconCls: "bg-sky-100 text-sky-600 dark:bg-sky-900/40 dark:text-sky-400",
-    mockBg: "from-sky-50 to-blue-50/60 dark:from-sky-900/20 dark:to-sky-900/5",
+    iconCls: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-400",
+    mockBg: "from-indigo-50 to-violet-50/60 dark:from-indigo-900/20 dark:to-indigo-900/5",
   },
 ];
 
@@ -133,10 +133,10 @@ const PERSONAS = [
     headline: "One workspace. Every client.",
     body: "Manage multiple brands, teams, and approval flows from a single operational hub. Built for agencies running at scale.",
     points: ["Multi-workspace management", "Team members with role-based access", "Client approval workflows", "Post history and analytics per brand"],
-    chip: "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/20 dark:border-blue-700/40 dark:text-blue-300",
-    checkCls: "text-blue-500",
-    accent: "hover:border-blue-300 dark:hover:border-blue-700",
-    link: "text-[var(--ds-blue-600)] hover:text-[var(--ds-blue-700)]",
+    chip: "bg-orange-50 border-orange-200 text-orange-700 dark:bg-orange-900/20 dark:border-orange-700/40 dark:text-orange-300",
+    checkCls: "text-orange-500",
+    accent: "hover:border-orange-300 dark:hover:border-orange-700",
+    link: "text-[var(--ds-orange-600)] hover:text-[var(--ds-orange-700)] dark:text-[var(--ds-orange-600)] dark:hover:text-[var(--ds-orange-500)]",
   },
 ];
 
@@ -144,7 +144,7 @@ const TESTIMONIALS = [
   {
     quote: "We manage 14 client accounts across industries. SocialRaven is the first tool that doesn't feel like it's fighting us — approvals, handoffs, post queues all in one place.",
     name: "Sarah Chen", role: "Head of Social", company: "Clarity Agency", tag: "Agency · 14 clients",
-    initials: "SC", avatarBg: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+    initials: "SC", avatarBg: "bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300",
   },
   {
     quote: "As a creator juggling YouTube, Instagram, and LinkedIn, SocialRaven cuts my publishing time in half. The review links mean my editor can approve without needing access.",
@@ -202,7 +202,7 @@ const KEYFRAMES = `
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(130deg, hsl(212 86% 46%) 0%, hsl(228 72% 60%) 50%, hsl(212 86% 46%) 100%);
+    background-image: linear-gradient(130deg, hsl(22 92% 42%) 0%, hsl(32 90% 58%) 50%, hsl(22 92% 42%) 100%);
     background-size: 200% auto;
     animation: gradientShift 7s ease infinite;
   }
@@ -287,7 +287,7 @@ function DashboardMock() {
         {/* Sidebar */}
         <div className="hidden w-12 flex-col items-center gap-1 border-r border-[var(--ds-gray-100)] bg-[var(--ds-background-100)] py-3 dark:border-white/[0.05] dark:bg-[hsl(222_28%_6%)] sm:flex" aria-hidden="true">
           {NAV_PATHS.map(({ d, active }, i) => (
-            <button key={i} tabIndex={-1} className={`flex h-9 w-9 items-center justify-center rounded-lg ${active ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-600)] dark:bg-white/10 dark:text-white/80" : "text-[var(--ds-gray-400)] dark:text-white/20"}`}>
+            <button key={i} tabIndex={-1} className={`flex h-9 w-9 items-center justify-center rounded-lg ${active ? "bg-[var(--ds-orange-100)] text-[var(--ds-orange-600)] dark:bg-white/10 dark:text-white/80" : "text-[var(--ds-gray-400)] dark:text-white/20"}`}>
               <svg className="h-[0.875rem] w-[0.875rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
             </button>
           ))}
@@ -299,7 +299,7 @@ function DashboardMock() {
               <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Scheduled posts</p>
               <p className="mt-0.5 text-[0.625rem] text-[var(--ds-gray-500)]">April 2026 · 48 posts queued</p>
             </div>
-            <button tabIndex={-1} className="self-start rounded-lg bg-[hsl(212_86%_50%)] px-2.5 py-1.5 text-[0.6875rem] font-semibold text-white sm:self-auto">+ New post</button>
+            <button tabIndex={-1} className="self-start rounded-lg bg-[hsl(22_92%_52%)] px-2.5 py-1.5 text-[0.6875rem] font-semibold text-white sm:self-auto">+ New post</button>
           </div>
           <div className="space-y-1.5">
             {MOCK_POSTS.map((post, i) => {
@@ -368,15 +368,15 @@ export default function LandingPage() {
         {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
         <section className="relative mx-auto max-w-[88rem] overflow-hidden pb-0 pt-28">
           {/* Light bloom */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(212 86% 82% / 0.20) 0%, transparent 56%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(22 92% 80% / 0.22) 0%, transparent 56%)" }} aria-hidden="true" />
           {/* Dark bloom */}
-          <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(212 86% 54% / 0.22) 0%, transparent 61%)" }} aria-hidden="true" />
+          <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(22 92% 52% / 0.22) 0%, transparent 61%)" }} aria-hidden="true" />
           {/* Dot grid — light mode base */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.28] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(214 18% 46% / 0.68) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 opacity-[0.28] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(22 30% 46% / 0.68) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)" }} aria-hidden="true" />
           {/* Dot grid — light mode subtle glow */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-[0.34] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(212 82% 66% / 0.44) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", WebkitMaskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", filter: "blur(0.55px) drop-shadow(0 0 8px hsl(212 86% 66% / 0.16))" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-[0.34] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(22 90% 62% / 0.44) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", WebkitMaskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", filter: "blur(0.55px) drop-shadow(0 0 8px hsl(22 92% 62% / 0.18))" }} aria-hidden="true" />
           {/* Dot grid — dark mode with glow */}
-          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(212 86% 72% / 0.55) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(212 86% 65% / 0.6))" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(22 92% 68% / 0.55) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(22 92% 62% / 0.6))" }} aria-hidden="true" />
 
           <div className={`${W} relative`}>
 
@@ -448,7 +448,7 @@ export default function LandingPage() {
                 <p className="mt-0.5 text-[1.5rem] font-black tracking-tight text-[var(--ds-gray-1000)]">48</p>
                 <div className="mt-2.5 flex items-end gap-1" style={{ height: "2.5rem" }}>
                   {[55, 40, 75, 50, 85, 65, 100].map((h, k) => (
-                    <div key={k} className="flex-1 rounded-sm bg-[hsl(212_86%_50%)]" style={{ height: `${h}%`, opacity: k === 6 ? 1 : 0.25 + k * 0.1 }} />
+                    <div key={k} className="flex-1 rounded-sm bg-[hsl(22_92%_52%)]" style={{ height: `${h}%`, opacity: k === 6 ? 1 : 0.25 + k * 0.1 }} />
                   ))}
                 </div>
                 <p className="mt-1.5 text-[0.5625rem] font-semibold text-emerald-600">↑ 28% vs last week</p>
@@ -466,7 +466,7 @@ export default function LandingPage() {
             >
               <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <div className="mb-3 flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-[hsl(212_86%_50%)]" />
+                  <Globe className="h-4 w-4 text-[hsl(22_92%_52%)]" />
                   <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-900)]">Connected accounts</p>
                 </div>
                 {[
@@ -509,7 +509,7 @@ export default function LandingPage() {
               <motion.div variants={FV} className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
                 <Link
                   href="/sign-up"
-                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[hsl(212_86%_48%)] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_hsl(212_86%_48%/0.38)] transition-all duration-150 hover:bg-[hsl(212_86%_43%)] hover:shadow-[0_6px_24px_hsl(212_86%_48%/0.48)]"
+                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[hsl(22_92%_52%)] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_hsl(22_92%_52%/0.38)] transition-all duration-150 hover:bg-[hsl(22_94%_44%)] hover:shadow-[0_6px_24px_hsl(22_92%_52%/0.48)]"
                 >
                   Start for free <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -533,7 +533,7 @@ export default function LandingPage() {
               transition={{ duration: 0.9, delay: 0.55, ease: EASE_OUT }}
               className="relative mx-auto mt-16 max-w-[58rem]"
             >
-              <div className="pointer-events-none absolute -inset-x-8 -bottom-8 h-28 blur-3xl" style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(212 86% 55% / 0.22) 0%, transparent 70%)" }} aria-hidden="true" />
+              <div className="pointer-events-none absolute -inset-x-8 -bottom-8 h-28 blur-3xl" style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(22 92% 52% / 0.22) 0%, transparent 70%)" }} aria-hidden="true" />
               <DashboardMock />
             </motion.div>
           </div>
@@ -615,20 +615,20 @@ export default function LandingPage() {
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="flex flex-col items-center">
 
               {/* Globe hub */}
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-[hsl(212_86%_48%)] bg-white shadow-[0_0_0_8px_hsl(212_86%_48%/0.08)] dark:bg-[var(--ds-background-100)]">
-                <Globe className="h-7 w-7 text-[hsl(212_86%_48%)]" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-[hsl(22_92%_52%)] bg-white shadow-[0_0_0_8px_hsl(22_92%_52%/0.08)] dark:bg-[var(--ds-background-100)]">
+                <Globe className="h-7 w-7 text-[hsl(22_92%_52%)]" />
               </div>
 
               {/* Vertical trunk */}
               <div className="relative h-10 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08]">
-                <div className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(212_86%_58%)] to-transparent" />
+                <div className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(22_90%_56%)] to-transparent" />
               </div>
 
               {/* Horizontal bus + drops + tiles */}
               <div className="w-full">
                 {/* Horizontal bus */}
                 <div className="relative mx-[calc((100%-1.5rem)/14)] h-px overflow-hidden bg-[var(--ds-gray-200)] sm:mx-[calc((100%-3rem)/14)] md:mx-[calc((100%-4.5rem)/14)] dark:bg-white/[0.08]">
-                  <div className="fiber-h absolute inset-y-0 left-1/2 w-full bg-gradient-to-r from-transparent via-[hsl(212_86%_58%)] to-transparent" />
+                  <div className="fiber-h absolute inset-y-0 left-1/2 w-full bg-gradient-to-r from-transparent via-[hsl(22_90%_56%)] to-transparent" />
                 </div>
 
                 {/* Platform tiles grid */}
@@ -638,7 +638,7 @@ export default function LandingPage() {
                       {/* Drop line */}
                       <div className="relative h-4 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08] md:h-8">
                         <div
-                          className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(212_86%_58%)] to-transparent"
+                          className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(22_90%_56%)] to-transparent"
                           style={{ animationDelay: `${i * 0.22}s` }}
                         />
                       </div>
@@ -686,8 +686,8 @@ export default function LandingPage() {
               {STEPS.map(({ n, Icon, title, body }) => (
                 <motion.div key={n} variants={FV} className="flex flex-col items-center text-center">
                   <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--ds-gray-200)] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:bg-[var(--ds-background-100)]">
-                    <Icon className="h-6 w-6 text-[hsl(212_86%_48%)]" />
-                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(212_86%_48%)] text-[0.5625rem] font-bold text-white">{n}</span>
+                    <Icon className="h-6 w-6 text-[hsl(22_92%_52%)]" />
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(22_92%_52%)] text-[0.5625rem] font-bold text-white">{n}</span>
                   </div>
                   <h3 className="mt-5 text-[1.0625rem] font-bold tracking-[-0.02em] text-[var(--ds-gray-1000)]">{title}</h3>
                   <p className="mt-2 text-[0.875rem] leading-[1.65] text-[var(--ds-gray-700)]">{body}</p>
@@ -741,8 +741,8 @@ export default function LandingPage() {
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="grid items-center gap-12 lg:grid-cols-2">
               <div>
                 <motion.div variants={FV}>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(212_86%_54%/0.3)] bg-[hsl(212_86%_54%/0.08)] px-3 py-1 text-[0.75rem] font-medium text-[hsl(212_86%_42%)] dark:text-[hsl(212_86%_72%)]">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(212_86%_52%)]" />
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(22_92%_52%/0.3)] bg-[hsl(22_92%_52%/0.08)] px-3 py-1 text-[0.75rem] font-medium text-[hsl(22_92%_40%)] dark:text-[hsl(22_92%_68%)]">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(22_92%_52%)]" />
                     Coming soon
                   </span>
                 </motion.div>
@@ -771,7 +771,7 @@ export default function LandingPage() {
                   <div className="flex items-center gap-3 border-b border-[var(--ds-gray-200)] px-4 py-3.5 dark:border-white/[0.07]">
                     <MessageSquare className="h-4 w-4 text-[var(--ds-gray-500)]" />
                     <span className="text-[0.8125rem] font-semibold text-[var(--ds-gray-900)]">Unified Inbox</span>
-                    <span className="ml-auto rounded-full bg-[hsl(212_86%_48%/0.12)] px-2 py-0.5 text-[0.625rem] font-bold text-[hsl(212_86%_42%)] dark:bg-[hsl(212_86%_48%/0.25)] dark:text-[hsl(212_86%_75%)]">12 new</span>
+                    <span className="ml-auto rounded-full bg-[hsl(22_92%_52%/0.12)] px-2 py-0.5 text-[0.625rem] font-bold text-[hsl(22_92%_40%)] dark:bg-[hsl(22_92%_52%/0.25)] dark:text-[hsl(22_92%_70%)]">12 new</span>
                   </div>
                   {[
                     { Icon: Instagram, name: "@sarah.design",  msg: "Love this post! Can I reshare it?",      time: "2m",  dot: "bg-pink-500"  },
@@ -891,8 +891,8 @@ export default function LandingPage() {
 
         {/* ════════════════════════ FINAL CTA ══════════════════════════════════ */}
         <section className="relative overflow-hidden border-t border-[var(--ds-gray-200)] bg-white py-32 dark:border-[var(--ds-gray-400)] dark:bg-[var(--ds-background-200)]">
-          <div className="pointer-events-none absolute inset-0 dark:hidden" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(212 86% 82% / 0.22) 0%, transparent 60%)" }} aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(212 86% 54% / 0.12) 0%, transparent 60%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 dark:hidden" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(22 92% 80% / 0.22) 0%, transparent 60%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(22 92% 52% / 0.12) 0%, transparent 60%)" }} aria-hidden="true" />
 
           <div className="relative">
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="flex flex-col items-center text-center">
@@ -905,7 +905,7 @@ export default function LandingPage() {
               <motion.div variants={FV} className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <Link
                   href="/sign-up"
-                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[hsl(212_86%_48%)] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_hsl(212_86%_48%/0.38)] transition-all duration-150 hover:bg-[hsl(212_86%_43%)] hover:shadow-[0_6px_24px_hsl(212_86%_48%/0.48)]"
+                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[hsl(22_92%_52%)] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_hsl(22_92%_52%/0.38)] transition-all duration-150 hover:bg-[hsl(22_94%_44%)] hover:shadow-[0_6px_24px_hsl(22_92%_52%/0.48)]"
                 >
                   Start for free — no card needed
                   <ArrowRight className="h-4 w-4" />
