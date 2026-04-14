@@ -18,7 +18,7 @@ export function DraftDateTimePicker({ date, setDate, time, setTime }: Props) {
   const inputClassName = cn(
     "flex h-10 w-full rounded-md border px-3 text-sm transition-colors",
     "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
-    "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+    "focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
   );
 
   return (

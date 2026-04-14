@@ -109,7 +109,7 @@ export function PostCollaborationAnnotationView({
               <div
                 className={cn(
                   "pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_0.1875rem_rgb(0_0_0_/_0.18)]",
-                  isGeist ? "bg-[var(--ds-blue-600)]" : "bg-[hsl(var(--accent))]"
+                  isGeist ? "bg-[hsl(var(--accent))]" : "bg-[hsl(var(--accent))]"
                 )}
                 style={{
                   left: `${thread.mediaMarkerX * 100}%`,

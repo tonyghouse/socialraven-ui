@@ -141,7 +141,7 @@ export default function ImageCropDialog({ file, open, onClose, onCrop }: Props) 
                   className={cn(
                     "flex-1 py-1.5 text-xs font-semibold rounded-lg border transition-colors",
                     selectedRatio === ratio
-                      ? "bg-primary text-primary-foreground border-primary"
+                      ? "bg-primary !text-primary-foreground border-primary"
                       : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground",
                   )}
                 >

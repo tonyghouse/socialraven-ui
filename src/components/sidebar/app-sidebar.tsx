@@ -194,7 +194,7 @@ export function AppSidebar() {
                               "flex shrink-0 items-center justify-center rounded-lg transition-colors",
                               isCollapsed ? "h-8 w-8" : "h-8 w-8",
                               isActive
-                                ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                                ? "bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
                                 : "text-[var(--ds-gray-900)] group-hover:bg-[var(--ds-background-100)] group-hover:text-[var(--ds-gray-1000)]"
                             )}
                           >

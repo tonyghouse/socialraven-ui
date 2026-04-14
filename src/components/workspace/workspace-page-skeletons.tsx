@@ -29,7 +29,7 @@ export function WorkspaceSettingsPageSkeleton() {
           <div className="space-y-4">
             <section className="rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm">
               <div className="flex items-start gap-3 border-b border-[var(--ds-gray-400)] px-4 py-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]">
                   <Skeleton className={`h-4 w-4 rounded-md ${skeletonClassName}`} />
                 </div>
                 <div className="space-y-2">
@@ -49,7 +49,7 @@ export function WorkspaceSettingsPageSkeleton() {
 
             <section className="rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm">
               <div className="flex items-start gap-3 border-b border-[var(--ds-gray-400)] px-4 py-4">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]">
                   <Skeleton className={`h-4 w-4 rounded-md ${skeletonClassName}`} />
                 </div>
                 <div className="space-y-2">
@@ -89,7 +89,7 @@ export function WorkspaceSettingsPageSkeleton() {
             <section className="rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm">
               <div className="flex items-start justify-between gap-4 border-b border-[var(--ds-gray-400)] px-4 py-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]">
                     <Skeleton className={`h-4 w-4 rounded-md ${skeletonClassName}`} />
                   </div>
                   <div className="space-y-2">

@@ -78,11 +78,11 @@ const itemTitleClassName = "text-label-14 text-[var(--ds-gray-1000)]";
 const bodyTextClassName = "text-copy-14 text-[var(--ds-gray-900)]";
 const quietTextClassName = "text-copy-12 text-[var(--ds-gray-900)]";
 const buttonFocusClassName =
-  "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const outlineButtonClassName =
   "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 const primaryButtonClassName =
-  "bg-[var(--ds-blue-600)] text-white shadow-none hover:bg-[var(--ds-blue-700)]";
+  "bg-[hsl(var(--accent))] !text-white shadow-none hover:bg-[hsl(var(--accent-hover))]";
 const ghostButtonClassName =
   "text-[var(--ds-gray-900)] shadow-none hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]";
 const destructiveButtonClassName =
@@ -92,11 +92,11 @@ const tabsListClassName =
 const tabsTriggerClassName =
   "rounded-md text-label-14 text-[var(--ds-gray-900)] data-[state=active]:bg-[var(--ds-background-100)] data-[state=active]:text-[var(--ds-gray-1000)] data-[state=active]:shadow-none";
 const inputClassName =
-  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] shadow-none focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] shadow-none focus-visible:border-[hsl(var(--accent))] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const selectClassName =
-  "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-sm text-[var(--ds-gray-1000)] shadow-none outline-none transition-[border-color,box-shadow,background-color] focus:border-[var(--ds-blue-600)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]";
+  "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-sm text-[var(--ds-gray-1000)] shadow-none outline-none transition-[border-color,box-shadow,background-color] focus:border-[hsl(var(--accent))] focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]";
 const checkboxClassName =
-  "border-[var(--ds-gray-500)] data-[state=checked]:border-[var(--ds-blue-600)] data-[state=checked]:bg-[var(--ds-blue-600)] data-[state=checked]:text-white";
+  "border-[var(--ds-gray-500)] data-[state=checked]:border-[hsl(var(--accent))] data-[state=checked]:bg-[hsl(var(--accent))] data-[state=checked]:text-white";
 const searchIconClassName =
   "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ds-gray-900)]";
 const iconBadgeClassName =
@@ -232,10 +232,10 @@ function canShowMedia(editor: ItemEditorState): boolean {
   return editor.itemType === "MEDIA_ASSET";
 }
 
-function badgeToneClassName(tone: "neutral" | "blue" | "green" | "amber" | "red"): string {
+function badgeToneClassName(tone: "neutral" | "accent" | "green" | "amber" | "red"): string {
   switch (tone) {
-    case "blue":
-      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+    case "accent":
+      return "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "green":
       return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "amber":
@@ -259,7 +259,7 @@ function statusBadgeClassName(status: WorkspaceLibraryItemStatus): string {
 
 function usableBadgeClassName(item: WorkspaceLibraryItem): string {
   if (item.usable) {
-    return badgeToneClassName("blue");
+    return badgeToneClassName("accent");
   }
   if (item.status === "ARCHIVED" || item.expired) {
     return badgeToneClassName("red");
@@ -698,7 +698,7 @@ export function WorkspaceLibraryManager() {
                           onClick={() => updateItemEditor("itemType", type)}
                           className={cn(
                             itemEditor.itemType === type
-                              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)] shadow-none hover:bg-[var(--ds-blue-100)] hover:text-[var(--ds-blue-700)]"
+                              ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)] shadow-none hover:bg-[var(--ds-plum-100)] hover:text-[var(--ds-plum-700)]"
                               : outlineButtonClassName,
                             buttonFocusClassName
                           )}
@@ -898,7 +898,7 @@ export function WorkspaceLibraryManager() {
                               event.currentTarget.value = "";
                             }}
                           />
-                          <Plus className="h-5 w-5 text-[var(--ds-blue-700)]" />
+                          <Plus className="h-5 w-5 text-[var(--ds-plum-700)]" />
                           <p className="text-label-14 text-[var(--ds-gray-1000)]">
                             Upload {itemEditor.postCollectionType === "VIDEO" ? "video" : "image"} asset
                             {itemEditor.postCollectionType === "VIDEO" ? "" : "s"}
@@ -1098,7 +1098,7 @@ export function WorkspaceLibraryManager() {
                           <div className="space-y-3">
                             <div className="flex flex-wrap items-center gap-2">
                               <div className={iconBadgeClassName}>
-                                <Icon className="h-4 w-4 text-[var(--ds-blue-700)]" />
+                                <Icon className="h-4 w-4 text-[var(--ds-plum-700)]" />
                               </div>
                               <div>
                                 <p className={itemTitleClassName}>{item.name}</p>
@@ -1376,7 +1376,7 @@ export function WorkspaceLibraryManager() {
                         <div className="space-y-3">
                           <div className="flex flex-wrap items-center gap-2">
                             <div className={iconBadgeClassName}>
-                              <Boxes className="h-4 w-4 text-[var(--ds-blue-700)]" />
+                              <Boxes className="h-4 w-4 text-[var(--ds-plum-700)]" />
                             </div>
                             <div>
                               <p className={itemTitleClassName}>{bundle.name}</p>

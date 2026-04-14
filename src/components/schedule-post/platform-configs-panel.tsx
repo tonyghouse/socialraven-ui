@@ -61,20 +61,20 @@ async function cropFileToRatio(file: File, ratio: number): Promise<File> {
 // ── Platform brand styles ─────────────────────────────────────────────────────
 
 const PLATFORM_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-  facebook:  { bg: "bg-surface-raised", text: "text-[#1877F2]", border: "border-border-subtle", dot: "bg-[#1877F2]" },
+  facebook:  { bg: "bg-surface-raised", text: "text-[var(--ds-plum-700)]", border: "border-border-subtle", dot: "bg-[hsl(var(--accent))]" },
   instagram: { bg: "bg-surface-raised", text: "text-[#C13584]", border: "border-border-subtle", dot: "bg-[#C13584]" },
   x:         { bg: "bg-surface-raised", text: "text-foreground", border: "border-border-subtle", dot: "bg-foreground" },
-  linkedin:  { bg: "bg-surface-raised", text: "text-[#0A66C2]", border: "border-border-subtle", dot: "bg-[#0A66C2]" },
+  linkedin:  { bg: "bg-surface-raised", text: "text-[var(--ds-plum-700)]", border: "border-border-subtle", dot: "bg-[hsl(var(--accent))]" },
   youtube:   { bg: "bg-surface-raised", text: "text-[#FF0000]", border: "border-border-subtle", dot: "bg-[#FF0000]" },
   threads:   { bg: "bg-surface-raised", text: "text-foreground", border: "border-border-subtle", dot: "bg-foreground" },
   tiktok:    { bg: "bg-surface-raised", text: "text-foreground", border: "border-border-subtle", dot: "bg-foreground" },
 };
 
 const GEIST_PLATFORM_STYLES: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-  facebook:  { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-blue-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-blue-600)]" },
+  facebook:  { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-plum-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[hsl(var(--accent))]" },
   instagram: { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-pink-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-pink-600)]" },
   x:         { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-gray-1000)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-gray-1000)]" },
-  linkedin:  { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-blue-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-blue-600)]" },
+  linkedin:  { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-plum-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[hsl(var(--accent))]" },
   youtube:   { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-red-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-red-600)]" },
   threads:   { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-gray-1000)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-gray-1000)]" },
   tiktok:    { bg: "bg-[var(--ds-gray-100)]", text: "text-[var(--ds-teal-700)]", border: "border-[var(--ds-gray-400)]", dot: "bg-[var(--ds-teal-600)]" },
@@ -94,13 +94,13 @@ type Appearance = "default" | "geist";
 
 function fieldClassName(appearance: Appearance) {
   return appearance === "geist"
-    ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+    ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none focus-visible:border-[hsl(var(--accent))] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
     : "";
 }
 
 function textareaClassName(appearance: Appearance) {
   return appearance === "geist"
-    ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+    ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none focus-visible:border-[hsl(var(--accent))] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
     : "";
 }
 
@@ -124,11 +124,11 @@ function Toggle({
       className={cn(
         "relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2",
         appearance === "geist"
-          ? "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+          ? "focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
           : "focus-visible:ring-[hsl(var(--accent))]/35",
         checked
           ? appearance === "geist"
-            ? "bg-[var(--ds-blue-600)]"
+            ? "bg-[hsl(var(--accent))]"
             : "bg-[hsl(var(--accent))]"
           : appearance === "geist"
             ? "bg-[var(--ds-gray-300)]"
@@ -191,10 +191,10 @@ function RadioPills<T extends string>({
             "rounded-md border px-3 py-1.5 text-xs font-medium transition-colors duration-150",
             value === opt.value
               ? appearance === "geist"
-                ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                 : "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
               : appearance === "geist"
-                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-blue-200)] hover:text-[var(--ds-gray-1000)]"
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-plum-200)] hover:text-[var(--ds-gray-1000)]"
                 : "border-border-subtle bg-surface text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground"
           )}
         >
@@ -315,10 +315,10 @@ function InstagramPanel({
                     "flex flex-1 flex-col items-center gap-1.5 rounded-lg border px-1 py-2.5 transition-colors",
                     isSelected
                       ? appearance === "geist"
-                        ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                         : "border-[hsl(var(--accent))]/20 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
                       : appearance === "geist"
-                        ? "border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:border-[var(--ds-blue-200)] hover:text-[var(--ds-gray-1000)]"
+                        ? "border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:border-[var(--ds-plum-200)] hover:text-[var(--ds-gray-1000)]"
                         : "border-border-subtle text-foreground-muted hover:border-[hsl(var(--accent))]/20 hover:text-foreground",
                   )}
                 >
@@ -328,7 +328,7 @@ function InstagramPanel({
                     className={cn(
                       "rounded-sm border-2 flex-shrink-0",
                       isSelected
-                        ? appearance === "geist" ? "border-[var(--ds-blue-700)]" : "border-[hsl(var(--accent))]"
+                        ? appearance === "geist" ? "border-[var(--ds-plum-700)]" : "border-[hsl(var(--accent))]"
                         : "border-current"
                     )}
                   />
@@ -346,7 +346,7 @@ function InstagramPanel({
               className={cn(
                 "mt-2 w-full rounded-lg border py-1.5 text-xs font-semibold transition-colors disabled:opacity-50",
                 appearance === "geist"
-                  ? "border-[var(--ds-blue-200)] text-[var(--ds-blue-700)] hover:bg-[var(--ds-blue-100)]"
+                  ? "border-[var(--ds-plum-200)] text-[var(--ds-plum-700)] hover:bg-[var(--ds-plum-100)]"
                   : "border-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))]/8"
               )}
             >
@@ -367,7 +367,7 @@ function InstagramPanel({
                   className={cn(
                     "group relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border transition-colors",
                     appearance === "geist"
-                      ? "border-[var(--ds-gray-400)] hover:border-[var(--ds-blue-200)]"
+                      ? "border-[var(--ds-gray-400)] hover:border-[var(--ds-plum-200)]"
                       : "border-border-subtle hover:border-[hsl(var(--accent))]/25"
                   )}
                   title={`Crop ${file.name} individually`}
@@ -529,8 +529,8 @@ function YouTubePanel({
             className={cn(
               "flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors",
               appearance === "geist"
-                ? "bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
-                : "bg-primary text-primary-foreground hover:bg-[hsl(var(--accent-hover))]"
+                ? "bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
+                : "bg-primary !text-primary-foreground hover:bg-[hsl(var(--accent-hover))]"
             )}
           >
             Add
@@ -789,7 +789,7 @@ export default function PlatformConfigsPanel({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg border", appearance === "geist" ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]" : "border-border-subtle bg-surface-raised text-[hsl(var(--accent))]")}>
+        <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg border", appearance === "geist" ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-plum-700)]" : "border-border-subtle bg-surface-raised text-[hsl(var(--accent))]")}>
           <Settings2 className="h-4 w-4" />
         </div>
         <div>

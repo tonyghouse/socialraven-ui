@@ -63,10 +63,10 @@ const STATUS_CONFIG: Record<
   { color: string; bg: string; text: string; border: string; label: string; Icon: React.ElementType }
 > = {
   SCHEDULED: {
-    color: "var(--ds-blue-600)",
-    bg: "bg-[var(--ds-blue-100)]",
-    text: "text-[var(--ds-blue-700)]",
-    border: "border-[var(--ds-blue-200)]",
+    color: "hsl(var(--accent))",
+    bg: "bg-[var(--ds-plum-100)]",
+    text: "text-[var(--ds-plum-700)]",
+    border: "border-[var(--ds-plum-200)]",
     label: "Scheduled",
     Icon: Clock,
   },
@@ -90,7 +90,7 @@ const sectionStripClassName = "border-b border-[var(--ds-gray-400)] bg-[var(--ds
 const mutedTextClassName = "text-[var(--ds-gray-900)]";
 const strongTextClassName = "text-[var(--ds-gray-1000)]";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const CONTROL_BUTTON_CLASS =
   "inline-flex h-9 items-center justify-center gap-1.5 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:pointer-events-none disabled:opacity-50";
 
@@ -98,7 +98,7 @@ const ICON_BUTTON_CLASS =
   "inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]";
 
 const PRIMARY_BUTTON_CLASS =
-  "inline-flex h-9 items-center justify-center gap-2 rounded-md bg-[var(--ds-blue-600)] px-3.5 text-label-14 text-white transition-colors hover:bg-[var(--ds-blue-700)]";
+  "inline-flex h-9 items-center justify-center gap-2 rounded-md bg-[hsl(var(--accent))] px-3.5 text-label-14 text-white transition-colors hover:bg-[hsl(var(--accent-hover))]";
 
 const SUBTLE_BADGE_CLASS =
   "inline-flex items-center gap-1.5 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]";
@@ -401,7 +401,7 @@ function DayDetailSheet({
                           <button
                             onClick={() => scheduleAt(hour)}
                             className={cn(
-                              "group flex w-full items-center gap-1.5 pb-1 pl-[4.5rem] pr-4 text-left text-label-12 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-blue-700)]",
+                              "group flex w-full items-center gap-1.5 pb-1 pl-[4.5rem] pr-4 text-left text-label-12 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-plum-700)]",
                               focusRingClassName
                             )}
                           >
@@ -484,7 +484,7 @@ function MonthView({
               className={cn(
                 "group relative overflow-hidden border-b border-r border-[var(--ds-gray-400)] p-2 transition-colors",
                 !inMonth && "bg-[var(--ds-gray-100)]",
-                todayFlag && "bg-[var(--ds-blue-100)]",
+                todayFlag && "bg-[var(--ds-plum-100)]",
                 "hover:bg-[var(--ds-gray-100)]"
               )}
               onClick={() => onDayClick(day)}
@@ -494,7 +494,7 @@ function MonthView({
                   className={cn(
                     "inline-flex h-7 w-7 items-center justify-center rounded-full text-label-12 transition-colors",
                     todayFlag
-                      ? "bg-[var(--ds-blue-600)] text-white"
+                      ? "bg-[hsl(var(--accent))] !text-white"
                       : inMonth
                         ? "text-[var(--ds-gray-1000)]"
                         : "text-[var(--ds-gray-900)]"
@@ -508,7 +508,7 @@ function MonthView({
                     onSchedule(format(day, "yyyy-MM-dd"), "09:00");
                   }}
                   className={cn(
-                    "rounded-md p-1 text-transparent transition-all group-hover:text-[var(--ds-gray-900)] hover:bg-[var(--ds-blue-100)] hover:!text-[var(--ds-blue-700)]",
+                    "rounded-md p-1 text-transparent transition-all group-hover:text-[var(--ds-gray-900)] hover:bg-[var(--ds-plum-100)] hover:!text-[var(--ds-plum-700)]",
                     focusRingClassName
                   )}
                   title="Schedule post"
@@ -524,7 +524,7 @@ function MonthView({
                 {overflow > 0 ? (
                   <button
                     className={cn(
-                      "pl-1 text-label-12 text-[var(--ds-blue-700)] transition-colors hover:text-[var(--ds-blue-800)]",
+                      "pl-1 text-label-12 text-[var(--ds-plum-700)] transition-colors hover:text-[var(--ds-plum-800)]",
                       focusRingClassName
                     )}
                     onClick={(e) => {
@@ -583,17 +583,17 @@ function WeekView({
               key={day.toISOString()}
               className={cn(
                 "cursor-pointer border-l border-[var(--ds-gray-400)] py-2.5 text-center transition-colors hover:bg-[var(--ds-background-100)]",
-                todayFlag && "bg-[var(--ds-blue-100)]"
+                todayFlag && "bg-[var(--ds-plum-100)]"
               )}
               onClick={() => onDayClick(day)}
             >
-              <p className={cn("text-label-12", todayFlag ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]")}>
+              <p className={cn("text-label-12", todayFlag ? "text-[var(--ds-plum-700)]" : "text-[var(--ds-gray-900)]")}>
                 {format(day, "EEE")}
               </p>
               <div
                 className={cn(
                   "mx-auto mt-1 flex h-7 w-7 items-center justify-center rounded-full text-label-14",
-                  todayFlag ? "bg-[var(--ds-blue-600)] text-white" : "text-[var(--ds-gray-1000)]"
+                  todayFlag ? "bg-[hsl(var(--accent))] !text-white" : "text-[var(--ds-gray-1000)]"
                 )}
               >
                 {format(day, "d")}
@@ -657,11 +657,11 @@ function WeekView({
                 {HOURS.map((hour) => (
                   <div
                     key={hour}
-                    className="group absolute left-0 right-0 cursor-pointer transition-colors hover:bg-[var(--ds-blue-100)]/60"
+                    className="group absolute left-0 right-0 cursor-pointer transition-colors hover:bg-[var(--ds-plum-100)]/60"
                     style={{ top: hour * HOUR_HEIGHT, height: HOUR_HEIGHT }}
                     onClick={() => onSchedule(format(day, "yyyy-MM-dd"), `${String(hour).padStart(2, "0")}:00`)}
                   >
-                    <Plus className="absolute right-1 top-1 h-3 w-3 text-[var(--ds-blue-700)] opacity-0 transition-opacity group-hover:opacity-100" />
+                    <Plus className="absolute right-1 top-1 h-3 w-3 text-[var(--ds-plum-700)] opacity-0 transition-opacity group-hover:opacity-100" />
                   </div>
                 ))}
 
@@ -755,7 +755,7 @@ function FilterBar({
             CONTROL_BUTTON_CLASS,
             focusRingClassName,
             hasFilters
-              ? "border-[var(--ds-blue-300)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)] hover:border-[var(--ds-blue-400)] hover:bg-[var(--ds-blue-200)]"
+              ? "border-[var(--ds-plum-300)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)] hover:border-[var(--ds-plum-400)] hover:bg-[var(--ds-plum-200)]"
               : mutedTextClassName
           )}
         >

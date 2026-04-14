@@ -110,9 +110,9 @@ const raisedSurfaceClass =
   "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] shadow-none";
 const subtleTextClass = "text-[var(--ds-gray-900)]";
 const dividerClass = "border-[var(--ds-gray-400)]";
-const accentTextClass = "text-[var(--ds-blue-700)]";
+const accentTextClass = "text-[var(--ds-plum-700)]";
 const sectionIconBadgeClass =
-  "border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+  "border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
 const neutralIconBadgeClass =
   "border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
 const dangerIconBadgeClass =
@@ -120,13 +120,13 @@ const dangerIconBadgeClass =
 const pillClass =
   "inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1.5 text-copy-12 font-medium text-[var(--ds-gray-900)]";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const secondaryButtonClassName = cn(
   "h-8 rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] shadow-none transition-colors hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:pointer-events-none disabled:opacity-50",
   focusRingClassName
 );
 const primaryButtonClassName = cn(
-  "h-8 rounded-md border border-transparent bg-[var(--ds-blue-600)] px-3 text-label-14 text-white shadow-none transition-colors hover:bg-[var(--ds-blue-700)] disabled:pointer-events-none disabled:opacity-50",
+  "h-8 rounded-md border border-transparent bg-[hsl(var(--accent))] px-3 text-label-14 text-white shadow-none transition-colors hover:bg-[hsl(var(--accent-hover))] disabled:pointer-events-none disabled:opacity-50",
   focusRingClassName
 );
 const ghostButtonClassName = cn(
@@ -144,25 +144,25 @@ const destructiveGhostButtonClassName = cn(
 const inputClassName = cn(
   "h-9 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] shadow-none",
   focusRingClassName,
-  "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+  "focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
 );
 const selectTriggerClassName = cn(
   "rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none transition-colors hover:border-[var(--ds-gray-500)] data-[placeholder]:text-[var(--ds-gray-900)]",
   focusRingClassName,
-  "focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+  "focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
 );
 const selectContentClassName =
   "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-lg shadow-black/[0.04]";
 const selectItemClassName =
   "focus:bg-[var(--ds-gray-100)] focus:text-[var(--ds-gray-1000)]";
 const checkboxClassName =
-  "rounded-[0.375rem] border-[var(--ds-gray-500)] bg-[var(--ds-background-100)] text-white focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] data-[state=checked]:border-[var(--ds-blue-600)] data-[state=checked]:bg-[var(--ds-blue-600)]";
+  "rounded-[0.375rem] border-[var(--ds-gray-500)] bg-[var(--ds-background-100)] text-white focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] data-[state=checked]:border-[hsl(var(--accent))] data-[state=checked]:bg-[hsl(var(--accent))]";
 const subtlePanelClassName =
   "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-3";
 const dashedNoticeClassName =
   "rounded-xl border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-3 text-copy-12 text-[var(--ds-gray-900)]";
 const infoPanelClassName =
-  "rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-3";
+  "rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-4 py-3";
 const warningPanelClassName =
   "rounded-xl border border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] px-4 py-3";
 const dangerPanelClassName =
@@ -198,9 +198,9 @@ function roleGroupLabel(role: WorkspaceRole) {
 function roleBadgeClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+      return "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "ADMIN":
-      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+      return "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "EDITOR":
       return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "READ_ONLY":
@@ -215,9 +215,9 @@ function approvalModeLabel(mode: WorkspaceApprovalMode) {
 function avatarToneClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+      return "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "ADMIN":
-      return "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+      return "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "EDITOR":
       return "bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "READ_ONLY":
@@ -466,9 +466,9 @@ function EmptyState({
 function roleHeadingClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "text-[var(--ds-blue-700)]";
+      return "text-[var(--ds-plum-700)]";
     case "ADMIN":
-      return "text-[var(--ds-blue-700)]";
+      return "text-[var(--ds-plum-700)]";
     case "EDITOR":
       return "text-[var(--ds-green-700)]";
     case "READ_ONLY":
@@ -479,9 +479,9 @@ function roleHeadingClass(role: WorkspaceRole) {
 function roleContextAccentClass(role: WorkspaceRole) {
   switch (role) {
     case "OWNER":
-      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+      return "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "ADMIN":
-      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+      return "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "EDITOR":
       return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "READ_ONLY":
@@ -1124,7 +1124,7 @@ export default function WorkspaceSettingsPage() {
                 <div className="space-y-3 p-4">
                   {isInfluencer ? (
                     <div className={cn(raisedSurfaceClass, "flex items-center gap-3 p-4")}>
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]">
                         <BriefcaseBusiness size={18} />
                       </div>
                       <div className="space-y-1">
@@ -1184,7 +1184,7 @@ export default function WorkspaceSettingsPage() {
                                   {ws.name}
                                 </span>
                                 {ws.id === activeWorkspace.id && (
-                                  <Check size={14} className="text-[var(--ds-blue-700)]" />
+                                  <Check size={14} className="text-[var(--ds-plum-700)]" />
                                 )}
                               </button>
                             ))}
@@ -1457,7 +1457,7 @@ export default function WorkspaceSettingsPage() {
                                     className={cn(
                                       "flex items-start gap-3 rounded-xl border px-3 py-3 transition-colors",
                                       checked
-                                        ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]"
+                                        ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]"
                                         : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
                                     )}
                                   >
@@ -2163,7 +2163,7 @@ export default function WorkspaceSettingsPage() {
                         )}
                       >
                         <div className="flex min-w-0 flex-1 items-center gap-3">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]">
                             <Mail size={18} />
                           </div>
                           <div className="min-w-0 space-y-1">

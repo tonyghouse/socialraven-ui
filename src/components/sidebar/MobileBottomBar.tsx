@@ -120,7 +120,7 @@ export function MobileBottomBar() {
                         className={cn(
                           "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
                           isActive
-                            ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                            ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                             : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
                         )}
                       >
@@ -128,7 +128,7 @@ export function MobileBottomBar() {
                           className={cn(
                             "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
                             isActive
-                              ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                              ? "bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
                               : "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                           )}
                         >
@@ -141,7 +141,7 @@ export function MobileBottomBar() {
                             <p
                               className={cn(
                                 "mt-0.5 truncate text-label-12",
-                                isActive ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]"
+                                isActive ? "text-[var(--ds-plum-700)]" : "text-[var(--ds-gray-900)]"
                               )}
                             >
                               {workspace.companyName}
@@ -149,7 +149,7 @@ export function MobileBottomBar() {
                           ) : null}
                         </div>
 
-                        {isActive ? <Check className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" /> : null}
+                        {isActive ? <Check className="h-4 w-4 shrink-0 text-[var(--ds-plum-700)]" /> : null}
                       </button>
                     );
                   })}
@@ -231,8 +231,8 @@ export function MobileBottomBar() {
                 href={scheduleItem.url}
                 aria-label={scheduleItem.title}
                 className={cn(
-                  "flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--ds-blue-600)] text-white transition-transform duration-150 active:scale-95",
-                  isSidebarItemActive(pathname, scheduleItem.url) && "ring-2 ring-[var(--ds-blue-200)] ring-offset-2 ring-offset-[var(--ds-background-100)]"
+                  "flex h-11 w-11 items-center justify-center rounded-2xl bg-[hsl(var(--accent))] !text-white transition-transform duration-150 active:scale-95",
+                  isSidebarItemActive(pathname, scheduleItem.url) && "ring-2 ring-[var(--ds-plum-200)] ring-offset-2 ring-offset-[var(--ds-background-100)]"
                 )}
               >
                 <PaperPlaneTilt className="h-4 w-4" />
@@ -252,7 +252,7 @@ export function MobileBottomBar() {
             className={cn(
               "flex flex-col items-center justify-center gap-1 rounded-xl transition-colors",
               drawerOpen || isMoreActive
-                ? "text-[var(--ds-blue-700)]"
+                ? "text-[var(--ds-plum-700)]"
                 : "text-[var(--ds-gray-900)]"
             )}
             aria-label="Open workspace menu"
@@ -261,7 +261,7 @@ export function MobileBottomBar() {
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
                 drawerOpen || isMoreActive
-                  ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                  ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                   : "text-[var(--ds-gray-900)]"
               )}
             >
@@ -293,14 +293,14 @@ function MobileNavTab({
       href={item.url}
       className={cn(
         "flex flex-col items-center justify-center gap-1 rounded-xl transition-colors",
-        isActive ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]"
+        isActive ? "text-[var(--ds-plum-700)]" : "text-[var(--ds-gray-900)]"
       )}
     >
       <div
         className={cn(
           "flex h-8 w-8 items-center justify-center rounded-xl transition-colors",
           isActive
-            ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+            ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
             : "text-[var(--ds-gray-900)]"
         )}
       >
@@ -331,7 +331,7 @@ function MobileDrawerLink({
       className={cn(
         "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors",
         active
-          ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+          ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
           : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
       )}
     >
@@ -339,7 +339,7 @@ function MobileDrawerLink({
         className={cn(
           "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
           active
-            ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+            ? "bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
             : "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
         )}
       >

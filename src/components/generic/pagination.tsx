@@ -90,7 +90,7 @@ export function Pagination({
           "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
           isGeist
-            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
             : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
@@ -111,7 +111,7 @@ export function Pagination({
           "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
           isGeist
-            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
             : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
@@ -153,12 +153,12 @@ export function Pagination({
                 "h-9 min-w-[2.25rem] px-3 rounded-lg border transition-all",
                 "flex items-center justify-center font-medium text-sm",
                 isGeist
-                  ? "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+                  ? "focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
                   : "focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1",
                 isActive
                   ? isGeist
-                    ? "border-[var(--ds-blue-600)] bg-[var(--ds-blue-600)] text-white shadow-none"
-                    : "bg-primary text-primary-foreground border-primary shadow-sm"
+                    ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent))] !text-white shadow-none"
+                    : "bg-primary !text-primary-foreground border-primary shadow-sm"
                   : isGeist
                     ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
                     : "bg-card border-border text-foreground hover:bg-muted hover:border-primary/30"
@@ -179,7 +179,7 @@ export function Pagination({
           "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
           isGeist
-            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
             : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >
@@ -200,7 +200,7 @@ export function Pagination({
           "h-9 w-9 rounded-lg border",
           "flex items-center justify-center transition-all",
           isGeist
-            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-[var(--ds-gray-400)] disabled:hover:bg-[var(--ds-background-100)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
             : "border-border bg-card hover:bg-muted hover:border-primary/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-card disabled:hover:border-border focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-1"
         )}
       >

@@ -16,11 +16,11 @@ import { cn } from "@/lib/utils";
 const REFRESH_INTERVAL = 30 * 1000;
 const pageClassName = "min-h-screen bg-[var(--ds-background-200)]";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 const badgeVariants = {
   neutral: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
-  accent: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  accent: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   danger: "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
 } as const;
 
@@ -39,7 +39,7 @@ function ActionButton({
 }) {
   const toneClassName =
     tone === "primary"
-      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      ? "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
       : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 
   const sizeClassName = iconOnly ? "h-9 w-9 px-0" : "h-9 px-3.5 text-label-14";
@@ -356,7 +356,7 @@ function EmptyState({ onCreatePost }: { onCreatePost: () => void }) {
   return (
     <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-5 py-12 text-center shadow-sm">
       <div className="mx-auto flex max-w-sm flex-col items-center text-center">
-        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]">
           <CalendarDays className="h-5 w-5" />
         </div>
         <h3 className="text-title-16 text-[var(--ds-gray-1000)]">

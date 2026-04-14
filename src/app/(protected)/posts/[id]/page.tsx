@@ -47,7 +47,7 @@ const getInitials = (username: string) => {
 };
 
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 const surfaceClassName =
   "rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm";
@@ -132,7 +132,7 @@ function InstagramPreview({ post }: { post: PostResponse }) {
         <button
           type="button"
           className={cn(
-            "shrink-0 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-3 py-1 text-copy-12 text-[var(--ds-blue-700)]",
+            "shrink-0 rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-3 py-1 text-copy-12 text-[var(--ds-plum-700)]",
             focusRingClassName
           )}
         >
@@ -201,7 +201,7 @@ function FacebookPreview({ post }: { post: PostResponse }) {
         <ProfileAvatar
           src={src}
           username={username}
-          fallbackClass="bg-blue-600"
+          fallbackClass="bg-[hsl(var(--accent))]"
         />
         <div>
           <p className="text-label-14 text-[var(--ds-gray-1000)]">{username}</p>
@@ -236,7 +236,7 @@ function LinkedInPreview({ post }: { post: PostResponse }) {
           src={src}
           username={username}
           size="lg"
-          fallbackClass="bg-sky-600"
+          fallbackClass="bg-[hsl(var(--accent))]"
         />
         <div className="flex-1 min-w-0">
           <p className="text-label-14 text-[var(--ds-gray-1000)]">{username}</p>
@@ -247,7 +247,7 @@ function LinkedInPreview({ post }: { post: PostResponse }) {
         <button
           type="button"
           className={cn(
-            "shrink-0 rounded-full border border-[#0A66C2]/20 bg-[#0A66C2]/10 px-3 py-1 text-copy-12 text-[#0A66C2]",
+            "shrink-0 rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-3 py-1 text-copy-12 text-[var(--ds-plum-700)]",
             focusRingClassName
           )}
         >
@@ -323,8 +323,8 @@ const statusConfig: Record<
   SCHEDULED: {
     label: "Scheduled",
     Icon: Clock,
-    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
-    barClass: "from-[var(--ds-blue-400)] to-[var(--ds-blue-600)]",
+    className: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
+    barClass: "from-[var(--ds-plum-400)] to-[hsl(var(--accent))]",
   },
   PUBLISHED: {
     label: "Published",
@@ -356,13 +356,13 @@ const platformMeta: Record<
   },
   FACEBOOK: {
     name: "Facebook",
-    iconColor: "border-[#1877F2]/20 bg-[#1877F2]/10 text-[#1877F2]",
-    headerBg: "from-[#1877F2]/8 via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
+    iconColor: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
+    headerBg: "from-[var(--ds-plum-100)] via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
   },
   LINKEDIN: {
     name: "LinkedIn",
-    iconColor: "border-[#0A66C2]/20 bg-[#0A66C2]/10 text-[#0A66C2]",
-    headerBg: "from-[#0A66C2]/8 via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
+    iconColor: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
+    headerBg: "from-[var(--ds-plum-100)] via-[var(--ds-background-100)] to-[var(--ds-background-100)]",
   },
   X: {
     name: "X (Twitter)",
@@ -416,7 +416,7 @@ export default function PostDetailPage() {
             onClick={() => router.back()}
             className={cn(
               actionButtonClassName,
-              "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]",
+              "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]",
               focusRingClassName
             )}
           >
@@ -709,8 +709,8 @@ export default function PostDetailPage() {
             {/* Schedule card */}
             <div className={cn(surfaceClassName, "p-5")}>
               <div className="flex items-center gap-2.5 mb-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]">
-                  <Calendar className="h-4 w-4 text-[var(--ds-blue-700)]" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]">
+                  <Calendar className="h-4 w-4 text-[var(--ds-plum-700)]" />
                 </div>
                 <h3 className="text-label-14 text-[var(--ds-gray-1000)]">
                   Schedule
@@ -783,24 +783,24 @@ export default function PostDetailPage() {
                   router.push(`/scheduled-posts/${post.postCollectionId}`)
                 }
                 className={cn(
-                  "group w-full p-5 text-left transition-all hover:border-[var(--ds-blue-300)] hover:shadow-md",
+                  "group w-full p-5 text-left transition-all hover:border-[var(--ds-plum-300)] hover:shadow-md",
                   surfaceClassName,
                   focusRingClassName
                 )}
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] transition-colors group-hover:border-[var(--ds-blue-200)] group-hover:bg-[var(--ds-blue-100)]">
-                    <Layers className="h-4 w-4 text-[var(--ds-gray-900)] transition-colors group-hover:text-[var(--ds-blue-700)]" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] transition-colors group-hover:border-[var(--ds-plum-200)] group-hover:bg-[var(--ds-plum-100)]">
+                    <Layers className="h-4 w-4 text-[var(--ds-gray-900)] transition-colors group-hover:text-[var(--ds-plum-700)]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-label-14 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
+                    <p className="text-label-14 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-plum-700)]">
                       View Collection
                     </p>
                     <p className="text-copy-12 text-[var(--ds-gray-900)]">
                       See all posts in this campaign
                     </p>
                   </div>
-                  <ExternalLink className="h-4 w-4 shrink-0 text-[var(--ds-gray-700)] transition-colors group-hover:text-[var(--ds-blue-700)]" />
+                  <ExternalLink className="h-4 w-4 shrink-0 text-[var(--ds-gray-700)] transition-colors group-hover:text-[var(--ds-plum-700)]" />
                 </div>
               </button>
             )}

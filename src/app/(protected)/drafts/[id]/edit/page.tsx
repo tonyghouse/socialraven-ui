@@ -88,7 +88,7 @@ const TYPE_CONFIG: Record<
     label: "Image",
     Icon: ImageIcon,
     className:
-      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+      "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
     description:
       "Edit your caption, add or remove images, and configure platform-specific settings.",
   },
@@ -110,10 +110,10 @@ const TYPE_CONFIG: Record<
 };
 
 const PLATFORM_BADGE_STYLES: Record<string, string> = {
-  facebook:  "border-[#1877F2]/20 bg-[#1877F2]/10 text-[#1877F2]",
+  facebook:  "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   instagram: "border-[#C13584]/20 bg-[#C13584]/10 text-[#A62E69]",
   x:         "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
-  linkedin:  "border-[#0A66C2]/20 bg-[#0A66C2]/10 text-[#0A66C2]",
+  linkedin:  "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   youtube:   "border-[#FF0000]/20 bg-[#FF0000]/10 text-[#D60000]",
   threads:   "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   tiktok:    "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
@@ -125,7 +125,7 @@ const PLATFORM_LABELS: Record<string, string> = {
 };
 const DEFAULT_APPROVAL_OVERRIDE = "DEFAULT";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 /* ── Helpers ── */
 
@@ -173,7 +173,7 @@ function StepCard({
         locked
           ? "border-[var(--ds-gray-400)] opacity-60"
           : complete && isOpen
-            ? "border-[var(--ds-blue-200)] shadow-[0_0_0_0.0625rem_var(--ds-blue-200)]"
+            ? "border-[var(--ds-plum-200)] shadow-[0_0_0_0.0625rem_var(--ds-plum-200)]"
             : complete
               ? "border-[var(--ds-gray-500)]"
               : "border-[var(--ds-gray-400)]",
@@ -194,12 +194,12 @@ function StepCard({
           className={cn(
             "mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border text-label-12 transition-colors duration-200",
             complete
-              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
               : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]",
           )}
         >
           {complete
-            ? <CheckCircle2 className="h-4 w-4 text-[var(--ds-blue-700)]" />
+            ? <CheckCircle2 className="h-4 w-4 text-[var(--ds-plum-700)]" />
             : <span>{step}</span>
           }
         </div>
@@ -458,14 +458,14 @@ export default function DraftEditPage() {
 
   const step1Summary = (
     <span className="flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
-      <TypeIcon className="h-3.5 w-3.5 text-[var(--ds-blue-700)]" />
+      <TypeIcon className="h-3.5 w-3.5 text-[var(--ds-plum-700)]" />
       {typeCfg.label}
     </span>
   );
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-label-14 text-[var(--ds-blue-700)]">{selectedIds.length}</span>
+      <span className="text-label-14 text-[var(--ds-plum-700)]">{selectedIds.length}</span>
       <span className="text-copy-12 text-[var(--ds-gray-900)]">{selectedIds.length === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
         <span
@@ -874,10 +874,10 @@ export default function DraftEditPage() {
                 "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
                 "resize-none min-h-[8.75rem] transition-all duration-200",
                 "placeholder:text-[var(--ds-gray-900)]",
-                "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]",
+                "focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]",
                 overLimit || platformCharErrors.length > 0
                   ? "border-[var(--ds-red-500)]"
-                  : "focus:border-[var(--ds-blue-600)]",
+                  : "focus:border-[hsl(var(--accent))]",
               )}
               value={description}
               onChange={(e) => setDescription(e.target.value)}

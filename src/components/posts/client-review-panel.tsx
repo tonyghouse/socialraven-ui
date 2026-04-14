@@ -84,7 +84,7 @@ function SelectChip({
       className={cn(
         "rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
         selected
-          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+          ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
           : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]",
         disabled && "cursor-not-allowed opacity-60"
       )}
@@ -333,7 +333,7 @@ export function ClientReviewPanel({
                   disabled={creating || !canCreateLink}
                   placeholder="Add a separate passcode"
                   type="password"
-                  className="mt-2 flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[var(--ds-blue-600)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+                  className="mt-2 flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[hsl(var(--accent))] focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
                 />
               </label>
             </div>
@@ -426,7 +426,7 @@ export function ClientReviewPanel({
                           </span>
                         </span>
                         {link.passcodeProtected ? (
-                          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-blue-700)]">
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-plum-700)]">
                             <LockKeyhole className="h-3.5 w-3.5" />
                             <span>Passcode protected</span>
                           </span>

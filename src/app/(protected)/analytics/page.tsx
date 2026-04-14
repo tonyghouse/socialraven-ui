@@ -74,11 +74,11 @@ const surfaceClassName =
   "overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none";
 const dividerClassName = "border-[var(--ds-gray-400)]";
 const subtleButtonClassName =
-  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-[var(--ds-background-100)]";
+  "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-[var(--ds-background-100)]";
 const segmentedControlClassName =
   "flex items-center gap-1 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-1";
 const segmentedButtonClassName =
-  "rounded-md px-3 py-1.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]";
+  "rounded-md px-3 py-1.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]";
 
 function meta(provider: string) {
   return PLATFORM_META[provider.toLowerCase()] ?? {
@@ -120,11 +120,11 @@ function initials(name?: string) {
 
 function heatmapCellColor(intensity: number) {
   if (intensity <= 0) return "var(--ds-gray-100)";
-  if (intensity <= 0.2) return "var(--ds-blue-100)";
-  if (intensity <= 0.4) return "var(--ds-blue-200)";
-  if (intensity <= 0.6) return "var(--ds-blue-300)";
-  if (intensity <= 0.8) return "var(--ds-blue-400)";
-  return "var(--ds-blue-500)";
+  if (intensity <= 0.2) return "var(--ds-plum-100)";
+  if (intensity <= 0.4) return "var(--ds-plum-200)";
+  if (intensity <= 0.6) return "var(--ds-plum-300)";
+  if (intensity <= 0.8) return "var(--ds-plum-400)";
+  return "var(--ds-plum-500)";
 }
 
 function Sk({ className }: { className?: string }) {
@@ -210,7 +210,7 @@ function AccountChip({
       className={cn(
         "flex shrink-0 items-center gap-2.5 rounded-lg border px-2.5 py-2 text-left transition-colors",
         isSelected
-          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]"
+          ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]"
           : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
       )}
     >
@@ -233,7 +233,7 @@ function AccountChip({
           className={cn(
             "max-w-[7.5rem] truncate text-label-14",
             isSelected
-              ? "text-[var(--ds-blue-700)]"
+              ? "text-[var(--ds-plum-700)]"
               : "text-[var(--ds-gray-1000)]"
           )}
         >
@@ -245,7 +245,7 @@ function AccountChip({
         className={cn(
           "rounded-full border px-2 py-0.5 text-label-12",
           isSelected
-            ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+            ? "border-[var(--ds-plum-200)] bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
             : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
         )}
       >
@@ -505,7 +505,7 @@ export default function AnalyticsPage() {
                 No connected accounts. Go to{" "}
                 <Link
                   href="/connect-accounts"
-                  className="text-[var(--ds-blue-700)] underline underline-offset-2"
+                  className="text-[var(--ds-plum-700)] underline underline-offset-2"
                 >
                   Connect Accounts
                 </Link>
@@ -799,7 +799,7 @@ export default function AnalyticsPage() {
             )}
           >
             <div className="flex items-center gap-2">
-              <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
+              <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[hsl(var(--accent))]">
                 <Star className="h-3.5 w-3.5" />
               </div>
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">
@@ -814,7 +814,7 @@ export default function AnalyticsPage() {
                   type="button"
                   onClick={() => setSnapshotType(snapshot)}
                   className={cn(
-                    "rounded-md px-2.5 py-1 text-label-12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]",
+                    "rounded-md px-2.5 py-1 text-label-12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]",
                     snapshotType === snapshot
                       ? "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]"
                       : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-gray-1000)]"
@@ -1056,7 +1056,7 @@ function SectionHeader({
         dividerClassName
       )}
     >
-      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
+      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[hsl(var(--accent))]">
         <Icon className="h-3.5 w-3.5" />
       </div>
       <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h2>

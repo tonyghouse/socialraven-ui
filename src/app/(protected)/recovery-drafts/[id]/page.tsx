@@ -19,7 +19,7 @@ const surfaceClassName =
 const insetSurfaceClassName =
   "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 function ActionButton({
   tone = "secondary",
@@ -34,7 +34,7 @@ function ActionButton({
 }) {
   const toneClassName =
     tone === "primary"
-      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      ? "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
       : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 
   return (
@@ -197,7 +197,7 @@ export default function RecoveryDraftPage() {
               <ToneBadge className="border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]">
                 Failed Collection
               </ToneBadge>
-              <ToneBadge className="border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+              <ToneBadge className="border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]">
                 {collection.postCollectionType}
               </ToneBadge>
               <ToneBadge className="border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]">

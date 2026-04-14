@@ -48,7 +48,7 @@ const statusConfig: Record<
   SCHEDULED: {
     label: "Scheduled",
     Icon: Clock,
-    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    className: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   PUBLISHED: {
     label: "Published",
@@ -74,7 +74,7 @@ const typeConfig: Record<
   IMAGE: {
     label: "Image",
     Icon: ImageIcon,
-    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    className: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   VIDEO: {
     label: "Video",
@@ -104,9 +104,9 @@ const platformIconStyle: Record<string, string> = {
   INSTAGRAM:
     "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   FACEBOOK:
-    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   LINKEDIN:
-    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   X: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   THREADS:
     "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
@@ -125,7 +125,7 @@ const platformAccent: Record<
   }
 > = {
   INSTAGRAM: {
-    bar: "linear-gradient(90deg,var(--ds-amber-600) 0%,var(--ds-pink-700) 50%,var(--ds-purple-700) 100%)",
+    bar: "linear-gradient(90deg,var(--ds-amber-600) 0%,var(--ds-pink-700) 50%,var(--ds-plum-700) 100%)",
     cardBg: "bg-[var(--ds-background-100)]",
     cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
@@ -139,11 +139,11 @@ const platformAccent: Record<
       "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   },
   LINKEDIN: {
-    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-600) 100%)",
+    bar: "linear-gradient(90deg,var(--ds-plum-700) 0%,hsl(var(--accent)) 100%)",
     cardBg: "bg-[var(--ds-background-100)]",
     cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+      "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   YOUTUBE: {
     bar: "linear-gradient(90deg,var(--ds-red-700) 0%,var(--ds-red-600) 100%)",
@@ -153,11 +153,11 @@ const platformAccent: Record<
       "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   },
   FACEBOOK: {
-    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-500) 100%)",
+    bar: "linear-gradient(90deg,var(--ds-plum-700) 0%,var(--ds-plum-500) 100%)",
     cardBg: "bg-[var(--ds-background-100)]",
     cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+      "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   TIKTOK: {
     bar: "linear-gradient(90deg,var(--ds-gray-1000) 0%,var(--ds-red-600) 55%,var(--ds-teal-600) 100%)",
@@ -189,7 +189,7 @@ const surfaceClassName =
 const surfaceHeaderClassName =
   "flex items-center gap-2.5 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-3.5";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 function ActionButton({
   tone = "secondary",
@@ -206,7 +206,7 @@ function ActionButton({
 }) {
   const toneClassName =
     tone === "primary"
-      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      ? "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
       : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 
   return (
@@ -728,7 +728,7 @@ function XPreview({ caption, media, accountName, avatarSrc }: {
           )}
           {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
           <div className="flex gap-4 mt-2 text-neutral-400">
-            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-blue-400 transition-colors">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-[var(--ds-plum-400)] transition-colors">
               <MessageCircle className="h-3 w-3" /><span>Reply</span>
             </button>
             <button className="flex items-center gap-1 text-[0.6875rem] hover:text-green-400 transition-colors">
@@ -737,7 +737,7 @@ function XPreview({ caption, media, accountName, avatarSrc }: {
             <button className="flex items-center gap-1 text-[0.6875rem] hover:text-pink-400 transition-colors">
               <Heart className="h-3 w-3" /><span>Like</span>
             </button>
-            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-blue-400 transition-colors ml-auto">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-[var(--ds-plum-400)] transition-colors ml-auto">
               <MoreHorizontal className="h-3 w-3" />
             </button>
           </div>
@@ -813,7 +813,7 @@ function LinkedInPreview({ caption, media, accountName, avatarSrc }: {
             <p className="text-[0.625rem] text-neutral-500 truncate">Your Title · 1st</p>
             <p className="text-[0.625rem] text-neutral-400">Just now · 🌐</p>
           </div>
-          <span className="text-blue-600 font-semibold text-[0.625rem] self-start flex-shrink-0 cursor-default">+ Follow</span>
+          <span className="text-[hsl(var(--accent))] font-semibold text-[0.625rem] self-start flex-shrink-0 cursor-default">+ Follow</span>
         </div>
         {caption && (
           <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-3 whitespace-pre-wrap">{caption}</p>
@@ -1142,7 +1142,7 @@ function PlatformSection({
                 "h-2 w-2 rounded-full flex-shrink-0",
                 post.postStatus === "PUBLISHED" ? "bg-emerald-500"
                   : post.postStatus === "FAILED" ? "bg-red-500"
-                  : "bg-blue-400"
+                  : "bg-[var(--ds-plum-400)]"
               )} />
             </div>
           );

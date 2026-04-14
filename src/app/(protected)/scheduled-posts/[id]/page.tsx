@@ -105,7 +105,7 @@ const statusConfig: Record<
   SCHEDULED: {
     label: "Scheduled",
     Icon: Clock,
-    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    className: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   PUBLISHED: {
     label: "Completed",
@@ -131,7 +131,7 @@ const typeConfig: Record<
   IMAGE: {
     label: "Image",
     Icon: ImageIcon,
-    className: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    className: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   VIDEO: {
     label: "Video",
@@ -161,9 +161,9 @@ const platformIconStyle: Record<string, string> = {
   INSTAGRAM:
     "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   FACEBOOK:
-    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   LINKEDIN:
-    "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+    "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   X: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   THREADS:
     "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
@@ -182,7 +182,7 @@ const platformAccent: Record<
   }
 > = {
   INSTAGRAM: {
-    bar: "linear-gradient(90deg,var(--ds-amber-600) 0%,var(--ds-pink-700) 50%,var(--ds-purple-700) 100%)",
+    bar: "linear-gradient(90deg,var(--ds-amber-600) 0%,var(--ds-pink-700) 50%,var(--ds-plum-700) 100%)",
     cardBg: "bg-[var(--ds-background-100)]",
     cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
@@ -196,11 +196,11 @@ const platformAccent: Record<
       "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   },
   LINKEDIN: {
-    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-600) 100%)",
+    bar: "linear-gradient(90deg,var(--ds-plum-700) 0%,hsl(var(--accent)) 100%)",
     cardBg: "bg-[var(--ds-background-100)]",
     cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+      "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   YOUTUBE: {
     bar: "linear-gradient(90deg,var(--ds-red-700) 0%,var(--ds-red-600) 100%)",
@@ -210,11 +210,11 @@ const platformAccent: Record<
       "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   },
   FACEBOOK: {
-    bar: "linear-gradient(90deg,var(--ds-blue-700) 0%,var(--ds-blue-500) 100%)",
+    bar: "linear-gradient(90deg,var(--ds-plum-700) 0%,var(--ds-plum-500) 100%)",
     cardBg: "bg-[var(--ds-background-100)]",
     cardBorder: "border-[var(--ds-gray-400)]",
     iconClass:
-      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+      "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   TIKTOK: {
     bar: "linear-gradient(90deg,var(--ds-gray-1000) 0%,var(--ds-red-600) 55%,var(--ds-teal-600) 100%)",
@@ -241,10 +241,10 @@ const platformAccentFallback = {
 
 /* Platform badge styles for edit mode header */
 const PLATFORM_BADGE_STYLES: Record<string, string> = {
-  facebook: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  facebook: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   instagram: "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   x: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
-  linkedin: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  linkedin: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   youtube: "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   threads: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   tiktok: "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
@@ -266,7 +266,7 @@ const surfaceClassName =
 const surfaceHeaderClassName =
   "flex items-center gap-2.5 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-3.5";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 const ActionButton = React.forwardRef<
   HTMLButtonElement,
@@ -291,7 +291,7 @@ const ActionButton = React.forwardRef<
 ) {
   const toneClassName =
     tone === "primary"
-      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      ? "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
       : tone === "danger"
         ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)] hover:border-[var(--ds-red-300)] hover:bg-[var(--ds-red-200)]"
         : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
@@ -370,7 +370,7 @@ function Notice({
       ? "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]"
       : variant === "error"
         ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]"
-        : "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+        : "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
 
   return (
     <div className={cn("rounded-xl border p-4 shadow-sm", variantClassName)}>
@@ -441,9 +441,9 @@ function StepCard({
         locked
           ? "border-[var(--ds-gray-400)] opacity-60"
           : complete && isOpen
-            ? "border-[var(--ds-blue-300)]"
+            ? "border-[var(--ds-plum-300)]"
             : complete
-              ? "border-[var(--ds-blue-200)]"
+              ? "border-[var(--ds-plum-200)]"
               : "border-[var(--ds-gray-400)]",
       )}
     >
@@ -463,7 +463,7 @@ function StepCard({
           className={cn(
             "mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg border text-copy-12 transition-colors",
             complete
-              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
               : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]",
           )}
         >
@@ -491,7 +491,7 @@ function StepCard({
         {canToggle && (
           <div className="flex shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)]">
             {!isOpen && (
-              <span className="hidden items-center gap-1 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2 py-0.5 text-copy-12 text-[var(--ds-blue-700)] sm:flex">
+              <span className="hidden items-center gap-1 rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-2 py-0.5 text-copy-12 text-[var(--ds-plum-700)] sm:flex">
                 <Pencil className="h-2.5 w-2.5" />
                 Edit
               </span>
@@ -1037,7 +1037,7 @@ export default function ScheduledCollectionDetailPage() {
 
           <div className="space-y-4 px-4 py-5 pb-24 sm:px-5 sm:pb-8">
             <div className={surfaceClassName}>
-              <div className="h-[0.1875rem] w-full bg-[var(--ds-blue-600)]" />
+              <div className="h-[0.1875rem] w-full bg-[hsl(var(--accent))]" />
               <div className="px-5 pt-5 pb-4">
                 <div className="mb-4 flex flex-wrap items-start gap-x-4 gap-y-3">
                   <h1 className="min-w-0 flex-1 text-title-20 text-[var(--ds-gray-1000)]">
@@ -1133,8 +1133,8 @@ export default function ScheduledCollectionDetailPage() {
               <div className="space-y-4">
                 <div className={surfaceClassName}>
                   <div className={surfaceHeaderClassName}>
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]">
-                      <Calendar className="h-4 w-4 text-[var(--ds-blue-700)]" />
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]">
+                      <Calendar className="h-4 w-4 text-[var(--ds-plum-700)]" />
                     </div>
                     <p className="flex-1 text-label-14 text-[var(--ds-gray-1000)]">Schedule</p>
                     {isScheduled && (
@@ -1145,9 +1145,9 @@ export default function ScheduledCollectionDetailPage() {
                   </div>
                   <div className="space-y-4 p-5">
                     {isScheduled && getCountdown(scheduledDate) && (
-                      <div className="rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-4">
-                        <p className="text-copy-12 text-[var(--ds-blue-700)]">Publishing in</p>
-                        <p className="mt-1 text-[1.625rem] font-bold leading-8 tabular-nums text-[var(--ds-blue-700)]">{getCountdown(scheduledDate)}</p>
+                      <div className="rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-4 py-4">
+                        <p className="text-copy-12 text-[var(--ds-plum-700)]">Publishing in</p>
+                        <p className="mt-1 text-[1.625rem] font-bold leading-8 tabular-nums text-[var(--ds-plum-700)]">{getCountdown(scheduledDate)}</p>
                       </div>
                     )}
                     <div className="space-y-2.5">
@@ -1424,14 +1424,14 @@ function EditModePanel({
 
   const step1Summary = (
     <span className="flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
-      <EditTypeIcon className="h-3.5 w-3.5 text-[var(--ds-blue-700)]" />
+      <EditTypeIcon className="h-3.5 w-3.5 text-[var(--ds-plum-700)]" />
       {editType.label}
     </span>
   );
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-label-14 text-[var(--ds-blue-700)]">{selectedAccountIds.length}</span>
+      <span className="text-label-14 text-[var(--ds-plum-700)]">{selectedAccountIds.length}</span>
       <span className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">{selectedAccountIds.length === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
         <span key={p} className={cn("rounded-full border px-1.5 py-0.5 text-copy-12", PLATFORM_BADGE_STYLES[p] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]")}>
@@ -1652,7 +1652,7 @@ function EditModePanel({
         }
         actions={
           selectedAccountIds.length > 0 ? (
-            <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-3 py-1.5 text-copy-12 text-[var(--ds-blue-700)]">
+            <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-3 py-1.5 text-copy-12 text-[var(--ds-plum-700)]">
               <Zap className="h-3 w-3" />
               {selectedAccountIds.length}{" "}
               {selectedAccountIds.length === 1 ? "account" : "accounts"}
@@ -1796,10 +1796,10 @@ function EditModePanel({
               className={cn(
                 "min-h-[8.75rem] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] p-4 text-label-14 leading-relaxed text-[var(--ds-gray-1000)] transition-all duration-200",
                 "placeholder:text-[var(--ds-gray-900)]",
-                "focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]",
+                "focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]",
                 overLimit || platformCharErrors.length > 0
                   ? "border-[var(--ds-red-300)]"
-                  : "border-[var(--ds-gray-400)] focus:border-[var(--ds-blue-600)]",
+                  : "border-[var(--ds-gray-400)] focus:border-[hsl(var(--accent))]",
               )}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -2085,7 +2085,7 @@ function XPreview({ caption, media, accountName, avatarSrc }: {
           )}
           {media.length > 0 && <PreviewMediaCarousel media={media} aspectRatio="video" />}
           <div className="flex gap-4 mt-2 text-neutral-400">
-            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-blue-400 transition-colors">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-[var(--ds-plum-400)] transition-colors">
               <MessageCircle className="h-3 w-3" /><span>Reply</span>
             </button>
             <button className="flex items-center gap-1 text-[0.6875rem] hover:text-green-400 transition-colors">
@@ -2094,7 +2094,7 @@ function XPreview({ caption, media, accountName, avatarSrc }: {
             <button className="flex items-center gap-1 text-[0.6875rem] hover:text-pink-400 transition-colors">
               <Heart className="h-3 w-3" /><span>Like</span>
             </button>
-            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-blue-400 transition-colors ml-auto">
+            <button className="flex items-center gap-1 text-[0.6875rem] hover:text-[var(--ds-plum-400)] transition-colors ml-auto">
               <MoreHorizontal className="h-3 w-3" />
             </button>
           </div>
@@ -2170,7 +2170,7 @@ function LinkedInPreview({ caption, media, accountName, avatarSrc }: {
             <p className="text-[0.625rem] text-neutral-500 truncate">Your Title · 1st</p>
             <p className="text-[0.625rem] text-neutral-400">Just now · 🌐</p>
           </div>
-          <span className="text-blue-600 font-semibold text-[0.625rem] self-start flex-shrink-0 cursor-default">+ Follow</span>
+          <span className="text-[hsl(var(--accent))] font-semibold text-[0.625rem] self-start flex-shrink-0 cursor-default">+ Follow</span>
         </div>
         {caption && (
           <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed line-clamp-3 whitespace-pre-wrap">{caption}</p>
@@ -2495,7 +2495,7 @@ function PlatformSection({
                 "h-2 w-2 rounded-full flex-shrink-0",
                 post.postStatus === "PUBLISHED" ? "bg-emerald-500"
                   : post.postStatus === "FAILED" ? "bg-red-500"
-                  : "bg-blue-400"
+                  : "bg-[var(--ds-plum-400)]"
               )} />
             </div>
           );

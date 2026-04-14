@@ -91,7 +91,7 @@ export default function PlatformCharLimits({
                       ? isGeist ? "bg-[var(--ds-red-600)]" : "bg-destructive"
                       : near
                         ? isGeist ? "bg-[var(--ds-amber-600)]" : "bg-warning"
-                        : isGeist ? "bg-[var(--ds-blue-600)]" : "bg-[hsl(var(--accent))]"
+                        : isGeist ? "bg-[hsl(var(--accent))]" : "bg-[hsl(var(--accent))]"
                   )}
                   style={{ width: `${pct}%` }}
                 />

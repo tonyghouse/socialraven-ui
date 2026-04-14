@@ -41,8 +41,8 @@ interface PostCollectionFiltersProps {
 const PLATFORM_COLORS: Record<string, string> = {
   instagram: "text-pink-500",
   x: "text-neutral-700 dark:text-neutral-300",
-  linkedin: "text-sky-600",
-  facebook: "text-blue-600",
+  linkedin: "text-[var(--ds-plum-700)]",
+  facebook: "text-[hsl(var(--accent))]",
   youtube: "text-red-600",
   threads: "text-neutral-700 dark:text-neutral-300",
   tiktok: "text-neutral-700 dark:text-neutral-300",
@@ -100,7 +100,7 @@ function DropdownButton({
         "h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
         active
           ? isGeist
-            ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+            ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
             : "bg-primary/10 border-primary/40 text-primary"
           : isGeist
             ? "bg-[var(--ds-background-100)] border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
@@ -207,7 +207,7 @@ export function PostCollectionFilters({
             className={cn(
               "h-9 pl-9 pr-8 rounded-lg border text-sm w-44 sm:w-72 transition-all",
               isGeist
-                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)] focus:border-[var(--ds-blue-600)]"
+                ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)] focus:border-[hsl(var(--accent))]"
                 : "text-foreground placeholder:text-muted-foreground bg-background border-border/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50"
             )}
           />
@@ -256,7 +256,7 @@ export function PostCollectionFilters({
                 "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
                 !selectedPlatform
                   ? isGeist
-                    ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                     : "bg-primary/10 text-primary"
                   : isGeist
                     ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
@@ -291,7 +291,7 @@ export function PostCollectionFilters({
                     "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
                     isSelected
                       ? isGeist
-                        ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                         : "bg-primary/10 text-primary"
                       : isGeist
                         ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
@@ -304,7 +304,7 @@ export function PostCollectionFilters({
                         "h-3.5 w-3.5 flex-shrink-0",
                         isSelected
                           ? isGeist
-                            ? "text-[var(--ds-blue-700)]"
+                            ? "text-[var(--ds-plum-700)]"
                             : "text-primary"
                           : PLATFORM_COLORS[p]
                       )}
@@ -347,7 +347,7 @@ export function PostCollectionFilters({
                 "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
                 !selectedDateRange
                   ? isGeist
-                    ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                     : "bg-primary/10 text-primary"
                   : isGeist
                     ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
@@ -375,7 +375,7 @@ export function PostCollectionFilters({
                     "w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors text-left",
                     isSelected
                       ? isGeist
-                        ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                         : "bg-primary/10 text-primary"
                       : isGeist
                         ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
@@ -398,7 +398,7 @@ export function PostCollectionFilters({
                 "relative h-9 px-3 rounded-lg border text-sm font-medium transition-all flex items-center gap-2 flex-shrink-0 whitespace-nowrap",
                 accountFilterCount > 0
                   ? isGeist
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                     : "bg-primary/10 border-primary/40 text-primary"
                   : isGeist
                     ? "bg-[var(--ds-background-100)] border-[var(--ds-gray-400)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
@@ -412,8 +412,8 @@ export function PostCollectionFilters({
                   className={cn(
                     "h-[1.125rem] min-w-[1.125rem] px-1 rounded-full text-[0.625rem] font-bold flex items-center justify-center leading-none",
                     isGeist
-                      ? "bg-[var(--ds-blue-600)] text-white"
-                      : "bg-primary text-primary-foreground"
+                      ? "bg-[hsl(var(--accent))] !text-white"
+                      : "bg-primary !text-primary-foreground"
                   )}
                 >
                   {accountFilterCount}
@@ -506,7 +506,7 @@ export function PostCollectionFilters({
                               "w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-colors text-left",
                               isSelected
                                 ? isGeist
-                                  ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                                  ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                                   : "bg-primary/10 text-primary"
                                 : isGeist
                                   ? "hover:bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
@@ -519,7 +519,7 @@ export function PostCollectionFilters({
                                   "h-3.5 w-3.5 flex-shrink-0",
                                   isSelected
                                     ? isGeist
-                                      ? "text-[var(--ds-blue-700)]"
+                                      ? "text-[var(--ds-plum-700)]"
                                       : "text-primary"
                                     : platformColor
                                 )}
@@ -597,7 +597,7 @@ export function PostCollectionFilters({
                 className={cn(
                   "inline-flex items-center gap-1.5 h-7 pl-2 pr-1.5 rounded-full border text-[0.6875rem] font-medium",
                   isGeist
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                     : "bg-primary/10 border-primary/20 text-primary"
                 )}
               >
@@ -607,7 +607,7 @@ export function PostCollectionFilters({
                   onClick={() => toggleAccount(uid)}
                   className={cn(
                     "rounded-full p-0.5 transition-colors",
-                    isGeist ? "hover:bg-[var(--ds-blue-200)]" : "hover:bg-primary/20"
+                    isGeist ? "hover:bg-[var(--ds-plum-200)]" : "hover:bg-primary/20"
                   )}
                 >
                   <X className="h-2.5 w-2.5" />

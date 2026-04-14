@@ -115,10 +115,10 @@ const GEIST_STATUS_CONFIG = {
   },
   SCHEDULED: {
     label: "Scheduled",
-    dotColor: "bg-[var(--ds-blue-600)]",
+    dotColor: "bg-[hsl(var(--accent))]",
     pulse: true,
     className:
-      "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+      "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   },
   PUBLISHED: {
     label: "Published",
@@ -168,8 +168,8 @@ const GEIST_RECOVERY_BADGE_CONFIG = {
 const PLATFORM_STYLE: Record<string, string> = {
   instagram: "text-pink-500",
   x: "text-[hsl(var(--foreground))]",
-  linkedin: "text-sky-600",
-  facebook: "text-blue-600",
+  linkedin: "text-[var(--ds-plum-700)]",
+  facebook: "text-[hsl(var(--accent))]",
   youtube: "text-red-600",
   tiktok: "text-[hsl(var(--foreground))]",
   threads: "text-[hsl(var(--foreground))]",
@@ -178,8 +178,8 @@ const PLATFORM_STYLE: Record<string, string> = {
 const GEIST_PLATFORM_STYLE: Record<string, string> = {
   instagram: "text-pink-600",
   x: "text-[var(--ds-gray-1000)]",
-  linkedin: "text-sky-600",
-  facebook: "text-blue-600",
+  linkedin: "text-[var(--ds-plum-700)]",
+  facebook: "text-[hsl(var(--accent))]",
   youtube: "text-red-600",
   tiktok: "text-[var(--ds-gray-1000)]",
   threads: "text-[var(--ds-gray-1000)]",
@@ -498,7 +498,7 @@ export function CollectionCard({
       className={cn(
         "group flex h-full flex-col overflow-hidden rounded-lg border transition-[box-shadow,border-color,background-color] duration-150",
         isGeist
-          ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus:outline-none focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+          ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
           : "border-[hsl(var(--border))] bg-[hsl(var(--surface))] shadow-[0_0.0625rem_0.125rem_rgb(0 0 0 / 0.08)] hover:border-[hsl(var(--accent))]/30 hover:shadow-[0_0.375rem_0.75rem_rgb(0 0 0 / 0.12)] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))]/30 focus:ring-offset-2"
       )}
     >
@@ -581,7 +581,7 @@ export function CollectionCard({
             className={cn(
               "line-clamp-2 text-[0.875rem] font-semibold leading-5 transition-colors",
               isGeist
-                ? "text-[var(--ds-gray-1000)] group-hover:text-[var(--ds-blue-700)]"
+                ? "text-[var(--ds-gray-1000)] group-hover:text-[var(--ds-plum-700)]"
                 : "text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--accent))]"
             )}
           >
@@ -742,7 +742,7 @@ export function CollectionCard({
           className={cn(
             "flex items-center gap-1 text-[0.6875rem] font-semibold",
             isGeist
-              ? "text-[var(--ds-blue-700)]"
+              ? "text-[var(--ds-plum-700)]"
               : "text-[hsl(var(--accent))]"
           )}
         >

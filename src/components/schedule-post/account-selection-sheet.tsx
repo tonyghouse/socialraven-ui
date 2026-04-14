@@ -26,20 +26,20 @@ const PLATFORM_LABELS: Record<string, string> = {
 
 // Brand colours for the platform icon badge
 const PLATFORM_ICON_STYLES: Record<string, string> = {
-  facebook:  "bg-[#1877F2] text-white border-[#1877F2]/30",
+  facebook:  "bg-[hsl(var(--accent))] !text-white border-transparent",
   instagram: "bg-gradient-to-br from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] text-white border-transparent",
   x:         "bg-black text-white border-black/20",
-  linkedin:  "bg-[#0A66C2] text-white border-[#0A66C2]/30",
+  linkedin:  "bg-[hsl(var(--accent))] !text-white border-transparent",
   youtube:   "bg-[#FF0000] text-white border-[#FF0000]/30",
   threads:   "bg-black text-white border-black/20",
   tiktok:    "bg-black text-white border-black/20",
 };
 
 const GEIST_PLATFORM_ICON_STYLES: Record<string, string> = {
-  facebook:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  facebook:  "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   instagram: "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   x:         "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
-  linkedin:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  linkedin:  "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   youtube:   "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   threads:   "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   tiktok:    "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
@@ -95,15 +95,15 @@ function AccountChip({
         className={cn(
           "relative flex flex-col items-center gap-1.5 rounded-xl border px-3 py-2.5 transition-[border-color,background-color,box-shadow] duration-150",
           isGeist
-            ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+            ? "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
             : "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]/35 focus-visible:ring-offset-2",
           "w-[4.5rem]",
           isSelected
             ? isGeist
-              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] shadow-sm"
+              ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] shadow-sm"
               : "border-[hsl(var(--accent))]/30 bg-surface-raised shadow-sm"
             : isGeist
-              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-blue-200)] hover:bg-[var(--ds-gray-100)]"
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-plum-200)] hover:bg-[var(--ds-gray-100)]"
               : "border-border-subtle bg-surface hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised",
           !isAllowed && "opacity-40 cursor-not-allowed",
         )}
@@ -114,7 +114,7 @@ function AccountChip({
             aria-hidden="true"
             className={cn(
               "absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full shadow-sm",
-              isGeist ? "bg-[var(--ds-blue-700)]" : "bg-[hsl(var(--accent))]"
+              isGeist ? "bg-[var(--ds-plum-700)]" : "bg-[hsl(var(--accent))]"
             )}
           >
             <Check className="w-2.5 h-2.5 text-accent-foreground" strokeWidth={3} />
@@ -350,7 +350,7 @@ export function AccountSelector({
           className={cn(
             "h-9 pl-9 pr-9 text-sm",
             isGeist
-              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] focus-visible:border-[hsl(var(--accent))] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
               : "border-border-subtle bg-surface focus-visible:border-[hsl(var(--accent))] focus-visible:bg-background"
           )}
         />
@@ -415,7 +415,7 @@ export function AccountSelector({
             className={cn(
               "rounded underline-offset-2 transition-colors focus-visible:outline-none hover:underline",
               isGeist
-                ? "text-xs text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]"
+                ? "text-xs text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)] focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))]"
                 : "text-xs text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             )}
           >

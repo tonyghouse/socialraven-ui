@@ -29,8 +29,8 @@ const ROLE_BADGE: Record<
   WorkspaceRole,
   { label: string; icon: ElementType; tone: string }
 > = {
-  OWNER: { label: "Owner", icon: Crown, tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]" },
-  ADMIN: { label: "Admin", icon: ShieldCheck, tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]" },
+  OWNER: { label: "Owner", icon: Crown, tone: "text-[var(--ds-plum-700)] bg-[var(--ds-plum-100)]" },
+  ADMIN: { label: "Admin", icon: ShieldCheck, tone: "text-[var(--ds-plum-700)] bg-[var(--ds-plum-100)]" },
   EDITOR: { label: "Editor", icon: Users, tone: "text-[var(--ds-gray-1000)] bg-[var(--ds-gray-100)]" },
   READ_ONLY: { label: "Read only", icon: Eye, tone: "text-[var(--ds-gray-1000)] bg-[var(--ds-gray-100)]" },
 };
@@ -88,7 +88,7 @@ export function UserAvatar({
             <div
               className={cn(
                 avatarSize,
-                "flex shrink-0 items-center justify-center rounded-xl bg-[var(--ds-blue-100)] text-label-12 text-[var(--ds-blue-700)]"
+                "flex shrink-0 items-center justify-center rounded-xl bg-[var(--ds-plum-100)] text-label-12 text-[var(--ds-plum-700)]"
               )}
             >
               {initials}
@@ -121,7 +121,7 @@ export function UserAvatar({
                   className="h-9 w-9 shrink-0 rounded-xl object-cover"
                 />
               ) : (
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-blue-100)] text-label-12 text-[var(--ds-blue-700)]">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-plum-100)] text-label-12 text-[var(--ds-plum-700)]">
                   {initials}
                 </div>
               )}
@@ -192,7 +192,7 @@ function resolveBadge({
     return {
       label: plan ? (PLAN_LABELS[plan] ?? "Influencer") : "Influencer",
       icon: Sparkles,
-      tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]",
+      tone: "text-[var(--ds-plum-700)] bg-[var(--ds-plum-100)]",
     };
   }
 
@@ -216,7 +216,7 @@ function resolveBadge({
     return {
       label: "Admin / Editor",
       icon: ShieldCheck,
-      tone: "text-[var(--ds-blue-700)] bg-[var(--ds-blue-100)]",
+      tone: "text-[var(--ds-plum-700)] bg-[var(--ds-plum-100)]",
     };
   }
 

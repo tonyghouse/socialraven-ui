@@ -83,7 +83,7 @@ function AccountItem({
 
             {/* Selected check */}
             {isSelected && isAllowed && (
-              <div className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-md border-2 border-background z-10">
+              <div className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-primary !text-primary-foreground flex items-center justify-center shadow-md border-2 border-background z-10">
                 <Check className="w-2.5 h-2.5" strokeWidth={3} />
               </div>
             )}

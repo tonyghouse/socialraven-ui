@@ -71,10 +71,10 @@ const POST_TYPE_META: Record<PostType, { label: string; Icon: React.ElementType;
 // ── Platform badge colours ────────────────────────────────────────────────────
 
 const PLATFORM_BADGE_STYLES: Record<string, string> = {
-  facebook:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  facebook:  "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   instagram: "border-[var(--ds-pink-200)] bg-[var(--ds-pink-100)] text-[var(--ds-pink-700)]",
   x:         "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
-  linkedin:  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  linkedin:  "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   youtube:   "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]",
   threads:   "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
   tiktok:    "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
@@ -89,7 +89,7 @@ const pageClassName = "min-h-screen bg-[var(--ds-background-200)] text-[var(--ds
 const insetSurfaceClassName =
   "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 // ── Accordion step card ────────────────────────────────────────────────────────
 
@@ -123,7 +123,7 @@ function StepCard({
         locked
           ? "border-[var(--ds-gray-400)] opacity-60"
           : complete && isOpen
-            ? "border-[var(--ds-blue-200)] shadow-[0_0_0_0.0625rem_var(--ds-blue-200)]"
+            ? "border-[var(--ds-plum-200)] shadow-[0_0_0_0.0625rem_var(--ds-plum-200)]"
             : complete
               ? "border-[var(--ds-gray-500)]"
               : "border-[var(--ds-gray-400)]",
@@ -146,12 +146,12 @@ function StepCard({
           className={cn(
             "mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border text-label-12 transition-colors duration-200",
             complete
-              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
               : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]",
           )}
         >
           {complete
-            ? <CheckCircle2 className="h-4 w-4 text-[var(--ds-blue-700)]" />
+            ? <CheckCircle2 className="h-4 w-4 text-[var(--ds-plum-700)]" />
             : <span>{step}</span>
           }
         </div>
@@ -220,7 +220,7 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
           focusRingClassName,
           disabled
             ? "cursor-not-allowed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
-            : "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]",
+            : "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]",
         )}
       >
         {label}
@@ -651,7 +651,7 @@ export default function ScheduledPostCollectionPage() {
   const step1Summary = postType ? (
     <span className="flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
       {React.createElement(POST_TYPE_META[postType].Icon, {
-        className: "h-3.5 w-3.5 text-[var(--ds-blue-700)]",
+        className: "h-3.5 w-3.5 text-[var(--ds-plum-700)]",
       })}
       {POST_TYPE_META[postType].label}
     </span>
@@ -659,7 +659,7 @@ export default function ScheduledPostCollectionPage() {
 
   const step2Summary = (
     <span className="flex items-center gap-2 flex-wrap">
-      <span className="text-label-14 text-[var(--ds-blue-700)]">{selectedCount}</span>
+      <span className="text-label-14 text-[var(--ds-plum-700)]">{selectedCount}</span>
       <span className="text-copy-12 text-[var(--ds-gray-900)]">{selectedCount === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
         <span
@@ -841,7 +841,7 @@ export default function ScheduledPostCollectionPage() {
                 focusRingClassName,
                 overLimit || platformCharErrors.length > 0
                   ? "border-[var(--ds-red-300)]"
-                  : "border-[var(--ds-gray-400)] focus:border-[var(--ds-blue-600)]",
+                  : "border-[var(--ds-gray-400)] focus:border-[hsl(var(--accent))]",
               )}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -1004,7 +1004,7 @@ export default function ScheduledPostCollectionPage() {
             <Button
               onClick={submit}
               disabled={submitLoading || draftLoading || selectedAccountIds.length === 0 || hasAnyCharError || (postType !== "TEXT" && hasMediaErrors) || validatingMedia}
-              className="h-11 flex-1 gap-2 border-transparent bg-[var(--ds-blue-600)] text-label-14 text-white shadow-none hover:bg-[var(--ds-blue-700)]"
+              className="h-11 flex-1 gap-2 border-transparent bg-[hsl(var(--accent))] text-label-14 !text-white shadow-none hover:bg-[hsl(var(--accent-hover))]"
               size="lg"
             >
               {submitLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}

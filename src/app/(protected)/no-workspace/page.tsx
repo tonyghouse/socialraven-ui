@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const actionButtonClassName =
-  "h-11 w-full rounded-md border text-label-14 shadow-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-200)]";
+  "h-11 w-full rounded-md border text-label-14 shadow-none transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-200)]";
 
 const primaryButtonClassName = cn(
   actionButtonClassName,
-  "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+  "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
 );
 
 const secondaryButtonClassName = cn(
@@ -78,7 +78,7 @@ export default function NoWorkspacePage() {
           <button
             className={cn(
               "mt-2 rounded-sm text-copy-12 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-200)]"
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-200)]"
             )}
             onClick={() => signOut({ redirectUrl: "/sign-in" })}
           >

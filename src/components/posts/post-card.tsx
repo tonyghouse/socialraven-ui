@@ -19,14 +19,14 @@ export function PostCard({ post }: { post: PostResponse }) {
   const platformIconColor: Record<string, string> = {
     YOUTUBE: "text-red-600 bg-red-50 border-red-100",
     INSTAGRAM: "text-pink-600 bg-pink-50 border-pink-100",
-    FACEBOOK: "text-blue-600 bg-blue-50 border-blue-100",
-    LINKEDIN: "text-sky-600 bg-sky-50 border-sky-100",
+    FACEBOOK: "text-[var(--ds-plum-700)] bg-[var(--ds-plum-100)] border-[var(--ds-plum-200)]",
+    LINKEDIN: "text-[var(--ds-plum-700)] bg-[var(--ds-plum-100)] border-[var(--ds-plum-200)]",
     X: "text-neutral-800 bg-neutral-50 border-neutral-100",
   };
 
   const statusColors: Record<string, string> = {
     SCHEDULED:
-      "bg-blue-500/10 text-blue-700 backdrop-blur-xl border-blue-500/20 dark:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30",
+      "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)] backdrop-blur-xl border-[var(--ds-plum-200)]",
     PUBLISHED:
       "bg-green-500/10 text-green-700 backdrop-blur-xl border-green-500/20 dark:bg-green-500/15 dark:text-green-400 dark:border-green-500/30",
   };

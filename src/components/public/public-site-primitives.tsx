@@ -11,7 +11,7 @@ const publicButtonClassName =
 
 const publicPrimaryButtonClassName = cn(
   publicButtonClassName,
-  "border border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-white hover:border-[hsl(var(--accent-active))] hover:bg-[hsl(var(--accent-active))]"
+  "border border-[hsl(var(--accent))] bg-[hsl(var(--accent))] !text-white hover:border-[hsl(var(--accent-active))] hover:bg-[hsl(var(--accent-active))]"
 );
 
 const publicSubtleButtonClassName = cn(

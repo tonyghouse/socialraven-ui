@@ -121,7 +121,7 @@ const sectionDescriptionClassName = "text-label-14 leading-6 text-[var(--ds-gray
 const labelClassName = "text-label-14 text-[var(--ds-gray-1000)]";
 const helperTextClassName = "text-copy-12 text-[var(--ds-gray-900)]";
 const inputBaseClassName =
-  "w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors placeholder:text-[var(--ds-gray-700)] focus:border-[var(--ds-blue-600)] focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors placeholder:text-[var(--ds-gray-700)] focus:border-[hsl(var(--accent))] focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const inputClassName = cn(inputBaseClassName, "h-10");
 const textareaClassName = cn(inputBaseClassName, "min-h-[7rem] py-2");
 const subtleMetaClassName = "text-copy-12 text-[var(--ds-gray-900)]";
@@ -139,7 +139,7 @@ function ActionButton({
 }) {
   const variantClassName =
     variant === "primary"
-      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      ? "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
       : variant === "danger"
         ? "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)] hover:border-[var(--ds-red-300)] hover:bg-[var(--ds-red-200)]"
         : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
@@ -148,7 +148,7 @@ function ActionButton({
     <button
       type={type}
       className={cn(
-        "inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] disabled:pointer-events-none disabled:opacity-50",
         variantClassName,
         className
       )}
@@ -168,7 +168,7 @@ function ToneBadge({
 }) {
   const toneClassName =
     tone === "info"
-      ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+      ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
       : tone === "success"
         ? "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]"
         : tone === "warning"
@@ -519,9 +519,9 @@ export default function ClientReportsPage() {
                       type="button"
                       onClick={() => setLinkExpiryHours(option.hours)}
                       className={cn(
-                        "rounded-full border px-3 py-1.5 text-label-12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]",
+                        "rounded-full border px-3 py-1.5 text-label-12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]",
                         linkExpiryHours === option.hours
-                          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                          ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                           : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
                       )}
                     >

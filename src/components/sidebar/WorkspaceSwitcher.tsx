@@ -186,7 +186,7 @@ function WorkspaceList({
               className={cn(
                 "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-colors",
                 isActive
-                  ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                  ? "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                   : "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
               )}
             >
@@ -194,7 +194,7 @@ function WorkspaceList({
                 className={cn(
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
                   isActive
-                    ? "bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                    ? "bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
                     : "bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                 )}
               >
@@ -207,7 +207,7 @@ function WorkspaceList({
                   <p
                     className={cn(
                       "mt-0.5 truncate text-label-12",
-                      isActive ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-900)]"
+                      isActive ? "text-[var(--ds-plum-700)]" : "text-[var(--ds-gray-900)]"
                     )}
                   >
                     {workspace.companyName}
@@ -215,7 +215,7 @@ function WorkspaceList({
                 ) : null}
               </div>
 
-              {isActive ? <Check className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" /> : null}
+              {isActive ? <Check className="h-4 w-4 shrink-0 text-[var(--ds-plum-700)]" /> : null}
             </button>
           );
         })}

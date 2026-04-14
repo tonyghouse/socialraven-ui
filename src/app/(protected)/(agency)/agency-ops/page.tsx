@@ -40,7 +40,7 @@ const subtleButtonClassName =
 const toneClassNames: Record<Tone, string> = {
   neutral:
     "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
-  info: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  info: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   success:
     "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
   warning:
@@ -775,7 +775,7 @@ function FilterSelect({
         <SelectTrigger
           className={cn(
             "h-10 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] shadow-none",
-            "hover:border-[var(--ds-gray-500)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
+            "hover:border-[var(--ds-gray-500)] focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]"
           )}
         >
           <SelectValue />

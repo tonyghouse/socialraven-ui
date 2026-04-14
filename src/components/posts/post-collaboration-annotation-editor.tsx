@@ -156,7 +156,7 @@ export function PostCollaborationAnnotationEditor({
                 "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                 mode === value
                   ? isGeist
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                     : "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
                   : isGeist
                     ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
@@ -241,7 +241,7 @@ export function PostCollaborationAnnotationEditor({
                       "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                       item.id === selectedMedia?.id
                         ? isGeist
-                          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                          ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                           : "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
                         : isGeist
                           ? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]"
@@ -297,7 +297,7 @@ export function PostCollaborationAnnotationEditor({
                           <div
                             className={cn(
                               "pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_0.1875rem_rgb(0_0_0_/_0.18)]",
-                              isGeist ? "bg-[var(--ds-blue-600)]" : "bg-[hsl(var(--accent))]"
+                              isGeist ? "bg-[hsl(var(--accent))]" : "bg-[hsl(var(--accent))]"
                             )}
                             style={{
                               left: `${mediaAnnotation.mediaMarkerX * 100}%`,

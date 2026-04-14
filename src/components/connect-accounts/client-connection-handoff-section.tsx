@@ -58,7 +58,7 @@ const EXPIRY_OPTIONS = [
 ] as const;
 
 const selectionChipClassName =
-  "rounded-full border px-3 py-1.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "rounded-full border px-3 py-1.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
 function formatTimestamp(value: string | null) {
   if (!value) return "Not available";
@@ -238,7 +238,7 @@ export default function ClientConnectionHandoffSection() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-[var(--ds-blue-700)]" />
+                <ShieldCheck className="h-4 w-4 text-[var(--ds-plum-700)]" />
                 <p className={connectTitleClassName}>Secure client connection handoff</p>
               </div>
               <p className={cn("max-w-2xl", connectBodyClassName)}>
@@ -345,7 +345,7 @@ export default function ClientConnectionHandoffSection() {
                       className={cn(
                         selectionChipClassName,
                         selected
-                          ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                          ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                           : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
                       )}
                     >
@@ -369,7 +369,7 @@ export default function ClientConnectionHandoffSection() {
                     className={cn(
                       selectionChipClassName,
                       expiryDays === option.value
-                        ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                        ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                         : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
                     )}
                   >

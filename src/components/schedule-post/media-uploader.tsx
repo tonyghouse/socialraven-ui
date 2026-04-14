@@ -63,10 +63,10 @@ export default function MediaUploader({
         className={`group relative w-full overflow-hidden rounded-xl border border-dashed transition-[border-color,background-color,box-shadow] duration-150
           ${files.length === 0
             ? isGeist
-              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-8 hover:border-[var(--ds-blue-200)] hover:bg-[var(--ds-gray-100)]"
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-8 hover:border-[var(--ds-plum-200)] hover:bg-[var(--ds-gray-100)]"
               : "border-border-subtle bg-surface py-8 hover:border-[hsl(var(--accent))]/25 hover:bg-surface-raised"
             : isGeist
-              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-3 hover:border-[var(--ds-blue-200)] hover:bg-[var(--ds-gray-100)]"
+              ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] py-3 hover:border-[var(--ds-plum-200)] hover:bg-[var(--ds-gray-100)]"
               : "border-border-subtle bg-surface py-3 hover:border-[hsl(var(--accent))]/20 hover:bg-surface-raised"
           }`}
       >
@@ -76,7 +76,7 @@ export default function MediaUploader({
               className={cn(
                 "absolute inset-0 rounded-full blur-md transition-all",
                 isGeist
-                  ? "bg-[var(--ds-blue-100)] group-hover:bg-[var(--ds-blue-200)]"
+                  ? "bg-[var(--ds-plum-100)] group-hover:bg-[var(--ds-plum-200)]"
                   : "bg-[hsl(var(--accent))]/10 group-hover:bg-[hsl(var(--accent))]/14"
               )}
             />
@@ -84,13 +84,13 @@ export default function MediaUploader({
               className={cn(
                 "relative flex h-full w-full items-center justify-center rounded-full border transition-colors",
                 isGeist
-                  ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)]"
+                  ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)]"
                   : "border-[hsl(var(--accent))]/12 bg-[hsl(var(--accent))]/8"
               )}
             >
               {files.length === 0
-                ? <Upload className={cn("h-5 w-5", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
-                : <Plus className={cn("h-4 w-4", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
+                ? <Upload className={cn("h-5 w-5", isGeist ? "text-[var(--ds-plum-700)]" : "text-[hsl(var(--accent))]")} />
+                : <Plus className={cn("h-4 w-4", isGeist ? "text-[var(--ds-plum-700)]" : "text-[hsl(var(--accent))]")} />
               }
             </div>
           </div>
@@ -140,7 +140,7 @@ export default function MediaUploader({
                       className={cn(
                         "relative h-28 w-28 overflow-hidden rounded-xl border shadow-sm transition-[border-color,box-shadow]",
                         isGeist
-                          ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] group-hover:border-[var(--ds-blue-200)] group-hover:shadow-md"
+                          ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] group-hover:border-[var(--ds-plum-200)] group-hover:shadow-md"
                           : "border-border-subtle bg-surface group-hover:border-[hsl(var(--accent))]/15 group-hover:shadow-md"
                       )}
                     >

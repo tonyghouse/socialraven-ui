@@ -94,13 +94,13 @@ const sectionTitleClassName = "text-label-14 text-[var(--ds-gray-1000)]";
 const bodyTextClassName = "text-label-14 leading-6 text-[var(--ds-gray-900)]";
 const metaTextClassName = "text-copy-12 text-[var(--ds-gray-900)]";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const rowHoverClassName = "transition-colors duration-150 hover:bg-[var(--ds-gray-100)]";
 
 const badgeVariants = {
   neutral: "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]",
   subtle: "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)]",
-  accent: "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]",
+  accent: "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]",
   success: "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]",
   warning: "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]",
 } as const;
@@ -134,7 +134,7 @@ function ActionButton({
 }) {
   const toneClassName =
     tone === "primary"
-      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      ? "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
       : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 
   const sizeClassName = iconOnly
@@ -179,7 +179,7 @@ function ActionLink({
 }) {
   const toneClassName =
     tone === "primary"
-      ? "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+      ? "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
       : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 
   const sizeClassName = compact ? "h-8 px-2.5 text-label-13" : "h-9 px-3.5 text-label-14";
@@ -203,7 +203,7 @@ function ActionLink({
 
 function SectionIcon({ icon: Icon }: { icon: React.ElementType }) {
   return (
-    <div className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]">
+    <div className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-plum-700)]">
       <Icon className="h-3.5 w-3.5" />
     </div>
   );
@@ -230,7 +230,7 @@ function StatusBadge({
 
 function ProgressTrack({
   value,
-  color = "var(--ds-blue-600)",
+  color = "hsl(var(--accent))",
 }: {
   value: number;
   color?: string;
@@ -441,7 +441,7 @@ export default function DashboardPage() {
                             {timeLabel}
                           </StatusBadge>
 
-                          <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-800)] transition-all group-hover:translate-x-0.5 group-hover:text-[var(--ds-blue-700)]" />
+                          <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[var(--ds-gray-800)] transition-all group-hover:translate-x-0.5 group-hover:text-[var(--ds-plum-700)]" />
                         </div>
                       </Link>
                     );
@@ -753,7 +753,7 @@ function StatCard({
           className={cn(
             "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
             accent
-              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
               : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
           )}
         >
@@ -842,14 +842,14 @@ function QuickAction({
       <div
         className={cn(
           "group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors",
-          accent ? "hover:bg-[var(--ds-blue-100)]" : "hover:bg-[var(--ds-gray-100)]"
+          accent ? "hover:bg-[var(--ds-plum-100)]" : "hover:bg-[var(--ds-gray-100)]"
         )}
       >
         <div
           className={cn(
             "flex h-8 w-8 shrink-0 items-center justify-center rounded-md border",
             accent
-              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+              ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
               : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]"
           )}
         >
@@ -857,7 +857,7 @@ function QuickAction({
         </div>
 
         <div className="min-w-0 flex-1">
-          <span className={cn("block text-label-14", accent ? "text-[var(--ds-blue-700)]" : "text-[var(--ds-gray-1000)]")}>
+          <span className={cn("block text-label-14", accent ? "text-[var(--ds-plum-700)]" : "text-[var(--ds-gray-1000)]")}>
             {label}
           </span>
           {desc ? (

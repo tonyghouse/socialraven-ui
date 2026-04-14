@@ -10,10 +10,10 @@ const PLATFORM_META: Record<
   { label: string; icon: any; accent: string }
 > = {
   x: { label: "X / Twitter", icon: PLATFORM_ICONS.x, accent: "text-[hsl(var(--foreground))]" },
-  linkedin: { label: "LinkedIn", icon: PLATFORM_ICONS.linkedin, accent: "text-[#0A66C2]" },
+  linkedin: { label: "LinkedIn", icon: PLATFORM_ICONS.linkedin, accent: "text-[var(--ds-plum-700)]" },
   youtube: { label: "YouTube", icon: PLATFORM_ICONS.youtube, accent: "text-red-500" },
   instagram: { label: "Instagram", icon: PLATFORM_ICONS.instagram, accent: "text-[#E1306C]" },
-  facebook: { label: "Facebook", icon: PLATFORM_ICONS.facebook, accent: "text-[#1877F2]" },
+  facebook: { label: "Facebook", icon: PLATFORM_ICONS.facebook, accent: "text-[var(--ds-plum-700)]" },
 };
 
 const ORDER = ["x", "linkedin", "youtube", "instagram", "facebook"];

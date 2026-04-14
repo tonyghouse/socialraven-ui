@@ -42,7 +42,7 @@ export function ScheduledPostsPageSkeleton() {
               key={index}
               className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm"
             >
-              <div className="h-[0.1875rem] bg-[var(--ds-blue-500)]" />
+              <div className="h-[0.1875rem] bg-[var(--ds-plum-500)]" />
               <div className="flex items-center justify-between px-5 pt-4">
                 <Skeleton className={`h-5 w-16 rounded-lg ${skeletonClassName}`} />
                 <Skeleton className={`h-5 w-20 rounded-full ${skeletonClassName}`} />

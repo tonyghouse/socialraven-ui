@@ -46,14 +46,14 @@ const insetPanelClassName =
 const outlineButtonClassName =
   "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 const primaryButtonClassName =
-  "bg-[var(--ds-blue-600)] text-white shadow-none hover:bg-[var(--ds-blue-700)]";
+  "bg-[hsl(var(--accent))] !text-white shadow-none hover:bg-[hsl(var(--accent-hover))]";
 const focusRingClassName =
-  "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
-function toneBadgeClassName(tone: "neutral" | "blue" | "green" | "amber" | "red") {
+function toneBadgeClassName(tone: "neutral" | "accent" | "green" | "amber" | "red") {
   switch (tone) {
-    case "blue":
-      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+    case "accent":
+      return "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
     case "green":
       return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
     case "amber":
@@ -65,9 +65,9 @@ function toneBadgeClassName(tone: "neutral" | "blue" | "green" | "amber" | "red"
   }
 }
 
-function noticeClassName(tone: "blue" | "amber" | "red" | "neutral") {
-  if (tone === "blue") {
-    return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+function noticeClassName(tone: "accent" | "amber" | "red" | "neutral") {
+  if (tone === "accent") {
+    return "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]";
   }
   if (tone === "amber") {
     return "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]";
@@ -164,7 +164,7 @@ function SectionHeader({
 function PlanStatusBadge({ status }: { status: UserPlan["status"] }) {
   const map: Record<UserPlan["status"], { label: string; cls: string }> = {
     ACTIVE: { label: "Active", cls: toneBadgeClassName("green") },
-    TRIALING: { label: "Trial", cls: toneBadgeClassName("blue") },
+    TRIALING: { label: "Trial", cls: toneBadgeClassName("accent") },
     PAST_DUE: { label: "Past Due", cls: toneBadgeClassName("amber") },
     CANCELLED: { label: "Cancelled", cls: toneBadgeClassName("red") },
   };
@@ -235,7 +235,7 @@ function UsageBar({
       ? "bg-[var(--ds-red-600)]"
       : nearLimit
         ? "bg-[var(--ds-amber-600)]"
-        : "bg-[var(--ds-blue-600)]";
+        : "bg-[hsl(var(--accent))]";
   const valueClassName = atLimit
     ? "text-[var(--ds-red-700)]"
     : nearLimit
@@ -246,7 +246,7 @@ function UsageBar({
     <div className="space-y-2.5 p-4 sm:p-5">
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2 text-copy-14 text-[var(--ds-gray-900)]">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--ds-gray-100)] text-[var(--ds-plum-700)]">
             <Icon className="h-3.5 w-3.5" />
           </div>
           <span className="truncate">{label}</span>
@@ -325,7 +325,7 @@ function PlanRow({
       className={cn(
         "px-5 py-5 transition-colors sm:px-6",
         isCurrent
-          ? "bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-blue-100)_100%)]"
+          ? "bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-plum-100)_100%)]"
           : "bg-[var(--ds-background-100)]"
       )}
     >
@@ -336,7 +336,7 @@ function PlanRow({
               className={cn(
                 "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
                 isCurrent
-                  ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                  ? "border-[var(--ds-plum-200)] bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
                   : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
               )}
             >
@@ -351,7 +351,7 @@ function PlanRow({
                     variant="outline"
                     className={cn(
                       "border px-2 py-0.5 text-copy-12 font-semibold",
-                      toneBadgeClassName("blue")
+                      toneBadgeClassName("accent")
                     )}
                   >
                     Current
@@ -362,7 +362,7 @@ function PlanRow({
                     variant="outline"
                     className={cn(
                       "border px-2 py-0.5 text-copy-12 font-semibold",
-                      toneBadgeClassName("blue")
+                      toneBadgeClassName("accent")
                     )}
                   >
                     Popular
@@ -379,7 +379,7 @@ function PlanRow({
           <ul className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
             {plan.features.map((feature) => (
               <li key={feature} className="flex items-start gap-2 text-copy-14 text-[var(--ds-gray-900)]">
-                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--ds-blue-700)]" />
+                <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--ds-plum-700)]" />
                 <span>{feature}</span>
               </li>
             ))}
@@ -397,7 +397,7 @@ function PlanRow({
             className={cn(
               "w-full text-sm",
               isCurrent
-                ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-blue-700)]"
+                ? "border-[var(--ds-plum-200)] bg-[var(--ds-background-100)] text-[var(--ds-plum-700)] hover:bg-[var(--ds-background-100)] hover:text-[var(--ds-plum-700)]"
                 : plan.popular
                   ? primaryButtonClassName
                   : outlineButtonClassName,
@@ -622,7 +622,7 @@ export default function BillingPage() {
                         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-6">
                           <div className="min-w-0 space-y-3 lg:border-r lg:border-[var(--ds-gray-400)] lg:pr-6">
                             <div className="flex items-start gap-3">
-                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]">
+                              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--ds-gray-100)] text-[var(--ds-plum-700)]">
                                 {(() => {
                                   const Icon = PLAN_ICONS[userPlan.currentPlan];
                                   return <Icon className="h-4 w-4" />;
@@ -770,7 +770,7 @@ export default function BillingPage() {
                           <div className="space-y-2.5 p-4 sm:p-5">
                             <div className="flex items-center justify-between gap-3">
                               <div className="flex min-w-0 items-center gap-2 text-copy-14 text-[var(--ds-gray-900)]">
-                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--ds-gray-100)] text-[var(--ds-blue-700)]">
+                                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--ds-gray-100)] text-[var(--ds-plum-700)]">
                                   <Building2 className="h-3.5 w-3.5" />
                                 </div>
                                 <span className="truncate">Workspaces</span>
@@ -790,7 +790,7 @@ export default function BillingPage() {
                                     ? "bg-[var(--ds-green-600)]"
                                     : usageStats.workspacesOwned >= usageStats.maxWorkspaces
                                       ? "bg-[var(--ds-amber-600)]"
-                                      : "bg-[var(--ds-blue-600)]"
+                                      : "bg-[hsl(var(--accent))]"
                                 )}
                                 style={
                                   usageStats.maxWorkspaces === "Unlimited"
@@ -886,7 +886,7 @@ export default function BillingPage() {
                   <div
                     className={cn(
                       "flex items-start gap-3 rounded-xl border px-4 py-3 sm:max-w-[47.5rem]",
-                      noticeClassName("blue")
+                      noticeClassName("accent")
                     )}
                   >
                     <Info className="mt-0.5 h-4 w-4 shrink-0" />

@@ -126,7 +126,7 @@ function MentionPicker({
               className={cn(
                 "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
                 isSelected
-                  ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                  ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                   : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:text-[var(--ds-gray-1000)]",
                 disabled && "cursor-not-allowed opacity-60"
               )}
@@ -155,7 +155,7 @@ function MentionBadges({
       {mentions.map((mention) => (
         <span
           key={`${mention.userId}-${mention.displayName}`}
-          className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-blue-700)]"
+          className="inline-flex items-center gap-1 rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-plum-700)]"
         >
           <span>@</span>
           <span>{mention.displayName}</span>
@@ -541,7 +541,7 @@ export function InternalCollaborationPanel({
                 className={cn(
                   "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
                   composerType === type
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                    ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                     : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]",
                   (!canWrite || creatingThread) && "cursor-not-allowed opacity-60"
                 )}
@@ -572,7 +572,7 @@ export function InternalCollaborationPanel({
                   className={cn(
                     "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-copy-12 transition-colors",
                     composerVisibility === value
-                      ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                      ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                       : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:text-[var(--ds-gray-1000)]",
                     (!canWrite || creatingThread) && "cursor-not-allowed opacity-60"
                   )}
@@ -769,7 +769,7 @@ export function InternalCollaborationPanel({
                             : "Internal only"}
                         </span>
                         {thread.authorType === "CLIENT_REVIEWER" && (
-                          <span className="inline-flex items-center rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-blue-700)]">
+                          <span className="inline-flex items-center rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-2.5 py-1 text-copy-12 text-[var(--ds-plum-700)]">
                             Client reviewer
                           </span>
                         )}
@@ -891,8 +891,8 @@ export function InternalCollaborationPanel({
                             : "Insertion point"}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] p-3">
-                        <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-blue-700)]">
+                      <div className="rounded-lg border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] p-3">
+                        <p className="text-copy-12 uppercase tracking-[0.16em] text-[var(--ds-plum-700)]">
                           Suggested text
                         </p>
                         <p className="mt-2 whitespace-pre-wrap text-label-14 text-[var(--ds-gray-1000)]">

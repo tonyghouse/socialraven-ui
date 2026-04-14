@@ -365,7 +365,7 @@ export default function DraftDetailPage() {
     ? "Approve & Schedule"
     : "Approve";
   const selectClassName =
-    "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[var(--ds-blue-600)] focus:ring-2 focus:ring-[var(--ds-blue-600)] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]";
+    "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] outline-none transition-colors focus:border-[hsl(var(--accent))] focus:ring-2 focus:ring-[hsl(var(--accent))] focus:ring-offset-2 focus:ring-offset-[var(--ds-background-100)]";
 
   return (
     <>
@@ -549,7 +549,7 @@ export default function DraftDetailPage() {
                 <div className={draftDetailPanelHeaderClassName}>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]">
                         <CalendarClock className="h-5 w-5" />
                       </div>
                       <div>
@@ -841,7 +841,7 @@ function MediaCarousel({ media }: { media: PostCollectionResponse["media"] }) {
               className={cn(
                 "rounded-full transition-all",
                 i === idx
-                  ? "h-1.5 w-4 bg-[var(--ds-blue-600)]"
+                  ? "h-1.5 w-4 bg-[hsl(var(--accent))]"
                   : "h-1.5 w-1.5 bg-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-700)]"
               )}
             />

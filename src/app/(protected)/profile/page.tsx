@@ -106,21 +106,21 @@ const ROLE_CONFIG: Record<
     label: "Owner",
     description: "Full control of the workspace",
     icon: Crown,
-    iconBg: "bg-[var(--ds-purple-100)]",
-    iconColor: "text-[var(--ds-purple-700)]",
-    pillBg: "bg-[var(--ds-purple-100)]",
-    pillText: "text-[var(--ds-purple-700)]",
-    pillBorder: "border-[var(--ds-purple-200)]",
+    iconBg: "bg-[var(--ds-plum-100)]",
+    iconColor: "text-[var(--ds-plum-700)]",
+    pillBg: "bg-[var(--ds-plum-100)]",
+    pillText: "text-[var(--ds-plum-700)]",
+    pillBorder: "border-[var(--ds-plum-200)]",
   },
   ADMIN: {
     label: "Admin",
     description: "Manage team & workspace settings",
     icon: ShieldCheck,
-    iconBg: "bg-[var(--ds-blue-100)]",
-    iconColor: "text-[var(--ds-blue-700)]",
-    pillBg: "bg-[var(--ds-blue-100)]",
-    pillText: "text-[var(--ds-blue-700)]",
-    pillBorder: "border-[var(--ds-blue-200)]",
+    iconBg: "bg-[var(--ds-plum-100)]",
+    iconColor: "text-[var(--ds-plum-700)]",
+    pillBg: "bg-[var(--ds-plum-100)]",
+    pillText: "text-[var(--ds-plum-700)]",
+    pillBorder: "border-[var(--ds-plum-200)]",
   },
   EDITOR: {
     label: "Editor",
@@ -145,7 +145,7 @@ const ROLE_CONFIG: Record<
 };
 
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const sectionClassName =
   "overflow-hidden rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm";
 const sectionHeaderClassName =
@@ -155,13 +155,13 @@ const cardClassName =
 const mutedCardClassName =
   "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
 const inputClassName =
-  "h-10 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none placeholder:text-[var(--ds-gray-900)] focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)]/20";
+  "h-10 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none placeholder:text-[var(--ds-gray-900)] focus-visible:border-[hsl(var(--accent))] focus-visible:ring-[hsl(var(--accent))]/20";
 const primaryButtonClassName =
-  "h-9 rounded-md border-0 bg-[var(--ds-blue-600)] text-white shadow-none hover:bg-[var(--ds-blue-700)]";
+  "h-9 rounded-md border-0 bg-[hsl(var(--accent))] !text-white shadow-none hover:bg-[hsl(var(--accent-hover))]";
 const secondaryButtonClassName =
   "h-9 rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] shadow-none hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 const linkButtonClassName =
-  "group inline-flex items-center gap-1.5 text-copy-12 text-[var(--ds-blue-700)] transition-colors hover:text-[var(--ds-blue-800)]";
+  "group inline-flex items-center gap-1.5 text-copy-12 text-[var(--ds-plum-700)] transition-colors hover:text-[var(--ds-plum-800)]";
 
 const AGENCY_PERMISSIONS: { label: string; roles: WorkspaceRole[] }[] = [
   { label: "View all content", roles: ["OWNER", "ADMIN", "EDITOR", "READ_ONLY"] },
@@ -259,8 +259,8 @@ export default function ProfilePage() {
 
   const isInfluencerPlan = plan?.startsWith("INFLUENCER");
   const PlanIcon = isInfluencerPlan ? Sparkles : Building2;
-  const planIconBg = isInfluencerPlan ? "bg-[var(--ds-purple-100)]" : "bg-[var(--ds-blue-100)]";
-  const planIconClr = isInfluencerPlan ? "text-[var(--ds-purple-700)]" : "text-[var(--ds-blue-700)]";
+  const planIconBg = "bg-[var(--ds-plum-100)]";
+  const planIconClr = "text-[var(--ds-plum-700)]";
 
   function applyProfile(nextProfile: ProfileResponse, successMessage?: string) {
     setProfile(nextProfile);
@@ -509,7 +509,7 @@ export default function ProfilePage() {
                                 className={cn(
                                   "inline-flex items-center rounded-full border px-2 py-1 text-copy-12",
                                   email.primary
-                                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                                    ? "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)]"
                                     : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]"
                                 )}
                               >
@@ -766,7 +766,7 @@ export default function ProfilePage() {
                     You can request access, correction, or deletion of personal data by contacting{" "}
                     <a
                       href="mailto:privacy@socialraven.io"
-                      className="font-medium text-[var(--ds-blue-700)] underline hover:no-underline"
+                      className="font-medium text-[var(--ds-plum-700)] underline hover:no-underline"
                     >
                       privacy@socialraven.io
                     </a>

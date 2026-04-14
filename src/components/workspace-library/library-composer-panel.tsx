@@ -184,7 +184,7 @@ export function LibraryComposerPanel({
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search templates, snippets, tags, bundles, or campaign labels"
-            className={cn("pl-9", isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] focus-visible:border-[var(--ds-blue-600)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]")}
+            className={cn("pl-9", isGeist && "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] focus-visible:border-[hsl(var(--accent))] focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]")}
           />
         </div>
 
@@ -221,7 +221,7 @@ export function LibraryComposerPanel({
                         <div className="space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg border", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]")}>
-                              <Icon className={cn("h-4 w-4", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
+                              <Icon className={cn("h-4 w-4", isGeist ? "text-[var(--ds-plum-700)]" : "text-[hsl(var(--accent))]")} />
                             </div>
                             <div>
                               <p className={cn(isGeist ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-semibold text-[hsl(var(--foreground))]")}>{item.name}</p>
@@ -292,7 +292,7 @@ export function LibraryComposerPanel({
                         <div className="space-y-2">
                           <div className="flex flex-wrap items-center gap-2">
                             <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg border", isGeist ? "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]" : "border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))]")}>
-                              <Boxes className={cn("h-4 w-4", isGeist ? "text-[var(--ds-blue-700)]" : "text-[hsl(var(--accent))]")} />
+                              <Boxes className={cn("h-4 w-4", isGeist ? "text-[var(--ds-plum-700)]" : "text-[hsl(var(--accent))]")} />
                             </div>
                             <div>
                               <p className={cn(isGeist ? "text-label-14 text-[var(--ds-gray-1000)]" : "text-sm font-semibold text-[hsl(var(--foreground))]")}>{bundle.name}</p>

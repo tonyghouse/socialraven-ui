@@ -25,14 +25,14 @@ const pageClassName =
 const cardClassName =
   "w-full max-w-md rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-5 shadow-sm sm:p-6";
 const focusRingClassName =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 const actionButtonClassName = cn(
   "h-10 w-full rounded-md border text-label-14 shadow-none transition-colors disabled:pointer-events-none disabled:opacity-50",
   focusRingClassName
 );
 const primaryButtonClassName = cn(
   actionButtonClassName,
-  "border-transparent bg-[var(--ds-blue-600)] text-white hover:bg-[var(--ds-blue-700)]"
+  "border-transparent bg-[hsl(var(--accent))] !text-white hover:bg-[hsl(var(--accent-hover))]"
 );
 const secondaryButtonClassName = cn(
   actionButtonClassName,
@@ -40,14 +40,14 @@ const secondaryButtonClassName = cn(
 );
 const inputClassName = cn(
   "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] placeholder:text-[var(--ds-gray-900)]",
-  "focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+  "focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
 );
 const workspaceCardBaseClassName =
   "flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors";
 const workspaceCardIdleClassName =
   "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]";
 const workspaceCardActiveClassName =
-  "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] shadow-sm";
+  "border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] shadow-sm";
 
 export default function WorkspaceSelectPage() {
   const router = useRouter();
@@ -197,7 +197,7 @@ export default function WorkspaceSelectPage() {
                 className={cn(
                   "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
                   selected?.id === w.id
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                    ? "border-[var(--ds-plum-200)] bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
                     : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                 )}
               >
@@ -212,7 +212,7 @@ export default function WorkspaceSelectPage() {
                 </p>
               </div>
               {selected?.id === w.id && (
-                <Check className="h-4 w-4 shrink-0 text-[var(--ds-blue-700)]" />
+                <Check className="h-4 w-4 shrink-0 text-[var(--ds-plum-700)]" />
               )}
             </button>
           ))}
@@ -235,7 +235,7 @@ export default function WorkspaceSelectPage() {
                 className={cn(
                   "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border",
                   creating
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-background-100)] text-[var(--ds-blue-700)]"
+                    ? "border-[var(--ds-plum-200)] bg-[var(--ds-background-100)] text-[var(--ds-plum-700)]"
                     : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
                 )}
               >
@@ -249,9 +249,9 @@ export default function WorkspaceSelectPage() {
         </div>
 
         {creating && canCreateWorkspaces && (
-          <div className="mb-3 space-y-3 rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] p-4">
+          <div className="mb-3 space-y-3 rounded-xl border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] p-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ws-name" className="text-label-14 text-[var(--ds-blue-700)]">
+              <Label htmlFor="ws-name" className="text-label-14 text-[var(--ds-plum-700)]">
                 Workspace name
               </Label>
               <Input
@@ -266,7 +266,7 @@ export default function WorkspaceSelectPage() {
             </div>
             {manageableCompanies.length > 1 && (
               <div className="space-y-1.5">
-                <Label className="text-label-14 text-[var(--ds-blue-700)]">
+                <Label className="text-label-14 text-[var(--ds-plum-700)]">
                   Company
                 </Label>
                 <Select value={createCompanyId} onValueChange={setCreateCompanyId}>

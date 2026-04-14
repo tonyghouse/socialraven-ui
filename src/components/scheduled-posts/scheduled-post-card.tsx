@@ -14,7 +14,7 @@ export function ScheduledPostCard({ post }: { post: PostResponse }) {
   const Icon = PLATFORM_ICONS[post.provider] || null;
 
   const statusColors: Record<string, string> = {
-    SCHEDULED: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900",
+    SCHEDULED: "bg-[var(--ds-plum-100)] text-[var(--ds-plum-700)] border-[var(--ds-plum-200)]",
     DRAFT: "bg-muted text-muted-foreground border-border",
     PUBLISHED: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/30 dark:text-green-400 dark:border-green-900",
   };

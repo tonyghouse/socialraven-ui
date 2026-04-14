@@ -22,7 +22,7 @@ const subtleButtonClassName =
 
 function QueuePill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-2.5 py-1 text-label-12 text-[var(--ds-blue-700)]">
+    <span className="inline-flex items-center rounded-full border border-[var(--ds-plum-200)] bg-[var(--ds-plum-100)] px-2.5 py-1 text-label-12 text-[var(--ds-plum-700)]">
       {children}
     </span>
   );
