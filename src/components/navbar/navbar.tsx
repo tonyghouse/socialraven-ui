@@ -32,17 +32,21 @@ export default function Navbar({
     navBtnBase,
     "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
   );
-  const primaryBtn = cn(navBtnBase, isLanding && "px-[1.125rem]");
+  const primaryBtn = cn(
+    navBtnBase,
+    isLanding && "px-[1.125rem]",
+    "bg-[#2A1D32] text-white hover:bg-[hsl(277_30%_10%)] dark:bg-[hsl(277_40%_50%)] dark:hover:bg-[hsl(277_44%_56%)]"
+  );
 
   const navHeight = isLanding ? "h-16" : "h-14";
-  const brandGap  = isLanding ? "gap-3.5" : "gap-2.5";
-  const brandBox  = isLanding ? "h-11 w-11 rounded-xl" : "h-8 w-8 rounded-lg";
-  const brandIcon = isLanding ? "h-6 w-6" : "h-5 w-5";
+  const brandGap  = isLanding ? "gap-3" : "gap-2.5";
+  const brandBox  = isLanding ? "h-10 w-10 rounded-xl" : "h-8 w-8 rounded-lg";
+  const brandIcon = isLanding ? "h-5 w-5" : "h-4.5 w-4.5";
   const brandText = isLanding
-    ? "text-[1.0625rem] font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))]"
+    ? "text-[1rem] font-semibold tracking-[-0.02em] text-[hsl(var(--foreground))]"
     : "text-[0.8125rem] font-semibold tracking-[-0.01em] text-[hsl(var(--foreground))]";
-  const avatarBox  = isLanding ? "h-11 w-11 rounded-xl" : "h-9 w-9 rounded-lg";
-  const themeClass = isLanding ? "h-10 w-10 rounded-lg shrink-0" : "shrink-0";
+  const avatarBox  = isLanding ? "h-10 w-10 rounded-xl" : "h-9 w-9 rounded-lg";
+  const themeClass = isLanding ? "h-9 w-9 rounded-lg shrink-0" : "shrink-0";
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 flex justify-center border-b border-[hsl(var(--border-subtle))] bg-[hsl(var(--background)/0.92)] backdrop-blur-xl">
@@ -52,15 +56,15 @@ export default function Navbar({
           {/* ── Left: Logo ─────────────────────────────────────────── */}
           <Link href="/" className={cn("flex items-center shrink-0", brandGap)}>
             <div className={cn(
-              "flex items-center justify-center border border-[hsl(var(--border-subtle))] bg-[hsl(var(--surface))] shadow-sm",
+              "flex items-center justify-center bg-[#2A1D32] shadow-sm dark:bg-[hsl(277_40%_50%)]",
               brandBox,
             )}>
               <Image
                 src="/SocialRavenLogo.svg"
                 alt="SocialRaven logo"
-                width={22}
-                height={22}
-                className={brandIcon}
+                width={20}
+                height={20}
+                className={cn(brandIcon, "brightness-0 invert")}
               />
             </div>
             <p className={cn("hidden sm:block", brandText)}>SocialRaven</p>
@@ -94,9 +98,16 @@ export default function Navbar({
                 </div>
               </>
             ) : (
-              <Button asChild size="sm" className={primaryBtn}>
-                <Link href="/sign-up">Get started</Link>
-              </Button>
+              <>
+                {isLanding && (
+                  <Button asChild variant="ghost" size="sm" className={secondaryBtn}>
+                    <Link href="/sign-in">Log in</Link>
+                  </Button>
+                )}
+                <Button asChild size="sm" className={primaryBtn}>
+                  <Link href="/sign-up">Get started</Link>
+                </Button>
+              </>
             )}
             <ThemeSwitcher compact className={themeClass} />
           </div>

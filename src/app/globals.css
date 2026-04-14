@@ -122,15 +122,26 @@
   --ds-purple-600: hsl(270 60% 48%);
   --ds-pink-600: hsl(328 60% 48%);
 
+  /* Plum (brand primary — #2A1D32) */
+  --ds-plum-100: hsl(277 55% 96%);
+  --ds-plum-200: hsl(277 46% 88%);
+  --ds-plum-300: hsl(277 38% 74%);
+  --ds-plum-400: hsl(277 32% 54%);
+  --ds-plum-500: hsl(277 28% 36%);
+  --ds-plum-600: hsl(277 27% 22%);
+  --ds-plum-700: hsl(277 27% 15%);
+  --ds-plum-800: hsl(277 30% 10%);
+  --ds-plum-900: hsl(277 32% 7%);
+
   /* Semantic aliases */
   --geist-success: var(--ds-green-600);
   --geist-error: var(--ds-red-600);
   --geist-warning: var(--ds-amber-600);
 
   /* Chart tokens */
-  --chart-brand: var(--ds-blue-600);
+  --chart-brand: var(--ds-plum-700);
   --chart-neutral: var(--ds-gray-700);
-  --chart-categorical-1: var(--ds-blue-600);
+  --chart-categorical-1: var(--ds-plum-700);
   --chart-categorical-2: var(--ds-teal-600);
   --chart-categorical-3: var(--ds-purple-600);
   --chart-categorical-4: var(--ds-pink-600);
@@ -156,11 +167,11 @@
   --popover: var(--surface);
   --popover-foreground: var(--foreground);
 
-  --primary: 212 86% 54%;
+  --primary: 277 27% 15%;
   --primary-foreground: 0 0% 100%;
-  --accent: 212 86% 54%;
-  --accent-hover: 212 88% 46%;
-  --accent-active: 212 92% 40%;
+  --accent: 277 27% 15%;
+  --accent-hover: 277 30% 10%;
+  --accent-active: 277 32% 7%;
   --accent-foreground: 0 0% 100%;
 
   --secondary: var(--surface-raised);
@@ -172,17 +183,17 @@
   --destructive-foreground: 0 0% 100%;
   --success: 155 54% 46%;
   --warning: 40 100% 50%;
-  --info: 212 86% 54%;
+  --info: 277 27% 15%;
 
   --border: 0 0% 86%;
   --border-subtle: 0 0% 92%;
   --input: 0 0% 86%;
   --ring: var(--accent);
 
-  --chart-1: 212 86% 54%;
+  --chart-1: 277 27% 15%;
   --chart-2: 155 54% 46%;
   --chart-3: 40 100% 50%;
-  --chart-4: 212 92% 78%;
+  --chart-4: 277 38% 74%;
   --chart-5: 0 0% 35%;
 
   --sidebar-background: var(--surface);
@@ -259,6 +270,17 @@
   --ds-purple-600: hsl(270 60% 66%);
   --ds-pink-600: hsl(328 60% 64%);
 
+  /* Plum (brand primary — dark mode) */
+  --ds-plum-100: hsl(277 30% 12%);
+  --ds-plum-200: hsl(277 32% 19%);
+  --ds-plum-300: hsl(277 35% 30%);
+  --ds-plum-400: hsl(277 36% 42%);
+  --ds-plum-500: hsl(277 38% 50%);
+  --ds-plum-600: hsl(277 40% 56%);
+  --ds-plum-700: hsl(277 44% 64%);
+  --ds-plum-800: hsl(277 48% 72%);
+  --ds-plum-900: hsl(277 52% 82%);
+
   --ds-surface-invert: hsl(0 0% 14%);
 
   /* === Existing tokens (used by protected app) === */
@@ -274,11 +296,11 @@
   --popover: var(--surface);
   --popover-foreground: var(--foreground);
 
-  --primary: 212 88% 68%;
+  --primary: 277 40% 56%;
   --primary-foreground: 0 0% 100%;
-  --accent: 212 88% 68%;
-  --accent-hover: 212 94% 76%;
-  --accent-active: 212 82% 60%;
+  --accent: 277 40% 56%;
+  --accent-hover: 277 44% 64%;
+  --accent-active: 277 34% 46%;
   --accent-foreground: 0 0% 100%;
 
   --secondary: var(--surface-raised);
@@ -290,17 +312,17 @@
   --destructive-foreground: 0 0% 100%;
   --success: 155 54% 46%;
   --warning: 40 100% 50%;
-  --info: 212 88% 68%;
+  --info: 277 40% 56%;
 
   --border: 0 0% 20%;
   --border-subtle: 0 0% 15%;
   --input: 0 0% 20%;
   --ring: var(--accent);
 
-  --chart-1: 212 88% 68%;
+  --chart-1: 277 40% 56%;
   --chart-2: 155 54% 46%;
   --chart-3: 40 100% 50%;
-  --chart-4: 212 94% 76%;
+  --chart-4: 277 44% 64%;
   --chart-5: 0 0% 60%;
 
   --sidebar-background: var(--surface);

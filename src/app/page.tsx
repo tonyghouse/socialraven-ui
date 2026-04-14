@@ -66,48 +66,48 @@ const MOCK_POSTS = [
 ];
 
 const STATUS_CONFIG = {
-  live:   { label: "Live",   dot: "bg-emerald-400", text: "text-emerald-700 dark:text-emerald-400" },
-  queued: { label: "Queued", dot: "bg-blue-400",    text: "text-blue-700 dark:text-blue-400"       },
-  review: { label: "Review", dot: "bg-amber-400",   text: "text-amber-700 dark:text-amber-400"     },
-  draft:  { label: "Draft",  dot: "bg-[var(--ds-gray-400)]", text: "text-[var(--ds-gray-600)]"    },
+  live:   { label: "Live",   dot: "bg-[hsl(158_50%_45%)]",      text: "text-[hsl(158_40%_26%)] dark:text-[hsl(158_30%_54%)]"            },
+  queued: { label: "Queued", dot: "bg-[var(--ds-gray-400)]",   text: "text-[var(--ds-gray-600)] dark:text-[var(--ds-gray-500)]"         },
+  review: { label: "Review", dot: "bg-[hsl(277_38%_58%)]",     text: "text-[#2A1D32] dark:text-[hsl(277_40%_56%)]"                     },
+  draft:  { label: "Draft",  dot: "bg-[var(--ds-gray-400)]",   text: "text-[var(--ds-gray-600)] dark:text-[var(--ds-gray-500)]"         },
 };
 
 const FEATURES = [
   {
     Icon: Calendar, tag: "Planning", title: "Visual content calendar",
     description: "See every scheduled post across all platforms at a glance. Drag, reorder, and batch-schedule without losing track of what's live.",
-    iconCls: "bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400",
-    mockBg: "from-blue-50 to-sky-50/60 dark:from-blue-900/20 dark:to-blue-900/5",
+    iconCls: "bg-[hsl(277_55%_96%)] text-[#2A1D32] dark:bg-[hsl(277_30%_16%)] dark:text-[hsl(277_44%_64%)]",
+    mockBg: "from-[hsl(277_55%_97%)] to-[hsl(277_40%_93%/0.5)] dark:from-[hsl(277_28%_12%)] dark:to-[hsl(277_22%_8%)]",
   },
   {
     Icon: Zap, tag: "Publishing", title: "One post. All platforms.",
     description: "Write once, publish everywhere. Official API connections — no browser extensions, no copy-pasting captions across five tabs.",
-    iconCls: "bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400",
-    mockBg: "from-amber-50 to-orange-50/60 dark:from-amber-900/20 dark:to-amber-900/5",
+    iconCls: "bg-[hsl(25_38%_93%)] text-[hsl(25_42%_28%)] dark:bg-[hsl(25_22%_16%)] dark:text-[hsl(25_32%_62%)]",
+    mockBg: "from-[hsl(25_38%_96%)] to-transparent dark:from-[hsl(25_20%_12%)] dark:to-[hsl(25_14%_8%)]",
   },
   {
     Icon: Users, tag: "Collaboration", title: "Review before anything goes live",
     description: "Share a private review link, collect approvals from clients or stakeholders, and publish only when everyone signs off.",
-    iconCls: "bg-purple-100 text-purple-600 dark:bg-purple-900/40 dark:text-purple-400",
-    mockBg: "from-purple-50 to-violet-50/60 dark:from-purple-900/20 dark:to-purple-900/5",
+    iconCls: "bg-[hsl(330_32%_93%)] text-[hsl(330_35%_30%)] dark:bg-[hsl(330_20%_16%)] dark:text-[hsl(330_28%_62%)]",
+    mockBg: "from-[hsl(330_32%_96%)] to-transparent dark:from-[hsl(330_18%_12%)] dark:to-[hsl(330_12%_8%)]",
   },
   {
     Icon: BarChart3, tag: "Analytics", title: "Post history and workspace reports",
     description: "Track every post across every platform from one dashboard. See what published, when, and to which accounts.",
-    iconCls: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-400",
-    mockBg: "from-emerald-50 to-teal-50/60 dark:from-emerald-900/20 dark:to-emerald-900/5",
+    iconCls: "bg-[hsl(158_28%_91%)] text-[hsl(158_32%_24%)] dark:bg-[hsl(158_18%_14%)] dark:text-[hsl(158_24%_52%)]",
+    mockBg: "from-[hsl(158_28%_94%)] to-transparent dark:from-[hsl(158_16%_11%)] dark:to-[hsl(158_10%_8%)]",
   },
   {
     Icon: Shield, tag: "Security", title: "OAuth-secured connections",
     description: "Every platform connection uses official OAuth — no password storage, no third-party workarounds. Workspace-scoped access controls.",
-    iconCls: "bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-400",
-    mockBg: "from-rose-50 to-pink-50/60 dark:from-rose-900/20 dark:to-rose-900/5",
+    iconCls: "bg-[hsl(215_30%_92%)] text-[hsl(215_36%_26%)] dark:bg-[hsl(215_20%_15%)] dark:text-[hsl(215_26%_56%)]",
+    mockBg: "from-[hsl(215_30%_95%)] to-transparent dark:from-[hsl(215_18%_12%)] dark:to-[hsl(215_12%_8%)]",
   },
   {
     Icon: Globe, tag: "Scale", title: "Multi-account management",
     description: "Organize brands, workspaces, and connected profiles in one place. Built for agencies and multi-brand teams from day one.",
-    iconCls: "bg-sky-100 text-sky-600 dark:bg-sky-900/40 dark:text-sky-400",
-    mockBg: "from-sky-50 to-blue-50/60 dark:from-sky-900/20 dark:to-sky-900/5",
+    iconCls: "bg-[hsl(35_20%_91%)] text-[hsl(35_26%_26%)] dark:bg-[hsl(35_16%_14%)] dark:text-[hsl(35_18%_54%)]",
+    mockBg: "from-[hsl(35_20%_94%)] to-transparent dark:from-[hsl(35_14%_11%)] dark:to-[hsl(35_10%_8%)]",
   },
 ];
 
@@ -123,20 +123,20 @@ const PERSONAS = [
     headline: "Create once. Reach everywhere.",
     body: "Write captions, schedule, and publish to every platform in one sitting. Spend time making content, not copy-pasting it.",
     points: ["5 platforms from one dashboard", "Image, video, and text post types", "Visual content calendar", "14-day trial, no card needed"],
-    chip: "bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-900/20 dark:border-purple-700/40 dark:text-purple-300",
-    checkCls: "text-purple-500",
-    accent: "hover:border-purple-300 dark:hover:border-purple-700",
-    link: "text-purple-600 hover:text-purple-700 dark:text-purple-400",
+    chip: "bg-slate-50 border-slate-200 text-slate-700 dark:bg-white/[0.05] dark:border-white/[0.10] dark:text-white/60",
+    checkCls: "text-slate-500 dark:text-white/50",
+    accent: "hover:border-slate-300 dark:hover:border-white/15",
+    link: "text-slate-600 hover:text-slate-800 dark:text-white/60 dark:hover:text-white/80",
   },
   {
     tag: "Agency",
     headline: "One workspace. Every client.",
     body: "Manage multiple brands, teams, and approval flows from a single operational hub. Built for agencies running at scale.",
     points: ["Multi-workspace management", "Team members with role-based access", "Client approval workflows", "Post history and analytics per brand"],
-    chip: "bg-blue-50 border-blue-200 text-blue-700 dark:bg-blue-900/20 dark:border-blue-700/40 dark:text-blue-300",
-    checkCls: "text-blue-500",
-    accent: "hover:border-blue-300 dark:hover:border-blue-700",
-    link: "text-[var(--ds-blue-600)] hover:text-[var(--ds-blue-700)]",
+    chip: "bg-[hsl(277_55%_96%)] border-[hsl(277_40%_80%)] text-[#2A1D32] dark:bg-[hsl(277_28%_14%)] dark:border-[hsl(277_32%_28%)] dark:text-[hsl(277_42%_60%)]",
+    checkCls: "text-[#2A1D32] dark:text-[hsl(277_42%_60%)]",
+    accent: "hover:border-[hsl(277_38%_72%)] dark:hover:border-[hsl(277_32%_32%)]",
+    link: "text-[#2A1D32] hover:text-[hsl(277_30%_10%)] dark:text-[hsl(277_40%_56%)] dark:hover:text-[hsl(277_44%_64%)]",
   },
 ];
 
@@ -144,27 +144,27 @@ const TESTIMONIALS = [
   {
     quote: "We manage 14 client accounts across industries. SocialRaven is the first tool that doesn't feel like it's fighting us — approvals, handoffs, post queues all in one place.",
     name: "Sarah Chen", role: "Head of Social", company: "Clarity Agency", tag: "Agency · 14 clients",
-    initials: "SC", avatarBg: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
+    initials: "SC", avatarBg: "bg-[hsl(277_55%_94%)] text-[#2A1D32] dark:bg-[hsl(277_30%_16%)] dark:text-[hsl(277_42%_60%)]",
   },
   {
     quote: "As a creator juggling YouTube, Instagram, and LinkedIn, SocialRaven cuts my publishing time in half. The review links mean my editor can approve without needing access.",
     name: "Marcus T.", role: "Content Creator", company: "Independent", tag: "Creator · 180K followers",
-    initials: "MT", avatarBg: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300",
+    initials: "MT", avatarBg: "bg-[hsl(330_32%_90%)] text-[hsl(330_35%_30%)] dark:bg-[hsl(330_20%_16%)] dark:text-[hsl(330_28%_62%)]",
   },
   {
     quote: "Our brand team used to send screenshots in Slack for approvals. Review links changed everything. Less chaos, more publishing.",
     name: "Priya Nair", role: "Social Media Lead", company: "Brandwave", tag: "Team · 3 brands managed",
-    initials: "PN", avatarBg: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300",
+    initials: "PN", avatarBg: "bg-[hsl(158_28%_88%)] text-[hsl(158_32%_24%)] dark:bg-[hsl(158_18%_14%)] dark:text-[hsl(158_24%_56%)]",
   },
   {
     quote: "The scheduling calendar alone saved us 6+ hours per week. We used to do everything manually across tabs.",
     name: "James Okafor", role: "Digital Marketing Manager", company: "Nexus Group", tag: "Team · 8 brands",
-    initials: "JO", avatarBg: "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300",
+    initials: "JO", avatarBg: "bg-[hsl(25_38%_89%)] text-[hsl(25_42%_28%)] dark:bg-[hsl(25_22%_14%)] dark:text-[hsl(25_32%_58%)]",
   },
   {
     quote: "I handle social for 3 DTC brands. Having everything in one place with approval flows means nothing slips through the cracks.",
     name: "Lena Fischer", role: "Social Media Manager", company: "Freelance", tag: "Creator · 3 brand clients",
-    initials: "LF", avatarBg: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300",
+    initials: "LF", avatarBg: "bg-[hsl(215_30%_88%)] text-[hsl(215_36%_26%)] dark:bg-[hsl(215_18%_14%)] dark:text-[hsl(215_26%_56%)]",
   },
 ];
 
@@ -202,7 +202,15 @@ const KEYFRAMES = `
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(130deg, hsl(212 86% 46%) 0%, hsl(228 72% 60%) 50%, hsl(212 86% 46%) 100%);
+    background-image: linear-gradient(130deg, hsl(277 32% 20%) 0%, hsl(277 42% 42%) 50%, hsl(277 32% 20%) 100%);
+    background-size: 200% auto;
+    animation: gradientShift 7s ease infinite;
+  }
+  .dark .gradient-text {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(130deg, hsl(277 42% 56%) 0%, hsl(277 50% 68%) 50%, hsl(277 42% 56%) 100%);
     background-size: 200% auto;
     animation: gradientShift 7s ease infinite;
   }
@@ -270,9 +278,9 @@ function DashboardMock() {
     { d: "M4 6h16M4 12h16M4 18h16", active: false },
   ];
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-[var(--ds-gray-200)] bg-white shadow-[0_32px_80px_rgba(0,0,0,0.10),0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[hsl(222_28%_8%)] dark:shadow-[0_48px_120px_-20px_rgba(0,0,0,0.72)]">
+    <div className="w-full overflow-hidden rounded-2xl border border-[var(--ds-gray-200)] bg-white shadow-[0_32px_80px_rgba(0,0,0,0.10),0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[hsl(277_15%_8%)] dark:shadow-[0_48px_120px_-20px_rgba(0,0,0,0.72)]">
       {/* Chrome bar */}
-      <div className="flex items-center gap-3 border-b border-[var(--ds-gray-100)] bg-[var(--ds-background-100)] px-4 py-3 dark:border-white/[0.06] dark:bg-[hsl(222_28%_6%)]">
+      <div className="flex items-center gap-3 border-b border-[var(--ds-gray-100)] bg-[var(--ds-background-100)] px-4 py-3 dark:border-white/[0.06] dark:bg-[hsl(277_12%_6%)]">
         <div className="flex gap-1.5" aria-hidden="true">
           <div className="h-3 w-3 rounded-full bg-[#FF5F56]" />
           <div className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
@@ -285,9 +293,9 @@ function DashboardMock() {
       </div>
       <div className="flex">
         {/* Sidebar */}
-        <div className="hidden w-12 flex-col items-center gap-1 border-r border-[var(--ds-gray-100)] bg-[var(--ds-background-100)] py-3 dark:border-white/[0.05] dark:bg-[hsl(222_28%_6%)] sm:flex" aria-hidden="true">
+        <div className="hidden w-12 flex-col items-center gap-1 border-r border-[var(--ds-gray-100)] bg-[var(--ds-background-100)] py-3 dark:border-white/[0.05] dark:bg-[hsl(277_12%_6%)] sm:flex" aria-hidden="true">
           {NAV_PATHS.map(({ d, active }, i) => (
-            <button key={i} tabIndex={-1} className={`flex h-9 w-9 items-center justify-center rounded-lg ${active ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-600)] dark:bg-white/10 dark:text-white/80" : "text-[var(--ds-gray-400)] dark:text-white/20"}`}>
+            <button key={i} tabIndex={-1} className={`flex h-9 w-9 items-center justify-center rounded-lg ${active ? "bg-[var(--ds-plum-100)] text-[#2A1D32] dark:bg-white/10 dark:text-white/80" : "text-[var(--ds-gray-400)] dark:text-white/20"}`}>
               <svg className="h-[0.875rem] w-[0.875rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
             </button>
           ))}
@@ -299,7 +307,7 @@ function DashboardMock() {
               <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Scheduled posts</p>
               <p className="mt-0.5 text-[0.625rem] text-[var(--ds-gray-500)]">April 2026 · 48 posts queued</p>
             </div>
-            <button tabIndex={-1} className="self-start rounded-lg bg-[hsl(212_86%_50%)] px-2.5 py-1.5 text-[0.6875rem] font-semibold text-white sm:self-auto">+ New post</button>
+            <button tabIndex={-1} className="self-start rounded-lg bg-[#2A1D32] px-2.5 py-1.5 text-[0.6875rem] font-semibold text-white dark:bg-[hsl(277_40%_50%)] sm:self-auto">+ New post</button>
           </div>
           <div className="space-y-1.5">
             {MOCK_POSTS.map((post, i) => {
@@ -332,12 +340,12 @@ function DashboardMock() {
               );
             })}
           </div>
-          <div className="mt-3 flex items-center justify-between rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 dark:border-amber-500/15 dark:bg-amber-500/[0.05]">
+          <div className="mt-3 flex items-center justify-between rounded-xl border border-[hsl(277_40%_88%)] bg-[hsl(277_55%_97%)] px-3 py-2 dark:border-[hsl(277_32%_22%)] dark:bg-[hsl(277_30%_13%)]">
             <div className="flex items-center gap-2">
-              <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-              <span className="text-[0.6875rem] text-amber-700 dark:text-amber-300/80">3 posts awaiting approval</span>
+              <div className="h-1.5 w-1.5 rounded-full bg-[hsl(277_38%_58%)]" />
+              <span className="text-[0.6875rem] text-[#2A1D32] dark:text-[hsl(277_40%_56%)]">3 posts awaiting approval</span>
             </div>
-            <button tabIndex={-1} className="text-[0.625rem] font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400/70">Review →</button>
+            <button tabIndex={-1} className="text-[0.625rem] font-semibold text-[#2A1D32] hover:text-[hsl(277_30%_10%)] dark:text-[hsl(277_40%_56%)] dark:hover:text-[hsl(277_44%_64%)]">Review →</button>
           </div>
         </div>
       </div>
@@ -368,15 +376,15 @@ export default function LandingPage() {
         {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
         <section className="relative mx-auto max-w-[88rem] overflow-hidden pb-0 pt-28">
           {/* Light bloom */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(212 86% 82% / 0.20) 0%, transparent 56%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(277 46% 76% / 0.18) 0%, transparent 56%)" }} aria-hidden="true" />
           {/* Dark bloom */}
-          <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(212 86% 54% / 0.22) 0%, transparent 61%)" }} aria-hidden="true" />
+          <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(277 35% 34% / 0.28) 0%, transparent 61%)" }} aria-hidden="true" />
           {/* Dot grid — light mode base */}
-          <div className="pointer-events-none absolute inset-0 opacity-[0.28] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(214 18% 46% / 0.68) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 opacity-[0.28] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(277 18% 42% / 0.65) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)" }} aria-hidden="true" />
           {/* Dot grid — light mode subtle glow */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-[0.34] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(212 82% 66% / 0.44) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", WebkitMaskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", filter: "blur(0.55px) drop-shadow(0 0 8px hsl(212 86% 66% / 0.16))" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-[0.32] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(277 42% 58% / 0.40) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", WebkitMaskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", filter: "blur(0.55px) drop-shadow(0 0 8px hsl(277 40% 55% / 0.14))" }} aria-hidden="true" />
           {/* Dot grid — dark mode with glow */}
-          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(212 86% 72% / 0.55) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(212 86% 65% / 0.6))" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(277 50% 68% / 0.52) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(277 48% 62% / 0.55))" }} aria-hidden="true" />
 
           <div className={`${W} relative`}>
 
@@ -391,8 +399,8 @@ export default function LandingPage() {
             >
               <div className="w-56 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <div className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/40">
-                    <CheckCircle2 className="h-4.5 w-4.5 h-[1.125rem] w-[1.125rem] text-emerald-600" />
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[hsl(277_55%_95%)] dark:bg-[hsl(277_30%_16%)]">
+                    <CheckCircle2 className="h-[1.125rem] w-[1.125rem] text-[#2A1D32] dark:text-[hsl(277_40%_56%)]" />
                   </span>
                   <div>
                     <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Campaign live</p>
@@ -405,7 +413,7 @@ export default function LandingPage() {
                       <Icon className="h-2.5 w-2.5 text-[var(--ds-gray-600)]" />
                     </div>
                   ))}
-                  <span className="ml-auto text-[0.5625rem] font-semibold text-emerald-600">just now</span>
+                  <span className="ml-auto text-[0.5625rem] font-semibold text-[var(--ds-gray-400)]">just now</span>
                 </div>
               </div>
             </motion.div>
@@ -421,14 +429,14 @@ export default function LandingPage() {
             >
               <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
-                    <Clock className="h-4 w-4 text-amber-600" />
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[hsl(277_55%_95%)] dark:bg-[hsl(277_30%_16%)]">
+                    <Clock className="h-4 w-4 text-[#2A1D32] dark:text-[hsl(277_40%_56%)]" />
                   </span>
                   <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Review needed</p>
                 </div>
                 <p className="mt-2 text-[0.625rem] leading-relaxed text-[var(--ds-gray-500)]">3 posts awaiting client approval before publishing</p>
-                <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-[var(--ds-gray-100)]">
-                  <div className="h-full w-[62%] rounded-full bg-amber-400" />
+                <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-[var(--ds-gray-100)] dark:bg-white/[0.06]">
+                  <div className="h-full w-[62%] rounded-full bg-[#2A1D32] dark:bg-[hsl(277_40%_48%)]" />
                 </div>
                 <p className="mt-1 text-right text-[0.5625rem] text-[var(--ds-gray-400)]">5 / 8 approved</p>
               </div>
@@ -448,10 +456,10 @@ export default function LandingPage() {
                 <p className="mt-0.5 text-[1.5rem] font-black tracking-tight text-[var(--ds-gray-1000)]">48</p>
                 <div className="mt-2.5 flex items-end gap-1" style={{ height: "2.5rem" }}>
                   {[55, 40, 75, 50, 85, 65, 100].map((h, k) => (
-                    <div key={k} className="flex-1 rounded-sm bg-[hsl(212_86%_50%)]" style={{ height: `${h}%`, opacity: k === 6 ? 1 : 0.25 + k * 0.1 }} />
+                    <div key={k} className="flex-1 rounded-sm bg-[#2A1D32] dark:bg-[hsl(277_40%_50%)]" style={{ height: `${h}%`, opacity: k === 6 ? 1 : 0.25 + k * 0.1 }} />
                   ))}
                 </div>
-                <p className="mt-1.5 text-[0.5625rem] font-semibold text-emerald-600">↑ 28% vs last week</p>
+                <p className="mt-1.5 text-[0.5625rem] font-semibold text-[hsl(158_32%_32%)] dark:text-[hsl(158_24%_52%)]">↑ 28% vs last week</p>
               </div>
             </motion.div>
 
@@ -466,7 +474,7 @@ export default function LandingPage() {
             >
               <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
                 <div className="mb-3 flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-[hsl(212_86%_50%)]" />
+                  <Globe className="h-4 w-4 text-[#2A1D32] dark:text-[hsl(277_40%_52%)]" />
                   <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-900)]">Connected accounts</p>
                 </div>
                 {[
@@ -509,7 +517,7 @@ export default function LandingPage() {
               <motion.div variants={FV} className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
                 <Link
                   href="/sign-up"
-                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[hsl(212_86%_48%)] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_hsl(212_86%_48%/0.38)] transition-all duration-150 hover:bg-[hsl(212_86%_43%)] hover:shadow-[0_6px_24px_hsl(212_86%_48%/0.48)]"
+                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[#2A1D32] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_rgba(42,29,50,0.40)] transition-all duration-150 hover:bg-[hsl(277_30%_10%)] hover:shadow-[0_6px_24px_rgba(42,29,50,0.50)] dark:bg-[hsl(277_40%_50%)] dark:shadow-[0_4px_16px_hsl(277_40%_50%/0.35)] dark:hover:bg-[hsl(277_44%_56%)]"
                 >
                   Start for free <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -533,7 +541,7 @@ export default function LandingPage() {
               transition={{ duration: 0.9, delay: 0.55, ease: EASE_OUT }}
               className="relative mx-auto mt-16 max-w-[58rem]"
             >
-              <div className="pointer-events-none absolute -inset-x-8 -bottom-8 h-28 blur-3xl" style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(212 86% 55% / 0.22) 0%, transparent 70%)" }} aria-hidden="true" />
+              <div className="pointer-events-none absolute -inset-x-8 -bottom-8 h-28 blur-3xl" style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(277 40% 52% / 0.18) 0%, transparent 70%)" }} aria-hidden="true" />
               <DashboardMock />
             </motion.div>
           </div>
@@ -615,20 +623,20 @@ export default function LandingPage() {
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="flex flex-col items-center">
 
               {/* Globe hub */}
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-[hsl(212_86%_48%)] bg-white shadow-[0_0_0_8px_hsl(212_86%_48%/0.08)] dark:bg-[var(--ds-background-100)]">
-                <Globe className="h-7 w-7 text-[hsl(212_86%_48%)]" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-[#2A1D32] bg-white shadow-[0_0_0_8px_rgba(42,29,50,0.08)] dark:border-[hsl(277_40%_50%)] dark:bg-[var(--ds-background-100)] dark:shadow-[0_0_0_8px_hsl(277_40%_50%/0.10)]">
+                <Globe className="h-7 w-7 text-[#2A1D32] dark:text-[hsl(277_40%_52%)]" />
               </div>
 
               {/* Vertical trunk */}
               <div className="relative h-10 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08]">
-                <div className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(212_86%_58%)] to-transparent" />
+                <div className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(277_40%_48%)] to-transparent" />
               </div>
 
               {/* Horizontal bus + drops + tiles */}
               <div className="w-full">
                 {/* Horizontal bus */}
                 <div className="relative mx-[calc((100%-1.5rem)/14)] h-px overflow-hidden bg-[var(--ds-gray-200)] sm:mx-[calc((100%-3rem)/14)] md:mx-[calc((100%-4.5rem)/14)] dark:bg-white/[0.08]">
-                  <div className="fiber-h absolute inset-y-0 left-1/2 w-full bg-gradient-to-r from-transparent via-[hsl(212_86%_58%)] to-transparent" />
+                  <div className="fiber-h absolute inset-y-0 left-1/2 w-full bg-gradient-to-r from-transparent via-[hsl(277_40%_48%)] to-transparent" />
                 </div>
 
                 {/* Platform tiles grid */}
@@ -638,7 +646,7 @@ export default function LandingPage() {
                       {/* Drop line */}
                       <div className="relative h-4 w-px overflow-hidden bg-[var(--ds-gray-200)] dark:bg-white/[0.08] md:h-8">
                         <div
-                          className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(212_86%_58%)] to-transparent"
+                          className="fiber-v absolute inset-x-0 h-[50%] bg-gradient-to-b from-transparent via-[hsl(277_40%_48%)] to-transparent"
                           style={{ animationDelay: `${i * 0.22}s` }}
                         />
                       </div>
@@ -686,8 +694,8 @@ export default function LandingPage() {
               {STEPS.map(({ n, Icon, title, body }) => (
                 <motion.div key={n} variants={FV} className="flex flex-col items-center text-center">
                   <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl border border-[var(--ds-gray-200)] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:bg-[var(--ds-background-100)]">
-                    <Icon className="h-6 w-6 text-[hsl(212_86%_48%)]" />
-                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[hsl(212_86%_48%)] text-[0.5625rem] font-bold text-white">{n}</span>
+                    <Icon className="h-6 w-6 text-[#2A1D32] dark:text-[hsl(277_40%_52%)]" />
+                    <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#2A1D32] text-[0.5625rem] font-bold text-white dark:bg-[hsl(277_40%_50%)]">{n}</span>
                   </div>
                   <h3 className="mt-5 text-[1.0625rem] font-bold tracking-[-0.02em] text-[var(--ds-gray-1000)]">{title}</h3>
                   <p className="mt-2 text-[0.875rem] leading-[1.65] text-[var(--ds-gray-700)]">{body}</p>
@@ -741,8 +749,8 @@ export default function LandingPage() {
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="grid items-center gap-12 lg:grid-cols-2">
               <div>
                 <motion.div variants={FV}>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(212_86%_54%/0.3)] bg-[hsl(212_86%_54%/0.08)] px-3 py-1 text-[0.75rem] font-medium text-[hsl(212_86%_42%)] dark:text-[hsl(212_86%_72%)]">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(212_86%_52%)]" />
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[rgba(42,29,50,0.28)] bg-[rgba(42,29,50,0.06)] px-3 py-1 text-[0.75rem] font-medium text-[#2A1D32] dark:border-[hsl(277_40%_55%/0.38)] dark:bg-[hsl(277_35%_45%/0.12)] dark:text-[hsl(277_40%_56%)]">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#2A1D32] dark:bg-[hsl(277_48%_65%)]" />
                     Coming soon
                   </span>
                 </motion.div>
@@ -771,7 +779,7 @@ export default function LandingPage() {
                   <div className="flex items-center gap-3 border-b border-[var(--ds-gray-200)] px-4 py-3.5 dark:border-white/[0.07]">
                     <MessageSquare className="h-4 w-4 text-[var(--ds-gray-500)]" />
                     <span className="text-[0.8125rem] font-semibold text-[var(--ds-gray-900)]">Unified Inbox</span>
-                    <span className="ml-auto rounded-full bg-[hsl(212_86%_48%/0.12)] px-2 py-0.5 text-[0.625rem] font-bold text-[hsl(212_86%_42%)] dark:bg-[hsl(212_86%_48%/0.25)] dark:text-[hsl(212_86%_75%)]">12 new</span>
+                    <span className="ml-auto rounded-full bg-[rgba(42,29,50,0.10)] px-2 py-0.5 text-[0.625rem] font-bold text-[#2A1D32] dark:bg-[hsl(277_38%_48%/0.22)] dark:text-[hsl(277_42%_60%)]">12 new</span>
                   </div>
                   {[
                     { Icon: Instagram, name: "@sarah.design",  msg: "Love this post! Can I reshare it?",      time: "2m",  dot: "bg-pink-500"  },
@@ -891,8 +899,8 @@ export default function LandingPage() {
 
         {/* ════════════════════════ FINAL CTA ══════════════════════════════════ */}
         <section className="relative overflow-hidden border-t border-[var(--ds-gray-200)] bg-white py-32 dark:border-[var(--ds-gray-400)] dark:bg-[var(--ds-background-200)]">
-          <div className="pointer-events-none absolute inset-0 dark:hidden" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(212 86% 82% / 0.22) 0%, transparent 60%)" }} aria-hidden="true" />
-          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(212 86% 54% / 0.12) 0%, transparent 60%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 dark:hidden" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(277 46% 74% / 0.16) 0%, transparent 60%)" }} aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ background: "radial-gradient(ellipse 70% 50% at 50% 120%, hsl(277 35% 32% / 0.20) 0%, transparent 60%)" }} aria-hidden="true" />
 
           <div className="relative">
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="flex flex-col items-center text-center">
@@ -905,7 +913,7 @@ export default function LandingPage() {
               <motion.div variants={FV} className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <Link
                   href="/sign-up"
-                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[hsl(212_86%_48%)] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_hsl(212_86%_48%/0.38)] transition-all duration-150 hover:bg-[hsl(212_86%_43%)] hover:shadow-[0_6px_24px_hsl(212_86%_48%/0.48)]"
+                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[#2A1D32] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_rgba(42,29,50,0.40)] transition-all duration-150 hover:bg-[hsl(277_30%_10%)] hover:shadow-[0_6px_24px_rgba(42,29,50,0.50)] dark:bg-[hsl(277_40%_50%)] dark:shadow-[0_4px_16px_hsl(277_40%_50%/0.35)] dark:hover:bg-[hsl(277_44%_56%)]"
                 >
                   Start for free — no card needed
                   <ArrowRight className="h-4 w-4" />
@@ -920,7 +928,7 @@ export default function LandingPage() {
               <motion.div variants={FV} className="mt-6 flex flex-wrap items-center justify-center gap-5 text-[0.8125rem] text-[var(--ds-gray-600)]">
                 {["No credit card required", "GDPR-conscious", "OAuth-secured", "Cancel anytime"].map((t) => (
                   <span key={t} className="flex items-center gap-1.5">
-                    <Check className="h-3.5 w-3.5 text-emerald-500" /> {t}
+                    <Check className="h-3.5 w-3.5 text-[#2A1D32] dark:text-[hsl(277_40%_52%)]" /> {t}
                   </span>
                 ))}
               </motion.div>
