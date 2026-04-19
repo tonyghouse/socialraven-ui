@@ -69,7 +69,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     Icon: PLATFORM_ICONS.tiktok,
     accentColor: "var(--ds-gray-1000)",
     connectHref: "/api/auth/tiktok",
-    enabled: false,
+    enabled: true,
     iconClassName: "h-[0.9375rem] w-[0.9375rem]",
   },
   threads: {
