@@ -67,8 +67,6 @@ const PLATFORM_META: Record<string, { label: string; chartColor: string }> = {
 
 const ACTIVE_PROVIDERS = ["youtube", "linkedin", "x"] as const;
 const DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const PROXY_DOMAINS = ["linkedin.com", "licdn.com"];
-
 const pageClassName = "min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]";
 const surfaceClassName =
   "overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none";
@@ -104,7 +102,8 @@ function fmtDate(iso: string | null): string {
 
 function proxyImg(url?: string | null): string | null {
   if (!url) return null;
-  return PROXY_DOMAINS.some((domain) => url.toLowerCase().includes(domain))
+  if (url.startsWith("/")) return url;
+  return /^https?:\/\//i.test(url)
     ? `/api/proxy-image?url=${encodeURIComponent(url)}`
     : url;
 }

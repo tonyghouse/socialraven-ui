@@ -30,8 +30,8 @@ import { mapMediaResponseToMedia } from "@/lib/media-mapper";
 
 const getImageUrl = (url: string | null | undefined) => {
   if (!url) return null;
-  const needsProxy = ["linkedin.com", "licdn.com"];
-  return needsProxy.some((d) => url.includes(d))
+  if (url.startsWith("/")) return url;
+  return /^https?:\/\//i.test(url)
     ? `/api/proxy-image?url=${encodeURIComponent(url)}`
     : url;
 };

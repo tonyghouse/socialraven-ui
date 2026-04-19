@@ -41,17 +41,12 @@ type Props = {
   canWrite?: boolean;
 };
 
-const needsProxyDomains = ["linkedin.com", "licdn.com"];
-
 const getImageUrl = (url?: string | null) => {
   if (!url) return null;
   try {
-    const lower = url.toLowerCase();
-    const requiresProxy = needsProxyDomains.some((d) => lower.includes(d));
-    if (requiresProxy) {
-      return `/api/proxy-image?url=${encodeURIComponent(url)}`;
-    }
-    return url;
+    if (url.startsWith("/")) return url;
+    const isRemoteUrl = /^https?:\/\//i.test(url);
+    return isRemoteUrl ? `/api/proxy-image?url=${encodeURIComponent(url)}` : url;
   } catch {
     return url;
   }

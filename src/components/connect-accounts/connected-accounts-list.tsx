@@ -33,23 +33,10 @@ const getInitials = (username: string) => {
 // Helper function to get proxied or direct image URL
 const getImageUrl = (url: string | null | undefined) => {
   if (!url) return null;
-
-  // List of domains that need proxying due to CORS
-  const needsProxy = [
-    'linkedin.com',
-    'licdn.com',
-  ];
-
-  // Check if URL needs proxying
-  const requiresProxy = needsProxy.some(domain => url.includes(domain));
-
-  if (requiresProxy) {
-    // Use the proxy API route
-    return `/api/proxy-image?url=${encodeURIComponent(url)}`;
-  }
-
-  // Return direct URL for other platforms
-  return url;
+  if (url.startsWith("/")) return url;
+  return /^https?:\/\//i.test(url)
+    ? `/api/proxy-image?url=${encodeURIComponent(url)}`
+    : url;
 };
 
 // Account item component with error handling

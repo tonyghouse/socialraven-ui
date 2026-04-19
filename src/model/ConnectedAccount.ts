@@ -5,6 +5,6 @@ export interface ConnectedAccount {
   providerUserId: string;
   platform: Platform;
   username: string;
-  profilePicLink: string;
+  profilePicLink: string | null;
   allowedFormats: PostType[];
 }

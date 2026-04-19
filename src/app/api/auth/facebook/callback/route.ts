@@ -1,11 +1,12 @@
-// app/api/auth/facebook/callback/route.ts
-import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 import {
   buildClientConnectResultUrl,
   clearClientConnectCookies,
   getClientConnectContext,
 } from "@/lib/client-connect-flow";
+
+const FACEBOOK_STATE_COOKIE = "oauth_facebook_state";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -22,6 +23,7 @@ export async function GET(req: NextRequest) {
         buildClientConnectResultUrl(publicContext.token, "facebook", status, reason)
       );
       clearClientConnectCookies(response);
+      response.cookies.delete(FACEBOOK_STATE_COOKIE);
       return response;
     };
 
@@ -57,31 +59,40 @@ export async function GET(req: NextRequest) {
     return finish("success");
   }
 
-  // Handle OAuth errors from Facebook
+  const finishWorkspace = (status: "success" | "error", reason?: string) => {
+    const url = new URL(`${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts`);
+    url.searchParams.set("provider", "facebook");
+    url.searchParams.set("status", status);
+    if (reason) {
+      url.searchParams.set("reason", reason);
+    }
+
+    const response = NextResponse.redirect(url.toString());
+    response.cookies.delete(FACEBOOK_STATE_COOKIE);
+    return response;
+  };
+
   if (error) {
-    console.error("Facebook OAuth error:", { error, errorReason, errorDescription });
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=facebook&status=error&reason=${error}`
-    );
+    return finishWorkspace("error", errorDescription || errorReason || error);
   }
 
   if (!code) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=facebook&status=error&reason=no_code`
-    );
+    return finishWorkspace("error", "no_code");
+  }
+
+  const expectedState = req.cookies.get(FACEBOOK_STATE_COOKIE)?.value ?? "";
+  if (!state || !expectedState || state !== expectedState) {
+    return finishWorkspace("error", "state_mismatch");
   }
 
   const { getToken } = await auth();
   const token = await getToken();
 
   if (!token) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=facebook&status=error&reason=unauthorized`
-    );
+    return finishWorkspace("error", "unauthorized");
   }
 
   const workspaceId = req.cookies.get("oauth_workspace_id")?.value ?? "";
-
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/oauth/facebook/callback`,
     {
@@ -96,13 +107,8 @@ export async function GET(req: NextRequest) {
   );
 
   if (!response.ok) {
-    console.log("Backend returned error:", await response.text());
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=facebook&status=error`
-    );
+    return finishWorkspace("error", (await response.text()) || "backend_error");
   }
 
-  return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/connect-accounts?provider=facebook&status=success`
-  );
+  return finishWorkspace("success");
 }
