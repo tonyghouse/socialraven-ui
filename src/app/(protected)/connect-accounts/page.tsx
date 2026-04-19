@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import LinkNewAccountSection from "@/components/connect-accounts/link-new-account-section";
 import ConnectedAccountsSection from "@/components/connect-accounts/connected-accounts-section";
 import ClientConnectionHandoffSection from "@/components/connect-accounts/client-connection-handoff-section";
 import {
@@ -72,7 +71,7 @@ export default function ManageAccountsPage() {
 
       <main className="px-4 py-5 sm:px-5 sm:py-6">
         <section className="space-y-5">
-          <div>
+          <div id="connect-platforms">
             <ConnectedAccountsSection
               canWrite={canWrite}
               header={
@@ -84,12 +83,6 @@ export default function ManageAccountsPage() {
               }
             />
           </div>
-
-          {canWrite ? (
-            <div id="connect-platforms">
-              <LinkNewAccountSection />
-            </div>
-          ) : null}
 
           {canWrite && isAgency ? <ClientConnectionHandoffSection /> : null}
         </section>
