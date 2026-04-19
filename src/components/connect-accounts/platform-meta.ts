@@ -24,8 +24,8 @@ export const CONNECT_PLATFORM_ORDER: ConnectPlatformKey[] = [
   "youtube",
   "instagram",
   "facebook",
-  "tiktok",
   "threads",
+  "tiktok",
 ];
 
 export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMeta> = {
@@ -77,7 +77,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     Icon: PLATFORM_ICONS.threads,
     accentColor: "var(--ds-gray-1000)",
     connectHref: "/api/auth/threads",
-    enabled: false,
+    enabled: true,
     iconClassName: "h-[0.9375rem] w-[0.9375rem]",
   },
 };

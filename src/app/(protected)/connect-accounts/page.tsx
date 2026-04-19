@@ -9,17 +9,12 @@ import ClientConnectionHandoffSection from "@/components/connect-accounts/client
 import {
   Link2,
   PlugZap,
-  RefreshCw,
-  ShieldCheck,
 } from "lucide-react";
 import { usePlan } from "@/hooks/usePlan";
 import { useRole } from "@/hooks/useRole";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
 import {
   ConnectButton,
-  connectBodyClassName,
-  connectInsetCardClassName,
-  connectMetaClassName,
   connectPageClassName,
   connectTitleClassName,
 } from "@/components/connect-accounts/connect-accounts-primitives";
@@ -90,7 +85,13 @@ export default function ManageAccountsPage() {
             />
           </div>
 
-            {canWrite && isAgency && <ClientConnectionHandoffSection />}
+          {canWrite ? (
+            <div id="connect-platforms">
+              <LinkNewAccountSection />
+            </div>
+          ) : null}
+
+          {canWrite && isAgency ? <ClientConnectionHandoffSection /> : null}
         </section>
       </main>
     </div>

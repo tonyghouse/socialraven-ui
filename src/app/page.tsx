@@ -54,8 +54,8 @@ const PLATFORMS = [
   { Icon: Linkedin,    name: "LinkedIn",    color: "text-blue-600",  bg: "bg-blue-50 dark:bg-blue-500/10" },
   { Icon: Youtube,     name: "YouTube",     color: "text-red-500",   bg: "bg-red-50 dark:bg-red-500/10"   },
   { Icon: Facebook,    name: "Facebook",    color: "text-blue-500",  bg: "bg-blue-50 dark:bg-blue-500/10" },
+  { Icon: ThreadsIcon, name: "Threads",     color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5" },
   { Icon: TikTokIcon,  name: "TikTok",      color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", soon: true },
-  { Icon: ThreadsIcon, name: "Threads",     color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", soon: true },
 ];
 
 const MOCK_POSTS = [
@@ -122,7 +122,7 @@ const PERSONAS = [
     tag: "Influencer",
     headline: "Create once. Reach everywhere.",
     body: "Write captions, schedule, and publish to every platform in one sitting. Spend time making content, not copy-pasting it.",
-    points: ["5 platforms from one dashboard", "Image, video, and text post types", "Visual content calendar", "14-day trial, no card needed"],
+    points: ["6 platforms from one dashboard", "Image, video, and text post types", "Visual content calendar", "14-day trial, no card needed"],
     chip: "bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-900/20 dark:border-purple-700/40 dark:text-purple-300",
     checkCls: "text-purple-500",
     accent: "hover:border-purple-300 dark:hover:border-purple-700",
@@ -172,7 +172,7 @@ const FAQ_ITEMS = [
   { q: "Is SocialRaven GDPR compliant?",              a: "SocialRaven uses privacy-conscious practices, scoped OAuth permissions, and clear public policy pages for how account and billing data are handled." },
   { q: "How does the free trial work?",               a: "Start with a 14-day trial workspace — no credit card required. Full access to all features from day one." },
   { q: "Does SocialRaven generate content?",          a: "No. SocialRaven is a scheduling and publishing platform. You bring the content — SocialRaven schedules and publishes it through official APIs." },
-  { q: "Which platforms are supported?",              a: "Currently live: Instagram, Twitter/X, LinkedIn, YouTube, and Facebook. TikTok and Threads are coming soon." },
+  { q: "Which platforms are supported?",              a: "Currently live: Instagram, Threads, Twitter/X, LinkedIn, YouTube, and Facebook. TikTok is coming soon." },
   { q: "Can I manage multiple clients from one account?", a: "Yes. Pro and Agency plans are designed for multi-brand work — manage all clients from a single workspace with proper access controls." },
   { q: "What is the unified inbox?",                  a: "An upcoming feature that consolidates comments and DMs from all connected social accounts into one actionable workspace." },
 ];
@@ -396,11 +396,11 @@ export default function LandingPage() {
                   </span>
                   <div>
                     <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Campaign live</p>
-                    <p className="text-[0.625rem] text-[var(--ds-gray-500)]">Published to 5 platforms</p>
+                    <p className="text-[0.625rem] text-[var(--ds-gray-500)]">Published to 6 platforms</p>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-1.5">
-                  {[Instagram, Twitter, Linkedin, Facebook, Youtube].map((Icon, k) => (
+                  {[Instagram, Twitter, Linkedin, Facebook, Youtube, ThreadsIcon].map((Icon, k) => (
                     <div key={k} className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)]">
                       <Icon className="h-2.5 w-2.5 text-[var(--ds-gray-600)]" />
                     </div>
@@ -475,6 +475,7 @@ export default function LandingPage() {
                   { Icon: Linkedin,  name: "LinkedIn",    dot: "bg-blue-500"  },
                   { Icon: Youtube,   name: "YouTube",     dot: "bg-red-400"   },
                   { Icon: Facebook,  name: "Facebook",    dot: "bg-blue-400"  },
+                  { Icon: ThreadsIcon, name: "Threads",   dot: "bg-[var(--ds-gray-700)]"  },
                 ].map(({ Icon, name, dot }, k) => (
                   <div key={k} className="flex items-center gap-2 py-0.5">
                     <Icon className="h-3 w-3 text-[var(--ds-gray-600)]" />
@@ -490,7 +491,7 @@ export default function LandingPage() {
               <motion.div variants={FV}>
                 <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-300)] bg-white/90 px-3.5 py-1.5 text-[0.75rem] font-medium text-[var(--ds-gray-900)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.06] dark:text-white/80">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                  Live on 5 platforms · 14-day trial, no card needed
+                  Live on 6 platforms · 14-day trial, no card needed
                 </span>
               </motion.div>
 
@@ -608,7 +609,7 @@ export default function LandingPage() {
                 Publish to every platform that matters.
               </motion.h2>
               <motion.p variants={FV} className="mt-3 max-w-lg text-[1rem] leading-[1.7] text-[var(--ds-gray-700)]">
-                One workflow, all major platforms. TikTok and Threads rolling out soon.
+                One workflow, all major platforms. Threads is live now, and TikTok is rolling out soon.
               </motion.p>
             </motion.div>
 

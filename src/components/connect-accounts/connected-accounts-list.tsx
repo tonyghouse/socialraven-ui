@@ -14,9 +14,10 @@ const PLATFORM_META: Record<
   youtube: { label: "YouTube", icon: PLATFORM_ICONS.youtube, accent: "text-red-500" },
   instagram: { label: "Instagram", icon: PLATFORM_ICONS.instagram, accent: "text-[#E1306C]" },
   facebook: { label: "Facebook", icon: PLATFORM_ICONS.facebook, accent: "text-[#1877F2]" },
+  threads: { label: "Threads", icon: PLATFORM_ICONS.threads, accent: "text-[var(--ds-gray-1000)]" },
 };
 
-const ORDER = ["x", "linkedin", "youtube", "instagram", "facebook"];
+const ORDER = ["x", "linkedin", "youtube", "instagram", "facebook", "threads"];
 
 // Helper function to get initials from username
 const getInitials = (username: string) => {

@@ -94,7 +94,7 @@ const FAQS = [
   },
   {
     q: "Which platforms does Social Raven support?",
-    a: "We support Instagram, Twitter/X, LinkedIn, YouTube, and Facebook. More platforms are actively in development.",
+    a: "We support Instagram, Threads, Twitter/X, LinkedIn, YouTube, and Facebook. TikTok and more platforms are actively in development.",
   },
   {
     q: "Is my data safe with Social Raven?",

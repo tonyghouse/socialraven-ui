@@ -25,6 +25,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/auth/youtube/callback',
   '/api/auth/instagram/callback',
   '/api/auth/facebook/callback',
+  '/api/auth/threads/callback',
 ])
 
 export default clerkMiddleware(async (auth, request) => {

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 };
 
 const STATS = [
-  { value: "5", label: "Supported platforms" },
+  { value: "6", label: "Supported platforms" },
   { value: "3", label: "Post types" },
   { value: "OAuth", label: "Secure connections" },
   { value: "Review", label: "Approval workflows" },
