@@ -149,6 +149,26 @@ export async function GET(request: NextRequest) {
       return response;
     }
 
+    if (platform === "tiktok") {
+      const state = crypto.randomUUID();
+      const clientKey = process.env.TIKTOK_CLIENT_KEY;
+      const redirectUri = process.env.TIKTOK_REDIRECT_URI;
+      if (!clientKey || !redirectUri) {
+        return errorRedirect("TikTok credentials are not configured.");
+      }
+
+      const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
+      authUrl.searchParams.set("client_key", clientKey);
+      authUrl.searchParams.set("response_type", "code");
+      authUrl.searchParams.set("scope", "user.info.basic");
+      authUrl.searchParams.set("redirect_uri", redirectUri);
+      authUrl.searchParams.set("state", state);
+
+      const response = NextResponse.redirect(authUrl.toString());
+      applyClientConnectCookies(response, { token, actorName, actorEmail, state });
+      return response;
+    }
+
     if (platform === "x") {
       const requestTokenUrl = "https://api.twitter.com/oauth/request_token";
       const oauthParams: Record<string, string> = {

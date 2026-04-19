@@ -27,6 +27,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/auth/instagram/callback',
   '/api/auth/facebook/callback',
   '/api/auth/threads/callback',
+  '/api/auth/tiktok/callback',
   '/api/meta/threads/uninstall',
   '/api/meta/threads/delete',
 ])
