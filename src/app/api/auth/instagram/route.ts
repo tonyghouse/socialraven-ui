@@ -1,6 +1,7 @@
 
 // app/api/auth/instagram/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { INSTAGRAM_OAUTH_SCOPES } from "@/lib/oauth-scopes";
 
 export async function GET(request: NextRequest) {
   const appId = process.env.INSTAGRAM_APP_ID;
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
   const authUrl = new URL('https://www.instagram.com/oauth/authorize');
   authUrl.searchParams.set('client_id', appId);
   authUrl.searchParams.set('redirect_uri', redirectUri);
-  authUrl.searchParams.set('scope', 'instagram_business_basic,instagram_business_content_publish,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_manage_insights');
+  authUrl.searchParams.set('scope', INSTAGRAM_OAUTH_SCOPES);
   authUrl.searchParams.set('response_type', 'code');
   authUrl.searchParams.set('force_reauth', 'true'); // Optional: force re-auth each time
 

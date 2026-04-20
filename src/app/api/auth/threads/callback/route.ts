@@ -14,16 +14,41 @@ export async function GET(req: NextRequest) {
   const publicContext = getClientConnectContext(req);
 
   if (publicContext.token) {
-    const response = NextResponse.redirect(
-      buildClientConnectResultUrl(
-        publicContext.token,
-        "threads",
-        "error",
-        "Threads client handoff is not enabled yet."
-      )
+    const finish = (status: "success" | "error", reason?: string) => {
+      const response = NextResponse.redirect(
+        buildClientConnectResultUrl(publicContext.token, "threads", status, reason)
+      );
+      clearClientConnectCookies(response);
+      return response;
+    };
+
+    if (error) {
+      return finish("error", errorDescription || error);
+    }
+    if (!code) {
+      return finish("error", "Missing Threads authorization code.");
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/public/client-connect/${publicContext.token}/threads/callback`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code,
+          actorDisplayName: publicContext.actorName,
+          actorEmail: publicContext.actorEmail,
+        }),
+      }
     );
-    clearClientConnectCookies(response);
-    return response;
+
+    if (!response.ok) {
+      return finish("error", (await response.text()) || "Threads connection failed.");
+    }
+
+    return finish("success");
   }
 
   if (error) {

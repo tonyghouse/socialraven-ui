@@ -34,6 +34,7 @@ type Props = {
   accentColor?: string;
   iconClassName?: string;
   connectHref?: string;
+  permissionSummary?: string;
   accounts: ConnectedAccount[];
   comingSoon?: boolean;
   onRemove?: (acc: ConnectedAccount) => void;
@@ -69,6 +70,7 @@ export default function ConnectedAccountsColumn({
   accentColor,
   iconClassName,
   connectHref = "#",
+  permissionSummary,
   accounts = [],
   comingSoon,
   onRemove,
@@ -146,6 +148,11 @@ export default function ConnectedAccountsColumn({
                 <p className={cn("mt-0.5", connectMetaClassName)}>
                   Authorize a new channel for this account.
                 </p>
+                {permissionSummary ? (
+                  <p className={cn("mt-1 text-label-12 text-[var(--ds-gray-900)]")}>
+                    {permissionSummary}
+                  </p>
+                ) : null}
               </div>
               <ArrowRight
                 size={14}

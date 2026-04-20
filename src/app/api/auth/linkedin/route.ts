@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { LINKEDIN_OAUTH_SCOPES } from "@/lib/oauth-scopes";
 
 export async function GET(req: NextRequest) {
   const clientId = process.env.LINKEDIN_CLIENT_ID!;
@@ -9,12 +10,10 @@ export async function GET(req: NextRequest) {
   const workspaceId = new URL(req.url).searchParams.get("workspaceId") ?? "";
   const state = crypto.randomUUID();
 
-  const scopes = ["openid", "profile", "email", "w_member_social"].join(" ");
-
   const url =
     `https://www.linkedin.com/oauth/v2/authorization` +
     `?response_type=code&client_id=${clientId}` +
-    `&redirect_uri=${redirectUri}&scope=${encodeURIComponent(scopes)}` +
+    `&redirect_uri=${redirectUri}&scope=${encodeURIComponent(LINKEDIN_OAUTH_SCOPES)}` +
     `&state=${state}`;
 
   const res = NextResponse.redirect(url);

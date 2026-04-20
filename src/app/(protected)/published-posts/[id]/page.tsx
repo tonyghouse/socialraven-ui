@@ -114,6 +114,44 @@ const platformIconStyle: Record<string, string> = {
     "border-[var(--ds-teal-200)] bg-[var(--ds-teal-100)] text-[var(--ds-teal-700)]",
 };
 
+const countFormatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
+
+function formatMetricNumber(value?: number | null) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return "—";
+  }
+  return countFormatter.format(value);
+}
+
+function formatWatchTimeMinutes(value?: number | null) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return "—";
+  }
+  if (value < 60) {
+    return `${countFormatter.format(value)} min`;
+  }
+
+  const hours = value / 60;
+  if (hours < 24) {
+    return `${countFormatter.format(hours)} h`;
+  }
+
+  return `${countFormatter.format(hours / 24)} d`;
+}
+
+function formatDateTime(value?: string | null) {
+  if (!value) {
+    return "—";
+  }
+  return new Date(value).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 /* Platform-specific accent tokens for the circle cards */
 const platformAccent: Record<
   string,
@@ -1118,32 +1156,88 @@ function PlatformSection({
       </div>
 
       {/* Account list */}
-      <div className="p-4 flex flex-wrap gap-2">
+      <div className="grid gap-3 p-4 md:grid-cols-2">
         {posts.map((post) => {
           const src = getImageUrl(post.connectedAccount?.profilePicLink);
+          const analytics = post.analytics;
+          const metricChips = [
+            analytics?.videoViews !== null && analytics?.videoViews !== undefined
+              ? { label: "Views", value: formatMetricNumber(analytics.videoViews) }
+              : null,
+            analytics?.watchTimeMinutes !== null && analytics?.watchTimeMinutes !== undefined
+              ? { label: "Watch time", value: formatWatchTimeMinutes(analytics.watchTimeMinutes) }
+              : null,
+            analytics?.likes !== null && analytics?.likes !== undefined
+              ? { label: "Likes", value: formatMetricNumber(analytics.likes) }
+              : null,
+            analytics?.comments !== null && analytics?.comments !== undefined
+              ? { label: "Comments", value: formatMetricNumber(analytics.comments) }
+              : null,
+            analytics?.shares !== null && analytics?.shares !== undefined
+              ? { label: "Shares", value: formatMetricNumber(analytics.shares) }
+              : null,
+            analytics?.clicks !== null && analytics?.clicks !== undefined
+              ? { label: "Clicks", value: formatMetricNumber(analytics.clicks) }
+              : null,
+            analytics?.engagementRate !== null && analytics?.engagementRate !== undefined
+              ? { label: "Eng. rate", value: `${formatMetricNumber(analytics.engagementRate)}%` }
+              : null,
+          ].filter(Boolean) as { label: string; value: string }[];
+
           return (
             <div
               key={post.id}
-              className="flex items-center gap-2 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] py-1.5 pl-1.5 pr-3 shadow-sm"
+              className="rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-3 shadow-sm"
             >
-              <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
-                {src ? (
-                  <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="1.25rem" className="object-cover" />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center">
-                    <User className="h-2.5 w-2.5 text-[var(--ds-gray-900)]" />
-                  </div>
-                )}
+              <div className="flex items-center gap-2">
+                <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
+                  {src ? (
+                    <Image src={src} alt={post.connectedAccount?.username ?? ""} fill sizes="2rem" className="object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <User className="h-3 w-3 text-[var(--ds-gray-900)]" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-label-14 text-[var(--ds-gray-1000)]">
+                    {post.connectedAccount?.username ?? "Account"}
+                  </p>
+                  <p className="mt-0.5 text-copy-12 text-[var(--ds-gray-900)]">
+                    {post.postStatus}
+                  </p>
+                </div>
+                <div className={cn(
+                  "h-2.5 w-2.5 rounded-full flex-shrink-0",
+                  post.postStatus === "PUBLISHED" ? "bg-emerald-500"
+                    : post.postStatus === "FAILED" ? "bg-red-500"
+                    : "bg-blue-400"
+                )} />
               </div>
-              <span className="max-w-[8.75rem] truncate text-copy-12 text-[var(--ds-gray-1000)]">
-                {post.connectedAccount?.username ?? "Account"}
-              </span>
-              <div className={cn(
-                "h-2 w-2 rounded-full flex-shrink-0",
-                post.postStatus === "PUBLISHED" ? "bg-emerald-500"
-                  : post.postStatus === "FAILED" ? "bg-red-500"
-                  : "bg-blue-400"
-              )} />
+
+              {metricChips.length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {metricChips.map((chip) => (
+                    <div
+                      key={`${post.id}-${chip.label}`}
+                      className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1"
+                    >
+                      <span className="text-copy-12 text-[var(--ds-gray-900)]">{chip.label}</span>
+                      <span className="ml-1.5 text-label-12 text-[var(--ds-gray-1000)]">{chip.value}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-copy-12 text-[var(--ds-gray-900)]">
+                  Analytics sync pending for this published account post.
+                </p>
+              )}
+
+              {analytics?.lastCollectedAt ? (
+                <p className="mt-3 text-copy-12 text-[var(--ds-gray-900)]">
+                  Last analytics write {formatDateTime(analytics.lastCollectedAt)}
+                </p>
+              ) : null}
             </div>
           );
         })}

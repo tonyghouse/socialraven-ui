@@ -4,6 +4,14 @@ import {
   applyClientConnectCookies,
   buildClientConnectResultUrl,
 } from "@/lib/client-connect-flow";
+import {
+  FACEBOOK_OAUTH_SCOPES,
+  INSTAGRAM_OAUTH_SCOPES,
+  LINKEDIN_OAUTH_SCOPES,
+  TIKTOK_OAUTH_SCOPES,
+  THREADS_OAUTH_SCOPES,
+  YOUTUBE_OAUTH_SCOPES,
+} from "@/lib/oauth-scopes";
 
 const X_API_KEY = process.env.X_API_KEY!;
 const X_API_SECRET = process.env.X_API_SECRET!;
@@ -65,11 +73,10 @@ export async function GET(request: NextRequest) {
       const redirectUri = encodeURIComponent(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/linkedin/callback`
       );
-      const scopes = ["openid", "profile", "email", "w_member_social"].join(" ");
       const authUrl =
         `https://www.linkedin.com/oauth/v2/authorization` +
         `?response_type=code&client_id=${clientId}` +
-        `&redirect_uri=${redirectUri}&scope=${encodeURIComponent(scopes)}` +
+        `&redirect_uri=${redirectUri}&scope=${encodeURIComponent(LINKEDIN_OAUTH_SCOPES)}` +
         `&state=${state}`;
 
       const response = NextResponse.redirect(authUrl);
@@ -83,16 +90,12 @@ export async function GET(request: NextRequest) {
       const redirectUri = encodeURIComponent(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/youtube/callback`
       );
-      const scopes = [
-        "https://www.googleapis.com/auth/youtube.upload",
-        "https://www.googleapis.com/auth/youtube",
-      ].join(" ");
       const authUrl =
         "https://accounts.google.com/o/oauth2/v2/auth" +
         `?client_id=${clientId}` +
         `&redirect_uri=${redirectUri}` +
         `&response_type=code` +
-        `&scope=${encodeURIComponent(scopes)}` +
+        `&scope=${encodeURIComponent(YOUTUBE_OAUTH_SCOPES)}` +
         `&access_type=offline` +
         `&prompt=consent` +
         `&state=${state}`;
@@ -113,10 +116,7 @@ export async function GET(request: NextRequest) {
       const authUrl = new URL("https://www.instagram.com/oauth/authorize");
       authUrl.searchParams.set("client_id", appId);
       authUrl.searchParams.set("redirect_uri", redirectUri);
-      authUrl.searchParams.set(
-        "scope",
-        "instagram_business_basic,instagram_business_content_publish,instagram_business_manage_messages,instagram_business_manage_comments,instagram_business_manage_insights"
-      );
+      authUrl.searchParams.set("scope", INSTAGRAM_OAUTH_SCOPES);
       authUrl.searchParams.set("response_type", "code");
       authUrl.searchParams.set("force_reauth", "true");
       authUrl.searchParams.set("state", state);
@@ -139,13 +139,31 @@ export async function GET(request: NextRequest) {
       authUrl.searchParams.set("redirect_uri", redirectUri);
       authUrl.searchParams.set(
         "scope",
-        "pages_show_list,pages_read_engagement,pages_manage_posts,public_profile,business_management"
+        FACEBOOK_OAUTH_SCOPES
       );
       authUrl.searchParams.set("response_type", "code");
       authUrl.searchParams.set("state", state);
 
       const response = NextResponse.redirect(authUrl.toString());
       applyClientConnectCookies(response, { token, actorName, actorEmail, state });
+      return response;
+    }
+
+    if (platform === "threads") {
+      const appId = process.env.THREADS_APP_ID;
+      const redirectUri = process.env.THREADS_REDIRECT_URI;
+      if (!appId || !redirectUri) {
+        return errorRedirect("Threads credentials are not configured.");
+      }
+
+      const authUrl = new URL("https://threads.net/oauth/authorize");
+      authUrl.searchParams.set("client_id", appId);
+      authUrl.searchParams.set("redirect_uri", redirectUri);
+      authUrl.searchParams.set("scope", THREADS_OAUTH_SCOPES);
+      authUrl.searchParams.set("response_type", "code");
+
+      const response = NextResponse.redirect(authUrl.toString());
+      applyClientConnectCookies(response, { token, actorName, actorEmail });
       return response;
     }
 
@@ -160,7 +178,7 @@ export async function GET(request: NextRequest) {
       const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
       authUrl.searchParams.set("client_key", clientKey);
       authUrl.searchParams.set("response_type", "code");
-      authUrl.searchParams.set("scope", "user.info.basic");
+      authUrl.searchParams.set("scope", TIKTOK_OAUTH_SCOPES);
       authUrl.searchParams.set("redirect_uri", redirectUri);
       authUrl.searchParams.set("state", state);
 

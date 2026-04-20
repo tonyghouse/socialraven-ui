@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { TIKTOK_OAUTH_SCOPES } from "@/lib/oauth-scopes";
 
 const TIKTOK_STATE_COOKIE = "oauth_tiktok_state";
 const COOKIE_OPTIONS = {
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
   const authUrl = new URL("https://www.tiktok.com/v2/auth/authorize/");
   authUrl.searchParams.set("client_key", clientKey);
   authUrl.searchParams.set("response_type", "code");
-  authUrl.searchParams.set("scope", "user.info.basic");
+  authUrl.searchParams.set("scope", TIKTOK_OAUTH_SCOPES);
   authUrl.searchParams.set("redirect_uri", redirectUri);
   authUrl.searchParams.set("state", state);
 

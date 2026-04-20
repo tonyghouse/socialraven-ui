@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { FACEBOOK_OAUTH_SCOPES } from "@/lib/oauth-scopes";
 
 const FACEBOOK_STATE_COOKIE = "oauth_facebook_state";
 const COOKIE_OPTIONS = {
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
   authUrl.searchParams.set("redirect_uri", redirectUri);
   authUrl.searchParams.set(
     "scope",
-    "pages_show_list,pages_read_engagement,pages_manage_posts,public_profile,business_management"
+    FACEBOOK_OAUTH_SCOPES
   );
   authUrl.searchParams.set("response_type", "code");
   authUrl.searchParams.set("state", state);

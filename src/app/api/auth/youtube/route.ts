@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { YOUTUBE_OAUTH_SCOPES } from "@/lib/oauth-scopes";
 
 export async function GET(req: NextRequest) {
   const clientId = process.env.YT_CLIENT_ID!;
@@ -8,17 +9,12 @@ export async function GET(req: NextRequest) {
 
   const workspaceId = new URL(req.url).searchParams.get("workspaceId") ?? "";
 
-  const scopes = [
-    "https://www.googleapis.com/auth/youtube.upload",
-    "https://www.googleapis.com/auth/youtube"
-  ].join(" ");
-
   const authUrl =
     "https://accounts.google.com/o/oauth2/v2/auth" +
     `?client_id=${clientId}` +
     `&redirect_uri=${redirectUri}` +
     `&response_type=code` +
-    `&scope=${encodeURIComponent(scopes)}` +
+    `&scope=${encodeURIComponent(YOUTUBE_OAUTH_SCOPES)}` +
     `&access_type=offline` +
     `&prompt=consent`;
 

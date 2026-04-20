@@ -15,6 +15,7 @@ type ConnectPlatformMeta = {
   accentColor: string;
   connectHref: string;
   enabled: boolean;
+  permissionSummary?: string;
   iconClassName?: string;
 };
 
@@ -35,6 +36,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--chart-neutral)",
     connectHref: "/api/auth/x",
     enabled: true,
+    permissionSummary: "Uses X app read and write access for publishing plus owned-post analytics collection.",
   },
   linkedin: {
     label: "LinkedIn",
@@ -42,6 +44,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--chart-categorical-2)",
     connectHref: "/api/auth/linkedin",
     enabled: true,
+    permissionSummary: "Requests profile, company-page publishing, and LinkedIn page admin/reporting access.",
   },
   youtube: {
     label: "YouTube",
@@ -49,6 +52,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--ds-red-600)",
     connectHref: "/api/auth/youtube",
     enabled: true,
+    permissionSummary: "Requests video upload, channel read access, and YouTube Analytics reporting permissions.",
   },
   instagram: {
     label: "Instagram",
@@ -56,6 +60,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--chart-categorical-4)",
     connectHref: "/api/auth/instagram",
     enabled: true,
+    permissionSummary: "Requests business publishing and insights access.",
   },
   facebook: {
     label: "Facebook",
@@ -63,6 +68,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--chart-categorical-5)",
     connectHref: "/api/auth/facebook",
     enabled: true,
+    permissionSummary: "Requests page publishing, engagement, and management permissions.",
   },
   tiktok: {
     label: "TikTok",
@@ -70,6 +76,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--ds-gray-1000)",
     connectHref: "/api/auth/tiktok",
     enabled: true,
+    permissionSummary: "Requests TikTok profile access, creator stats, and owned-video read permissions for analytics.",
     iconClassName: "h-[0.9375rem] w-[0.9375rem]",
   },
   threads: {
@@ -78,6 +85,7 @@ export const CONNECT_PLATFORM_META: Record<ConnectPlatformKey, ConnectPlatformMe
     accentColor: "var(--ds-gray-1000)",
     connectHref: "/api/auth/threads",
     enabled: true,
+    permissionSummary: "Requests Threads publishing and insights access.",
     iconClassName: "h-[0.9375rem] w-[0.9375rem]",
   },
 };

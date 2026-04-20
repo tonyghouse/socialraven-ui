@@ -40,6 +40,7 @@ export default function ConnectedAccountsGrid({
             accentColor={meta.accentColor}
             connectHref={meta.connectHref}
             accounts={accountsForPlatform}
+            permissionSummary={meta.permissionSummary}
             comingSoon={!meta.enabled}
             iconClassName={meta.iconClassName}
             onRemove={onRemove}

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { THREADS_OAUTH_SCOPES } from "@/lib/oauth-scopes";
 
 export async function GET(request: NextRequest) {
   const appId = process.env.THREADS_APP_ID;
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
   const authUrl = new URL("https://threads.net/oauth/authorize");
   authUrl.searchParams.set("client_id", appId);
   authUrl.searchParams.set("redirect_uri", redirectUri);
-  authUrl.searchParams.set("scope", "threads_basic,threads_content_publish");
+  authUrl.searchParams.set("scope", THREADS_OAUTH_SCOPES);
   authUrl.searchParams.set("response_type", "code");
 
   const response = NextResponse.redirect(authUrl.toString());
