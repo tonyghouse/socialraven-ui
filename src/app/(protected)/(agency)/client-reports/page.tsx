@@ -3,27 +3,41 @@
 import { useAuth } from "@clerk/nextjs";
 import {
   AlertTriangle,
+  BarChart3,
   CalendarClock,
   Copy,
   Download,
+  Eye,
   Globe2,
+  Layers3,
   Loader2,
   Mail,
   RefreshCw,
   Send,
   Trash2,
+  TrendingUp,
 } from "lucide-react";
-import { type ButtonHTMLAttributes, type ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  type ButtonHTMLAttributes,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { ProtectedPageHeader } from "@/components/layout/protected-page-header";
-import { useRole } from "@/hooks/useRole";
 import { useWorkspace } from "@/context/WorkspaceContext";
+import { useRole } from "@/hooks/useRole";
 import { cn } from "@/lib/utils";
 import type {
   ClientReportCadence,
+  ClientReportForecastItem,
   ClientReportLink,
+  ClientReportScope,
   ClientReportSchedule,
   ClientReportTemplate,
+  ClientReportTopPost,
+  PublicClientReport,
 } from "@/model/ClientReport";
 import {
   createClientReportLinkApi,
@@ -31,9 +45,14 @@ import {
   deactivateClientReportScheduleApi,
   getClientReportLinksApi,
   getClientReportSchedulesApi,
+  getClientReportSnapshotApi,
   publicClientReportPdfUrl,
   revokeClientReportLinkApi,
 } from "@/service/clientReports";
+import {
+  fetchAnalyticsShellApi,
+  type AnalyticsSelectOption,
+} from "@/service/analytics";
 
 const TEMPLATE_OPTIONS: Array<{
   value: ClientReportTemplate;
@@ -43,17 +62,34 @@ const TEMPLATE_OPTIONS: Array<{
   {
     value: "EXECUTIVE_SUMMARY",
     label: "Executive Summary",
-    description: "Balanced performance recap across reach, engagement, and publishing output.",
+    description: "Best for a balanced performance recap with clear executive takeaways.",
   },
   {
     value: "ENGAGEMENT_SPOTLIGHT",
     label: "Engagement Spotlight",
-    description: "Best for clients who care about interaction quality and top-performing channels.",
+    description: "Best for client reviews focused on interaction quality and best-performing channels.",
   },
   {
     value: "GROWTH_SNAPSHOT",
     label: "Growth Snapshot",
-    description: "Best for momentum-focused clients tracking follower and audience lift.",
+    description: "Best for momentum reviews that need trend and forecast framing.",
+  },
+];
+
+const REPORT_SCOPE_OPTIONS: Array<{
+  value: ClientReportScope;
+  label: string;
+  description: string;
+}> = [
+  {
+    value: "WORKSPACE",
+    label: "Workspace",
+    description: "Use all published analytics in the workspace for a full client-facing recap.",
+  },
+  {
+    value: "CAMPAIGN",
+    label: "Campaign",
+    description: "Limit the report to one campaign and expose campaign-specific benchmarks.",
   },
 ];
 
@@ -93,12 +129,25 @@ function formatTimestamp(value: string | null) {
   }).format(new Date(value));
 }
 
-function reportUrl(token: string) {
-  return `${window.location.origin}/reports/${token}`;
+function formatShortDate(value: string | null) {
+  if (!value) return "Not available";
+  return new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(value));
 }
 
-function downloadPdf(token: string) {
-  window.open(publicClientReportPdfUrl(token), "_blank", "noopener,noreferrer");
+function formatNumber(value: number | null | undefined) {
+  if (value === null || value === undefined) return "0";
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
+  return `${Math.round(value)}`;
+}
+
+function formatPercent(value: number | null | undefined) {
+  if (value === null || value === undefined) return "Not available";
+  return `${value.toFixed(1)}%`;
 }
 
 function formatTemplateLabel(value: string) {
@@ -107,6 +156,53 @@ function formatTemplateLabel(value: string) {
     .split("_")
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
     .join(" ");
+}
+
+function formatScopeLabel(scope: ClientReportScope, campaignLabel?: string | null) {
+  if (scope === "CAMPAIGN") {
+    return campaignLabel || "Campaign report";
+  }
+  return "Workspace report";
+}
+
+function forecastHeadline(item: ClientReportForecastItem | null) {
+  if (!item || !item.available) return "Not enough data";
+  const range = item.range;
+  if (range && range.expectedValue !== null && range.expectedValue !== undefined) {
+    return formatNumber(range.expectedValue);
+  }
+  return item.slotLabel || "Available";
+}
+
+function forecastDetail(item: ClientReportForecastItem | null) {
+  if (!item) return "No forecast available yet.";
+  if (!item.available) {
+    return item.unavailableReason || "No forecast available yet.";
+  }
+
+  const parts: string[] = [];
+  const range = item.range;
+  if (item.slotLabel) {
+    parts.push(item.slotLabel);
+  }
+  if (range && range.lowValue !== null && range.highValue !== null) {
+    parts.push(`Range ${formatNumber(range.lowValue)} to ${formatNumber(range.highValue)}`);
+  }
+  if (item.liftPercent !== null && item.liftPercent !== undefined) {
+    parts.push(`Lift ${formatPercent(item.liftPercent)}`);
+  }
+  if (item.basisSummary) {
+    parts.push(item.basisSummary);
+  }
+  return parts.join(" · ");
+}
+
+function reportUrl(token: string) {
+  return `${window.location.origin}/reports/${token}`;
+}
+
+function downloadPdf(token: string) {
+  window.open(publicClientReportPdfUrl(token), "_blank", "noopener,noreferrer");
 }
 
 const pageClassName = "min-h-screen bg-[var(--ds-background-200)]";
@@ -218,6 +314,129 @@ function Notice({
   );
 }
 
+function MetricCard({
+  icon: Icon,
+  label,
+  value,
+  detail,
+}: {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className={insetSurfaceClassName}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
+          <Icon className="h-5 w-5" />
+        </div>
+        <div className="text-right">
+          <p className="text-[1.75rem] font-semibold leading-none text-[var(--ds-gray-1000)]">
+            {value}
+          </p>
+          <p className="mt-1 text-copy-12 text-[var(--ds-gray-900)]">{label}</p>
+        </div>
+      </div>
+      <p className="mt-4 text-copy-12 leading-5 text-[var(--ds-gray-900)]">{detail}</p>
+    </div>
+  );
+}
+
+function ForecastCard({
+  item,
+}: {
+  item: ClientReportForecastItem | null;
+}) {
+  return (
+    <div className={insetSurfaceClassName}>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-label-14 text-[var(--ds-gray-1000)]">
+            {item?.label || "Forecast"}
+          </p>
+          <ToneBadge tone={item?.available ? "info" : "warning"}>
+            {item?.confidenceTier || (item?.available ? "Available" : "Limited")}
+          </ToneBadge>
+        </div>
+        <p className="text-[1.35rem] font-semibold leading-none text-[var(--ds-gray-1000)]">
+          {forecastHeadline(item)}
+        </p>
+        <p className="text-copy-12 leading-5 text-[var(--ds-gray-900)]">
+          {forecastDetail(item)}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ScopeSelector({
+  value,
+  onChange,
+}: {
+  value: ClientReportScope;
+  onChange: (value: ClientReportScope) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <span className={labelClassName}>Report scope</span>
+      <div className="flex flex-wrap gap-2">
+        {REPORT_SCOPE_OPTIONS.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => onChange(option.value)}
+            className={cn(
+              "rounded-full border px-3 py-1.5 text-label-12 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]",
+              value === option.value
+                ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+            )}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+      <p className={helperTextClassName}>
+        {REPORT_SCOPE_OPTIONS.find((option) => option.value === value)?.description}
+      </p>
+    </div>
+  );
+}
+
+function TopPostPreviewCard({ post }: { post: ClientReportTopPost }) {
+  return (
+    <div className={insetSurfaceClassName}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className={sectionTitleClassName}>{post.platformLabel}</p>
+            {post.campaignLabel && <ToneBadge tone="info">{post.campaignLabel}</ToneBadge>}
+          </div>
+          <p className="text-copy-12 text-[var(--ds-gray-900)]">
+            {post.accountName || "Connected account"} ·{" "}
+            {post.publishedAt ? formatShortDate(post.publishedAt) : "Publish date unavailable"}
+          </p>
+        </div>
+        <ToneBadge tone="success">
+          {formatNumber(post.engagements)} engagements
+        </ToneBadge>
+      </div>
+      <p className="mt-3 line-clamp-3 text-copy-13 leading-6 text-[var(--ds-gray-1000)]">
+        {post.content || "No post caption was captured for this item."}
+      </p>
+      <div className="mt-4 grid gap-2 text-copy-12 text-[var(--ds-gray-900)] sm:grid-cols-2">
+        <p>Impressions {formatNumber(post.impressions)}</p>
+        <p>Engagement rate {formatPercent(post.engagementRate)}</p>
+        <p>Likes {formatNumber(post.likes)}</p>
+        <p>Comments {formatNumber(post.comments)}</p>
+        <p>Shares {formatNumber(post.shares)}</p>
+        <p>Clicks {formatNumber(post.clicks)}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function ClientReportsPage() {
   const { getToken } = useAuth();
   const { canExportClientReports } = useRole();
@@ -225,6 +444,10 @@ export default function ClientReportsPage() {
 
   const [links, setLinks] = useState<ClientReportLink[]>([]);
   const [schedules, setSchedules] = useState<ClientReportSchedule[]>([]);
+  const [campaignOptions, setCampaignOptions] = useState<AnalyticsSelectOption[]>([]);
+  const [preview, setPreview] = useState<PublicClientReport | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -236,6 +459,9 @@ export default function ClientReportsPage() {
     useState<ClientReportTemplate>("EXECUTIVE_SUMMARY");
   const [linkReportDays, setLinkReportDays] = useState<number>(30);
   const [linkCommentary, setLinkCommentary] = useState("");
+  const [linkReportScope, setLinkReportScope] =
+    useState<ClientReportScope>("WORKSPACE");
+  const [linkCampaignId, setLinkCampaignId] = useState("");
   const [linkRecipientName, setLinkRecipientName] = useState("");
   const [linkRecipientEmail, setLinkRecipientEmail] = useState("");
   const [linkExpiryHours, setLinkExpiryHours] =
@@ -252,6 +478,9 @@ export default function ClientReportsPage() {
     useState<ClientReportTemplate>("EXECUTIVE_SUMMARY");
   const [scheduleReportDays, setScheduleReportDays] = useState<number>(30);
   const [scheduleCommentary, setScheduleCommentary] = useState("");
+  const [scheduleReportScope, setScheduleReportScope] =
+    useState<ClientReportScope>("WORKSPACE");
+  const [scheduleCampaignId, setScheduleCampaignId] = useState("");
   const [scheduleCadence, setScheduleCadence] =
     useState<ClientReportCadence>("WEEKLY");
   const [scheduleDayOfWeek, setScheduleDayOfWeek] = useState<number>(1);
@@ -271,15 +500,29 @@ export default function ClientReportsPage() {
     setScheduleAgencyLabel((current) => current || activeWorkspace.companyName || activeWorkspace.name);
   }, [activeWorkspace]);
 
+  useEffect(() => {
+    if (linkReportScope === "CAMPAIGN" && !linkCampaignId && campaignOptions[0]) {
+      setLinkCampaignId(campaignOptions[0].value);
+    }
+  }, [linkCampaignId, linkReportScope, campaignOptions]);
+
+  useEffect(() => {
+    if (scheduleReportScope === "CAMPAIGN" && !scheduleCampaignId && campaignOptions[0]) {
+      setScheduleCampaignId(campaignOptions[0].value);
+    }
+  }, [scheduleCampaignId, scheduleReportScope, campaignOptions]);
+
   const loadData = useCallback(async () => {
     try {
       setError(null);
-      const [nextLinks, nextSchedules] = await Promise.all([
+      const [nextLinks, nextSchedules, shell] = await Promise.all([
         getClientReportLinksApi(getToken),
         getClientReportSchedulesApi(getToken),
+        fetchAnalyticsShellApi(getToken, { dateRange: "90d" }),
       ]);
       setLinks(nextLinks);
       setSchedules(nextSchedules);
+      setCampaignOptions(shell.filters.campaigns.filter((option) => option.value !== "NO_CAMPAIGN"));
     } catch (err: any) {
       setError(err?.message ?? "Failed to load client reports.");
     }
@@ -307,6 +550,75 @@ export default function ClientReportsPage() {
     };
   }, [canExportClientReports, loadData]);
 
+  useEffect(() => {
+    if (!canExportClientReports || !activeWorkspace) {
+      return;
+    }
+    if (linkReportScope === "CAMPAIGN" && !linkCampaignId) {
+      setPreview(null);
+      setPreviewError(
+        campaignOptions.length === 0
+          ? "No campaigns are available yet. Create campaign-linked posts before using campaign report mode."
+          : "Select a campaign to preview a campaign report."
+      );
+      return;
+    }
+
+    let ignore = false;
+    const timeout = window.setTimeout(async () => {
+      try {
+        setPreviewLoading(true);
+        setPreviewError(null);
+        const expiresAt = new Date(
+          Date.now() + linkExpiryHours * 60 * 60 * 1000
+        ).toISOString();
+        const next = await getClientReportSnapshotApi(getToken, {
+          reportTitle: linkTitle || undefined,
+          clientLabel: linkClientLabel || undefined,
+          agencyLabel: linkAgencyLabel || undefined,
+          reportScope: linkReportScope,
+          campaignId:
+            linkReportScope === "CAMPAIGN" && linkCampaignId ? Number(linkCampaignId) : undefined,
+          templateType: linkTemplate,
+          reportDays: linkReportDays,
+          commentary: linkCommentary || undefined,
+          expiresAt,
+        });
+        if (!ignore) {
+          setPreview(next);
+        }
+      } catch (err: any) {
+        if (!ignore) {
+          setPreview(null);
+          setPreviewError(err?.message ?? "Failed to generate the analytics snapshot.");
+        }
+      } finally {
+        if (!ignore) {
+          setPreviewLoading(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      ignore = true;
+      window.clearTimeout(timeout);
+    };
+  }, [
+    activeWorkspace,
+    campaignOptions.length,
+    canExportClientReports,
+    getToken,
+    linkAgencyLabel,
+    linkCampaignId,
+    linkClientLabel,
+    linkCommentary,
+    linkExpiryHours,
+    linkReportDays,
+    linkReportScope,
+    linkTemplate,
+    linkTitle,
+  ]);
+
   async function refresh() {
     setRefreshing(true);
     await loadData();
@@ -321,6 +633,9 @@ export default function ClientReportsPage() {
         reportTitle: linkTitle || undefined,
         clientLabel: linkClientLabel || undefined,
         agencyLabel: linkAgencyLabel || undefined,
+        reportScope: linkReportScope,
+        campaignId:
+          linkReportScope === "CAMPAIGN" && linkCampaignId ? Number(linkCampaignId) : undefined,
         templateType: linkTemplate,
         reportDays: linkReportDays,
         commentary: linkCommentary || undefined,
@@ -374,6 +689,11 @@ export default function ClientReportsPage() {
         recipientEmail: scheduleRecipientEmail,
         clientLabel: scheduleClientLabel || undefined,
         agencyLabel: scheduleAgencyLabel || undefined,
+        reportScope: scheduleReportScope,
+        campaignId:
+          scheduleReportScope === "CAMPAIGN" && scheduleCampaignId
+            ? Number(scheduleCampaignId)
+            : undefined,
         templateType: scheduleTemplate,
         reportDays: scheduleReportDays,
         commentary: scheduleCommentary || undefined,
@@ -410,7 +730,7 @@ export default function ClientReportsPage() {
     <div className={pageClassName}>
       <ProtectedPageHeader
         title="Client Reports"
-        description="Create client-ready report links, email branded recaps, and automate recurring delivery."
+        description="Preview the actual analytics report first, then share links and automate recurring delivery."
         icon={<Globe2 className="h-4 w-4" />}
         className="border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]/95"
         actions={
@@ -437,20 +757,333 @@ export default function ClientReportsPage() {
           </Notice>
         )}
 
+        <section className={cn(surfaceClassName, "overflow-hidden p-0")}>
+          <div className="border-b border-[var(--ds-gray-400)] bg-[radial-gradient(circle_at_top_left,rgba(47,101,235,0.12),transparent_55%),linear-gradient(180deg,var(--ds-background-100),var(--ds-gray-100))] px-4 py-4 sm:px-5">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="space-y-2">
+                <p className={footerEyebrowClassName}>Analytics Snapshot</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-[1.35rem] font-semibold text-[var(--ds-gray-1000)]">
+                    {preview?.reportTitle || `${activeWorkspace?.name ?? "Workspace"} report preview`}
+                  </h2>
+                  <ToneBadge tone="info">
+                    {preview ? formatScopeLabel(preview.reportScope, preview.campaignLabel) : formatScopeLabel(linkReportScope)}
+                  </ToneBadge>
+                  <ToneBadge tone="neutral">{formatTemplateLabel(linkTemplate)}</ToneBadge>
+                </div>
+                <p className="max-w-3xl text-copy-13 leading-6 text-[var(--ds-gray-900)]">
+                  {preview?.commentary ||
+                    "This preview is generated from the live workspace analytics foundation. Share and export only after the on-screen report is useful."}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {previewLoading && (
+                  <ToneBadge tone="info">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Refreshing preview
+                  </ToneBadge>
+                )}
+                {preview && (
+                  <ToneBadge tone="success">
+                    Updated {formatTimestamp(preview.generatedAt)}
+                  </ToneBadge>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-5 px-4 py-4 sm:px-5">
+            {previewError && (
+              <Notice tone="danger" title="Preview unavailable">
+                {previewError}
+              </Notice>
+            )}
+
+            {preview ? (
+              <>
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  <MetricCard
+                    icon={Eye}
+                    label="Impressions"
+                    value={formatNumber(preview.summary.impressions)}
+                    detail={`${formatNumber(preview.summary.engagements)} engagements in ${preview.reportWindowLabel}.`}
+                  />
+                  <MetricCard
+                    icon={TrendingUp}
+                    label="Engagement Rate"
+                    value={formatPercent(preview.summary.engagementRate)}
+                    detail={`${formatNumber(preview.summary.clicks)} clicks captured across this report scope.`}
+                  />
+                  <MetricCard
+                    icon={Layers3}
+                    label="Posts Published"
+                    value={formatNumber(preview.summary.postsPublished)}
+                    detail={`${formatNumber(preview.platformPerformance.length)} tracked platform segment${preview.platformPerformance.length === 1 ? "" : "s"} contributed.`}
+                  />
+                  <MetricCard
+                    icon={BarChart3}
+                    label="Top Window"
+                    value={preview.reportWindowLabel}
+                    detail={
+                      preview.linkExpiresAt
+                        ? `Share link stays active until ${formatTimestamp(preview.linkExpiresAt)}.`
+                        : "Preview mode does not expose an active share window."
+                    }
+                  />
+                </div>
+
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.95fr)]">
+                  <div className={insetSurfaceClassName}>
+                    <div className="mb-4 space-y-1">
+                      <p className={sectionTitleClassName}>Client takeaways</p>
+                      <p className={sectionDescriptionClassName}>
+                        These are the exact highlights that will appear in the shared report.
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      {preview.highlights.map((highlight, index) => (
+                        <div
+                          key={`${highlight}-${index}`}
+                          className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-3"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]">
+                              <TrendingUp className="h-4 w-4" />
+                            </div>
+                            <p className="text-copy-13 leading-6 text-[var(--ds-gray-1000)]">
+                              {highlight}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className={insetSurfaceClassName}>
+                      <div className="mb-4 space-y-1">
+                        <p className={sectionTitleClassName}>Forecast outlook</p>
+                        <p className={sectionDescriptionClassName}>
+                          Real projections from the current workspace analytics slice.
+                        </p>
+                      </div>
+                      <div className="grid gap-3">
+                        <ForecastCard item={preview.forecast?.nextPostPrediction || null} />
+                        <ForecastCard item={preview.forecast?.nextBestSlot || null} />
+                        <ForecastCard item={preview.forecast?.planningWindowProjection || null} />
+                      </div>
+                    </div>
+
+                    {preview.reportScope === "CAMPAIGN" && preview.campaignInsight && (
+                      <div className={insetSurfaceClassName}>
+                        <div className="mb-4 space-y-1">
+                          <p className={sectionTitleClassName}>Campaign benchmark</p>
+                          <p className={sectionDescriptionClassName}>
+                            Campaign-specific performance against comparable campaigns in this workspace slice.
+                          </p>
+                        </div>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-3">
+                            <p className="text-copy-12 text-[var(--ds-gray-900)]">Percentile rank</p>
+                            <p className="mt-2 text-[1.35rem] font-semibold text-[var(--ds-gray-1000)]">
+                              {formatPercent(preview.campaignInsight.percentile)}
+                            </p>
+                            <p className="mt-2 text-copy-12 text-[var(--ds-gray-900)]">
+                              Lift vs benchmark {formatPercent(preview.campaignInsight.liftPercent)}
+                            </p>
+                          </div>
+                          <div className="rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-3">
+                            <p className="text-copy-12 text-[var(--ds-gray-900)]">Campaign output</p>
+                            <p className="mt-2 text-[1.35rem] font-semibold text-[var(--ds-gray-1000)]">
+                              {formatNumber(preview.campaignInsight.postsPublished)} posts
+                            </p>
+                            <p className="mt-2 text-copy-12 text-[var(--ds-gray-900)]">
+                              {formatNumber(preview.campaignInsight.engagements)} engagements in this window
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid gap-5 lg:grid-cols-[minmax(0,1.05fr)_minmax(20rem,0.95fr)]">
+                  <div className={insetSurfaceClassName}>
+                    <div className="mb-4 space-y-1">
+                      <p className={sectionTitleClassName}>Platform performance</p>
+                      <p className={sectionDescriptionClassName}>
+                        Share-safe channel breakdown generated from the same workspace analytics system.
+                      </p>
+                    </div>
+                    {preview.platformPerformance.length === 0 ? (
+                      <div className={emptyStateClassName}>No platform analytics available yet.</div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-[var(--ds-gray-400)]">
+                          <thead>
+                            <tr className="text-left text-copy-12 uppercase tracking-[0.12em] text-[var(--ds-gray-900)]">
+                              <th className="pb-3 pr-4">Platform</th>
+                              <th className="pb-3 pr-4">Impressions</th>
+                              <th className="pb-3 pr-4">Engagements</th>
+                              <th className="pb-3 pr-4">Avg / Post</th>
+                              <th className="pb-3">Share</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-[var(--ds-gray-400)]">
+                            {preview.platformPerformance.map((platform) => (
+                              <tr key={platform.provider}>
+                                <td className="py-3 pr-4 text-copy-13 text-[var(--ds-gray-1000)]">
+                                  {platform.platformLabel}
+                                </td>
+                                <td className="py-3 pr-4 text-copy-13 text-[var(--ds-gray-900)]">
+                                  {formatNumber(platform.impressions)}
+                                </td>
+                                <td className="py-3 pr-4 text-copy-13 text-[var(--ds-gray-900)]">
+                                  {formatNumber(platform.engagements)}
+                                </td>
+                                <td className="py-3 pr-4 text-copy-13 text-[var(--ds-gray-900)]">
+                                  {formatNumber(platform.averageEngagementsPerPost)}
+                                </td>
+                                <td className="py-3 text-copy-13 text-[var(--ds-gray-900)]">
+                                  {formatPercent(platform.engagementSharePercent)}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={insetSurfaceClassName}>
+                    <div className="mb-4 space-y-1">
+                      <p className={sectionTitleClassName}>Top content</p>
+                      <p className={sectionDescriptionClassName}>
+                        Best-performing posts with the actual likes, comments, shares, and reach signals.
+                      </p>
+                    </div>
+                    <div className="space-y-3">
+                      {preview.topPosts.length === 0 ? (
+                        <div className={emptyStateClassName}>No top-post analytics available yet.</div>
+                      ) : (
+                        preview.topPosts.map((post) => (
+                          <TopPostPreviewCard key={post.postId} post={post} />
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {preview.reportScope === "CAMPAIGN" && preview.campaignInsight && (
+                  <div className="grid gap-5 lg:grid-cols-2">
+                    <div className={insetSurfaceClassName}>
+                      <div className="mb-4 space-y-1">
+                        <p className={sectionTitleClassName}>Platform contribution</p>
+                        <p className={sectionDescriptionClassName}>
+                          Which platforms carried the campaign in this window.
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        {(preview.campaignInsight.platformBreakdown?.rows || []).map((row) => (
+                          <div
+                            key={`campaign-platform-${row.key}`}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-2"
+                          >
+                            <div>
+                              <p className="text-copy-13 text-[var(--ds-gray-1000)]">{row.label}</p>
+                              <p className="text-copy-12 text-[var(--ds-gray-900)]">
+                                {formatNumber(row.postsPublished)} posts
+                              </p>
+                            </div>
+                            <ToneBadge tone="info">
+                              {formatNumber(row.performanceValue)} engagements
+                            </ToneBadge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={insetSurfaceClassName}>
+                      <div className="mb-4 space-y-1">
+                        <p className={sectionTitleClassName}>Account contribution</p>
+                        <p className={sectionDescriptionClassName}>
+                          Which connected accounts contributed the most campaign performance.
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        {(preview.campaignInsight.accountBreakdown?.rows || []).map((row) => (
+                          <div
+                            key={`campaign-account-${row.key}`}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 py-2"
+                          >
+                            <div>
+                              <p className="text-copy-13 text-[var(--ds-gray-1000)]">{row.label}</p>
+                              <p className="text-copy-12 text-[var(--ds-gray-900)]">
+                                {formatNumber(row.postsPublished)} posts
+                              </p>
+                            </div>
+                            <ToneBadge tone="info">
+                              {formatNumber(row.performanceValue)} engagements
+                            </ToneBadge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className={emptyStateClassName}>
+                {previewLoading
+                  ? "Generating analytics snapshot..."
+                  : "Adjust the report settings below to generate a live client-report preview."}
+              </div>
+            )}
+          </div>
+        </section>
+
         <section className="grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(20rem,0.9fr)]">
           <div className={surfaceClassName}>
             <div className="mb-5 flex items-start justify-between gap-4">
               <div className="space-y-1">
                 <p className={sectionTitleClassName}>Quick Share</p>
                 <p className={sectionDescriptionClassName}>
-                  Generate a branded report link instantly. Add a recipient email to deliver it
-                  directly from SocialRaven.
+                  Generate a branded report link instantly. The preview above uses these exact report settings.
                 </p>
               </div>
               <ToneBadge tone="info">{links.length} links</ToneBadge>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-4">
+              <ScopeSelector value={linkReportScope} onChange={setLinkReportScope} />
+
+              {linkReportScope === "CAMPAIGN" && (
+                <label className="space-y-2">
+                  <span className={labelClassName}>Campaign</span>
+                  <select
+                    value={linkCampaignId}
+                    onChange={(event) => setLinkCampaignId(event.target.value)}
+                    className={inputClassName}
+                    disabled={campaignOptions.length === 0}
+                  >
+                    {campaignOptions.length === 0 ? (
+                      <option value="">No campaigns available</option>
+                    ) : (
+                      campaignOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                  <p className={helperTextClassName}>
+                    Campaign report mode is only available when the workspace has campaign-linked posts.
+                  </p>
+                </label>
+              )}
+            </div>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
               <label className="space-y-2">
                 <span className={labelClassName}>Report title</span>
                 <input
@@ -569,7 +1202,11 @@ export default function ClientReportsPage() {
               <p className={footerEyebrowClassName}>
                 {linkRecipientEmail.trim() ? "Email delivery enabled" : "Copy link after creation"}
               </p>
-              <ActionButton variant="primary" disabled={creatingLink} onClick={handleCreateLink}>
+              <ActionButton
+                variant="primary"
+                disabled={creatingLink || (linkReportScope === "CAMPAIGN" && !linkCampaignId)}
+                onClick={handleCreateLink}
+              >
                 <span className="inline-flex items-center gap-2">
                   {creatingLink ? (
                     <>
@@ -604,16 +1241,11 @@ export default function ClientReportsPage() {
                 <Loader2 className="h-5 w-5 animate-spin text-[var(--ds-gray-900)]" />
               </div>
             ) : links.length === 0 ? (
-              <div className={emptyStateClassName}>
-                No report links yet.
-              </div>
+              <div className={emptyStateClassName}>No report links yet.</div>
             ) : (
               <div className="space-y-3">
                 {links.map((link) => (
-                  <div
-                    key={link.id}
-                    className={insetSurfaceClassName}
-                  >
+                  <div key={link.id} className={insetSurfaceClassName}>
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
@@ -623,15 +1255,14 @@ export default function ClientReportsPage() {
                           </ToneBadge>
                         </div>
                         <p className={subtleMetaClassName}>
-                          {link.clientLabel || activeWorkspace?.name} · {link.reportDays}d · {formatTemplateLabel(link.templateType)}
+                          {formatScopeLabel(link.reportScope, link.campaignLabel)} · {link.reportDays}d ·{" "}
+                          {formatTemplateLabel(link.templateType)}
                         </p>
                         <p className={subtleMetaClassName}>
                           Created {formatTimestamp(link.createdAt)} · Expires {formatTimestamp(link.expiresAt)}
                         </p>
                         {link.recipientEmail && (
-                          <p className={subtleMetaClassName}>
-                            Delivered to {link.recipientEmail}
-                          </p>
+                          <p className={subtleMetaClassName}>Delivered to {link.recipientEmail}</p>
                         )}
                       </div>
 
@@ -677,13 +1308,39 @@ export default function ClientReportsPage() {
               <div className="space-y-1">
                 <p className={sectionTitleClassName}>Recurring Delivery</p>
                 <p className={sectionDescriptionClassName}>
-                  Send automated weekly or monthly client reports with branded links.
+                  Automate weekly or monthly client reporting with the same workspace or campaign scope.
                 </p>
               </div>
               <ToneBadge tone="warning">{schedules.length} schedules</ToneBadge>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-4">
+              <ScopeSelector value={scheduleReportScope} onChange={setScheduleReportScope} />
+
+              {scheduleReportScope === "CAMPAIGN" && (
+                <label className="space-y-2">
+                  <span className={labelClassName}>Campaign</span>
+                  <select
+                    value={scheduleCampaignId}
+                    onChange={(event) => setScheduleCampaignId(event.target.value)}
+                    className={inputClassName}
+                    disabled={campaignOptions.length === 0}
+                  >
+                    {campaignOptions.length === 0 ? (
+                      <option value="">No campaigns available</option>
+                    ) : (
+                      campaignOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))
+                    )}
+                  </select>
+                </label>
+              )}
+            </div>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
               <label className="space-y-2">
                 <span className={labelClassName}>Report title</span>
                 <input
@@ -845,7 +1502,13 @@ export default function ClientReportsPage() {
             </label>
 
             <div className="mt-5 flex justify-end">
-              <ActionButton variant="primary" disabled={creatingSchedule} onClick={handleCreateSchedule}>
+              <ActionButton
+                variant="primary"
+                disabled={
+                  creatingSchedule || (scheduleReportScope === "CAMPAIGN" && !scheduleCampaignId)
+                }
+                onClick={handleCreateSchedule}
+              >
                 <span className="inline-flex items-center gap-2">
                   {creatingSchedule ? (
                     <>
@@ -867,8 +1530,7 @@ export default function ClientReportsPage() {
             <div className="mb-5 space-y-1">
               <p className={sectionTitleClassName}>Active Schedules</p>
               <p className={sectionDescriptionClassName}>
-                Monitor cadence, next send times, and pause delivery when a client no longer needs
-                updates.
+                Monitor cadence, scope, and next-send timing before clients receive the next snapshot.
               </p>
             </div>
 
@@ -877,16 +1539,11 @@ export default function ClientReportsPage() {
                 <Loader2 className="h-5 w-5 animate-spin text-[var(--ds-gray-900)]" />
               </div>
             ) : schedules.length === 0 ? (
-              <div className={emptyStateClassName}>
-                No recurring report schedules yet.
-              </div>
+              <div className={emptyStateClassName}>No recurring report schedules yet.</div>
             ) : (
               <div className="space-y-3">
                 {schedules.map((schedule) => (
-                  <div
-                    key={schedule.id}
-                    className={insetSurfaceClassName}
-                  >
+                  <div key={schedule.id} className={insetSurfaceClassName}>
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
@@ -897,6 +1554,9 @@ export default function ClientReportsPage() {
                         </div>
                         <p className={subtleMetaClassName}>
                           {schedule.recipientEmail} · {schedule.cadence.toLowerCase()} · {schedule.reportDays}d
+                        </p>
+                        <p className={subtleMetaClassName}>
+                          {formatScopeLabel(schedule.reportScope, schedule.campaignLabel)}
                         </p>
                         <p className={subtleMetaClassName}>
                           Next send {formatTimestamp(schedule.nextSendAt)}

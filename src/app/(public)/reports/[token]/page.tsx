@@ -8,14 +8,10 @@ import {
   Copy,
   Download,
   Eye,
-  Globe2,
-  Heart,
-  LineChart,
+  Layers3,
   Loader2,
-  MessageCircle,
-  Share2,
+  Target,
   TrendingUp,
-  Users,
 } from "lucide-react";
 import {
   PublicCard,
@@ -31,25 +27,36 @@ import {
   PublicSectionMessage,
   PublicSubtleButton,
 } from "@/components/public/public-site-primitives";
-import type { PublicClientReport } from "@/model/ClientReport";
+import type {
+  ClientReportCampaignInsight,
+  ClientReportContribution,
+  ClientReportForecastItem,
+  ClientReportTopPost,
+  PublicClientReport,
+} from "@/model/ClientReport";
 import { getPublicClientReportApi, publicClientReportPdfUrl } from "@/service/clientReports";
 
-type TimelineDatum = {
+type TrendDatum = {
   date: string;
   totalEngagements: number;
+  postsPublished: number;
+  averagePerPost: number | null;
 };
 
-function fmt(n: number): string {
+function fmt(n: number | null | undefined): string {
+  if (n === null || n === undefined) return "0";
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return `${n}`;
+  return `${Math.round(n)}`;
 }
 
-function fmtPct(n: number): string {
-  return `${n.toFixed(2)}%`;
+function fmtPct(n: number | null | undefined): string {
+  if (n === null || n === undefined) return "Not available";
+  return `${n.toFixed(1)}%`;
 }
 
-function fmtDate(value: string) {
+function fmtDate(value: string | null) {
+  if (!value) return "Not available";
   return new Intl.DateTimeFormat(undefined, {
     month: "short",
     day: "numeric",
@@ -60,7 +67,8 @@ function fmtDate(value: string) {
   }).format(new Date(value));
 }
 
-function fmtShortDate(value: string) {
+function fmtShortDate(value: string | null) {
+  if (!value) return "Not available";
   return new Intl.DateTimeFormat(undefined, {
     month: "short",
     day: "numeric",
@@ -81,17 +89,18 @@ function fmtCalendarDate(value: string) {
   }).format(new Date(Date.UTC(year, month - 1, day)));
 }
 
-function aggregateTimeline(timeline: PublicClientReport["timeline"]): TimelineDatum[] {
-  const byDate = new Map<string, number>();
-  for (const point of timeline) {
-    byDate.set(point.date, (byDate.get(point.date) ?? 0) + point.totalEngagements);
-  }
-  return Array.from(byDate.entries())
-    .sort(([left], [right]) => left.localeCompare(right))
-    .map(([date, totalEngagements]) => ({ date, totalEngagements }));
+function buildTrendSeries(trend: PublicClientReport["trend"]): TrendDatum[] {
+  return trend
+    .map((point) => ({
+      date: point.bucketStartDate,
+      totalEngagements: point.engagements,
+      postsPublished: point.postsPublished,
+      averagePerPost: point.averageEngagementsPerPost,
+    }))
+    .sort((left, right) => left.date.localeCompare(right.date));
 }
 
-function TrendChart({ series }: { series: TimelineDatum[] }) {
+function TrendChart({ series }: { series: TrendDatum[] }) {
   const width = 560;
   const height = 240;
   const paddingX = 18;
@@ -175,7 +184,7 @@ function TrendChart({ series }: { series: TimelineDatum[] }) {
 
       <div className="flex flex-wrap items-center justify-between gap-3 text-label-12 text-[var(--ds-gray-900)]">
         <span>{fmtCalendarDate(series[0]?.date ?? "")}</span>
-        <span>Daily engagements across all connected platforms</span>
+        <span>Daily engagements across the selected report scope</span>
         <span>{fmtCalendarDate(series[series.length - 1]?.date ?? "")}</span>
       </div>
     </div>
@@ -199,15 +208,189 @@ function KpiCard({
         <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
           <Icon className="h-5 w-5" />
         </div>
-        <p className="text-heading-32 text-[var(--ds-gray-1000)]">
-          {value}
-        </p>
+        <p className="text-heading-32 text-[var(--ds-gray-1000)]">{value}</p>
       </div>
       <div className="mt-4 space-y-1">
         <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
         <p className="text-copy-14 text-[var(--ds-gray-900)]">{detail}</p>
       </div>
     </PublicInsetCard>
+  );
+}
+
+function ForecastCard({
+  item,
+}: {
+  item: ClientReportForecastItem | null;
+}) {
+  const range = item?.range;
+  const headline = !item || !item.available
+    ? "Not enough data"
+    : range && range.expectedValue !== null && range.expectedValue !== undefined
+      ? fmt(range.expectedValue)
+      : item.slotLabel || "Available";
+
+  const detail = !item
+    ? "No forecast available."
+    : !item.available
+      ? item.unavailableReason || "No forecast available."
+      : [item.slotLabel, range && range.lowValue !== null && range.highValue !== null
+          ? `Range ${fmt(range.lowValue)} to ${fmt(range.highValue)}`
+          : null, item.basisSummary]
+          .filter(Boolean)
+          .join(" · ");
+
+  return (
+    <PublicInsetCard className="p-5">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-label-14 text-[var(--ds-gray-1000)]">{item?.label || "Forecast"}</p>
+          <PublicLozenge appearance={item?.available ? "success" : "default"}>
+            {item?.confidenceTier || (item?.available ? "Available" : "Limited")}
+          </PublicLozenge>
+        </div>
+        <p className="text-heading-28 text-[var(--ds-gray-1000)]">{headline}</p>
+        <p className="text-copy-14 text-[var(--ds-gray-900)]">{detail}</p>
+      </div>
+    </PublicInsetCard>
+  );
+}
+
+function TopPostCard({ post }: { post: ClientReportTopPost }) {
+  return (
+    <PublicCard className="p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <PublicLozenge appearance="default">{post.platformLabel}</PublicLozenge>
+            {post.campaignLabel ? (
+              <PublicLozenge appearance="new">{post.campaignLabel}</PublicLozenge>
+            ) : null}
+          </div>
+          <p className="text-copy-13 text-[var(--ds-gray-900)]">
+            {post.accountName || "Connected account"} · {fmtShortDate(post.publishedAt)}
+          </p>
+        </div>
+        <PublicLozenge appearance="success">{fmt(post.engagements)} engagements</PublicLozenge>
+      </div>
+      <p className="mt-4 text-copy-14 leading-7 text-[var(--ds-gray-1000)]">
+        {post.content || "No post caption was captured for this item."}
+      </p>
+      <div className="mt-5 grid gap-3 text-copy-13 text-[var(--ds-gray-900)] sm:grid-cols-2">
+        <p>Impressions {fmt(post.impressions)}</p>
+        <p>Engagement rate {fmtPct(post.engagementRate)}</p>
+        <p>Likes {fmt(post.likes)}</p>
+        <p>Comments {fmt(post.comments)}</p>
+        <p>Shares {fmt(post.shares)}</p>
+        <p>Clicks {fmt(post.clicks)}</p>
+      </div>
+    </PublicCard>
+  );
+}
+
+function ContributionTable({
+  title,
+  contribution,
+}: {
+  title: string;
+  contribution: ClientReportContribution | null;
+}) {
+  if (!contribution || contribution.rows.length === 0) {
+    return null;
+  }
+
+  return (
+    <PublicCard className="p-6">
+      <div className="mb-4 space-y-1">
+        <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
+          {title}
+        </p>
+        <p className="text-copy-14 text-[var(--ds-gray-900)]">
+          Contribution breakdown inside this campaign report.
+        </p>
+      </div>
+      <PublicTable
+        headers={["Segment", "Posts", "Performance", "Avg / Post"]}
+        rows={contribution.rows.map((row) => [
+          <span key={`${row.key}-label`} className="text-[var(--ds-gray-1000)]">
+            {row.label}
+          </span>,
+          <span key={`${row.key}-posts`}>{fmt(row.postsPublished)}</span>,
+          <span key={`${row.key}-performance`}>{fmt(row.performanceValue)}</span>,
+          <span key={`${row.key}-average`}>{fmt(row.averagePerformancePerPost)}</span>,
+        ])}
+      />
+    </PublicCard>
+  );
+}
+
+function CampaignInsightPanel({
+  campaignInsight,
+}: {
+  campaignInsight: ClientReportCampaignInsight | null;
+}) {
+  if (!campaignInsight) {
+    return null;
+  }
+
+  if (campaignInsight.postsPublished === 0) {
+    return (
+      <PublicSection surface="surface" eyebrow="Campaign Insight" title="Campaign benchmark">
+        <PublicSectionMessage appearance="information" title="Campaign benchmark is still building">
+          <p className="text-copy-14">
+            This campaign does not yet have enough tracked post data in the selected window to
+            render a benchmark view.
+          </p>
+        </PublicSectionMessage>
+      </PublicSection>
+    );
+  }
+
+  return (
+    <PublicSection
+      eyebrow="Campaign Insight"
+      title="Campaign benchmark"
+      description="Campaign-scoped reports include percentile rank and contribution analysis against comparable campaigns in the same workspace slice."
+      surface="surface"
+    >
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <KpiCard
+          icon={Target}
+          label="Percentile Rank"
+          value={fmtPct(campaignInsight.percentile)}
+          detail={`Rank ${campaignInsight.rank ?? "Not available"} of ${campaignInsight.comparableCount} comparable campaigns.`}
+        />
+        <KpiCard
+          icon={TrendingUp}
+          label="Lift vs Benchmark"
+          value={fmtPct(campaignInsight.liftPercent)}
+          detail={`Benchmark average ${fmt(campaignInsight.benchmarkAverage)} engagements per post.`}
+        />
+        <KpiCard
+          icon={Layers3}
+          label="Campaign Posts"
+          value={fmt(campaignInsight.postsPublished)}
+          detail="Posts included in this campaign snapshot."
+        />
+        <KpiCard
+          icon={BarChart3}
+          label="Campaign Engagements"
+          value={fmt(campaignInsight.engagements)}
+          detail={`Average ${fmt(campaignInsight.averageEngagementsPerPost)} engagements per post.`}
+        />
+      </div>
+
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <ContributionTable
+          title="Platform Contribution"
+          contribution={campaignInsight.platformBreakdown}
+        />
+        <ContributionTable
+          title="Account Contribution"
+          contribution={campaignInsight.accountBreakdown}
+        />
+      </div>
+    </PublicSection>
   );
 }
 
@@ -245,17 +428,8 @@ export default function PublicClientReportPage() {
     };
   }, [token]);
 
-  const totalEngagements = useMemo(() => {
-    if (!report) return 0;
-    return (
-      report.overview.totalLikes +
-      report.overview.totalComments +
-      report.overview.totalShares
-    );
-  }, [report]);
-
   const timelineSeries = useMemo(
-    () => aggregateTimeline(report?.timeline ?? []),
+    () => buildTrendSeries(report?.trend ?? []),
     [report]
   );
 
@@ -268,13 +442,7 @@ export default function PublicClientReportPage() {
     );
   }, [timelineSeries]);
 
-  const averageDailyEngagements = useMemo(() => {
-    if (timelineSeries.length === 0) return 0;
-    return Math.round(
-      timelineSeries.reduce((sum, point) => sum + point.totalEngagements, 0) /
-        timelineSeries.length
-    );
-  }, [timelineSeries]);
+  const topPlatform = report?.platformPerformance[0] ?? null;
 
   async function copyLink() {
     try {
@@ -350,17 +518,16 @@ export default function PublicClientReportPage() {
             <PublicLozenge appearance="default">
               {report.templateType.replaceAll("_", " ")}
             </PublicLozenge>
-            <PublicLozenge appearance="success">
-              Generated {fmtShortDate(report.generatedAt)}
-            </PublicLozenge>
+            <PublicLozenge appearance="success">{report.reportScopeLabel}</PublicLozenge>
+            {report.campaignLabel ? (
+              <PublicLozenge appearance="new">{report.campaignLabel}</PublicLozenge>
+            ) : null}
           </div>
         }
         actions={
           <>
             <div className="print:hidden">
-              <PublicPrimaryButton
-                onClick={downloadPdf}
-              >
+              <PublicPrimaryButton onClick={downloadPdf}>
                 <span className="inline-flex items-center gap-2">
                   <Download className="h-4 w-4" />
                   <span>Download PDF</span>
@@ -393,25 +560,27 @@ export default function PublicClientReportPage() {
                   Report coverage
                 </p>
                 <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
-                  {report.reportWindowLabel} for {report.clientLabel}.
+                  {report.reportWindowLabel} for {report.clientLabel} in {report.reportScopeLabel.toLowerCase()} mode.
                 </p>
               </div>
 
-              <div>
-                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
-                  Share window
-                </p>
-                <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
-                  This report link stays active until {fmtDate(report.linkExpiresAt)}.
-                </p>
-              </div>
+              {report.linkExpiresAt ? (
+                <div>
+                  <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
+                    Share window
+                  </p>
+                  <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
+                    This report link stays active until {fmtDate(report.linkExpiresAt)}.
+                  </p>
+                </div>
+              ) : null}
 
               <div>
                 <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
-                  Timezone
+                  Generated
                 </p>
                 <p className="mt-2 text-copy-14 text-[var(--ds-gray-1000)]">
-                  Date and time values render in your local browser timezone.
+                  {fmtDate(report.generatedAt)}
                 </p>
               </div>
             </div>
@@ -438,26 +607,30 @@ export default function PublicClientReportPage() {
           <KpiCard
             icon={Eye}
             label="Impressions"
-            value={fmt(report.overview.totalImpressions)}
-            detail={`${fmt(report.overview.totalReach)} reach captured across published content.`}
+            value={fmt(report.summary.impressions)}
+            detail={`${fmt(report.summary.engagements)} engagements captured in this report scope.`}
           />
           <KpiCard
-            icon={Heart}
-            label="Engagements"
-            value={fmt(totalEngagements)}
-            detail={`${fmtPct(report.overview.avgEngagementRate)} average engagement rate.`}
+            icon={TrendingUp}
+            label="Engagement Rate"
+            value={fmtPct(report.summary.engagementRate)}
+            detail={`${fmt(report.summary.clicks)} clicks generated across published content.`}
           />
           <KpiCard
-            icon={Users}
-            label="Follower Growth"
-            value={fmt(report.overview.followerGrowth)}
-            detail="Net audience movement across connected accounts."
-          />
-          <KpiCard
-            icon={Globe2}
+            icon={Layers3}
             label="Posts Published"
-            value={fmt(report.overview.totalPosts)}
-            detail="Published output included in this reporting window."
+            value={fmt(report.summary.postsPublished)}
+            detail={`${fmt(report.platformPerformance.length)} platform segments contributed to this report.`}
+          />
+          <KpiCard
+            icon={BarChart3}
+            label="Top Platform"
+            value={topPlatform?.platformLabel || "No data"}
+            detail={
+              topPlatform
+                ? `${fmt(topPlatform.engagements)} engagements and ${fmtPct(topPlatform.engagementSharePercent)} of total engagement.`
+                : "No platform performance data is available yet."
+            }
           />
         </div>
       </PublicSection>
@@ -494,10 +667,12 @@ export default function PublicClientReportPage() {
                   Top channel
                 </p>
                 <p className="mt-2 text-heading-20 text-[var(--ds-gray-1000)]">
-                  {report.platformStats[0]?.provider ?? "No data yet"}
+                  {topPlatform?.platformLabel ?? "No data yet"}
                 </p>
                 <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
-                  Highest current impression volume in the selected report window.
+                  {topPlatform
+                    ? `Led with ${fmt(topPlatform.engagements)} engagements across ${fmt(topPlatform.postsPublished)} posts.`
+                    : "Publish a few posts and let analytics snapshots collect before sharing this report externally."}
                 </p>
               </div>
 
@@ -521,10 +696,9 @@ export default function PublicClientReportPage() {
         surface="surface"
       >
         {timelineSeries.length === 0 ? (
-          <PublicSectionMessage appearance="information" title="No timeline data yet">
+          <PublicSectionMessage appearance="information" title="No trend data yet">
             <p className="text-copy-14">
-              SocialRaven has not collected enough engagement snapshots to render a daily trend for
-              this report window yet.
+              SocialRaven has not collected enough report-scope engagement data to render a daily trend for this window yet.
             </p>
           </PublicSectionMessage>
         ) : (
@@ -543,31 +717,20 @@ export default function PublicClientReportPage() {
                 </p>
                 <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
                   {peakTrendPoint
-                    ? `${fmtCalendarDate(peakTrendPoint.date)} delivered the highest daily engagement across the selected report window.`
+                    ? `${fmtCalendarDate(peakTrendPoint.date)} delivered the highest daily engagement in this report.`
                     : "No daily engagement peak is available yet."}
                 </p>
               </PublicInsetCard>
 
               <PublicInsetCard className="p-5">
                 <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
-                  Daily average
+                  Average per post
                 </p>
                 <p className="mt-2 text-heading-24 text-[var(--ds-gray-1000)]">
-                  {fmt(averageDailyEngagements)}
+                  {fmt(timelineSeries[timelineSeries.length - 1]?.averagePerPost ?? 0)}
                 </p>
                 <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
-                  Average daily engagements across {timelineSeries.length} tracked day
-                  {timelineSeries.length === 1 ? "" : "s"} in this reporting period.
-                </p>
-              </PublicInsetCard>
-
-              <PublicInsetCard className="p-5">
-                <p className="text-label-12 uppercase tracking-[0.14em] text-[var(--ds-gray-900)]">
-                  Report framing
-                </p>
-                <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
-                  Use the trendline with the highlights above to explain which publishing windows
-                  gained momentum and where the next creative sprint should focus.
+                  Average engagements per tracked post on the latest day inside this report window.
                 </p>
               </PublicInsetCard>
             </div>
@@ -576,11 +739,23 @@ export default function PublicClientReportPage() {
       </PublicSection>
 
       <PublicSection
+        eyebrow="Forecast Outlook"
+        title="What the next publishing window looks like"
+        description="These projections come from the same workspace analytics model used in the internal product."
+      >
+        <div className="grid gap-4 md:grid-cols-3">
+          <ForecastCard item={report.forecast?.nextPostPrediction || null} />
+          <ForecastCard item={report.forecast?.nextBestSlot || null} />
+          <ForecastCard item={report.forecast?.planningWindowProjection || null} />
+        </div>
+      </PublicSection>
+
+      <PublicSection
         eyebrow="Channel Breakdown"
         title="Platform performance"
         description="Channel-level performance helps agencies explain where momentum is building and where creative needs adjustment."
       >
-        {report.platformStats.length === 0 ? (
+        {report.platformPerformance.length === 0 ? (
           <PublicSectionMessage appearance="information" title="No platform analytics yet">
             <p className="text-copy-14">
               Publish a few posts and let snapshots collect before sharing this report externally.
@@ -588,22 +763,24 @@ export default function PublicClientReportPage() {
           </PublicSectionMessage>
         ) : (
           <PublicTable
-            headers={["Platform", "Impressions", "Engagements", "Follower Growth", "Posts"]}
-            rows={report.platformStats.map((platform) => [
+            headers={["Platform", "Impressions", "Engagements", "Avg / Post", "Share"]}
+            rows={report.platformPerformance.map((platform) => [
               <div key={`${platform.provider}-platform`} className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-[var(--ds-gray-900)]" />
-                <span className="font-medium text-[var(--ds-gray-1000)]">{platform.provider}</span>
+                <span className="font-medium text-[var(--ds-gray-1000)]">{platform.platformLabel}</span>
               </div>,
               <span key={`${platform.provider}-impressions`}>{fmt(platform.impressions)}</span>,
-              <span key={`${platform.provider}-engagement`}>
-                {fmt(platform.likes + platform.comments + platform.shares)} · {fmtPct(platform.engagementRate)}
-              </span>,
-              <span key={`${platform.provider}-growth`}>{fmt(platform.followerGrowth)}</span>,
-              <span key={`${platform.provider}-posts`}>{fmt(platform.postsPublished)}</span>,
+              <span key={`${platform.provider}-engagement`}>{fmt(platform.engagements)}</span>,
+              <span key={`${platform.provider}-average`}>{fmt(platform.averageEngagementsPerPost)}</span>,
+              <span key={`${platform.provider}-share`}>{fmtPct(platform.engagementSharePercent)}</span>,
             ])}
           />
         )}
       </PublicSection>
+
+      {report.reportScope === "CAMPAIGN" ? (
+        <CampaignInsightPanel campaignInsight={report.campaignInsight} />
+      ) : null}
 
       <PublicSection
         eyebrow="Top Content"
@@ -619,71 +796,8 @@ export default function PublicClientReportPage() {
               </p>
             </PublicCard>
           ) : (
-            report.topPosts.map((post) => (
-              <PublicCard key={post.postId} className="p-5">
-                <div className="flex flex-wrap items-center gap-2">
-                  <PublicLozenge appearance="default">{post.provider}</PublicLozenge>
-                  <PublicLozenge appearance="success">
-                    {fmtPct(post.engagementRate)} engagement
-                  </PublicLozenge>
-                </div>
-                <p className="mt-4 text-copy-14 text-[var(--ds-gray-1000)]">
-                  {post.content || "No post caption was captured for this item."}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-4 text-xs text-[var(--ds-gray-900)]">
-                  <span className="inline-flex items-center gap-1">
-                    <Eye className="h-3.5 w-3.5" />
-                    {fmt(post.impressions)} impressions
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <MessageCircle className="h-3.5 w-3.5" />
-                    {fmt(post.comments)} comments
-                  </span>
-                  <span className="inline-flex items-center gap-1">
-                    <Share2 className="h-3.5 w-3.5" />
-                    {fmt(post.shares)} shares
-                  </span>
-                </div>
-              </PublicCard>
-            ))
+            report.topPosts.map((post) => <TopPostCard key={post.postId} post={post} />)
           )}
-        </div>
-      </PublicSection>
-
-      <PublicSection
-        eyebrow="Reporting Context"
-        title="How to read this report"
-        description="This shareable report is generated from SocialRaven analytics snapshots and designed for agencies to hand off directly to clients."
-      >
-        <div className="grid gap-4 md:grid-cols-3">
-          <PublicInsetCard className="p-5">
-            <LineChart className="h-5 w-5 text-[var(--ds-blue-600)]" />
-            <p className="mt-3 text-label-14 text-[var(--ds-gray-1000)]">
-              Snapshot-based analytics
-            </p>
-            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
-              Numbers are based on the latest analytics snapshots available for the selected report window.
-            </p>
-          </PublicInsetCard>
-          <PublicInsetCard className="p-5">
-            <Globe2 className="h-5 w-5 text-[var(--ds-blue-600)]" />
-            <p className="mt-3 text-label-14 text-[var(--ds-gray-1000)]">
-              Shareable by default
-            </p>
-            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
-              Agencies can send this link directly, and the print-safe layout is optimized for PDF
-              export without exposing app navigation or extra client-unfriendly chrome.
-            </p>
-          </PublicInsetCard>
-          <PublicInsetCard className="p-5">
-            <Users className="h-5 w-5 text-[var(--ds-blue-600)]" />
-            <p className="mt-3 text-label-14 text-[var(--ds-gray-1000)]">
-              Client-friendly formatting
-            </p>
-            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
-              Commentary and highlights are structured to reduce manual deck-building for agencies serving US and EU clients.
-            </p>
-          </PublicInsetCard>
         </div>
       </PublicSection>
     </PublicPageShell>

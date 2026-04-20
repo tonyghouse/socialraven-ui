@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { startTransition, useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { startTransition, useEffect, useState, type ReactNode } from "react";
 import { useAuth } from "@clerk/nextjs";
 import {
   Bar,
@@ -43,7 +44,14 @@ import {
 import { cn } from "@/lib/utils";
 import { useRole } from "@/hooks/useRole";
 import {
+  fetchAnalyticsAccountDrilldownApi,
+  fetchAnalyticsCampaignDrilldownApi,
+  fetchAnalyticsForecastPanelApi,
   fetchAnalyticsBreakdownEngineApi,
+  fetchAnalyticsPlatformDrilldownApi,
+  fetchAnalyticsPostDrilldownApi,
+  fetchAnalyticsRecommendationPanelApi,
+  fetchAnalyticsPatternLabApi,
   fetchAnalyticsPostRankingsApi,
   fetchAnalyticsPostTableApi,
   fetchAnalyticsShellApi,
@@ -53,12 +61,31 @@ import {
   fetchAnalyticsYouTubeChannelActivityApi,
   fetchAnalyticsWorkspaceOverviewApi,
   requestAnalyticsRefreshApi,
+  dismissAnalyticsRecommendationApi,
+  type AnalyticsAccountDrilldownResponse,
   type AnalyticsBreakdownResponse,
+  type AnalyticsCampaignDrilldownResponse,
+  type AnalyticsComparableBenchmark,
+  type AnalyticsDrilldownContribution,
+  type AnalyticsDrilldownSummary,
+  type AnalyticsEndOfPeriodForecast,
+  type AnalyticsForecastBestSlot,
+  type AnalyticsForecastPanelResponse,
+  type AnalyticsForecastPrediction,
+  type AnalyticsForecastRange,
   type AnalyticsLinkedInPageActivityResponse,
   type AnalyticsManualRefreshProviderResult,
   type AnalyticsOverviewMetric,
   type AnalyticsMetricAvailabilityWindow,
+  type AnalyticsPattern,
+  type AnalyticsPatternLabResponse,
+  type AnalyticsPercentileRank,
+  type AnalyticsPlatformDrilldownResponse,
+  type AnalyticsPostDrilldownResponse,
+  type AnalyticsPostMilestonePoint,
   type AnalyticsPostRankingsResponse,
+  type AnalyticsRecommendation,
+  type AnalyticsRecommendationPanelResponse,
   type AnalyticsPostRow,
   type AnalyticsPostTableResponse,
   type AnalyticsProviderCoverage,
@@ -81,6 +108,8 @@ const segmentedControlClassName =
   "flex items-center gap-1 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-1";
 const segmentedButtonClassName =
   "rounded-md px-3 py-1.5 text-label-14 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]";
+const interactiveRowClassName =
+  "cursor-pointer transition-colors hover:bg-[var(--ds-gray-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]";
 
 const countFormatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 });
 const compactCountFormatter = new Intl.NumberFormat("en-US", {
@@ -133,6 +162,31 @@ const breakdownDimensionOptions: AnalyticsSelectOption[] = [
 const breakdownMetricOptions: AnalyticsSelectOption[] = rankingMetricOptions.filter(
   (option) => option.value !== "engagementRate"
 );
+
+const patternScopeOptions: AnalyticsSelectOption[] = [
+  { value: "workspace", label: "Workspace view" },
+  { value: "platform", label: "Platform view" },
+  { value: "account", label: "Account view" },
+];
+
+const forecastDaysOptions: AnalyticsSelectOption[] = [
+  { value: "7", label: "Next 7 days" },
+  { value: "14", label: "Next 14 days" },
+  { value: "30", label: "Next 30 days" },
+];
+
+const plannedPostOptions: AnalyticsSelectOption[] = [
+  { value: "1", label: "1 planned post" },
+  { value: "3", label: "3 planned posts" },
+  { value: "5", label: "5 planned posts" },
+  { value: "8", label: "8 planned posts" },
+];
+
+type AnalyticsDrilldownData =
+  | { type: "post"; data: AnalyticsPostDrilldownResponse }
+  | { type: "account"; data: AnalyticsAccountDrilldownResponse }
+  | { type: "platform"; data: AnalyticsPlatformDrilldownResponse }
+  | { type: "campaign"; data: AnalyticsCampaignDrilldownResponse };
 
 function formatDateTime(value?: string | null) {
   if (!value) return "—";
@@ -225,6 +279,64 @@ function formatBucketLabel(point: AnalyticsTrendExplorerPoint) {
   return `${formatShortDateLabel(point.bucketStartDate)}-${formatShortDateLabel(
     point.bucketEndDate
   )}`;
+}
+
+function patternDimensionLabel(dimension: string) {
+  switch (dimension) {
+    case "weekday":
+      return "Weekday";
+    case "hourBucket":
+      return "Hour bucket";
+    case "postType":
+      return "Post type";
+    case "mediaFormat":
+      return "Media format";
+    case "account":
+      return "Account";
+    default:
+      return dimension;
+  }
+}
+
+function patternConfidenceClassName(confidenceTier: string) {
+  switch (confidenceTier) {
+    case "HIGH":
+      return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
+    case "MEDIUM":
+      return "border-[var(--ds-yellow-300)] bg-[var(--ds-yellow-100)] text-[var(--ds-yellow-800)]";
+    default:
+      return "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
+  }
+}
+
+function recommendationPriorityClassName(priority: string) {
+  switch (priority) {
+    case "HIGH":
+      return "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]";
+    case "MEDIUM":
+      return "border-[var(--ds-yellow-300)] bg-[var(--ds-yellow-100)] text-[var(--ds-yellow-800)]";
+    default:
+      return "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
+  }
+}
+
+function recommendationSourceLabel(sourceType: string) {
+  switch (sourceType) {
+    case "POSTING_WINDOW_PATTERN":
+      return "Posting window";
+    case "FORMAT_PATTERN":
+      return "Format";
+    case "ACCOUNT_PATTERN":
+      return "Account";
+    case "CONTRIBUTION_GAP":
+      return "Contribution";
+    default:
+      return sourceType.toLowerCase().replace(/_/g, " ");
+  }
+}
+
+function forecastConfidenceLabel(value?: string | null) {
+  return value ? value.toLowerCase() : "limited";
 }
 
 function labelForProvider(provider: string) {
@@ -804,6 +916,7 @@ function BreakdownEngineSection({
   metric,
   onDimensionChange,
   onMetricChange,
+  onRowSelect,
 }: {
   breakdown: AnalyticsBreakdownResponse | null;
   loading: boolean;
@@ -811,6 +924,7 @@ function BreakdownEngineSection({
   metric: string;
   onDimensionChange: (value: string) => void;
   onMetricChange: (value: string) => void;
+  onRowSelect?: (dimension: string, row: { key: string; label: string }) => void;
 }) {
   const rows = breakdown?.rows ?? [];
   const metricLabel = breakdown?.metricLabel ?? rankingMetricLabel(metric);
@@ -907,14 +1021,37 @@ function BreakdownEngineSection({
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr
-                    key={`${dimension}-${row.key}`}
-                    className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
-                  >
+                {rows.map((row) => {
+                  const clickable = !!onRowSelect && isBreakdownDrilldownEnabled(dimension, row);
+                  return (
+                    <tr
+                      key={`${dimension}-${row.key}`}
+                      role={clickable ? "button" : undefined}
+                      tabIndex={clickable ? 0 : undefined}
+                      onClick={clickable ? () => onRowSelect(dimension, row) : undefined}
+                      onKeyDown={
+                        clickable
+                          ? (event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                onRowSelect(dimension, row);
+                              }
+                            }
+                          : undefined
+                      }
+                      className={cn(
+                        "border-b border-[var(--ds-gray-400)] align-top last:border-b-0",
+                        clickable ? interactiveRowClassName : ""
+                      )}
+                    >
                     <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
                       <div className="min-w-[13rem]">
-                        <p>{row.label}</p>
+                        <div className="flex items-center gap-2">
+                          <p>{row.label}</p>
+                          {clickable ? (
+                            <ArrowUpRight className="h-3.5 w-3.5 text-[var(--ds-gray-900)]" />
+                          ) : null}
+                        </div>
                         <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">{row.key}</p>
                       </div>
                     </td>
@@ -951,13 +1088,800 @@ function BreakdownEngineSection({
                     <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
                       {formatMetricByKey(metric, row.averagePerformancePerPost, metricFormat)}
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </ScrollArea>
         </div>
       )}
+    </section>
+  );
+}
+
+function PatternCardsBlock({
+  title,
+  description,
+  patterns,
+  metric,
+  metricFormat,
+  emptyBody,
+}: {
+  title: string;
+  description: string;
+  patterns: AnalyticsPattern[];
+  metric: string;
+  metricFormat: "number" | "percent";
+  emptyBody: string;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
+        </div>
+        <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+          {patterns.length} patterns
+        </span>
+      </div>
+
+      {patterns.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-5 text-copy-14 text-[var(--ds-gray-900)]">
+          {emptyBody}
+        </div>
+      ) : (
+        <div className="mt-4 grid gap-3 xl:grid-cols-2">
+          {patterns.map((pattern) => (
+            <div
+              key={`${title}-${pattern.dimension}-${pattern.key}`}
+              className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                  {patternDimensionLabel(pattern.dimension)}
+                </span>
+                <span
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-label-12",
+                    patternConfidenceClassName(pattern.confidenceTier)
+                  )}
+                >
+                  {pattern.confidenceTier.toLowerCase()}
+                </span>
+              </div>
+
+              <div className="mt-3 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-heading-16 text-[var(--ds-gray-1000)]">{pattern.label}</p>
+                  <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">{pattern.key}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-label-12 text-[var(--ds-gray-900)]">Observed average</p>
+                  <p className="mt-1 text-heading-20 text-[var(--ds-gray-1000)]">
+                    {formatMetricByKey(metric, pattern.observedValue, metricFormat)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                <MetricTag label="Sample size" value={formatNumber(pattern.sampleSize)} />
+                <MetricTag
+                  label="Baseline"
+                  value={formatMetricByKey(metric, pattern.baselineValue, metricFormat)}
+                />
+                <MetricTag label="Lift" value={formatPercent(pattern.liftPercent)} />
+              </div>
+
+              <p className="mt-4 text-copy-14 text-[var(--ds-gray-900)]">
+                {pattern.evidenceSummary}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PatternLabSection({
+  patternLab,
+  loading,
+  scope,
+  metric,
+  onScopeChange,
+  onMetricChange,
+}: {
+  patternLab: AnalyticsPatternLabResponse | null;
+  loading: boolean;
+  scope: string;
+  metric: string;
+  onScopeChange: (value: string) => void;
+  onMetricChange: (value: string) => void;
+}) {
+  const contexts = patternLab?.contexts ?? [];
+  const metricLabel = patternLab?.metricLabel ?? rankingMetricLabel(metric);
+  const metricFormat = patternLab?.metricFormat ?? (metric === "engagementRate" ? "percent" : "number");
+
+  return (
+    <section className={cn(surfaceClassName, "px-4 py-4")}>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">Pattern Lab</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+            Turn published post history into repeatable rules with sample size, baseline, lift, and confidence on every pattern.
+          </p>
+        </div>
+        <div className="grid w-full gap-3 sm:max-w-2xl sm:grid-cols-2">
+          <ControlField
+            label="Pattern scope"
+            value={scope}
+            onValueChange={onScopeChange}
+            options={patternScopeOptions}
+          />
+          <ControlField
+            label="Pattern metric"
+            value={metric}
+            onValueChange={onMetricChange}
+            options={rankingMetricOptions}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <MetricTile
+          label="Eligible posts"
+          value={loading ? "—" : formatNumber(patternLab?.eligiblePostCount ?? 0)}
+        />
+        <MetricTile
+          label="Excluded posts"
+          value={loading ? "—" : formatNumber(patternLab?.excludedPostCount ?? 0)}
+        />
+        <MetricTile
+          label="Minimum sample"
+          value={loading ? "—" : formatNumber(patternLab?.minimumSampleSize ?? 0)}
+        />
+        <MetricTile
+          label="Contexts"
+          value={loading ? "—" : formatNumber(contexts.length)}
+        />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-3 text-copy-14 text-[var(--ds-blue-700)]">
+        {loading
+          ? "Loading pattern eligibility rules."
+          : patternLab?.eligibilityNote ??
+            "Only eligible posts with live metric coverage are used for pattern output."}
+      </div>
+
+      {contexts.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-6 text-copy-14 text-[var(--ds-gray-900)]">
+          {loading
+            ? "Loading workspace patterns."
+            : "No eligible published posts exist for the selected slice and metric yet."}
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)]">
+            <ScrollArea className="w-full">
+              <table className="min-w-[64rem] border-collapse">
+                <thead className="bg-[var(--ds-gray-100)]">
+                  <tr className="border-b border-[var(--ds-gray-400)]">
+                    <th className="px-3 py-3 text-left text-label-12 text-[var(--ds-gray-900)]">
+                      Context
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Baseline {metricLabel}
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Eligible Posts
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Excluded Posts
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Window Patterns
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Format Patterns
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Account Patterns
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contexts.map((context) => (
+                    <tr
+                      key={`pattern-summary-${context.contextKey}`}
+                      className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
+                    >
+                      <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
+                        {context.contextLabel}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatMetricByKey(metric, context.baselineValue, metricFormat)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(context.eligiblePostCount)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(context.excludedPostCount)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(context.postingWindowPatterns.length)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(context.formatPatterns.length)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(context.accountPatterns.length)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollArea>
+          </div>
+
+          <div className="mt-4 space-y-4">
+            {contexts.map((context) => (
+              <div
+                key={`pattern-context-${context.contextKey}`}
+                className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-heading-18 text-[var(--ds-gray-1000)]">
+                      {context.contextLabel}
+                    </p>
+                    <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+                      Baseline {metricLabel.toLowerCase()}:{" "}
+                      {formatMetricByKey(metric, context.baselineValue, metricFormat)} across{" "}
+                      {formatNumber(context.eligiblePostCount)} eligible posts.
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                      eligible {formatNumber(context.eligiblePostCount)}
+                    </span>
+                    <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                      excluded {formatNumber(context.excludedPostCount)}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-4 xl:grid-cols-3">
+                  <PatternCardsBlock
+                    title="Best Posting Windows"
+                    description="Weekdays and UTC hour buckets that beat the context baseline."
+                    patterns={context.postingWindowPatterns}
+                    metric={metric}
+                    metricFormat={metricFormat}
+                    emptyBody={`No posting-window patterns cleared the minimum sample of ${
+                      patternLab?.minimumSampleSize ?? 0
+                    } posts.`}
+                  />
+                  <PatternCardsBlock
+                    title="Best Formats"
+                    description="Post types and media formats with repeatable upside in this context."
+                    patterns={context.formatPatterns}
+                    metric={metric}
+                    metricFormat={metricFormat}
+                    emptyBody={`No format patterns cleared the minimum sample of ${
+                      patternLab?.minimumSampleSize ?? 0
+                    } posts.`}
+                  />
+                  <PatternCardsBlock
+                    title="Account Performance"
+                    description="Accounts outperforming the context baseline with enough evidence."
+                    patterns={context.accountPatterns}
+                    metric={metric}
+                    metricFormat={metricFormat}
+                    emptyBody={
+                      scope === "account"
+                        ? "Account view is already account-specific, so no cross-account comparison is shown here."
+                        : `No account patterns cleared the minimum sample of ${
+                            patternLab?.minimumSampleSize ?? 0
+                          } posts.`
+                    }
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}
+
+function RecommendationPanelSection({
+  panel,
+  loading,
+  scope,
+  metric,
+  dismissingRecommendationId,
+  onDismiss,
+}: {
+  panel: AnalyticsRecommendationPanelResponse | null;
+  loading: boolean;
+  scope: string;
+  metric: string;
+  dismissingRecommendationId: number | null;
+  onDismiss: (recommendationId: number) => Promise<void>;
+}) {
+  const recommendations = panel?.recommendations ?? [];
+  const metricLabel = panel?.metricLabel ?? rankingMetricLabel(metric);
+
+  return (
+    <section className={cn(surfaceClassName, "px-4 py-4")}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">Recommendation Panel</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+            High-signal next steps generated from pattern winners and contribution gaps inside the current workspace slice.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+            {panel?.scopeLabel ?? patternScopeOptions.find((option) => option.value === scope)?.label ?? "Workspace view"}
+          </span>
+          <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+            {metricLabel}
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <MetricTile
+          label="Visible recommendations"
+          value={loading ? "—" : formatNumber(recommendations.length)}
+        />
+        <MetricTile
+          label="Total active recommendations"
+          value={loading ? "—" : formatNumber(panel?.totalRecommendations ?? 0)}
+        />
+        <MetricTile
+          label="Dismissed"
+          value={loading ? "—" : formatNumber(panel?.dismissedRecommendationCount ?? 0)}
+        />
+        <MetricTile
+          label="Window"
+          value={
+            loading
+              ? "—"
+              : `${formatDateLabel(panel?.currentStartAt ?? null)} to ${formatDateLabel(
+                  panel?.currentEndAt ?? null
+                )}`
+          }
+        />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-3 text-copy-14 text-[var(--ds-blue-700)]">
+        {loading
+          ? "Loading recommendation rules."
+          : panel?.dismissedRecommendationCount
+            ? "Dismissed low-priority recommendations stay stored for this slice and will reappear only if the underlying rule changes materially."
+            : "Recommendations are regenerated from the current workspace slice whenever the underlying pattern output materially changes."}
+      </div>
+
+      {recommendations.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-6 text-copy-14 text-[var(--ds-gray-900)]">
+          {loading
+            ? "Loading recommendation cards."
+            : (panel?.totalRecommendations ?? 0) > 0
+              ? "All active recommendations for this slice are currently dismissed."
+              : "No recommendation rules cleared the signal threshold for the selected slice yet."}
+        </div>
+      ) : (
+        <div className="mt-4 grid gap-4 xl:grid-cols-2">
+          {recommendations.map((recommendation) => (
+            <div
+              key={recommendation.id}
+              className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-label-12",
+                    recommendationPriorityClassName(recommendation.priority)
+                  )}
+                >
+                  {recommendation.priority.toLowerCase()}
+                </span>
+                <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                  {recommendationSourceLabel(recommendation.sourceType)}
+                </span>
+                <span
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-label-12",
+                    patternConfidenceClassName(recommendation.confidenceTier)
+                  )}
+                >
+                  {recommendation.confidenceTier.toLowerCase()}
+                </span>
+              </div>
+
+              <div className="mt-3 flex items-start justify-between gap-4">
+                <div className="min-w-0 flex-1">
+                  <p className="text-heading-18 text-[var(--ds-gray-1000)]">
+                    {recommendation.title}
+                  </p>
+                  {recommendation.contextLabel ? (
+                    <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">
+                      Applies to {recommendation.contextLabel}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="text-right">
+                  <p className="text-label-12 text-[var(--ds-gray-900)]">Impact score</p>
+                  <p className="mt-1 text-heading-24 text-[var(--ds-gray-1000)]">
+                    {formatNumber(recommendation.expectedImpactScore)}
+                  </p>
+                </div>
+              </div>
+
+              <p className="mt-4 text-copy-14 text-[var(--ds-gray-1000)]">
+                {recommendation.actionSummary}
+              </p>
+
+              <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-3">
+                <p className="text-label-12 text-[var(--ds-gray-900)]">Evidence</p>
+                <p className="mt-1 text-copy-14 text-[var(--ds-gray-1000)]">
+                  {recommendation.evidenceSummary}
+                </p>
+              </div>
+
+              <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                <MetricTag label="Metric" value={metricLabel} />
+                <MetricTag
+                  label="Time window"
+                  value={`${formatDateLabel(recommendation.timeWindowStartAt)} to ${formatDateLabel(
+                    recommendation.timeWindowEndAt
+                  )}`}
+                />
+                <MetricTag
+                  label="Confidence"
+                  value={recommendation.confidenceTier.toLowerCase()}
+                />
+              </div>
+
+              {recommendation.dismissible ? (
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => void onDismiss(recommendation.id)}
+                    disabled={dismissingRecommendationId === recommendation.id}
+                    className={cn("h-9 rounded-md", subtleButtonClassName)}
+                  >
+                    <span>
+                      {dismissingRecommendationId === recommendation.id
+                        ? "Dismissing..."
+                        : "Dismiss low-priority rule"}
+                    </span>
+                  </Button>
+                </div>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function ForecastRangeStrip({
+  range,
+  metric,
+  metricFormat,
+}: {
+  range: AnalyticsForecastRange | null;
+  metric: string;
+  metricFormat: "number" | "percent";
+}) {
+  const cells = [
+    { label: "Low", value: range?.lowValue ?? null },
+    { label: "Expected", value: range?.expectedValue ?? null },
+    { label: "High", value: range?.highValue ?? null },
+  ];
+
+  return (
+    <div className="grid gap-2 sm:grid-cols-3">
+      {cells.map((cell) => (
+        <div
+          key={cell.label}
+          className="rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-3 py-2.5"
+        >
+          <p className="text-label-11 uppercase tracking-[0.04em] text-[var(--ds-gray-900)]">
+            {cell.label}
+          </p>
+          <p className="mt-1 text-heading-18 text-[var(--ds-gray-1000)]">
+            {formatMetricByKey(metric, cell.value, metricFormat)}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ForecastCard({
+  title,
+  summary,
+  loading,
+  loadingBody,
+  unavailableReason,
+  badges,
+  range,
+  metric,
+  metricFormat,
+  footer,
+}: {
+  title: string;
+  summary: string;
+  loading: boolean;
+  loadingBody: string;
+  unavailableReason: string | null;
+  badges: ReactNode;
+  range: AnalyticsForecastRange | null;
+  metric: string;
+  metricFormat: "number" | "percent";
+  footer: ReactNode;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-heading-18 text-[var(--ds-gray-1000)]">{title}</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{summary}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">{badges}</div>
+      </div>
+
+      {loading ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-5 text-copy-14 text-[var(--ds-gray-900)]">
+          {loadingBody}
+        </div>
+      ) : unavailableReason ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-5 text-copy-14 text-[var(--ds-gray-900)]">
+          {unavailableReason}
+        </div>
+      ) : (
+        <>
+          <div className="mt-4">
+            <ForecastRangeStrip range={range} metric={metric} metricFormat={metricFormat} />
+          </div>
+          <div className="mt-4">{footer}</div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function ForecastPanelSection({
+  panel,
+  loading,
+  metric,
+  forecastDays,
+  plannedPosts,
+  onMetricChange,
+  onForecastDaysChange,
+  onPlannedPostsChange,
+}: {
+  panel: AnalyticsForecastPanelResponse | null;
+  loading: boolean;
+  metric: string;
+  forecastDays: string;
+  plannedPosts: string;
+  onMetricChange: (value: string) => void;
+  onForecastDaysChange: (value: string) => void;
+  onPlannedPostsChange: (value: string) => void;
+}) {
+  const metricLabel = panel?.metricLabel ?? rankingMetricLabel(metric);
+  const metricFormat = panel?.metricFormat ?? (metric === "engagementRate" ? "percent" : "number");
+  const nextPostForecast: AnalyticsForecastPrediction | null = panel?.nextPostForecast ?? null;
+  const nextBestSlot: AnalyticsForecastBestSlot | null = panel?.nextBestSlot ?? null;
+  const endOfPeriodForecast: AnalyticsEndOfPeriodForecast | null = panel?.endOfPeriodForecast ?? null;
+  const fallbackUnavailableReason = !loading && !panel ? "Forecast panel unavailable for this slice." : null;
+
+  return (
+    <section className={cn(surfaceClassName, "px-4 py-4")}>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">Forecasts And Planning</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+            Plan the next post, the strongest upcoming slot, and the likely result of the next publishing window using only covered workspace history.
+          </p>
+        </div>
+        <div className="grid w-full gap-3 sm:max-w-4xl sm:grid-cols-3">
+          <ControlField
+            label="Forecast metric"
+            value={metric}
+            onValueChange={onMetricChange}
+            options={rankingMetricOptions}
+          />
+          <ControlField
+            label="Planning horizon"
+            value={forecastDays}
+            onValueChange={onForecastDaysChange}
+            options={forecastDaysOptions}
+          />
+          <ControlField
+            label="Planned posts"
+            value={plannedPosts}
+            onValueChange={onPlannedPostsChange}
+            options={plannedPostOptions}
+          />
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <MetricTile
+          label="Eligible posts"
+          value={loading ? "—" : formatNumber(panel?.eligiblePostCount ?? 0)}
+        />
+        <MetricTile
+          label="Excluded posts"
+          value={loading ? "—" : formatNumber(panel?.excludedPostCount ?? 0)}
+        />
+        <MetricTile
+          label="Planning window"
+          value={
+            loading
+              ? "—"
+              : panel?.planningWindowLabel ?? forecastDaysOptions.find((option) => option.value === forecastDays)?.label ?? "Next 7 days"
+          }
+        />
+        <MetricTile
+          label="Comparable floor"
+          value={loading ? "—" : formatNumber(panel?.minimumComparablePosts ?? 0)}
+        />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-4 py-3 text-copy-14 text-[var(--ds-blue-700)]">
+        {loading
+          ? "Loading forecast basis."
+          : panel?.basisNote ??
+            "Forecasts use only fresh workspace history with real coverage for the selected metric."}
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <ForecastCard
+          title="Next Post Range"
+          summary={`Expected ${metricLabel.toLowerCase()} range for the next post in this slice.`}
+          loading={loading}
+          loadingBody="Loading next-post forecast."
+          unavailableReason={
+            nextPostForecast?.available ? null : nextPostForecast?.unavailableReason ?? fallbackUnavailableReason
+          }
+          badges={
+            <>
+              <span
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-label-12",
+                  patternConfidenceClassName(nextPostForecast?.confidenceTier ?? "LOW")
+                )}
+              >
+                {forecastConfidenceLabel(nextPostForecast?.confidenceTier)}
+              </span>
+              <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                {formatNumber(nextPostForecast?.comparablePosts ?? 0)} comparable posts
+              </span>
+            </>
+          }
+          range={nextPostForecast?.range ?? null}
+          metric={metric}
+          metricFormat={metricFormat}
+          footer={
+            <p className="text-copy-14 text-[var(--ds-gray-900)]">
+              {nextPostForecast?.basisSummary}
+            </p>
+          }
+        />
+
+        <ForecastCard
+          title="Next Best Slot"
+          summary="Strongest upcoming weekday and UTC hour bucket inside the selected planning horizon."
+          loading={loading}
+          loadingBody="Loading next-best-slot forecast."
+          unavailableReason={
+            nextBestSlot?.available ? null : nextBestSlot?.unavailableReason ?? fallbackUnavailableReason
+          }
+          badges={
+            <>
+              <span
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-label-12",
+                  patternConfidenceClassName(nextBestSlot?.confidenceTier ?? "LOW")
+                )}
+              >
+                {forecastConfidenceLabel(nextBestSlot?.confidenceTier)}
+              </span>
+              <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                {formatNumber(nextBestSlot?.comparablePosts ?? 0)} slot posts
+              </span>
+            </>
+          }
+          range={nextBestSlot?.range ?? null}
+          metric={metric}
+          metricFormat={metricFormat}
+          footer={
+            <div className="space-y-3">
+              <div className="grid gap-2 sm:grid-cols-3">
+                <MetricTag label="Slot" value={nextBestSlot?.slotLabel ?? "—"} />
+                <MetricTag
+                  label="Upcoming"
+                  value={nextBestSlot?.predictedAt ? formatDateTime(nextBestSlot.predictedAt) : "—"}
+                />
+                <MetricTag
+                  label="Lift"
+                  value={nextBestSlot?.liftPercent !== null && nextBestSlot?.liftPercent !== undefined
+                    ? formatPercent(nextBestSlot.liftPercent)
+                    : "—"}
+                />
+              </div>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">
+                {nextBestSlot?.basisSummary}
+              </p>
+            </div>
+          }
+        />
+
+        <ForecastCard
+          title="End-Of-Period Forecast"
+          summary={`Expected ${metricLabel.toLowerCase()} from the next ${panel?.plannedPosts ?? Number(plannedPosts)} planned posts in the selected planning window.`}
+          loading={loading}
+          loadingBody="Loading planning-window forecast."
+          unavailableReason={
+            endOfPeriodForecast?.available
+              ? null
+              : endOfPeriodForecast?.unavailableReason ?? fallbackUnavailableReason
+          }
+          badges={
+            <>
+              <span
+                className={cn(
+                  "rounded-full border px-2.5 py-1 text-label-12",
+                  patternConfidenceClassName(endOfPeriodForecast?.confidenceTier ?? "LOW")
+                )}
+              >
+                {forecastConfidenceLabel(endOfPeriodForecast?.confidenceTier)}
+              </span>
+              <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                {panel?.planningWindowLabel ?? "Next window"}
+              </span>
+            </>
+          }
+          range={endOfPeriodForecast?.range ?? null}
+          metric={metric}
+          metricFormat={metricFormat}
+          footer={
+            <div className="space-y-3">
+              <div className="grid gap-2 sm:grid-cols-3">
+                <MetricTag
+                  label="Planned posts"
+                  value={formatNumber(endOfPeriodForecast?.plannedPosts ?? Number(plannedPosts))}
+                />
+                <MetricTag
+                  label="Posts/day"
+                  value={formatNumber(endOfPeriodForecast?.historicalPostsPerDay ?? null)}
+                />
+                <MetricTag
+                  label="Comparable posts"
+                  value={formatNumber(endOfPeriodForecast?.comparablePosts ?? 0)}
+                />
+              </div>
+              <p className="text-copy-14 text-[var(--ds-gray-900)]">
+                {endOfPeriodForecast?.basisSummary}
+              </p>
+            </div>
+          }
+        />
+      </div>
     </section>
   );
 }
@@ -978,11 +1902,13 @@ function RankingColumn({
   rows,
   metric,
   emptyBody,
+  onPostSelect,
 }: {
   title: string;
   rows: AnalyticsPostRow[];
   metric: string;
   emptyBody: string;
+  onPostSelect: (postId: number) => void;
 }) {
   return (
     <section className={cn(surfaceClassName, "px-4 py-4")}>
@@ -1003,9 +1929,11 @@ function RankingColumn({
       ) : (
         <div className="mt-4 space-y-3">
           {rows.map((row, index) => (
-            <div
+            <button
               key={`${title}-${row.postId}`}
-              className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4"
+              type="button"
+              onClick={() => onPostSelect(row.postId)}
+              className="w-full rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4 text-left transition-colors hover:bg-[var(--ds-gray-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
@@ -1037,6 +1965,10 @@ function RankingColumn({
                   <p className="mt-1 text-heading-24 text-[var(--ds-gray-1000)]">
                     {formatRankingMetric(row, metric)}
                   </p>
+                  <p className="mt-2 inline-flex items-center gap-1 text-label-12 text-[var(--ds-gray-900)]">
+                    <span>View detail</span>
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </p>
                 </div>
               </div>
 
@@ -1046,7 +1978,7 @@ function RankingColumn({
                 <MetricTag label="Impressions" value={formatNumber(row.impressions)} />
                 <MetricTag label="Likes" value={formatNumber(row.likes)} />
               </div>
-            </div>
+            </button>
           ))}
         </div>
       )}
@@ -1156,9 +2088,11 @@ function CoverageCard({ coverage }: { coverage: AnalyticsProviderCoverage }) {
 function LinkedInPageActivitySection({
   activity,
   loading,
+  onAccountSelect,
 }: {
   activity: AnalyticsLinkedInPageActivityResponse | null;
   loading: boolean;
+  onAccountSelect?: (provider: string, providerUserId: string) => void;
 }) {
   const rows = activity?.rows ?? [];
 
@@ -1224,13 +2158,42 @@ function LinkedInPageActivitySection({
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr
-                    key={row.providerUserId}
-                    className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
-                  >
+                {rows.map((row) => {
+                  const clickable = !!onAccountSelect;
+                  return (
+                    <tr
+                      key={row.providerUserId}
+                      role={clickable ? "button" : undefined}
+                      tabIndex={clickable ? 0 : undefined}
+                      onClick={
+                        clickable
+                          ? () => onAccountSelect("linkedin", row.providerUserId)
+                          : undefined
+                      }
+                      onKeyDown={
+                        clickable
+                          ? (event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                onAccountSelect("linkedin", row.providerUserId);
+                              }
+                            }
+                          : undefined
+                      }
+                      className={cn(
+                        "border-b border-[var(--ds-gray-400)] align-top last:border-b-0",
+                        clickable ? interactiveRowClassName : ""
+                      )}
+                    >
                     <td className="px-3 py-3">
-                      <p className="text-copy-14 text-[var(--ds-gray-1000)]">{row.accountName || row.providerUserId}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-copy-14 text-[var(--ds-gray-1000)]">
+                          {row.accountName || row.providerUserId}
+                        </p>
+                        {clickable ? (
+                          <ArrowUpRight className="h-3.5 w-3.5 text-[var(--ds-gray-900)]" />
+                        ) : null}
+                      </div>
                       <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">{row.providerUserId}</p>
                     </td>
                     <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
@@ -1257,8 +2220,9 @@ function LinkedInPageActivitySection({
                     <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
                       {formatDateLabel(row.lastSnapshotDate)}
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </ScrollArea>
@@ -1271,9 +2235,11 @@ function LinkedInPageActivitySection({
 function YouTubeChannelActivitySection({
   activity,
   loading,
+  onAccountSelect,
 }: {
   activity: AnalyticsYouTubeChannelActivityResponse | null;
   loading: boolean;
+  onAccountSelect?: (provider: string, providerUserId: string) => void;
 }) {
   const rows = activity?.rows ?? [];
   const trend = activity?.trend ?? [];
@@ -1391,13 +2357,42 @@ function YouTubeChannelActivitySection({
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr
-                    key={row.providerUserId}
-                    className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
-                  >
+                {rows.map((row) => {
+                  const clickable = !!onAccountSelect;
+                  return (
+                    <tr
+                      key={row.providerUserId}
+                      role={clickable ? "button" : undefined}
+                      tabIndex={clickable ? 0 : undefined}
+                      onClick={
+                        clickable
+                          ? () => onAccountSelect("youtube", row.providerUserId)
+                          : undefined
+                      }
+                      onKeyDown={
+                        clickable
+                          ? (event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                onAccountSelect("youtube", row.providerUserId);
+                              }
+                            }
+                          : undefined
+                      }
+                      className={cn(
+                        "border-b border-[var(--ds-gray-400)] align-top last:border-b-0",
+                        clickable ? interactiveRowClassName : ""
+                      )}
+                    >
                     <td className="px-3 py-3">
-                      <p className="text-copy-14 text-[var(--ds-gray-1000)]">{row.accountName || row.providerUserId}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-copy-14 text-[var(--ds-gray-1000)]">
+                          {row.accountName || row.providerUserId}
+                        </p>
+                        {clickable ? (
+                          <ArrowUpRight className="h-3.5 w-3.5 text-[var(--ds-gray-900)]" />
+                        ) : null}
+                      </div>
                       <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">{row.providerUserId}</p>
                     </td>
                     <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
@@ -1430,8 +2425,9 @@ function YouTubeChannelActivitySection({
                     <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
                       {formatDateLabel(row.lastSnapshotDate)}
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </ScrollArea>
@@ -1444,9 +2440,11 @@ function YouTubeChannelActivitySection({
 function TikTokCreatorActivitySection({
   activity,
   loading,
+  onAccountSelect,
 }: {
   activity: AnalyticsTikTokCreatorActivityResponse | null;
   loading: boolean;
+  onAccountSelect?: (provider: string, providerUserId: string) => void;
 }) {
   const rows = activity?.rows ?? [];
   const trend = activity?.trend ?? [];
@@ -1553,13 +2551,42 @@ function TikTokCreatorActivitySection({
                 </tr>
               </thead>
               <tbody>
-                {rows.map((row) => (
-                  <tr
-                    key={row.providerUserId}
-                    className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
-                  >
+                {rows.map((row) => {
+                  const clickable = !!onAccountSelect;
+                  return (
+                    <tr
+                      key={row.providerUserId}
+                      role={clickable ? "button" : undefined}
+                      tabIndex={clickable ? 0 : undefined}
+                      onClick={
+                        clickable
+                          ? () => onAccountSelect("tiktok", row.providerUserId)
+                          : undefined
+                      }
+                      onKeyDown={
+                        clickable
+                          ? (event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                onAccountSelect("tiktok", row.providerUserId);
+                              }
+                            }
+                          : undefined
+                      }
+                      className={cn(
+                        "border-b border-[var(--ds-gray-400)] align-top last:border-b-0",
+                        clickable ? interactiveRowClassName : ""
+                      )}
+                    >
                     <td className="px-3 py-3">
-                      <p className="text-copy-14 text-[var(--ds-gray-1000)]">{row.accountName || row.providerUserId}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-copy-14 text-[var(--ds-gray-1000)]">
+                          {row.accountName || row.providerUserId}
+                        </p>
+                        {clickable ? (
+                          <ArrowUpRight className="h-3.5 w-3.5 text-[var(--ds-gray-900)]" />
+                        ) : null}
+                      </div>
                       <p className="mt-1 text-label-12 text-[var(--ds-gray-900)]">{row.providerUserId}</p>
                     </td>
                     <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
@@ -1592,8 +2619,9 @@ function TikTokCreatorActivitySection({
                     <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
                       {formatDateLabel(row.lastSnapshotDate)}
                     </td>
-                  </tr>
-                ))}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </ScrollArea>
@@ -1654,6 +2682,991 @@ function AvailabilityBlock({ items }: { items: AnalyticsMetricAvailabilityWindow
         ))}
       </div>
     </div>
+  );
+}
+
+function formatPercentileSummary(percentileRank: AnalyticsPercentileRank | null | undefined) {
+  if (!percentileRank || percentileRank.percentile === null || percentileRank.rank === null) {
+    return "Not enough comparable rows";
+  }
+  return `${formatPercent(percentileRank.percentile)} percentile`;
+}
+
+function isBreakdownDrilldownEnabled(
+  dimension: string,
+  row: { key: string }
+) {
+  if (dimension === "campaign") {
+    return row.key !== "NO_CAMPAIGN";
+  }
+  return dimension === "platform" || dimension === "account" || dimension === "campaign";
+}
+
+function DrilldownBenchmarkCard({
+  benchmark,
+  metric,
+  metricFormat,
+}: {
+  benchmark: AnalyticsComparableBenchmark | null | undefined;
+  metric: string;
+  metricFormat: "number" | "percent";
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4">
+      <p className="text-label-12 text-[var(--ds-gray-900)]">Comparable benchmark</p>
+      <p className="mt-1 text-heading-18 text-[var(--ds-gray-1000)]">
+        {benchmark?.groupLabel ?? "Comparable group"}
+      </p>
+      <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
+        {benchmark?.basisLabel ?? "Selected metric"}
+      </p>
+
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <MetricTag
+          label="This entity"
+          value={formatMetricByKey(metric, benchmark?.targetValue ?? null, metricFormat)}
+        />
+        <MetricTag
+          label="Group average"
+          value={formatMetricByKey(metric, benchmark?.comparableAverageValue ?? null, metricFormat)}
+        />
+        <MetricTag
+          label="Lift vs group"
+          value={formatPercent(benchmark?.liftPercent ?? null)}
+        />
+      </div>
+
+      <p className="mt-3 text-label-12 text-[var(--ds-gray-900)]">
+        {formatNumber(benchmark?.comparableCount ?? 0)} comparable rows in this workspace slice.
+      </p>
+    </div>
+  );
+}
+
+function DrilldownPercentileCard({
+  percentileRank,
+}: {
+  percentileRank: AnalyticsPercentileRank | null | undefined;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4">
+      <p className="text-label-12 text-[var(--ds-gray-900)]">Percentile rank</p>
+      <p className="mt-1 text-heading-18 text-[var(--ds-gray-1000)]">
+        {formatPercentileSummary(percentileRank)}
+      </p>
+      <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <MetricTag
+          label="Rank"
+          value={
+            percentileRank?.rank !== null && percentileRank?.rank !== undefined
+              ? `#${percentileRank.rank}`
+              : "—"
+          }
+        />
+        <MetricTag
+          label="Comparable rows"
+          value={formatNumber(percentileRank?.comparableCount ?? 0)}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DrilldownSummaryCard({
+  summary,
+  metric,
+  metricFormat,
+}: {
+  summary: AnalyticsDrilldownSummary | null | undefined;
+  metric: string;
+  metricFormat: "number" | "percent";
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4">
+      <p className="text-label-12 text-[var(--ds-gray-900)]">Contribution summary</p>
+      <p className="mt-1 text-heading-18 text-[var(--ds-gray-1000)]">
+        {summary?.label ?? "Current selection"}
+      </p>
+
+      <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <MetricTag
+          label={rankingMetricLabel(metric)}
+          value={formatMetricByKey(metric, summary?.performanceValue ?? null, metricFormat)}
+        />
+        <MetricTag
+          label="Avg per post"
+          value={formatMetricByKey(metric, summary?.averagePerformancePerPost ?? null, metricFormat)}
+        />
+        <MetricTag
+          label="Output share"
+          value={formatPercent(summary?.outputSharePercent ?? null)}
+        />
+        <MetricTag
+          label="Share gap"
+          value={formatPercent(summary?.shareGapPercent ?? null)}
+        />
+      </div>
+    </div>
+  );
+}
+
+function DrilldownTrendPanel({
+  title,
+  description,
+  trend,
+  metric,
+  metricFormat,
+}: {
+  title: string;
+  description: string;
+  trend: AnalyticsTrendExplorerPoint[];
+  metric: string;
+  metricFormat: "number" | "percent";
+}) {
+  const chartData = trend.map((point) => ({
+    bucketLabel: formatBucketLabel(point),
+    performanceValue: point.performanceValue,
+    postsPublished: point.postsPublished,
+  }));
+
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+      <p className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</p>
+      <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
+
+      {trend.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-5 text-copy-14 text-[var(--ds-gray-900)]">
+          No daily rows exist for this drilldown yet.
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 h-[18rem] rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-3">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 8, right: 4, left: 0, bottom: 0 }}>
+                <CartesianGrid stroke="var(--ds-gray-300)" vertical={false} />
+                <XAxis
+                  dataKey="bucketLabel"
+                  tickLine={false}
+                  axisLine={false}
+                  minTickGap={16}
+                  tick={{ fill: "var(--ds-gray-900)", fontSize: 12 }}
+                />
+                <YAxis
+                  yAxisId="performance"
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) =>
+                    formatAxisMetric(metric, Number(value), metricFormat)
+                  }
+                  tick={{ fill: "var(--ds-gray-900)", fontSize: 12 }}
+                  width={72}
+                />
+                <YAxis
+                  yAxisId="posts"
+                  orientation="right"
+                  allowDecimals={false}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => formatNumber(Number(value), true)}
+                  tick={{ fill: "var(--ds-gray-900)", fontSize: 12 }}
+                  width={48}
+                />
+                <Tooltip
+                  contentStyle={{
+                    borderColor: "var(--ds-gray-400)",
+                    backgroundColor: "var(--ds-background-100)",
+                    borderRadius: 12,
+                  }}
+                  formatter={(value, name) => {
+                    const numericValue = Number(value);
+                    if (name === "postsPublished") {
+                      return [formatNumber(numericValue), "Posts"];
+                    }
+                    return [
+                      formatMetricByKey(metric, numericValue, metricFormat),
+                      rankingMetricLabel(metric),
+                    ];
+                  }}
+                />
+                <Bar
+                  yAxisId="posts"
+                  dataKey="postsPublished"
+                  fill="var(--ds-gray-500)"
+                  radius={[6, 6, 0, 0]}
+                  maxBarSize={30}
+                />
+                <Line
+                  yAxisId="performance"
+                  type="monotone"
+                  dataKey="performanceValue"
+                  stroke="var(--ds-blue-600)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3, fill: "var(--ds-blue-600)" }}
+                  activeDot={{ r: 4 }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)]">
+            <ScrollArea className="w-full">
+              <table className="min-w-[44rem] border-collapse">
+                <thead className="bg-[var(--ds-gray-100)]">
+                  <tr className="border-b border-[var(--ds-gray-400)]">
+                    <th className="px-3 py-3 text-left text-label-12 text-[var(--ds-gray-900)]">
+                      Date
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      {rankingMetricLabel(metric)}
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Posts
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Avg per post
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {trend.map((point) => (
+                    <tr
+                      key={`${title}-${point.bucketKey}`}
+                      className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
+                    >
+                      <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatBucketLabel(point)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatMetricByKey(metric, point.performanceValue, metricFormat)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(point.postsPublished)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatMetricByKey(
+                          metric,
+                          point.averagePerformancePerPost,
+                          metricFormat
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollArea>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function DrilldownContributionPanel({
+  title,
+  description,
+  contribution,
+  metric,
+  metricFormat,
+  onRowSelect,
+}: {
+  title: string;
+  description: string;
+  contribution: AnalyticsDrilldownContribution | null | undefined;
+  metric: string;
+  metricFormat: "number" | "percent";
+  onRowSelect?: (dimension: string, row: { key: string; label: string }) => void;
+}) {
+  const rows = contribution?.rows ?? [];
+
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+      <p className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</p>
+      <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
+
+      {rows.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-5 text-copy-14 text-[var(--ds-gray-900)]">
+          No contribution rows exist for this dimension yet.
+        </div>
+      ) : (
+        <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)]">
+          <ScrollArea className="w-full">
+            <table className="min-w-[48rem] border-collapse">
+              <thead className="bg-[var(--ds-gray-100)]">
+                <tr className="border-b border-[var(--ds-gray-400)]">
+                  <th className="px-3 py-3 text-left text-label-12 text-[var(--ds-gray-900)]">
+                    {contribution?.dimensionLabel ?? "Group"}
+                  </th>
+                  <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                    Posts
+                  </th>
+                  <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                    {rankingMetricLabel(metric)}
+                  </th>
+                  <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                    Avg per post
+                  </th>
+                  <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                    Share gap
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row) => {
+                  const clickable =
+                    !!onRowSelect &&
+                    contribution &&
+                    isBreakdownDrilldownEnabled(contribution.dimension, row);
+                  return (
+                    <tr
+                      key={`${title}-${row.key}`}
+                      role={clickable ? "button" : undefined}
+                      tabIndex={clickable ? 0 : undefined}
+                      onClick={
+                        clickable && contribution
+                          ? () => onRowSelect(contribution.dimension, row)
+                          : undefined
+                      }
+                      onKeyDown={
+                        clickable && contribution
+                          ? (event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                onRowSelect(contribution.dimension, row);
+                              }
+                            }
+                          : undefined
+                      }
+                      className={cn(
+                        "border-b border-[var(--ds-gray-400)] align-top last:border-b-0",
+                        clickable ? interactiveRowClassName : ""
+                      )}
+                    >
+                      <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
+                        <div className="flex items-center gap-2">
+                          <span>{row.label}</span>
+                          {clickable ? (
+                            <ArrowUpRight className="h-3.5 w-3.5 text-[var(--ds-gray-900)]" />
+                          ) : null}
+                        </div>
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(row.postsPublished)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatMetricByKey(metric, row.performanceValue, metricFormat)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatMetricByKey(metric, row.averagePerformancePerPost, metricFormat)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatPercent(row.shareGapPercent)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </ScrollArea>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DrilldownPostList({
+  title,
+  description,
+  rows,
+  metric,
+  metricFormat,
+  onPostSelect,
+}: {
+  title: string;
+  description: string;
+  rows: AnalyticsPostRow[];
+  metric: string;
+  metricFormat: "number" | "percent";
+  onPostSelect: (postId: number) => void;
+}) {
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+      <p className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</p>
+      <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
+
+      {rows.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-5 text-copy-14 text-[var(--ds-gray-900)]">
+          No comparable post rows exist yet.
+        </div>
+      ) : (
+        <div className="mt-4 space-y-3">
+          {rows.map((row) => (
+            <button
+              key={`${title}-${row.postId}`}
+              type="button"
+              onClick={() => onPostSelect(row.postId)}
+              className="w-full rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-4 text-left transition-colors hover:bg-[var(--ds-background-100)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)]"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                  {labelForProvider(row.provider)}
+                </span>
+                <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+                  {labelForPostType(row.postType)}
+                </span>
+              </div>
+              <div className="mt-3 flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-copy-14 text-[var(--ds-gray-1000)]">{previewText(row)}</p>
+                  <p className="mt-2 text-label-12 text-[var(--ds-gray-900)]">
+                    {row.accountName || row.providerUserId}
+                    {row.campaignLabel ? ` · ${row.campaignLabel}` : ""}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-label-12 text-[var(--ds-gray-900)]">
+                    {rankingMetricLabel(metric)}
+                  </p>
+                  <p className="mt-1 text-heading-20 text-[var(--ds-gray-1000)]">
+                    {formatMetricByKey(metric, rowMetricValue(row, metric), metricFormat)}
+                  </p>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PostMilestonePanel({
+  milestones,
+}: {
+  milestones: AnalyticsPostMilestonePoint[];
+}) {
+  const chartData = milestones.map((point) => ({
+    fetchedLabel: formatDateTime(point.fetchedAt),
+    engagements: point.engagements ?? 0,
+    impressions: point.impressions ?? 0,
+    clicks: point.clicks ?? 0,
+  }));
+
+  return (
+    <div className="rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+      <p className="text-heading-16 text-[var(--ds-gray-1000)]">Milestone progression</p>
+      <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+        Snapshot-by-snapshot growth for the selected post.
+      </p>
+
+      {milestones.length === 0 ? (
+        <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-5 text-copy-14 text-[var(--ds-gray-900)]">
+          No milestone snapshots exist for this post yet.
+        </div>
+      ) : (
+        <>
+          <div className="mt-4 h-[18rem] rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] p-3">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={chartData} margin={{ top: 8, right: 4, left: 0, bottom: 0 }}>
+                <CartesianGrid stroke="var(--ds-gray-300)" vertical={false} />
+                <XAxis
+                  dataKey="fetchedLabel"
+                  tickLine={false}
+                  axisLine={false}
+                  minTickGap={16}
+                  tick={{ fill: "var(--ds-gray-900)", fontSize: 12 }}
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => formatNumber(Number(value), true)}
+                  tick={{ fill: "var(--ds-gray-900)", fontSize: 12 }}
+                  width={72}
+                />
+                <Tooltip
+                  contentStyle={{
+                    borderColor: "var(--ds-gray-400)",
+                    backgroundColor: "var(--ds-background-100)",
+                    borderRadius: 12,
+                  }}
+                />
+                <Legend />
+                <Bar dataKey="impressions" fill="var(--ds-gray-500)" radius={[6, 6, 0, 0]} />
+                <Line
+                  type="monotone"
+                  dataKey="engagements"
+                  stroke="var(--ds-blue-600)"
+                  strokeWidth={2.5}
+                  dot={{ r: 3, fill: "var(--ds-blue-600)" }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="clicks"
+                  stroke="var(--ds-green-600)"
+                  strokeWidth={2}
+                  dot={{ r: 2.5, fill: "var(--ds-green-600)" }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)]">
+            <ScrollArea className="w-full">
+              <table className="min-w-[52rem] border-collapse">
+                <thead className="bg-[var(--ds-gray-100)]">
+                  <tr className="border-b border-[var(--ds-gray-400)]">
+                    <th className="px-3 py-3 text-left text-label-12 text-[var(--ds-gray-900)]">
+                      Snapshot
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Impressions
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Engagements
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Clicks
+                    </th>
+                    <th className="px-3 py-3 text-right text-label-12 text-[var(--ds-gray-900)]">
+                      Engagement rate
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {milestones.map((point) => (
+                    <tr
+                      key={`milestone-${point.fetchedAt}`}
+                      className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
+                    >
+                      <td className="px-3 py-3 text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatDateTime(point.fetchedAt)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(point.impressions)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(point.engagements)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatNumber(point.clicks)}
+                      </td>
+                      <td className="px-3 py-3 text-right text-copy-14 text-[var(--ds-gray-1000)]">
+                        {formatPercent(point.engagementRate)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ScrollArea>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function PostDrilldownSection({
+  drilldown,
+  onClose,
+  onPostSelect,
+}: {
+  drilldown: AnalyticsPostDrilldownResponse;
+  onClose: () => void;
+  onPostSelect: (postId: number) => void;
+}) {
+  const { post, metric, metricFormat } = drilldown;
+
+  return (
+    <section id="analytics-drilldown" className={cn(surfaceClassName, "px-4 py-4")}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">Post drilldown</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+            Direct evidence for a single post inside the active workspace slice.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onClose}
+          className={cn("h-9 rounded-md", subtleButtonClassName)}
+        >
+          Close detail
+        </Button>
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+            {labelForProvider(post.provider)}
+          </span>
+          <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+            {labelForPostType(post.postType)}
+          </span>
+          <span
+            className={cn(
+              "rounded-full border px-2.5 py-1 text-label-12",
+              statusPillClass(post.freshnessStatus)
+            )}
+          >
+            {post.freshnessStatus.toLowerCase()}
+          </span>
+        </div>
+
+        <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-heading-20 text-[var(--ds-gray-1000)]">{previewText(post)}</p>
+            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
+              {post.accountName || post.providerUserId}
+              {post.campaignLabel ? ` · ${post.campaignLabel}` : ""}
+              {post.publishedAt ? ` · ${formatDateTime(post.publishedAt)}` : ""}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-label-12 text-[var(--ds-gray-900)]">{rankingMetricLabel(metric)}</p>
+            <p className="mt-1 text-heading-28 text-[var(--ds-gray-1000)]">
+              {formatMetricByKey(metric, rowMetricValue(post, metric), metricFormat)}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+          <DetailRow label="Post ID" value={String(post.postId)} />
+          <DetailRow label="Provider post ID" value={post.providerPostId ?? "—"} />
+          <DetailRow label="Last write" value={formatDateTime(post.lastCollectedAt)} />
+          <DetailRow label="Media format" value={post.mediaFormat.toLowerCase().replace(/_/g, " ")} />
+        </div>
+
+        <div className="mt-4">
+          <AvailabilityBlock items={post.metricAvailability} />
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <DrilldownBenchmarkCard
+          benchmark={drilldown.comparableBenchmark}
+          metric={metric}
+          metricFormat={metricFormat}
+        />
+        <DrilldownPercentileCard percentileRank={drilldown.percentileRank} />
+        <DrilldownSummaryCard
+          summary={{
+            key: String(post.postId),
+            label: "Selected post",
+            postsPublished: 1,
+            performanceValue: rowMetricValue(post, metric) ?? 0,
+            averagePerformancePerPost: rowMetricValue(post, metric),
+            outputSharePercent: 100,
+            performanceSharePercent: 100,
+            shareGapPercent: null,
+          }}
+          metric={metric}
+          metricFormat={metricFormat}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        <PostMilestonePanel milestones={drilldown.milestoneProgression} />
+        <DrilldownPostList
+          title="Comparable posts"
+          description="Other posts from the same provider cohort used as the comparison set."
+          rows={drilldown.comparablePosts}
+          metric={metric}
+          metricFormat={metricFormat}
+          onPostSelect={onPostSelect}
+        />
+      </div>
+    </section>
+  );
+}
+
+function AccountDrilldownSection({
+  drilldown,
+  onClose,
+  onPostSelect,
+}: {
+  drilldown: AnalyticsAccountDrilldownResponse;
+  onClose: () => void;
+  onPostSelect: (postId: number) => void;
+}) {
+  return (
+    <section id="analytics-drilldown" className={cn(surfaceClassName, "px-4 py-4")}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">Account drilldown</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+            Trend and contribution analysis for a single connected account inside the current workspace slice.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onClose}
+          className={cn("h-9 rounded-md", subtleButtonClassName)}
+        >
+          Close detail
+        </Button>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <DrilldownSummaryCard
+          summary={drilldown.summary}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownBenchmarkCard
+          benchmark={drilldown.comparableBenchmark}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownPercentileCard percentileRank={drilldown.percentileRank} />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+            {labelForProvider(drilldown.provider)}
+          </span>
+          <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+            {drilldown.currentRangeLabel}
+          </span>
+        </div>
+        <p className="mt-3 text-heading-20 text-[var(--ds-gray-1000)]">
+          {drilldown.accountName || drilldown.providerUserId}
+        </p>
+        <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+          {drilldown.providerUserId}
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        <DrilldownTrendPanel
+          title="Account trend"
+          description="Daily posting and result movement for this account."
+          trend={drilldown.trend}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownPostList
+          title="Top posts"
+          description="Highest-performing posts from this account in the selected slice."
+          rows={drilldown.topPosts}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+          onPostSelect={onPostSelect}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <DrilldownContributionPanel
+          title="Post type contribution"
+          description="See which post types are driving this account."
+          contribution={drilldown.postTypeBreakdown}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownContributionPanel
+          title="Media format contribution"
+          description="See which media formats are carrying this account."
+          contribution={drilldown.mediaFormatBreakdown}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+      </div>
+    </section>
+  );
+}
+
+function PlatformDrilldownSection({
+  drilldown,
+  onClose,
+  onPostSelect,
+  onRowSelect,
+}: {
+  drilldown: AnalyticsPlatformDrilldownResponse;
+  onClose: () => void;
+  onPostSelect: (postId: number) => void;
+  onRowSelect: (dimension: string, row: { key: string; label: string }) => void;
+}) {
+  return (
+    <section id="analytics-drilldown" className={cn(surfaceClassName, "px-4 py-4")}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">Platform drilldown</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+            Trend, contribution, and top-post analysis for one platform in the active workspace slice.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onClose}
+          className={cn("h-9 rounded-md", subtleButtonClassName)}
+        >
+          Close detail
+        </Button>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <DrilldownSummaryCard
+          summary={drilldown.summary}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownBenchmarkCard
+          benchmark={drilldown.comparableBenchmark}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownPercentileCard percentileRank={drilldown.percentileRank} />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+        <p className="text-heading-20 text-[var(--ds-gray-1000)]">{drilldown.platformLabel}</p>
+        <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+          {drilldown.currentRangeLabel}
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        <DrilldownTrendPanel
+          title="Platform trend"
+          description="Daily result movement for this platform."
+          trend={drilldown.trend}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownPostList
+          title="Top posts"
+          description="Highest-performing posts on this platform for the selected slice."
+          rows={drilldown.topPosts}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+          onPostSelect={onPostSelect}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <DrilldownContributionPanel
+          title="Account contribution"
+          description="Drill into the accounts driving this platform."
+          contribution={drilldown.accountBreakdown}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+          onRowSelect={onRowSelect}
+        />
+        <DrilldownContributionPanel
+          title="Post type contribution"
+          description="Post types contributing inside this platform."
+          contribution={drilldown.postTypeBreakdown}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownContributionPanel
+          title="Media format contribution"
+          description="Media mix contributing inside this platform."
+          contribution={drilldown.mediaFormatBreakdown}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+      </div>
+    </section>
+  );
+}
+
+function CampaignDrilldownSection({
+  drilldown,
+  onClose,
+  onPostSelect,
+  onRowSelect,
+}: {
+  drilldown: AnalyticsCampaignDrilldownResponse;
+  onClose: () => void;
+  onPostSelect: (postId: number) => void;
+  onRowSelect: (dimension: string, row: { key: string; label: string }) => void;
+}) {
+  return (
+    <section id="analytics-drilldown" className={cn(surfaceClassName, "px-4 py-4")}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-heading-16 text-[var(--ds-gray-1000)]">Campaign drilldown</p>
+          <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+            Cross-platform evidence for a single campaign inside the current workspace slice.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onClose}
+          className={cn("h-9 rounded-md", subtleButtonClassName)}
+        >
+          Close detail
+        </Button>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-3">
+        <DrilldownSummaryCard
+          summary={drilldown.summary}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownBenchmarkCard
+          benchmark={drilldown.comparableBenchmark}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownPercentileCard percentileRank={drilldown.percentileRank} />
+      </div>
+
+      <div className="mt-4 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] p-4">
+        <p className="text-heading-20 text-[var(--ds-gray-1000)]">
+          {drilldown.campaignLabel || `Campaign #${drilldown.campaignId}`}
+        </p>
+        <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+          Campaign #{drilldown.campaignId} · {drilldown.currentRangeLabel}
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+        <DrilldownTrendPanel
+          title="Campaign trend"
+          description="Daily result movement for this campaign."
+          trend={drilldown.trend}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+        />
+        <DrilldownPostList
+          title="Top posts"
+          description="Strongest posts inside this campaign for the selected slice."
+          rows={drilldown.topPosts}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+          onPostSelect={onPostSelect}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <DrilldownContributionPanel
+          title="Platform contribution"
+          description="Which platforms are carrying the campaign."
+          contribution={drilldown.platformBreakdown}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+          onRowSelect={onRowSelect}
+        />
+        <DrilldownContributionPanel
+          title="Account contribution"
+          description="Which accounts are carrying the campaign."
+          contribution={drilldown.accountBreakdown}
+          metric={drilldown.metric}
+          metricFormat={drilldown.metricFormat}
+          onRowSelect={onRowSelect}
+        />
+      </div>
+    </section>
   );
 }
 
@@ -1740,6 +3753,9 @@ function EmptyState({
 export default function AnalyticsPage() {
   const { getToken } = useAuth();
   const { canExportClientReports } = useRole();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [dateRange, setDateRange] = useState<DateRange>("30d");
   const [platform, setPlatform] = useState("ALL");
@@ -1751,6 +3767,11 @@ export default function AnalyticsPage() {
   const [trendGranularity, setTrendGranularity] = useState<"daily" | "weekly">("daily");
   const [breakdownDimension, setBreakdownDimension] = useState("platform");
   const [breakdownMetric, setBreakdownMetric] = useState("engagements");
+  const [patternScope, setPatternScope] = useState("workspace");
+  const [patternMetric, setPatternMetric] = useState("engagements");
+  const [forecastMetric, setForecastMetric] = useState("engagements");
+  const [forecastDays, setForecastDays] = useState("7");
+  const [plannedPosts, setPlannedPosts] = useState("3");
   const [sortBy, setSortBy] = useState("publishedAt");
   const [sortDirection, setSortDirection] = useState("desc");
   const [page, setPage] = useState(0);
@@ -1759,6 +3780,10 @@ export default function AnalyticsPage() {
   const [overview, setOverview] = useState<AnalyticsWorkspaceOverview | null>(null);
   const [trendExplorer, setTrendExplorer] = useState<AnalyticsTrendExplorerResponse | null>(null);
   const [breakdownEngine, setBreakdownEngine] = useState<AnalyticsBreakdownResponse | null>(null);
+  const [patternLab, setPatternLab] = useState<AnalyticsPatternLabResponse | null>(null);
+  const [forecastPanel, setForecastPanel] = useState<AnalyticsForecastPanelResponse | null>(null);
+  const [recommendationPanel, setRecommendationPanel] =
+    useState<AnalyticsRecommendationPanelResponse | null>(null);
   const [rankings, setRankings] = useState<AnalyticsPostRankingsResponse | null>(null);
   const [postTable, setPostTable] = useState<AnalyticsPostTableResponse | null>(null);
   const [linkedInPageActivity, setLinkedInPageActivity] =
@@ -1769,9 +3794,103 @@ export default function AnalyticsPage() {
     useState<AnalyticsYouTubeChannelActivityResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [dismissingRecommendationId, setDismissingRecommendationId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [refreshResults, setRefreshResults] = useState<AnalyticsManualRefreshProviderResult[]>([]);
   const [reloadTick, setReloadTick] = useState(0);
+  const [drilldown, setDrilldown] = useState<AnalyticsDrilldownData | null>(null);
+  const [drilldownLoading, setDrilldownLoading] = useState(false);
+  const [drilldownError, setDrilldownError] = useState<string | null>(null);
+
+  const detailType = searchParams.get("detail");
+  const detailPostId = searchParams.get("detailPostId");
+  const detailProvider = searchParams.get("detailProvider");
+  const detailProviderUserId = searchParams.get("detailProviderUserId");
+  const detailCampaignId = searchParams.get("detailCampaignId");
+  const parsedDetailPostId =
+    detailPostId && !Number.isNaN(Number(detailPostId)) ? Number(detailPostId) : null;
+  const parsedDetailCampaignId =
+    detailCampaignId && !Number.isNaN(Number(detailCampaignId)) ? Number(detailCampaignId) : null;
+
+  function updateDetailQuery(updater: (params: URLSearchParams) => void) {
+    const params = new URLSearchParams(searchParams.toString());
+    updater(params);
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }
+
+  function openPostDetail(postId: number) {
+    updateDetailQuery((params) => {
+      params.set("detail", "post");
+      params.set("detailPostId", String(postId));
+      params.delete("detailProvider");
+      params.delete("detailProviderUserId");
+      params.delete("detailCampaignId");
+    });
+  }
+
+  function openAccountDetail(provider: string, accountProviderUserId: string) {
+    updateDetailQuery((params) => {
+      params.set("detail", "account");
+      params.set("detailProvider", provider.toLowerCase());
+      params.set("detailProviderUserId", accountProviderUserId);
+      params.delete("detailPostId");
+      params.delete("detailCampaignId");
+    });
+  }
+
+  function openPlatformDetail(provider: string) {
+    updateDetailQuery((params) => {
+      params.set("detail", "platform");
+      params.set("detailProvider", provider.toLowerCase());
+      params.delete("detailProviderUserId");
+      params.delete("detailPostId");
+      params.delete("detailCampaignId");
+    });
+  }
+
+  function openCampaignDetail(nextCampaignId: number) {
+    updateDetailQuery((params) => {
+      params.set("detail", "campaign");
+      params.set("detailCampaignId", String(nextCampaignId));
+      params.delete("detailProvider");
+      params.delete("detailProviderUserId");
+      params.delete("detailPostId");
+    });
+  }
+
+  function closeDrilldown() {
+    updateDetailQuery((params) => {
+      params.delete("detail");
+      params.delete("detailPostId");
+      params.delete("detailProvider");
+      params.delete("detailProviderUserId");
+      params.delete("detailCampaignId");
+    });
+  }
+
+  function handleBreakdownRowSelect(
+    dimension: string,
+    row: { key: string; label: string }
+  ) {
+    if (dimension === "platform") {
+      openPlatformDetail(row.key);
+      return;
+    }
+    if (dimension === "account") {
+      const [provider, accountProviderUserId] = row.key.split(":");
+      if (provider && accountProviderUserId) {
+        openAccountDetail(provider, accountProviderUserId);
+      }
+      return;
+    }
+    if (dimension === "campaign" && row.key !== "NO_CAMPAIGN") {
+      const nextCampaignId = Number(row.key);
+      if (!Number.isNaN(nextCampaignId)) {
+        openCampaignDetail(nextCampaignId);
+      }
+    }
+  }
 
   async function handleManualRefresh() {
     setRefreshing(true);
@@ -1790,6 +3909,24 @@ export default function AnalyticsPage() {
       );
     } finally {
       setRefreshing(false);
+    }
+  }
+
+  async function handleDismissRecommendation(recommendationId: number) {
+    setDismissingRecommendationId(recommendationId);
+    setError(null);
+
+    try {
+      await dismissAnalyticsRecommendationApi(getToken, recommendationId);
+      setReloadTick((current) => current + 1);
+    } catch (dismissError: unknown) {
+      setError(
+        dismissError instanceof Error
+          ? dismissError.message
+          : "Failed to dismiss analytics recommendation."
+      );
+    } finally {
+      setDismissingRecommendationId(null);
     }
   }
 
@@ -1814,6 +3951,9 @@ export default function AnalyticsPage() {
           overviewResponse,
           trendExplorerResponse,
           breakdownEngineResponse,
+          patternLabResponse,
+          forecastPanelResponse,
+          recommendationPanelResponse,
           rankingsResponse,
           tableResponse,
           linkedInPageActivityResponse,
@@ -1831,6 +3971,22 @@ export default function AnalyticsPage() {
               ...params,
               dimension: breakdownDimension,
               metric: breakdownMetric,
+            }),
+            fetchAnalyticsPatternLabApi(getToken, {
+              ...params,
+              scope: patternScope,
+              metric: patternMetric,
+            }),
+            fetchAnalyticsForecastPanelApi(getToken, {
+              ...params,
+              metric: forecastMetric,
+              forecastDays: Number(forecastDays),
+              plannedPosts: Number(plannedPosts),
+            }),
+            fetchAnalyticsRecommendationPanelApi(getToken, {
+              ...params,
+              scope: patternScope,
+              metric: patternMetric,
             }),
             fetchAnalyticsPostRankingsApi(getToken, {
               ...params,
@@ -1867,6 +4023,9 @@ export default function AnalyticsPage() {
         setOverview(overviewResponse);
         setTrendExplorer(trendExplorerResponse);
         setBreakdownEngine(breakdownEngineResponse);
+        setPatternLab(patternLabResponse);
+        setForecastPanel(forecastPanelResponse);
+        setRecommendationPanel(recommendationPanelResponse);
         setRankings(rankingsResponse);
         setPostTable(tableResponse);
         setLinkedInPageActivity(linkedInPageActivityResponse);
@@ -1897,11 +4056,125 @@ export default function AnalyticsPage() {
     trendMetric,
     breakdownDimension,
     breakdownMetric,
+    patternScope,
+    patternMetric,
+    forecastMetric,
+    forecastDays,
+    plannedPosts,
     sortBy,
     sortDirection,
     page,
     getToken,
     reloadTick,
+  ]);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadDrilldown() {
+      if (!detailType) {
+        setDrilldown(null);
+        setDrilldownError(null);
+        setDrilldownLoading(false);
+        return;
+      }
+
+      setDrilldownLoading(true);
+      setDrilldownError(null);
+
+      const sliceParams = {
+        dateRange,
+        platform: platform === "ALL" ? null : platform,
+        providerUserId: providerUserId === "ALL" ? null : providerUserId,
+        campaignId: campaignId === "ALL" ? null : campaignId,
+        contentType: contentType === "ALL" ? null : contentType,
+      };
+
+      try {
+        let nextDrilldown: AnalyticsDrilldownData | null = null;
+
+        if (detailType === "post" && parsedDetailPostId !== null) {
+          const response = await fetchAnalyticsPostDrilldownApi(getToken, parsedDetailPostId, {
+            ...sliceParams,
+            metric: rankingMetric,
+          });
+          nextDrilldown = { type: "post", data: response };
+        } else if (
+          detailType === "account" &&
+          detailProvider &&
+          detailProviderUserId
+        ) {
+          const response = await fetchAnalyticsAccountDrilldownApi(
+            getToken,
+            detailProvider,
+            detailProviderUserId,
+            {
+              dateRange,
+              platform: platform === "ALL" ? null : platform,
+              campaignId: campaignId === "ALL" ? null : campaignId,
+              contentType: contentType === "ALL" ? null : contentType,
+              metric: breakdownMetric,
+            }
+          );
+          nextDrilldown = { type: "account", data: response };
+        } else if (detailType === "platform" && detailProvider) {
+          const response = await fetchAnalyticsPlatformDrilldownApi(getToken, detailProvider, {
+            ...sliceParams,
+            metric: breakdownMetric,
+          });
+          nextDrilldown = { type: "platform", data: response };
+        } else if (detailType === "campaign" && parsedDetailCampaignId !== null) {
+          const response = await fetchAnalyticsCampaignDrilldownApi(
+            getToken,
+            parsedDetailCampaignId,
+            {
+              dateRange,
+              platform: platform === "ALL" ? null : platform,
+              providerUserId: providerUserId === "ALL" ? null : providerUserId,
+              contentType: contentType === "ALL" ? null : contentType,
+              metric: breakdownMetric,
+            }
+          );
+          nextDrilldown = { type: "campaign", data: response };
+        }
+
+        if (!isActive) return;
+        setDrilldown(nextDrilldown);
+        if (!nextDrilldown) {
+          setDrilldownError("Selected drilldown is incomplete.");
+        }
+      } catch (loadError: unknown) {
+        if (!isActive) return;
+        setDrilldown(null);
+        setDrilldownError(
+          loadError instanceof Error ? loadError.message : "Failed to load drilldown."
+        );
+      } finally {
+        if (isActive) {
+          setDrilldownLoading(false);
+        }
+      }
+    }
+
+    void loadDrilldown();
+
+    return () => {
+      isActive = false;
+    };
+  }, [
+    dateRange,
+    platform,
+    providerUserId,
+    campaignId,
+    contentType,
+    rankingMetric,
+    breakdownMetric,
+    detailType,
+    detailProvider,
+    detailProviderUserId,
+    parsedDetailPostId,
+    parsedDetailCampaignId,
+    getToken,
   ]);
 
   useEffect(() => {
@@ -1932,6 +4205,16 @@ export default function AnalyticsPage() {
       setContentType("ALL");
     }
   }, [shell, platform, providerUserId, campaignId, contentType]);
+
+  useEffect(() => {
+    if (!detailType || (!drilldown && !drilldownLoading && !drilldownError)) {
+      return;
+    }
+    const detailElement = document.getElementById("analytics-drilldown");
+    if (detailElement) {
+      detailElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [detailType, drilldown, drilldownLoading, drilldownError]);
 
   function resetPageAndRun(update: () => void) {
     startTransition(() => {
@@ -2237,6 +4520,61 @@ export default function AnalyticsPage() {
           )}
         </section>
 
+        {detailType ? (
+          drilldown ? (
+            drilldown.type === "post" ? (
+              <PostDrilldownSection
+                drilldown={drilldown.data}
+                onClose={closeDrilldown}
+                onPostSelect={openPostDetail}
+              />
+            ) : drilldown.type === "account" ? (
+              <AccountDrilldownSection
+                drilldown={drilldown.data}
+                onClose={closeDrilldown}
+                onPostSelect={openPostDetail}
+              />
+            ) : drilldown.type === "platform" ? (
+              <PlatformDrilldownSection
+                drilldown={drilldown.data}
+                onClose={closeDrilldown}
+                onPostSelect={openPostDetail}
+                onRowSelect={handleBreakdownRowSelect}
+              />
+            ) : (
+              <CampaignDrilldownSection
+                drilldown={drilldown.data}
+                onClose={closeDrilldown}
+                onPostSelect={openPostDetail}
+                onRowSelect={handleBreakdownRowSelect}
+              />
+            )
+          ) : (
+            <section id="analytics-drilldown" className={cn(surfaceClassName, "px-4 py-4")}>
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-heading-16 text-[var(--ds-gray-1000)]">Drilldown</p>
+                  <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
+                    Loading evidence for the selected insight.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={closeDrilldown}
+                  className={cn("h-9 rounded-md", subtleButtonClassName)}
+                >
+                  Close detail
+                </Button>
+              </div>
+              <div className="mt-4 rounded-lg border border-dashed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-4 py-6 text-copy-14 text-[var(--ds-gray-900)]">
+                {drilldownLoading ? "Loading drilldown." : drilldownError ?? "Drilldown unavailable."}
+              </div>
+            </section>
+          )
+        ) : null}
+
         <TrendExplorerSection
           trend={trendExplorer}
           loading={loading}
@@ -2269,18 +4607,80 @@ export default function AnalyticsPage() {
               setBreakdownMetric(value);
             });
           }}
+          onRowSelect={handleBreakdownRowSelect}
+        />
+
+        <PatternLabSection
+          patternLab={patternLab}
+          loading={loading}
+          scope={patternScope}
+          metric={patternMetric}
+          onScopeChange={(value) => {
+            startTransition(() => {
+              setPatternScope(value);
+            });
+          }}
+          onMetricChange={(value) => {
+            startTransition(() => {
+              setPatternMetric(value);
+            });
+          }}
+        />
+
+        <RecommendationPanelSection
+          panel={recommendationPanel}
+          loading={loading}
+          scope={patternScope}
+          metric={patternMetric}
+          dismissingRecommendationId={dismissingRecommendationId}
+          onDismiss={handleDismissRecommendation}
+        />
+
+        <ForecastPanelSection
+          panel={forecastPanel}
+          loading={loading}
+          metric={forecastMetric}
+          forecastDays={forecastDays}
+          plannedPosts={plannedPosts}
+          onMetricChange={(value) => {
+            startTransition(() => {
+              setForecastMetric(value);
+            });
+          }}
+          onForecastDaysChange={(value) => {
+            startTransition(() => {
+              setForecastDays(value);
+            });
+          }}
+          onPlannedPostsChange={(value) => {
+            startTransition(() => {
+              setPlannedPosts(value);
+            });
+          }}
         />
 
         {showLinkedInPageActivity ? (
-          <LinkedInPageActivitySection activity={linkedInPageActivity} loading={loading} />
+          <LinkedInPageActivitySection
+            activity={linkedInPageActivity}
+            loading={loading}
+            onAccountSelect={openAccountDetail}
+          />
         ) : null}
 
         {showTikTokCreatorActivity ? (
-          <TikTokCreatorActivitySection activity={tikTokCreatorActivity} loading={loading} />
+          <TikTokCreatorActivitySection
+            activity={tikTokCreatorActivity}
+            loading={loading}
+            onAccountSelect={openAccountDetail}
+          />
         ) : null}
 
         {showYouTubeChannelActivity ? (
-          <YouTubeChannelActivitySection activity={youTubeChannelActivity} loading={loading} />
+          <YouTubeChannelActivitySection
+            activity={youTubeChannelActivity}
+            loading={loading}
+            onAccountSelect={openAccountDetail}
+          />
         ) : null}
 
         <section className="space-y-3">
@@ -2311,12 +4711,14 @@ export default function AnalyticsPage() {
               rows={rankings?.topPosts ?? []}
               metric={rankings?.metric ?? rankingMetric}
               emptyBody="No posts in this slice have the selected metric yet."
+              onPostSelect={openPostDetail}
             />
             <RankingColumn
               title="Needs Attention"
               rows={rankings?.worstPosts ?? []}
               metric={rankings?.metric ?? rankingMetric}
               emptyBody="There are no low-performing rows to rank for the selected metric yet."
+              onPostSelect={openPostDetail}
             />
           </div>
         </section>
@@ -2432,7 +4834,19 @@ export default function AnalyticsPage() {
                       {currentRows.map((row) => (
                         <tr
                           key={row.postId}
-                          className="border-b border-[var(--ds-gray-400)] align-top last:border-b-0"
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => openPostDetail(row.postId)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              event.preventDefault();
+                              openPostDetail(row.postId);
+                            }
+                          }}
+                          className={cn(
+                            "border-b border-[var(--ds-gray-400)] align-top last:border-b-0",
+                            interactiveRowClassName
+                          )}
                         >
                           <td className="px-3 py-3">
                             <div className="min-w-[15rem]">
@@ -2442,6 +4856,10 @@ export default function AnalyticsPage() {
                                 </span>
                                 <span className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
                                   {labelForPostType(row.postType)}
+                                </span>
+                                <span className="inline-flex items-center gap-1 text-label-12 text-[var(--ds-gray-900)]">
+                                  <span>Open</span>
+                                  <ArrowUpRight className="h-3.5 w-3.5" />
                                 </span>
                               </div>
                               <p className="mt-2 line-clamp-2 text-copy-14 text-[var(--ds-gray-1000)]">

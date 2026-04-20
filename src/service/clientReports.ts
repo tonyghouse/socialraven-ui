@@ -2,6 +2,7 @@ import { apiHeaders } from "@/lib/api-headers";
 import type {
   ClientReportLink,
   ClientReportSchedule,
+  ClientReportSnapshotRequest,
   CreateClientReportLinkRequest,
   CreateClientReportScheduleRequest,
   PublicClientReport,
@@ -25,6 +26,19 @@ export async function getClientReportLinksApi(
   const headers = await apiHeaders(getToken);
   const res = await fetch(`${BACKEND}/client-reports/links`, { headers });
   return parseJsonResponse<ClientReportLink[]>(res);
+}
+
+export async function getClientReportSnapshotApi(
+  getToken: GetToken,
+  request: ClientReportSnapshotRequest
+): Promise<PublicClientReport> {
+  const headers = await apiHeaders(getToken);
+  const res = await fetch(`${BACKEND}/client-reports/snapshot`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(request),
+  });
+  return parseJsonResponse<PublicClientReport>(res);
 }
 
 export async function createClientReportLinkApi(

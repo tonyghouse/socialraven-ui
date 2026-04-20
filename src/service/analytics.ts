@@ -295,6 +295,262 @@ export interface AnalyticsBreakdownResponse {
   rows: AnalyticsBreakdownRow[];
 }
 
+export interface AnalyticsPattern {
+  patternType: string;
+  dimension: string;
+  key: string;
+  label: string;
+  sampleSize: number;
+  baselineValue: number;
+  observedValue: number;
+  liftPercent: number;
+  confidenceTier: string;
+  evidenceSummary: string;
+}
+
+export interface AnalyticsPatternContext {
+  contextKey: string;
+  contextLabel: string;
+  baselineValue: number;
+  eligiblePostCount: number;
+  excludedPostCount: number;
+  postingWindowPatterns: AnalyticsPattern[];
+  formatPatterns: AnalyticsPattern[];
+  accountPatterns: AnalyticsPattern[];
+}
+
+export interface AnalyticsPatternLabResponse {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
+  scope: string;
+  scopeLabel: string;
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  minimumSampleSize: number;
+  eligiblePostCount: number;
+  excludedPostCount: number;
+  eligibilityNote: string;
+  contexts: AnalyticsPatternContext[];
+}
+
+export interface AnalyticsRecommendation {
+  id: number;
+  recommendationKey: string;
+  sourceType: string;
+  contextLabel: string | null;
+  title: string;
+  actionSummary: string;
+  evidenceSummary: string;
+  confidenceTier: string;
+  priority: string;
+  expectedImpactScore: number;
+  timeWindowStartAt: string | null;
+  timeWindowEndAt: string | null;
+  dismissible: boolean;
+}
+
+export interface AnalyticsRecommendationPanelResponse {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
+  scope: string;
+  scopeLabel: string;
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  totalRecommendations: number;
+  dismissedRecommendationCount: number;
+  recommendations: AnalyticsRecommendation[];
+}
+
+export interface AnalyticsRecommendationDismissResponse {
+  recommendationId: number;
+  dismissedAt: string;
+}
+
+export interface AnalyticsForecastRange {
+  lowValue: number | null;
+  expectedValue: number | null;
+  highValue: number | null;
+}
+
+export interface AnalyticsForecastPrediction {
+  available: boolean;
+  confidenceTier: string | null;
+  comparablePosts: number;
+  range: AnalyticsForecastRange | null;
+  basisSummary: string | null;
+  unavailableReason: string | null;
+}
+
+export interface AnalyticsForecastBestSlot {
+  available: boolean;
+  slotKey: string | null;
+  slotLabel: string | null;
+  predictedAt: string | null;
+  confidenceTier: string | null;
+  comparablePosts: number;
+  baselineValue: number | null;
+  observedValue: number | null;
+  liftPercent: number | null;
+  range: AnalyticsForecastRange | null;
+  basisSummary: string | null;
+  unavailableReason: string | null;
+}
+
+export interface AnalyticsEndOfPeriodForecast {
+  available: boolean;
+  forecastDays: number;
+  planningWindowLabel: string;
+  plannedPosts: number;
+  historicalPostsPerDay: number | null;
+  confidenceTier: string | null;
+  comparablePosts: number;
+  range: AnalyticsForecastRange | null;
+  basisSummary: string | null;
+  unavailableReason: string | null;
+}
+
+export interface AnalyticsForecastPanelResponse {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  forecastDays: number;
+  planningWindowLabel: string;
+  plannedPosts: number;
+  minimumComparablePosts: number;
+  minimumSlotSampleSize: number;
+  eligiblePostCount: number;
+  excludedPostCount: number;
+  basisNote: string;
+  nextPostForecast: AnalyticsForecastPrediction;
+  nextBestSlot: AnalyticsForecastBestSlot;
+  endOfPeriodForecast: AnalyticsEndOfPeriodForecast;
+}
+
+export interface AnalyticsComparableBenchmark {
+  groupLabel: string;
+  basisLabel: string;
+  comparableCount: number;
+  targetValue: number | null;
+  comparableAverageValue: number | null;
+  sliceAverageValue: number | null;
+  liftPercent: number | null;
+}
+
+export interface AnalyticsPercentileRank {
+  percentile: number | null;
+  rank: number | null;
+  comparableCount: number;
+}
+
+export interface AnalyticsPostMilestonePoint {
+  fetchedAt: string;
+  impressions: number | null;
+  reach: number | null;
+  likes: number | null;
+  comments: number | null;
+  shares: number | null;
+  saves: number | null;
+  clicks: number | null;
+  videoViews: number | null;
+  watchTimeMinutes: number | null;
+  engagements: number | null;
+  engagementRate: number | null;
+}
+
+export interface AnalyticsDrilldownSummary {
+  key: string;
+  label: string;
+  postsPublished: number;
+  performanceValue: number;
+  averagePerformancePerPost: number | null;
+  outputSharePercent: number | null;
+  performanceSharePercent: number | null;
+  shareGapPercent: number | null;
+}
+
+export interface AnalyticsDrilldownContribution {
+  dimension: string;
+  dimensionLabel: string;
+  rows: AnalyticsBreakdownRow[];
+}
+
+export interface AnalyticsPostDrilldownResponse {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  post: AnalyticsPostRow;
+  comparableBenchmark: AnalyticsComparableBenchmark;
+  percentileRank: AnalyticsPercentileRank;
+  milestoneProgression: AnalyticsPostMilestonePoint[];
+  comparablePosts: AnalyticsPostRow[];
+}
+
+export interface AnalyticsAccountDrilldownResponse {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  provider: string;
+  providerUserId: string;
+  accountName: string | null;
+  comparableBenchmark: AnalyticsComparableBenchmark;
+  percentileRank: AnalyticsPercentileRank;
+  summary: AnalyticsDrilldownSummary;
+  trend: AnalyticsTrendExplorerPoint[];
+  postTypeBreakdown: AnalyticsDrilldownContribution | null;
+  mediaFormatBreakdown: AnalyticsDrilldownContribution | null;
+  topPosts: AnalyticsPostRow[];
+}
+
+export interface AnalyticsPlatformDrilldownResponse {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  provider: string;
+  platformLabel: string;
+  comparableBenchmark: AnalyticsComparableBenchmark;
+  percentileRank: AnalyticsPercentileRank;
+  summary: AnalyticsDrilldownSummary;
+  trend: AnalyticsTrendExplorerPoint[];
+  accountBreakdown: AnalyticsDrilldownContribution | null;
+  postTypeBreakdown: AnalyticsDrilldownContribution | null;
+  mediaFormatBreakdown: AnalyticsDrilldownContribution | null;
+  topPosts: AnalyticsPostRow[];
+}
+
+export interface AnalyticsCampaignDrilldownResponse {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  campaignId: number;
+  campaignLabel: string | null;
+  comparableBenchmark: AnalyticsComparableBenchmark;
+  percentileRank: AnalyticsPercentileRank;
+  summary: AnalyticsDrilldownSummary;
+  trend: AnalyticsTrendExplorerPoint[];
+  platformBreakdown: AnalyticsDrilldownContribution | null;
+  accountBreakdown: AnalyticsDrilldownContribution | null;
+  topPosts: AnalyticsPostRow[];
+}
+
 export interface AnalyticsShellParams {
   dateRange: DateRange;
   platform?: string | null;
@@ -509,6 +765,170 @@ export async function fetchAnalyticsBreakdownEngineApi(
       campaignId: params.campaignId,
       contentType: params.contentType,
       dimension: params.dimension,
+      metric: params.metric,
+    }
+  );
+}
+
+export async function fetchAnalyticsPatternLabApi(
+  getToken: GetToken,
+  params: AnalyticsShellParams & {
+    scope?: string;
+    metric?: string;
+  }
+): Promise<AnalyticsPatternLabResponse> {
+  return request<AnalyticsPatternLabResponse>(getToken, "/analytics/pattern-lab", undefined, {
+    days: dateRangeToDays(params.dateRange),
+    platform: params.platform,
+    providerUserId: params.providerUserId,
+    campaignId: params.campaignId,
+    contentType: params.contentType,
+    scope: params.scope,
+    metric: params.metric,
+  });
+}
+
+export async function fetchAnalyticsRecommendationPanelApi(
+  getToken: GetToken,
+  params: AnalyticsShellParams & {
+    scope?: string;
+    metric?: string;
+  }
+): Promise<AnalyticsRecommendationPanelResponse> {
+  return request<AnalyticsRecommendationPanelResponse>(
+    getToken,
+    "/analytics/recommendation-panel",
+    undefined,
+    {
+      days: dateRangeToDays(params.dateRange),
+      platform: params.platform,
+      providerUserId: params.providerUserId,
+      campaignId: params.campaignId,
+      contentType: params.contentType,
+      scope: params.scope,
+      metric: params.metric,
+    }
+  );
+}
+
+export async function dismissAnalyticsRecommendationApi(
+  getToken: GetToken,
+  recommendationId: number
+): Promise<AnalyticsRecommendationDismissResponse> {
+  return request<AnalyticsRecommendationDismissResponse>(
+    getToken,
+    `/analytics/recommendations/${recommendationId}/dismiss`,
+    { method: "POST" }
+  );
+}
+
+export async function fetchAnalyticsForecastPanelApi(
+  getToken: GetToken,
+  params: AnalyticsShellParams & {
+    metric?: string;
+    forecastDays?: number;
+    plannedPosts?: number;
+  }
+): Promise<AnalyticsForecastPanelResponse> {
+  return request<AnalyticsForecastPanelResponse>(
+    getToken,
+    "/analytics/forecast-panel",
+    undefined,
+    {
+      days: dateRangeToDays(params.dateRange),
+      platform: params.platform,
+      providerUserId: params.providerUserId,
+      campaignId: params.campaignId,
+      contentType: params.contentType,
+      metric: params.metric,
+      forecastDays: params.forecastDays,
+      plannedPosts: params.plannedPosts,
+    }
+  );
+}
+
+export async function fetchAnalyticsPostDrilldownApi(
+  getToken: GetToken,
+  postId: number,
+  params: AnalyticsShellParams & {
+    metric?: string;
+  }
+): Promise<AnalyticsPostDrilldownResponse> {
+  return request<AnalyticsPostDrilldownResponse>(
+    getToken,
+    `/analytics/drilldown/post/${postId}`,
+    undefined,
+    {
+      days: dateRangeToDays(params.dateRange),
+      platform: params.platform,
+      providerUserId: params.providerUserId,
+      campaignId: params.campaignId,
+      contentType: params.contentType,
+      metric: params.metric,
+    }
+  );
+}
+
+export async function fetchAnalyticsAccountDrilldownApi(
+  getToken: GetToken,
+  provider: string,
+  providerUserId: string,
+  params: Pick<AnalyticsShellParams, "dateRange" | "platform" | "campaignId" | "contentType"> & {
+    metric?: string;
+  }
+): Promise<AnalyticsAccountDrilldownResponse> {
+  return request<AnalyticsAccountDrilldownResponse>(
+    getToken,
+    `/analytics/drilldown/account/${provider}/${providerUserId}`,
+    undefined,
+    {
+      days: dateRangeToDays(params.dateRange),
+      platform: params.platform,
+      campaignId: params.campaignId,
+      contentType: params.contentType,
+      metric: params.metric,
+    }
+  );
+}
+
+export async function fetchAnalyticsPlatformDrilldownApi(
+  getToken: GetToken,
+  provider: string,
+  params: AnalyticsShellParams & {
+    metric?: string;
+  }
+): Promise<AnalyticsPlatformDrilldownResponse> {
+  return request<AnalyticsPlatformDrilldownResponse>(
+    getToken,
+    `/analytics/drilldown/platform/${provider}`,
+    undefined,
+    {
+      days: dateRangeToDays(params.dateRange),
+      platform: params.platform,
+      providerUserId: params.providerUserId,
+      campaignId: params.campaignId,
+      contentType: params.contentType,
+      metric: params.metric,
+    }
+  );
+}
+
+export async function fetchAnalyticsCampaignDrilldownApi(
+  getToken: GetToken,
+  campaignId: number,
+  params: Pick<AnalyticsShellParams, "dateRange" | "platform" | "providerUserId" | "contentType"> & {
+    metric?: string;
+  }
+): Promise<AnalyticsCampaignDrilldownResponse> {
+  return request<AnalyticsCampaignDrilldownResponse>(
+    getToken,
+    `/analytics/drilldown/campaign/${campaignId}`,
+    undefined,
+    {
+      days: dateRangeToDays(params.dateRange),
+      platform: params.platform,
+      providerUserId: params.providerUserId,
+      contentType: params.contentType,
       metric: params.metric,
     }
   );

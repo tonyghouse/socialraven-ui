@@ -4,6 +4,7 @@ export type ClientReportTemplate =
   | "GROWTH_SNAPSHOT";
 
 export type ClientReportCadence = "WEEKLY" | "MONTHLY";
+export type ClientReportScope = "WORKSPACE" | "CAMPAIGN";
 
 export interface ClientReportLink {
   id: string;
@@ -11,6 +12,9 @@ export interface ClientReportLink {
   reportTitle: string;
   clientLabel: string | null;
   agencyLabel: string | null;
+  reportScope: ClientReportScope;
+  campaignId: number | null;
+  campaignLabel: string | null;
   templateType: ClientReportTemplate;
   reportDays: number;
   recipientName: string | null;
@@ -29,6 +33,9 @@ export interface ClientReportSchedule {
   recipientEmail: string;
   clientLabel: string | null;
   agencyLabel: string | null;
+  reportScope: ClientReportScope;
+  campaignId: number | null;
+  campaignLabel: string | null;
   templateType: ClientReportTemplate;
   reportDays: number;
   cadence: ClientReportCadence;
@@ -47,6 +54,8 @@ export interface CreateClientReportLinkRequest {
   reportTitle?: string;
   clientLabel?: string;
   agencyLabel?: string;
+  reportScope?: ClientReportScope;
+  campaignId?: number;
   templateType?: ClientReportTemplate;
   reportDays?: number;
   commentary?: string;
@@ -61,6 +70,8 @@ export interface CreateClientReportScheduleRequest {
   recipientEmail: string;
   clientLabel?: string;
   agencyLabel?: string;
+  reportScope?: ClientReportScope;
+  campaignId?: number;
   templateType?: ClientReportTemplate;
   reportDays?: number;
   commentary?: string;
@@ -71,51 +82,137 @@ export interface CreateClientReportScheduleRequest {
   shareExpiryHours?: number;
 }
 
-export interface AnalyticsOverviewSnapshot {
-  totalImpressions: number;
-  totalReach: number;
-  totalLikes: number;
-  totalComments: number;
-  totalShares: number;
-  totalVideoViews: number;
-  followerGrowth: number;
-  totalPosts: number;
-  avgEngagementRate: number;
+export interface ClientReportSnapshotRequest {
+  reportTitle?: string;
+  clientLabel?: string;
+  agencyLabel?: string;
+  reportScope?: ClientReportScope;
+  campaignId?: number;
+  templateType?: ClientReportTemplate;
+  reportDays?: number;
+  commentary?: string;
+  expiresAt?: string;
 }
 
-export interface PlatformStatsSnapshot {
-  provider: string;
+export interface ClientReportSummary {
+  currentRangeLabel: string;
+  currentStartAt: string;
+  currentEndAt: string;
   impressions: number;
-  reach: number;
-  likes: number;
-  comments: number;
-  shares: number;
+  engagements: number;
+  engagementRate: number;
   clicks: number;
   videoViews: number;
-  followerGrowth: number;
   postsPublished: number;
-  engagementRate: number;
 }
 
-export interface TopPostSnapshot {
+export interface ClientReportPlatformPerformance {
+  provider: string;
+  platformLabel: string;
+  postsPublished: number;
+  engagements: number;
+  impressions: number;
+  averageEngagementsPerPost: number | null;
+  outputSharePercent: number | null;
+  engagementSharePercent: number | null;
+  impressionSharePercent: number | null;
+}
+
+export interface ClientReportTopPost {
   postId: number;
   provider: string;
-  providerPostId: string | null;
+  platformLabel: string;
+  accountName: string | null;
+  campaignId: number | null;
+  campaignLabel: string | null;
   content: string | null;
+  postType: string;
+  mediaFormat: string;
   publishedAt: string | null;
-  snapshotType: string;
-  impressions: number;
-  reach: number;
-  likes: number;
-  comments: number;
-  shares: number;
-  engagementRate: number;
+  impressions: number | null;
+  reach: number | null;
+  likes: number | null;
+  comments: number | null;
+  shares: number | null;
+  saves: number | null;
+  clicks: number | null;
+  videoViews: number | null;
+  watchTimeMinutes: number | null;
+  engagements: number | null;
+  engagementRate: number | null;
 }
 
-export interface TimelinePointSnapshot {
-  date: string;
-  provider: string;
-  totalEngagements: number;
+export interface ClientReportTrendPoint {
+  bucketKey: string;
+  bucketStartDate: string;
+  bucketEndDate: string;
+  engagements: number;
+  postsPublished: number;
+  averageEngagementsPerPost: number | null;
+}
+
+export interface ClientReportForecastRange {
+  lowValue: number | null;
+  expectedValue: number | null;
+  highValue: number | null;
+}
+
+export interface ClientReportForecastItem {
+  available: boolean;
+  label: string;
+  confidenceTier: string | null;
+  slotLabel: string | null;
+  forecastDays: number | null;
+  plannedPosts: number | null;
+  comparablePosts: number;
+  liftPercent: number | null;
+  range: ClientReportForecastRange | null;
+  basisSummary: string | null;
+  unavailableReason: string | null;
+}
+
+export interface ClientReportForecastSummary {
+  metric: string;
+  metricLabel: string;
+  metricFormat: "number" | "percent";
+  planningWindowLabel: string;
+  basisNote: string;
+  nextPostPrediction: ClientReportForecastItem;
+  nextBestSlot: ClientReportForecastItem;
+  planningWindowProjection: ClientReportForecastItem;
+}
+
+export interface ClientReportContributionRow {
+  key: string;
+  label: string;
+  postsPublished: number;
+  performanceValue: number;
+  outputSharePercent: number | null;
+  performanceSharePercent: number | null;
+  shareGapPercent: number | null;
+  averagePerformancePerPost: number | null;
+}
+
+export interface ClientReportContribution {
+  dimension: string;
+  dimensionLabel: string;
+  rows: ClientReportContributionRow[];
+}
+
+export interface ClientReportCampaignInsight {
+  campaignId: number;
+  campaignLabel: string | null;
+  postsPublished: number;
+  engagements: number;
+  averageEngagementsPerPost: number | null;
+  benchmarkAverage: number | null;
+  liftPercent: number | null;
+  percentile: number | null;
+  rank: number | null;
+  comparableCount: number;
+  trend: ClientReportTrendPoint[];
+  platformBreakdown: ClientReportContribution | null;
+  accountBreakdown: ClientReportContribution | null;
 }
 
 export interface PublicClientReport {
@@ -128,12 +225,18 @@ export interface PublicClientReport {
   templateType: ClientReportTemplate;
   reportDays: number;
   reportWindowLabel: string;
+  reportScope: ClientReportScope;
+  reportScopeLabel: string;
+  campaignId: number | null;
+  campaignLabel: string | null;
   commentary: string;
   highlights: string[];
   generatedAt: string;
-  linkExpiresAt: string;
-  overview: AnalyticsOverviewSnapshot;
-  platformStats: PlatformStatsSnapshot[];
-  topPosts: TopPostSnapshot[];
-  timeline: TimelinePointSnapshot[];
+  linkExpiresAt: string | null;
+  summary: ClientReportSummary;
+  platformPerformance: ClientReportPlatformPerformance[];
+  topPosts: ClientReportTopPost[];
+  trend: ClientReportTrendPoint[];
+  forecast: ClientReportForecastSummary | null;
+  campaignInsight: ClientReportCampaignInsight | null;
 }
