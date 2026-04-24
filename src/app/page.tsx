@@ -49,13 +49,13 @@ function ThreadsIcon({ className = "" }: { className?: string }) {
 /* ──────────────────────────────── Data ─────────────────────────────────── */
 
 const PLATFORMS = [
-  { Icon: Instagram,   name: "Instagram",   color: "text-pink-500",  bg: "bg-pink-50 dark:bg-pink-500/10",  dot: "bg-pink-400" },
-  { Icon: Twitter,     name: "X / Twitter", color: "text-sky-500",   bg: "bg-sky-50 dark:bg-sky-500/10",   dot: "bg-sky-400" },
-  { Icon: Linkedin,    name: "LinkedIn",    color: "text-blue-600",  bg: "bg-blue-50 dark:bg-blue-500/10", dot: "bg-blue-500" },
-  { Icon: Youtube,     name: "YouTube",     color: "text-red-500",   bg: "bg-red-50 dark:bg-red-500/10",   dot: "bg-red-400" },
-  { Icon: Facebook,    name: "Facebook",    color: "text-blue-500",  bg: "bg-blue-50 dark:bg-blue-500/10", dot: "bg-blue-400" },
-  { Icon: ThreadsIcon, name: "Threads",     color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", dot: "bg-[var(--ds-gray-700)]" },
-  { Icon: TikTokIcon,  name: "TikTok",      color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", dot: "bg-[var(--ds-gray-700)]" },
+  { Icon: Instagram,   name: "Instagram",   color: "text-pink-500",  bg: "bg-pink-50 dark:bg-pink-500/10",  dot: "bg-pink-400", soon: false },
+  { Icon: Twitter,     name: "X / Twitter", color: "text-sky-500",   bg: "bg-sky-50 dark:bg-sky-500/10",   dot: "bg-sky-400", soon: false },
+  { Icon: Linkedin,    name: "LinkedIn",    color: "text-blue-600",  bg: "bg-blue-50 dark:bg-blue-500/10", dot: "bg-blue-500", soon: false },
+  { Icon: Youtube,     name: "YouTube",     color: "text-red-500",   bg: "bg-red-50 dark:bg-red-500/10",   dot: "bg-red-400", soon: false },
+  { Icon: Facebook,    name: "Facebook",    color: "text-blue-500",  bg: "bg-blue-50 dark:bg-blue-500/10", dot: "bg-blue-400", soon: false },
+  { Icon: ThreadsIcon, name: "Threads",     color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", dot: "bg-[var(--ds-gray-700)]", soon: false },
+  { Icon: TikTokIcon,  name: "TikTok",      color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", dot: "bg-[var(--ds-gray-700)]", soon: false },
 ];
 
 function formatList(items: string[]) {
