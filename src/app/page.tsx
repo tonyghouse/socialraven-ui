@@ -49,14 +49,24 @@ function ThreadsIcon({ className = "" }: { className?: string }) {
 /* ──────────────────────────────── Data ─────────────────────────────────── */
 
 const PLATFORMS = [
-  { Icon: Instagram,   name: "Instagram",   color: "text-pink-500",  bg: "bg-pink-50 dark:bg-pink-500/10"  },
-  { Icon: Twitter,     name: "X / Twitter", color: "text-sky-500",   bg: "bg-sky-50 dark:bg-sky-500/10"   },
-  { Icon: Linkedin,    name: "LinkedIn",    color: "text-blue-600",  bg: "bg-blue-50 dark:bg-blue-500/10" },
-  { Icon: Youtube,     name: "YouTube",     color: "text-red-500",   bg: "bg-red-50 dark:bg-red-500/10"   },
-  { Icon: Facebook,    name: "Facebook",    color: "text-blue-500",  bg: "bg-blue-50 dark:bg-blue-500/10" },
-  { Icon: ThreadsIcon, name: "Threads",     color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5" },
-  { Icon: TikTokIcon,  name: "TikTok",      color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", soon: true },
+  { Icon: Instagram,   name: "Instagram",   color: "text-pink-500",  bg: "bg-pink-50 dark:bg-pink-500/10",  dot: "bg-pink-400" },
+  { Icon: Twitter,     name: "X / Twitter", color: "text-sky-500",   bg: "bg-sky-50 dark:bg-sky-500/10",   dot: "bg-sky-400" },
+  { Icon: Linkedin,    name: "LinkedIn",    color: "text-blue-600",  bg: "bg-blue-50 dark:bg-blue-500/10", dot: "bg-blue-500" },
+  { Icon: Youtube,     name: "YouTube",     color: "text-red-500",   bg: "bg-red-50 dark:bg-red-500/10",   dot: "bg-red-400" },
+  { Icon: Facebook,    name: "Facebook",    color: "text-blue-500",  bg: "bg-blue-50 dark:bg-blue-500/10", dot: "bg-blue-400" },
+  { Icon: ThreadsIcon, name: "Threads",     color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", dot: "bg-[var(--ds-gray-700)]" },
+  { Icon: TikTokIcon,  name: "TikTok",      color: "text-[var(--ds-gray-800)]", bg: "bg-[var(--ds-gray-100)] dark:bg-white/5", dot: "bg-[var(--ds-gray-700)]" },
 ];
+
+function formatList(items: string[]) {
+  if (items.length <= 1) return items[0] ?? "";
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
+}
+
+const LIVE_PLATFORMS = PLATFORMS.filter(({ soon }) => !soon);
+const LIVE_PLATFORM_COUNT = LIVE_PLATFORMS.length;
+const LIVE_PLATFORM_NAMES = formatList(LIVE_PLATFORMS.map(({ name }) => name));
 
 const MOCK_POSTS = [
   { platforms: [Instagram, Twitter, Linkedin],           title: "Q2 campaign — new product launch",       time: "Today, 7:30 PM",     status: "live"   as const },
@@ -81,7 +91,7 @@ const FEATURES = [
   },
   {
     Icon: Zap, tag: "Publishing", title: "One post. All platforms.",
-    description: "Write once, publish everywhere. Official API connections — no browser extensions, no copy-pasting captions across five tabs.",
+    description: "Write once, publish from one place. Official API connections — no browser extensions, no copy-pasting captions across separate tabs.",
     iconCls: "bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-400",
     mockBg: "from-amber-50 to-orange-50/60 dark:from-amber-900/20 dark:to-amber-900/5",
   },
@@ -112,7 +122,7 @@ const FEATURES = [
 ];
 
 const STEPS = [
-  { n: "01", Icon: Globe,        title: "Connect your accounts",  body: "Link Instagram, LinkedIn, X, YouTube, and Facebook in seconds. OAuth-secured — no password sharing required." },
+  { n: "01", Icon: Globe,        title: "Connect your accounts",  body: `Link all ${LIVE_PLATFORM_COUNT} supported platforms in seconds. OAuth-secured — no password sharing required.` },
   { n: "02", Icon: Calendar,     title: "Create and schedule",    body: "Write captions, upload media, schedule to multiple platforms at once. Image, video, and text all supported." },
   { n: "03", Icon: CheckCircle2, title: "Publish and track",      body: "Posts go live on schedule. Monitor publish status, review history, and workspace analytics from one place." },
 ];
@@ -120,9 +130,9 @@ const STEPS = [
 const PERSONAS = [
   {
     tag: "Influencer",
-    headline: "Create once. Reach everywhere.",
+    headline: "Create once. Publish across every platform you need.",
     body: "Write captions, schedule, and publish to every platform in one sitting. Spend time making content, not copy-pasting it.",
-    points: ["6 platforms from one dashboard", "Image, video, and text post types", "Visual content calendar", "14-day trial, no card needed"],
+    points: [`${LIVE_PLATFORM_COUNT} platforms from one dashboard`, "Image, video, and text support", "Visual content calendar", "14-day trial, no card needed"],
     chip: "bg-purple-50 border-purple-200 text-purple-700 dark:bg-purple-900/20 dark:border-purple-700/40 dark:text-purple-300",
     checkCls: "text-purple-500",
     accent: "hover:border-purple-300 dark:hover:border-purple-700",
@@ -172,7 +182,7 @@ const FAQ_ITEMS = [
   { q: "Is SocialRaven GDPR compliant?",              a: "SocialRaven uses privacy-conscious practices, scoped OAuth permissions, and clear public policy pages for how account and billing data are handled." },
   { q: "How does the free trial work?",               a: "Start with a 14-day trial workspace — no credit card required. Full access to all features from day one." },
   { q: "Does SocialRaven generate content?",          a: "No. SocialRaven is a scheduling and publishing platform. You bring the content — SocialRaven schedules and publishes it through official APIs." },
-  { q: "Which platforms are supported?",              a: "Currently live: Instagram, Threads, Twitter/X, LinkedIn, YouTube, and Facebook. TikTok is coming soon." },
+  { q: "Which platforms are supported?",              a: `Currently live: ${LIVE_PLATFORM_NAMES}.` },
   { q: "Can I manage multiple clients from one account?", a: "Yes. Pro and Agency plans are designed for multi-brand work — manage all clients from a single workspace with proper access controls." },
   { q: "What is the unified inbox?",                  a: "An upcoming feature that consolidates comments and DMs from all connected social accounts into one actionable workspace." },
 ];
@@ -396,11 +406,11 @@ export default function LandingPage() {
                   </span>
                   <div>
                     <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Campaign live</p>
-                    <p className="text-[0.625rem] text-[var(--ds-gray-500)]">Published to 6 platforms</p>
+                    <p className="text-[0.625rem] text-[var(--ds-gray-500)]">Published to {LIVE_PLATFORM_COUNT} platforms</p>
                   </div>
                 </div>
                 <div className="mt-3 flex items-center gap-1.5">
-                  {[Instagram, Twitter, Linkedin, Facebook, Youtube, ThreadsIcon].map((Icon, k) => (
+                  {LIVE_PLATFORMS.map(({ Icon }, k) => (
                     <div key={k} className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)]">
                       <Icon className="h-2.5 w-2.5 text-[var(--ds-gray-600)]" />
                     </div>
@@ -469,14 +479,7 @@ export default function LandingPage() {
                   <Globe className="h-4 w-4 text-[hsl(212_86%_50%)]" />
                   <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-900)]">Connected accounts</p>
                 </div>
-                {[
-                  { Icon: Instagram, name: "Instagram",   dot: "bg-pink-400"  },
-                  { Icon: Twitter,   name: "X / Twitter", dot: "bg-sky-400"   },
-                  { Icon: Linkedin,  name: "LinkedIn",    dot: "bg-blue-500"  },
-                  { Icon: Youtube,   name: "YouTube",     dot: "bg-red-400"   },
-                  { Icon: Facebook,  name: "Facebook",    dot: "bg-blue-400"  },
-                  { Icon: ThreadsIcon, name: "Threads",   dot: "bg-[var(--ds-gray-700)]"  },
-                ].map(({ Icon, name, dot }, k) => (
+                {LIVE_PLATFORMS.map(({ Icon, name, dot }, k) => (
                   <div key={k} className="flex items-center gap-2 py-0.5">
                     <Icon className="h-3 w-3 text-[var(--ds-gray-600)]" />
                     <span className="flex-1 text-[0.5625rem] text-[var(--ds-gray-600)]">{name}</span>
@@ -491,7 +494,7 @@ export default function LandingPage() {
               <motion.div variants={FV}>
                 <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-300)] bg-white/90 px-3.5 py-1.5 text-[0.75rem] font-medium text-[var(--ds-gray-900)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.06] dark:text-white/80">
                   <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-                  Live on 6 platforms · 14-day trial, no card needed
+                  Live on {LIVE_PLATFORM_COUNT} platforms · 14-day trial, no card needed
                 </span>
               </motion.div>
 
@@ -504,7 +507,7 @@ export default function LandingPage() {
               </motion.h1>
 
               <motion.p variants={FV} className="mt-7 max-w-[30rem] text-[1.0625rem] leading-[1.72] text-[var(--ds-gray-700)]">
-                Schedule, publish, and get approvals across Instagram, LinkedIn, X, YouTube, and Facebook — without switching tabs or copy-pasting captions.
+                Schedule, publish, and get approvals across {LIVE_PLATFORM_NAMES} — without switching tabs or copy-pasting captions.
               </motion.p>
 
               <motion.div variants={FV} className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
@@ -549,10 +552,9 @@ export default function LandingPage() {
           <div className={W}>
             <div className="flex flex-wrap items-center justify-center gap-10 md:gap-16">
               {[
-                { v: "5",      l: "Live platforms"       },
-                { v: "7",      l: "Platforms by 2025"    },
-                { v: "14-day", l: "Free trial"           },
-                { v: "OAuth",  l: "Secure connections"   },
+                { v: String(LIVE_PLATFORM_COUNT),    l: "Live platforms"     },
+                { v: "14-day",                    l: "Free trial"         },
+                { v: "OAuth",                     l: "Secure connections" },
               ].map(({ v, l }) => (
                 <div key={l} className="text-center">
                   <p className="text-[2rem] font-black tracking-[-0.04em] text-[var(--ds-gray-1000)]">{v}</p>
@@ -609,7 +611,7 @@ export default function LandingPage() {
                 Publish to every platform that matters.
               </motion.h2>
               <motion.p variants={FV} className="mt-3 max-w-lg text-[1rem] leading-[1.7] text-[var(--ds-gray-700)]">
-                One workflow, all major platforms. Threads is live now, and TikTok is rolling out soon.
+                One workflow, all major platforms. Threads and TikTok are live now.
               </motion.p>
             </motion.div>
 
@@ -793,7 +795,7 @@ export default function LandingPage() {
                       <span className="shrink-0 text-[0.5625rem] text-[var(--ds-gray-400)]">{row.time}</span>
                     </div>
                   ))}
-                  <div className="px-4 py-3 text-center text-[0.625rem] text-[var(--ds-gray-400)]">and 7 more messages across 6 platforms</div>
+                  <div className="px-4 py-3 text-center text-[0.625rem] text-[var(--ds-gray-400)]">and 7 more messages across {LIVE_PLATFORM_COUNT} platforms</div>
                 </div>
               </motion.div>
             </motion.div>

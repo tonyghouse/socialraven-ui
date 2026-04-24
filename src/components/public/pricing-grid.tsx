@@ -4,6 +4,8 @@ import { PLANS } from "@/constants/plans";
 import { PublicCard } from "@/components/public/public-layout";
 
 const PAID_PLANS = PLANS.filter((plan) => !plan.type.endsWith("_TRIAL"));
+const INFLUENCER_PLANS = PAID_PLANS.filter((plan) => plan.type.startsWith("INFLUENCER"));
+const AGENCY_PLANS = PAID_PLANS.filter((plan) => plan.type.startsWith("AGENCY"));
 const AGENCY_CUSTOM_PRICING_SHEET_HREF = "/downloads/agency-custom-pricing-sheet.pdf";
 
 function ctaClasses(isPrimary: boolean) {
@@ -13,95 +15,108 @@ function ctaClasses(isPrimary: boolean) {
 }
 
 export function PricingGrid() {
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-      {PAID_PLANS.map((plan, index) => {
-        const isAgencyCustom = plan.type === "AGENCY_CUSTOM";
-        const ctaHref = isAgencyCustom
-          ? "mailto:team+sales@socialraven.io?subject=Agency%20Plan%20Enquiry"
-          : "/sign-up";
-        const centeredLastRowClass =
-          PAID_PLANS.length === 5 && index === 3
-            ? "lg:col-span-2 lg:col-start-2"
-            : PAID_PLANS.length === 5 && index === 4
-              ? "lg:col-span-2 lg:col-start-4"
-              : "lg:col-span-2";
+  const renderPlanCard = (plan: typeof PAID_PLANS[number], className = "") => {
+    const isAgencyCustom = plan.type === "AGENCY_CUSTOM";
+    const ctaHref = isAgencyCustom
+      ? "mailto:team+sales@socialraven.io?subject=Agency%20Plan%20Enquiry"
+      : "/sign-up";
 
-        return (
-          <PublicCard
-            key={plan.type}
-            className={`p-6 shadow-none ${centeredLastRowClass} ${plan.popular ? "border-[var(--ds-blue-400)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-blue-100)_100%)]" : "bg-[var(--ds-background-100)]"}`}
+    return (
+      <PublicCard
+        key={plan.type}
+        className={`p-6 shadow-none ${className} ${plan.popular ? "border-[var(--ds-blue-400)] bg-[linear-gradient(180deg,var(--ds-background-100)_0%,var(--ds-blue-100)_100%)]" : "bg-[var(--ds-background-100)]"}`}
+      >
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">
+              {plan.name}
+            </h3>
+            <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
+              {plan.description}
+            </p>
+          </div>
+          <span
+            className={`inline-flex items-center rounded-full border px-2.5 py-1 text-label-12 ${
+              plan.popular
+                ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
+                : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
+            }`}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">
-                  {plan.name}
-                </h3>
-                <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
-                  {plan.description}
-                </p>
-              </div>
-              <span
-                className={`inline-flex items-center rounded-full border px-2.5 py-1 text-label-12 ${
-                  plan.popular
-                    ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
-                    : "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
-                }`}
-              >
-                {plan.popular ? "Recommended" : "Standard"}
+            {plan.popular ? "Recommended" : "Standard"}
+          </span>
+        </div>
+
+        <div className="mt-6">
+          {plan.customPricing ? (
+            <div className="space-y-1">
+              <p className="text-heading-32 text-[var(--ds-gray-1000)]">
+                $300+
+              </p>
+              <p className="text-copy-13 text-[var(--ds-gray-900)]">
+                includes 30 workspaces
+              </p>
+              <p className="text-copy-12 text-[var(--ds-blue-700)]">
+                $3 per additional workspace / month
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-end gap-2">
+              <span className="text-heading-32 text-[var(--ds-gray-1000)]">
+                ${plan.price}
+              </span>
+              <span className="pb-1 text-copy-13 text-[var(--ds-gray-900)]">
+                per month
               </span>
             </div>
+          )}
+        </div>
 
-            <div className="mt-6">
-              {plan.customPricing ? (
-                <div className="space-y-1">
-                  <p className="text-heading-32 text-[var(--ds-gray-1000)]">
-                    $300+
-                  </p>
-                  <p className="text-copy-13 text-[var(--ds-gray-900)]">
-                    includes 30 workspaces
-                  </p>
-                  <p className="text-copy-12 text-[var(--ds-blue-700)]">
-                    $3 per additional workspace / month
-                  </p>
-                </div>
-              ) : (
-                <div className="flex items-end gap-2">
-                  <span className="text-heading-32 text-[var(--ds-gray-1000)]">
-                    ${plan.price}
-                  </span>
-                  <span className="pb-1 text-copy-13 text-[var(--ds-gray-900)]">
-                    per month
-                  </span>
-                </div>
-              )}
-            </div>
+        <ul className="mt-6 space-y-3">
+          {plan.features.map((feature) => (
+            <li key={feature} className="flex items-start gap-3 text-copy-13 text-[var(--ds-gray-900)]">
+              <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--ds-blue-600)]" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
 
-            <ul className="mt-6 space-y-3">
-              {plan.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-3 text-copy-13 text-[var(--ds-gray-900)]">
-                  <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-[var(--ds-blue-600)]" />
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
+        <div className="mt-8 flex flex-col items-start gap-4">
+          <Link href={ctaHref} className={ctaClasses(Boolean(plan.popular))}>
+            {isAgencyCustom ? "Contact sales" : "Create trial workspace"}
+          </Link>
+          {isAgencyCustom ? (
+            <a
+              href={AGENCY_CUSTOM_PRICING_SHEET_HREF}
+              className="inline-flex text-copy-13 text-[var(--ds-blue-700)] underline underline-offset-2 transition-colors hover:text-[var(--ds-blue-800)]"
+            >
+              Download pricing sheet
+            </a>
+          ) : null}
+        </div>
+      </PublicCard>
+    );
+  };
 
-            <div className="mt-8 flex flex-col items-start gap-4">
-              <Link href={ctaHref} className={ctaClasses(Boolean(plan.popular))}>
-                {isAgencyCustom ? "Contact sales" : "Create trial workspace"}
-              </Link>
-              {isAgencyCustom ? (
-                <a
-                  href={AGENCY_CUSTOM_PRICING_SHEET_HREF}
-                  className="inline-flex text-copy-13 text-[var(--ds-blue-700)] underline underline-offset-2 transition-colors hover:text-[var(--ds-blue-800)]"
-                >
-                  Download pricing sheet
-                </a>
-              ) : null}
-            </div>
-          </PublicCard>
-        );
-      })}
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+      {INFLUENCER_PLANS.map((plan, index) =>
+        renderPlanCard(
+          plan,
+          index === 0
+            ? "lg:col-span-2 lg:col-start-2"
+            : "lg:col-span-2 lg:col-start-4"
+        )
+      )}
+      {AGENCY_PLANS.map((plan, index) =>
+        renderPlanCard(
+          plan,
+          index === 0
+            ? "lg:col-span-2 lg:col-start-1"
+            : index === 1
+              ? "lg:col-span-2 lg:col-start-3"
+              : "lg:col-span-2 lg:col-start-5"
+        )
+      )}
     </div>
   );
 }

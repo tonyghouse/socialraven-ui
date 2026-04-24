@@ -32,7 +32,15 @@ export default function Navbar({
     navBtnBase,
     "text-[var(--ds-gray-900)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
   );
-  const primaryBtn = cn(navBtnBase, isLanding && "px-[1.125rem]");
+  const authSecondaryBtn = cn(
+    navBtnBase,
+    "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-[var(--ds-background-100)]"
+  );
+  const authPrimaryBtn = cn(
+    navBtnBase,
+    isLanding && "px-[1.125rem]",
+    "border border-[var(--ds-blue-600)] bg-[var(--ds-blue-600)] text-white hover:border-[var(--ds-blue-700)] hover:bg-[var(--ds-blue-700)] focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-[var(--ds-background-100)]"
+  );
 
   const navHeight = isLanding ? "h-16" : "h-14";
   const brandGap  = isLanding ? "gap-3.5" : "gap-2.5";
@@ -94,9 +102,14 @@ export default function Navbar({
                 </div>
               </>
             ) : (
-              <Button asChild size="sm" className={primaryBtn}>
-                <Link href="/sign-up">Get started</Link>
-              </Button>
+              <>
+                <Button asChild variant="ghost" size="sm" className={authSecondaryBtn}>
+                  <Link href="/sign-in">Login</Link>
+                </Button>
+                <Button asChild variant="ghost" size="sm" className={authPrimaryBtn}>
+                  <Link href="/sign-up">Sign up</Link>
+                </Button>
+              </>
             )}
             <ThemeSwitcher compact className={themeClass} />
           </div>

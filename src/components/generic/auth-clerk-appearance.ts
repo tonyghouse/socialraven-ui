@@ -23,7 +23,8 @@ export const authClerkAppearance = {
   elements: {
     rootBox: "w-full",
     cardBox: "w-full",
-    card: "w-full rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-none",
+    card:
+      "w-full rounded-2xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-[0_1rem_2.75rem_rgb(15_23_42_/_0.08)] dark:border-[rgb(255_255_255_/_0.12)] dark:shadow-[0_1.25rem_3rem_rgb(0_0_0_/_0.52)]",
     headerTitle: "text-heading-20 text-[var(--ds-gray-1000)]",
     headerSubtitle: "text-copy-14 text-[var(--ds-gray-900)]",
     socialButtonsBlockButton:
