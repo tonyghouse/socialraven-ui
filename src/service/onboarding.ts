@@ -9,8 +9,12 @@ const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 async function authHeaders(getToken: GetToken): Promise<HeadersInit> {
   const token = await getToken();
+  if (!token) {
+    throw new Error("Authentication token is not available yet");
+  }
   return {
     Authorization: `Bearer ${token}`,
+    Accept: "application/json",
     "Content-Type": "application/json",
   };
 }

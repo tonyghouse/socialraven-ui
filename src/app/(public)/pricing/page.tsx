@@ -53,7 +53,7 @@ const BILLING_NOTES = [
   {
     title: "Agency Custom pricing",
     description:
-      "Agency Custom starts at USD 300 per month and includes 30 workspaces. Each additional workspace is USD 3 per month. Provider-side limits still apply, including a 1000-post cap per workspace for X.com.",
+      "Agency Custom starts at USD 300 per month and includes 30 workspaces. Each additional workspace is USD 3 per month. Unlimited scheduled posts apply across all platforms except x.com, and x.com monthly volume is scoped separately based on expected needs.",
   },
   {
     title: "Product scope",
@@ -78,10 +78,10 @@ export default function PricingPage() {
         title="Clear pricing for creators, teams, and agencies."
         meta={
           <>
-            Last updated: <span className="font-medium text-[var(--ds-gray-1000)]">April 13, 2026</span>
+            Last updated: <span className="font-medium text-[var(--ds-gray-1000)]">April 27, 2026</span>
           </>
         }
-        description="Choose a plan based on how many brands, accounts, and campaigns you need to manage. Trial signup is available now; paid self-serve billing is still being finalized."
+        description="Choose a plan based on how many brands, accounts, and campaigns you need to manage. Unlimited scheduling is included across supported platforms, with a separate x.com monthly allowance on each plan."
         actions={
           <>
             <PublicPrimaryLinkButton href="/sign-up">Create trial workspace</PublicPrimaryLinkButton>
@@ -134,14 +134,14 @@ export default function PricingPage() {
       <PublicSection
         eyebrow="Plans"
         title="Current public plan pricing"
-        description="These are the self-serve and agency plan prices currently offered by SocialRaven."
+        description="These are the self-serve and agency plans built for high-volume scheduling across your day-to-day channels."
       >
         <div className="rounded-xl border border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] px-5 py-4 text-[var(--ds-gray-1000)]">
           <p className="text-label-14 text-[var(--ds-gray-1000)]">
             14-day free trial available on standard plans
           </p>
           <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
-            Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Agency Custom starts at USD 300 per month for 30 workspaces, and each additional workspace is USD 3 per month. Provider-side limits still apply across channels, and X.com is capped at 1000 posts per workspace.
+            Trial signup is available now. Paid self-serve checkout will be enabled after billing setup is complete. Unlimited scheduling is included across supported platforms, and each plan includes its own x.com monthly allowance with optional add-on upgrades for higher volume.
           </p>
         </div>
 
@@ -151,7 +151,7 @@ export default function PricingPage() {
               Agency Custom pricing sheet
             </p>
             <p className="mt-1 text-copy-14 text-[var(--ds-gray-900)]">
-              Download the PDF used for Paddle review. It shows the base custom price, the per-workspace pricing rule, and the platform-limit note.
+              Download the PDF used for Paddle review. It shows the base custom price, the per-workspace pricing rule, and how x.com volume is handled for custom accounts.
             </p>
           </div>
           <PublicSubtleLinkButton href={AGENCY_CUSTOM_PRICING_SHEET_HREF}>

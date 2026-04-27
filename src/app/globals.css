@@ -59,6 +59,32 @@
   transform: translateY(-0.0625rem);
 }
 
+@keyframes pricingShine {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.pricing-shine-text {
+  display: inline-block;
+  background-image: linear-gradient(
+    110deg,
+    var(--ds-blue-700) 0%,
+    var(--ds-blue-600) 28%,
+    var(--ds-gray-1000) 50%,
+    var(--ds-blue-600) 72%,
+    var(--ds-blue-700) 100%
+  );
+  background-size: 220% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: pricingShine 6s ease-in-out infinite;
+}
+
 :root {
   /* === Geist --ds-* design tokens (light) === */
 

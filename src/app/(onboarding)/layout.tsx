@@ -6,11 +6,15 @@ import { useRouter } from "next/navigation";
 import { getOnboardingStatusApi } from "@/service/onboarding";
 
 function OnboardingGate({ children }: { children: React.ReactNode }) {
-  const { getToken } = useAuth();
+  const { getToken, isLoaded } = useAuth();
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
+    if (!isLoaded) {
+      return;
+    }
+
     let cancelled = false;
 
     async function checkAccess() {
@@ -33,9 +37,9 @@ function OnboardingGate({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [getToken, router]);
+  }, [getToken, isLoaded, router]);
 
-  if (isChecking) return null;
+  if (!isLoaded || isChecking) return null;
 
   return <div className="min-h-screen page-bg">{children}</div>;
 }

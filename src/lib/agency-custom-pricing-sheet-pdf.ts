@@ -24,10 +24,10 @@ const pricingBullets = [
 ];
 
 const providerBullets = [
-  "All providers keep their own platform-side limits and publishing rules.",
-  "SocialRaven pricing does not remove provider-side caps.",
-  "X.com is capped at 1000 posts per workspace.",
-  "Other providers may enforce different limits under their own platform policies.",
+  "Unlimited scheduled posts apply across all platforms except x.com.",
+  "Limited x.com posts. x add-on available.",
+  "Custom x.com limits can be tailored to expected volume.",
+  "Providers still keep their own platform-side publishing rules.",
 ];
 
 const billingBullets = [
@@ -190,7 +190,7 @@ export function generateAgencyCustomPricingSheetPdf() {
     420,
     { size: 12, color: COLORS.headerTint, leading: 15 }
   );
-  drawText("Updated April 13, 2026", 420, 798, { size: 10, color: COLORS.headerTint });
+  drawText("Updated April 27, 2026", 420, 798, { size: 10, color: COLORS.headerTint });
 
   drawRect(42, 522, 511, 112, {
     fillColor: COLORS.brandSoft,
@@ -238,7 +238,7 @@ export function generateAgencyCustomPricingSheetPdf() {
   drawText("Contact", 354, 248, { font: "F2", size: 13, color: COLORS.brandDark });
   drawText("team+sales@socialraven.io", 354, 224, { size: 10, color: COLORS.ink });
   drawText("https://socialraven.io/pricing", 354, 208, { size: 10, color: COLORS.ink });
-  drawText("SR-AGENCY-CUSTOM-2026-04-13-B", 354, 192, { size: 10, color: COLORS.muted });
+  drawText("SR-AGENCY-CUSTOM-2026-04-27-C", 354, 192, { size: 10, color: COLORS.muted });
 
   const content = `${ops.join("\n")}\n`;
 

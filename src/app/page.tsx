@@ -853,10 +853,10 @@ export default function LandingPage() {
             <motion.div initial="hidden" whileInView="visible" viewport={VP} variants={STAGGER} className="mb-14">
               <motion.div variants={FV}><Label>Pricing</Label></motion.div>
               <motion.h2 variants={FV} className="mt-4 max-w-xl text-[clamp(1.875rem,4vw,2.875rem)] font-black leading-[1.04] tracking-[-0.04em] text-[var(--ds-gray-1000)]">
-                Simple, transparent pricing.
+                Unlimited scheduling. Clear pricing.
               </motion.h2>
               <motion.p variants={FV} className="mt-3 text-[1rem] text-[var(--ds-gray-700)]">
-                Start free for 14 days. No credit card required. Upgrade when ready.
+                Start free for 14 days. Unlimited scheduling is included across supported platforms, with a separate x.com monthly allowance on each plan.
               </motion.p>
             </motion.div>
             <PricingGrid />

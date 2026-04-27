@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  CalendarClock, CheckCircle2, Zap, ChevronDown, ChevronUp,
-  ImageIcon, Video, Type, Pencil, Send, Loader2, BookOpen,
+  CalendarClock, CheckCircle2, Zap,
+  ImageIcon, Video, Type, Send, Loader2, BookOpen, ChevronDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
@@ -84,127 +84,129 @@ const PLATFORM_LABELS: Record<string, string> = {
   facebook: "Facebook", instagram: "Instagram", x: "X",
   linkedin: "LinkedIn", youtube: "YouTube",    threads: "Threads", tiktok: "TikTok",
 };
+
 const DEFAULT_APPROVAL_OVERRIDE = "DEFAULT";
-const pageClassName = "min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]";
-const insetSurfaceClassName =
-  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
+
 const focusRingClassName =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]";
 
-// ── Accordion step card ────────────────────────────────────────────────────────
+const insetSurfaceClassName =
+  "rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]";
+
+// ── CompletedRow — settled, done step ────────────────────────────────────────
+
+function CompletedRow({
+  title,
+  summary,
+  onEdit,
+}: {
+  title: string;
+  summary?: React.ReactNode;
+  onEdit: () => void;
+}) {
+  return (
+    <div className="flex items-center gap-4 border-b border-[var(--ds-gray-400)] py-3.5">
+      <CheckCircle2 className="h-4 w-4 flex-shrink-0 text-[var(--ds-gray-700)]" />
+
+      <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+        <span className="flex-shrink-0 text-label-13 text-[var(--ds-gray-900)]">{title}</span>
+        {summary && (
+          <>
+            <span className="text-[var(--ds-gray-600)]" aria-hidden="true">·</span>
+            <div className="min-w-0 flex-1 overflow-hidden">{summary}</div>
+          </>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={onEdit}
+        className={cn(
+          "flex-shrink-0 text-label-13 text-[var(--ds-gray-900)] transition-colors duration-100 hover:text-[var(--ds-gray-1000)]",
+          focusRingClassName,
+        )}
+      >
+        Edit
+      </button>
+    </div>
+  );
+}
+
+// ── ActiveCard — current step ─────────────────────────────────────────────────
+
+function ActiveCard({
+  title,
+  description,
+  children,
+  elevated,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+  elevated?: boolean;
+}) {
+  return (
+    <div className={cn(elevated && "pt-5")}>
+      <div className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] shadow-sm">
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-4">
+          <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h2>
+          <p className="mt-1 text-copy-13 leading-5 text-[var(--ds-gray-900)]">{description}</p>
+        </div>
+        <div className="px-5 py-5">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+// ── StepCard — routes to CompletedRow or ActiveCard ───────────────────────────
 
 function StepCard({
-  step,
   title,
   description,
   children,
   complete = false,
   locked = false,
   isOpen,
-  onToggle,
+  onOpen,
   summary,
+  elevated,
 }: {
-  step: number;
   title: string;
   description: string;
   children: React.ReactNode;
   complete?: boolean;
   locked?: boolean;
   isOpen: boolean;
-  onToggle?: () => void;
+  onOpen?: () => void;
   summary?: React.ReactNode;
+  elevated?: boolean;
 }) {
-  const canToggle = !!onToggle && !locked;
+  if (locked) return null;
 
-  return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-2xl border bg-[var(--ds-background-100)] shadow-sm transition-[border-color,box-shadow,opacity] duration-200",
-        locked
-          ? "border-[var(--ds-gray-400)] opacity-60"
-          : complete && isOpen
-            ? "border-[var(--ds-blue-200)] shadow-[0_0_0_0.0625rem_var(--ds-blue-200)]"
-            : complete
-              ? "border-[var(--ds-gray-500)]"
-              : "border-[var(--ds-gray-400)]",
-      )}
-    >
-      {/* ── Header ── */}
-      <button
-        type="button"
-        disabled={!canToggle}
-        onClick={canToggle ? onToggle : undefined}
-        className={cn(
-          "flex w-full items-center gap-4 border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-5 py-4 text-left transition-colors duration-150",
-          canToggle
-            ? cn("cursor-pointer hover:bg-[var(--ds-gray-200)]", focusRingClassName)
-            : "cursor-default",
-        )}
-      >
-        {/* Step indicator */}
-        <div
-          className={cn(
-            "mt-0.5 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border text-label-12 transition-colors duration-200",
-            complete
-              ? "border-[var(--ds-blue-200)] bg-[var(--ds-blue-100)] text-[var(--ds-blue-700)]"
-              : "border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)]",
-          )}
-        >
-          {complete
-            ? <CheckCircle2 className="h-4 w-4 text-[var(--ds-blue-700)]" />
-            : <span>{step}</span>
-          }
-        </div>
+  if (!isOpen && complete) {
+    return (
+      <CompletedRow title={title} summary={summary} onEdit={onOpen ?? (() => {})} />
+    );
+  }
 
-        {/* Title / summary */}
-        <div className="flex-1 min-w-0">
-          {!isOpen && complete && summary ? (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-copy-12 text-[var(--ds-gray-900)]">{title}</span>
-              <span className="text-[var(--ds-gray-700)]">·</span>
-              {summary}
-            </div>
-          ) : (
-            <>
-              <h2 className="text-label-14 text-[var(--ds-gray-1000)]">{title}</h2>
-              <p className="mt-1 text-copy-12 leading-5 text-[var(--ds-gray-900)]">{description}</p>
-            </>
-          )}
-        </div>
+  if (isOpen) {
+    return (
+      <ActiveCard title={title} description={description} elevated={elevated}>
+        {children}
+      </ActiveCard>
+    );
+  }
 
-        {/* Edit hint + chevron */}
-        {canToggle && (
-            <div className="flex flex-shrink-0 items-center gap-1.5 text-[var(--ds-gray-900)]">
-              {!isOpen && (
-              <span className="hidden items-center gap-1 rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-1000)] sm:flex">
-                <Pencil className="w-2.5 h-2.5" />
-                Edit
-              </span>
-            )}
-            {isOpen
-              ? <ChevronUp  className="w-4 h-4" />
-              : <ChevronDown className="w-4 h-4" />
-            }
-          </div>
-        )}
-      </button>
-
-      {/* ── Body ── */}
-      <div
-        className={cn(
-          "transition-all duration-300 ease-in-out overflow-hidden",
-          isOpen ? "max-h-[624.9375rem] opacity-100" : "max-h-0 opacity-0 pointer-events-none",
-        )}
-      >
-        <div className="px-6 py-5">{children}</div>
-      </div>
-    </div>
-  );
+  return null;
 }
 
-// ── Continue button ────────────────────────────────────────────────────────────
+// ── ContinueBtn ────────────────────────────────────────────────────────────────
 
-function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
+function ContinueBtn({
+  onClick,
+  disabled = false,
+  label = "Continue",
+}: {
   onClick: () => void;
   disabled?: boolean;
   label?: string;
@@ -216,7 +218,7 @@ function ContinueBtn({ onClick, disabled = false, label = "Continue" }: {
         onClick={onClick}
         disabled={disabled}
         className={cn(
-          "flex items-center gap-1.5 rounded-md border px-4 py-2 text-label-14 transition-colors duration-150",
+          "flex items-center gap-1.5 rounded-lg border px-4 py-2 text-label-14 transition-colors duration-100",
           focusRingClassName,
           disabled
             ? "cursor-not-allowed border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]"
@@ -266,17 +268,19 @@ export default function ScheduledPostCollectionPage() {
   const [mediaErrors,   setMediaErrors]   = useState<MediaValidationError[]>([]);
   const [validatingMedia, setValidatingMedia] = useState(false);
 
-  // ── Accordion state ──────────────────────────────────────────────────────────
-  const [activeStep,   setActiveStep]   = useState(1);
-  const [reachedStep,  setReachedStep]  = useState(1);
+  // ── Step state ───────────────────────────────────────────────────────────────
+  const [activeStep,  setActiveStep]  = useState(1);
+  const [reachedStep, setReachedStep] = useState(1);
 
+  // Advance to next step (updates reachedStep so future steps unlock)
   function goToStep(n: number) {
     setActiveStep(n);
     setReachedStep((prev) => Math.max(prev, n));
   }
 
-  function toggleStep(n: number) {
-    setActiveStep((prev) => (prev === n ? -1 : n)); // -1 = all collapsed
+  // Jump back to a completed step for editing (does not unlock future steps)
+  function editStep(n: number) {
+    setActiveStep(n);
   }
 
   // ── Derived ──────────────────────────────────────────────────────────────────
@@ -346,6 +350,7 @@ export default function ScheduledPostCollectionPage() {
   const step3Complete =
     postType !== null && description.trim().length > 0 && (postType === "TEXT" || totalMediaCount > 0);
   const step4Complete = !!date && !!time;
+
   const effectiveApprovalMode = resolveWorkspaceApprovalMode(activeWorkspace, {
     approvalModeOverride:
       approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE
@@ -354,10 +359,7 @@ export default function ScheduledPostCollectionPage() {
     providerUserIds: selectedAccountIds,
     postType,
   });
-  const canDirectSchedule = canDirectScheduleForMode(
-    effectiveApprovalMode,
-    canPublishPosts
-  );
+  const canDirectSchedule = canDirectScheduleForMode(effectiveApprovalMode, canPublishPosts);
   const submitActionLabel = !isAgency || canDirectSchedule ? "Schedule" : "Submit for Review";
   const step4Title = !isAgency || canDirectSchedule ? "Schedule & Publish" : "Schedule & Review";
   const step4Description = !isAgency || canDirectSchedule
@@ -367,7 +369,6 @@ export default function ScheduledPostCollectionPage() {
   // ── Load accounts ────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isLoaded) return;
-
     async function loadData() {
       try {
         setAccountsLoading(true);
@@ -378,7 +379,6 @@ export default function ScheduledPostCollectionPage() {
         setAccountsLoading(false);
       }
     }
-
     void loadData();
   }, [getToken, isLoaded]);
 
@@ -393,7 +393,6 @@ export default function ScheduledPostCollectionPage() {
     setApprovalModeOverrideInput(DEFAULT_APPROVAL_OVERRIDE);
     setMediaErrors([]);
     setShowErrors(false);
-    // Reset progress and advance to step 2
     setReachedStep(2);
     setActiveStep(2);
   }
@@ -414,13 +413,12 @@ export default function ScheduledPostCollectionPage() {
     setReachedStep(1);
   }
 
-  // ── Submit ────────────────────────────────────────────────────────────────────
+  // ── Library handlers ─────────────────────────────────────────────────────────
   function applyLibrarySnippet(item: WorkspaceLibraryItem) {
     if (!item.body?.trim()) {
       toast.error("This snippet does not contain any content.");
       return;
     }
-
     if (item.snippetTarget === "FIRST_COMMENT") {
       const result = applyFirstCommentSnippet(platformConfigs, selectedPlatforms, item.body);
       if (result.appliedPlatforms.length === 0) {
@@ -431,7 +429,6 @@ export default function ScheduledPostCollectionPage() {
       toast.success(`Applied "${item.name}" to first comments.`);
       return;
     }
-
     setDescription((current) => appendTextBlock(current, item.body));
     toast.success(`Applied snippet "${item.name}".`);
   }
@@ -441,7 +438,6 @@ export default function ScheduledPostCollectionPage() {
       toast.error(`"${item.name}" does not match the selected content type.`);
       return false;
     }
-
     if (
       item.body?.trim() &&
       description.trim() &&
@@ -450,7 +446,6 @@ export default function ScheduledPostCollectionPage() {
     ) {
       return false;
     }
-
     if (item.body?.trim()) {
       setDescription(item.body.trim());
     }
@@ -470,65 +465,45 @@ export default function ScheduledPostCollectionPage() {
   }
 
   async function handleApplyLibraryItem(item: WorkspaceLibraryItem) {
-    if (!postType) {
-      return;
-    }
-    if (item.itemType === "SNIPPET") {
-      applyLibrarySnippet(item);
-      return;
-    }
-    if (item.itemType === "TEMPLATE") {
-      applyLibraryTemplate(item);
-      return;
-    }
+    if (!postType) return;
+    if (item.itemType === "SNIPPET") { applyLibrarySnippet(item); return; }
+    if (item.itemType === "TEMPLATE") { applyLibraryTemplate(item); return; }
     applyLibraryAssets(item);
   }
 
   async function handleApplyLibraryBundle(bundle: WorkspaceLibraryBundle) {
-    if (!postType) {
-      return;
-    }
+    if (!postType) return;
     const relevantItems = filterRelevantBundleItems(bundle, postType);
     if (relevantItems.length === 0) {
       toast.error("This bundle does not contain usable items for the current composer.");
       return;
     }
-
     let appliedCount = 0;
     let templateApplied = false;
     for (const item of relevantItems) {
       if (item.itemType === "TEMPLATE") {
-        if (templateApplied) {
-          continue;
-        }
-        if (applyLibraryTemplate(item)) {
-          templateApplied = true;
-          appliedCount += 1;
-        }
+        if (templateApplied) continue;
+        if (applyLibraryTemplate(item)) { templateApplied = true; appliedCount += 1; }
         continue;
       }
-      if (item.itemType === "SNIPPET") {
-        applyLibrarySnippet(item);
-        appliedCount += 1;
-        continue;
-      }
+      if (item.itemType === "SNIPPET") { applyLibrarySnippet(item); appliedCount += 1; continue; }
       applyLibraryAssets(item);
       appliedCount += 1;
     }
-
     if (appliedCount > 0) {
       toast.success(`Applied ${appliedCount} bundle item${appliedCount === 1 ? "" : "s"} from "${bundle.name}".`);
     }
   }
 
+  // ── Submit ────────────────────────────────────────────────────────────────────
   async function submit() {
     setShowErrors(true);
 
-    if (!postType)                         { toast.error("Please choose a content type");             return; }
-    if (!description.trim())             { toast.error("Please write a caption");                     return; }
+    if (!postType)                         { toast.error("Please choose a content type");                         return; }
+    if (!description.trim())               { toast.error("Please write a caption");                               return; }
     if (postType !== "TEXT" && totalMediaCount === 0) { toast.error("Please upload or attach at least one file"); return; }
-    if (!date || !time)                  { toast.error("Please select a date and time");              return; }
-    if (selectedAccountIds.length === 0) { toast.error("Please select at least one account");        return; }
+    if (!date || !time)                    { toast.error("Please select a date and time");                        return; }
+    if (selectedAccountIds.length === 0)   { toast.error("Please select at least one account");                   return; }
 
     if (platformCharErrors.length > 0) {
       const { platform, current, limit } = platformCharErrors[0];
@@ -567,7 +542,6 @@ export default function ScheduledPostCollectionPage() {
         await uploadToS3(uploadUrl, file);
         media.push({ fileName: file.name, mimeType: file.type, fileUrl, fileKey, size: file.size });
       }
-
       if (postType !== "TEXT" && media.length === 0) { toast.error("No valid files found"); return; }
 
       const response = await postConnectedAccountsApi(getToken, {
@@ -578,9 +552,7 @@ export default function ScheduledPostCollectionPage() {
         scheduledTime: localToUTC(date, time),
         platformConfigs,
         approvalModeOverride:
-          approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE
-            ? undefined
-            : approvalModeOverrideInput,
+          approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE ? undefined : approvalModeOverrideInput,
       });
 
       toast.success(
@@ -597,9 +569,9 @@ export default function ScheduledPostCollectionPage() {
   }
 
   async function saveDraft() {
-    if (!postType)          { toast.error("Please choose a content type");                 return; }
-    if (!description.trim()) { toast.error("Please write a caption before saving as draft"); return; }
-    if (hasAnyCharError)      { toast.error("Fix character limit errors before saving");     return; }
+    if (!postType)            { toast.error("Please choose a content type");                 return; }
+    if (!description.trim())  { toast.error("Please write a caption before saving as draft"); return; }
+    if (hasAnyCharError)       { toast.error("Fix character limit errors before saving");     return; }
 
     setDraftLoading(true);
     try {
@@ -616,7 +588,6 @@ export default function ScheduledPostCollectionPage() {
         await uploadToS3(uploadUrl, file);
         media.push({ fileName: file.name, mimeType: file.type, fileUrl, fileKey, size: file.size });
       }
-
       await postConnectedAccountsApi(getToken, {
         description,
         postType,
@@ -624,12 +595,9 @@ export default function ScheduledPostCollectionPage() {
         connectedAccounts: selectedAccounts,
         platformConfigs,
         approvalModeOverride:
-          approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE
-            ? undefined
-            : approvalModeOverrideInput,
+          approvalModeOverrideInput === DEFAULT_APPROVAL_OVERRIDE ? undefined : approvalModeOverrideInput,
         isDraft: true,
       });
-
       toast.success("Draft saved! You can schedule it later from Drafts.");
       resetAll();
     } catch {
@@ -639,7 +607,7 @@ export default function ScheduledPostCollectionPage() {
     }
   }
 
-  // ── Summaries ─────────────────────────────────────────────────────────────────
+  // ── Summaries (shown on compact cards) ────────────────────────────────────────
   const selectedCount = selectedAccountIds.length;
 
   const selectedPlatformKeys = [...new Set(
@@ -651,14 +619,14 @@ export default function ScheduledPostCollectionPage() {
   const step1Summary = postType ? (
     <span className="flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
       {React.createElement(POST_TYPE_META[postType].Icon, {
-        className: "h-3.5 w-3.5 text-[var(--ds-blue-700)]",
+        className: "h-3.5 w-3.5 flex-shrink-0 text-[var(--ds-blue-700)]",
       })}
       {POST_TYPE_META[postType].label}
     </span>
   ) : null;
 
   const step2Summary = (
-    <span className="flex items-center gap-2 flex-wrap">
+    <span className="flex items-center gap-1.5 flex-wrap">
       <span className="text-label-14 text-[var(--ds-blue-700)]">{selectedCount}</span>
       <span className="text-copy-12 text-[var(--ds-gray-900)]">{selectedCount === 1 ? "account" : "accounts"}</span>
       {selectedPlatformKeys.slice(0, 3).map((p) => (
@@ -666,8 +634,7 @@ export default function ScheduledPostCollectionPage() {
           key={p}
           className={cn(
             "rounded-full border px-1.5 py-0.5 text-label-12",
-            PLATFORM_BADGE_STYLES[p]
-            ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+            PLATFORM_BADGE_STYLES[p] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
           )}
         >
           {PLATFORM_LABELS[p] ?? p}
@@ -680,12 +647,12 @@ export default function ScheduledPostCollectionPage() {
   );
 
   const step3Summary = (
-    <span className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)]">
-      <span className="truncate max-w-[10rem] sm:max-w-[16.25rem]">
+    <span className="flex items-center gap-2 text-label-14 text-[var(--ds-gray-1000)] min-w-0">
+      <span className="truncate">
         {description.trim().slice(0, 60)}{description.trim().length > 60 ? "…" : ""}
       </span>
-          {postType && postType !== "TEXT" && totalMediaCount > 0 && (
-        <span className="shrink-0 text-copy-12 text-[var(--ds-gray-900)]">
+      {postType && postType !== "TEXT" && totalMediaCount > 0 && (
+        <span className="flex-shrink-0 text-copy-12 text-[var(--ds-gray-900)]">
           · {totalMediaCount} {postType === "IMAGE" ? "image" : "video"}{totalMediaCount !== 1 ? "s" : ""}
         </span>
       )}
@@ -700,8 +667,9 @@ export default function ScheduledPostCollectionPage() {
     </span>
   ) : null;
 
+  // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div className={pageClassName}>
+    <div className="min-h-screen bg-[var(--ds-background-200)] text-[var(--ds-gray-1000)]">
 
       <ProtectedPageHeader
         title="Schedule Post"
@@ -722,8 +690,9 @@ export default function ScheduledPostCollectionPage() {
         }
       />
 
+      {/* Platform context bar */}
       {selectedPlatformKeys.length > 0 && (
-        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-3 sm:px-5">
+        <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-4 py-2.5 sm:px-5">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-copy-12 text-[var(--ds-gray-900)]">Posting to:</span>
             {selectedPlatformKeys.map((p) => (
@@ -731,8 +700,7 @@ export default function ScheduledPostCollectionPage() {
                 key={p}
                 className={cn(
                   "rounded-full border px-2 py-0.5 text-label-12",
-                  PLATFORM_BADGE_STYLES[p]
-                  ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]"
+                  PLATFORM_BADGE_STYLES[p] ?? "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]",
                 )}
               >
                 {PLATFORM_LABELS[p] ?? p}
@@ -742,32 +710,31 @@ export default function ScheduledPostCollectionPage() {
         </div>
       )}
 
-      {/* ── Steps ── */}
-      <div className="space-y-4 px-4 py-5 sm:px-5">
+      {/* ── Step stack ── */}
+      <div className="space-y-2 px-4 py-5 sm:px-5">
 
-        {/* ── Step 1: Content Type ── */}
+        {/* Step 1 — Content Type */}
         <StepCard
-          step={1}
           title="Content Type"
           description="Choose the format for this post."
           complete={step1Complete}
           isOpen={activeStep === 1}
-          onToggle={() => toggleStep(1)}
+          onOpen={() => editStep(1)}
           summary={step1Summary ?? undefined}
         >
           <PostTypeSelector postType={postType} setPostType={handlePostTypeChange} />
         </StepCard>
 
-        {/* ── Step 2: Select Accounts ── */}
+        {/* Step 2 — Select Accounts */}
         <StepCard
-          step={2}
           title="Select Accounts"
           description="Choose which social profiles this post will be published to."
           complete={step2Complete}
           locked={reachedStep < 2}
           isOpen={activeStep === 2}
-          onToggle={reachedStep >= 2 ? () => toggleStep(2) : undefined}
+          onOpen={() => editStep(2)}
           summary={step2Summary}
+          elevated={step1Complete}
         >
           <AccountSelector
             postType={postType}
@@ -782,9 +749,8 @@ export default function ScheduledPostCollectionPage() {
           )}
         </StepCard>
 
-        {/* ── Step 3: Compose ── */}
+        {/* Step 3 — Compose */}
         <StepCard
-          step={3}
           title="Compose"
           description={
             postType === "TEXT"
@@ -796,9 +762,11 @@ export default function ScheduledPostCollectionPage() {
           complete={step3Complete}
           locked={reachedStep < 3}
           isOpen={activeStep === 3}
-          onToggle={reachedStep >= 3 ? () => toggleStep(3) : undefined}
+          onOpen={() => editStep(3)}
           summary={step3Summary}
+          elevated={step2Complete}
         >
+          {/* Library panel (agency only) */}
           {isAgency ? (
             <div className="mb-6">
               <LibraryComposerPanel
@@ -836,7 +804,7 @@ export default function ScheduledPostCollectionPage() {
                   : "Write your post caption here. You can use emoji, hashtags, and mentions."
               }
               className={cn(
-                "min-h-[10rem] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] px-4 py-3 text-copy-14 leading-6 text-[var(--ds-gray-1000)] transition-[border-color,box-shadow,background-color] duration-150",
+                "min-h-[10rem] w-full resize-none rounded-xl border bg-[var(--ds-background-100)] px-4 py-3 text-copy-14 leading-6 text-[var(--ds-gray-1000)] transition-[border-color,box-shadow] duration-150",
                 "placeholder:text-[var(--ds-gray-900)]",
                 focusRingClassName,
                 overLimit || platformCharErrors.length > 0
@@ -851,15 +819,15 @@ export default function ScheduledPostCollectionPage() {
             )}
           </div>
 
-          {/* Media upload — IMAGE / VIDEO only */}
+          {/* Media — IMAGE / VIDEO only */}
           {postType && postType !== "TEXT" && (
-            <div className="space-y-2 mt-6">
+            <div className="mt-6 space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-semibold text-foreground">
+                <label className="text-label-14 text-[var(--ds-gray-1000)]">
                   {postType === "IMAGE" ? "Images" : "Video"}
                 </label>
                 {selectedPlatforms.length > 0 && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-copy-12 text-[var(--ds-gray-900)]">
                     Max {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""}
                     {restrictivePlatformLabel ? ` (${restrictivePlatformLabel} limit)` : ""}
                   </span>
@@ -879,7 +847,8 @@ export default function ScheduledPostCollectionPage() {
                 />
               ) : (
                 <p className="text-copy-12 text-[var(--ds-gray-900)]">
-                  Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached. {isAgency ? "Remove a library asset or uploaded file to add more." : "Remove an uploaded file to add more."}
+                  Maximum {effectiveMaxFiles} {postType === "IMAGE" ? "image" : "video"}{effectiveMaxFiles !== 1 ? "s" : ""} reached.{" "}
+                  {isAgency ? "Remove a library asset or uploaded file to add more." : "Remove an uploaded file to add more."}
                 </p>
               )}
               {isAgency ? (
@@ -908,16 +877,16 @@ export default function ScheduledPostCollectionPage() {
 
           {/* Platform-specific settings */}
           {postType && selectedAccounts.length > 0 && (
-            <div className="mt-6 border-t border-border-subtle pt-6">
+            <div className="mt-6 border-t border-[var(--ds-gray-400)] pt-6">
               <PlatformConfigsPanel
-              selectedAccounts={selectedAccounts}
-              configs={platformConfigs}
-              onChange={setPlatformConfigs}
-              showErrors={showErrors}
-              postType={postType}
-              appearance="geist"
-            />
-          </div>
+                selectedAccounts={selectedAccounts}
+                configs={platformConfigs}
+                onChange={setPlatformConfigs}
+                showErrors={showErrors}
+                postType={postType}
+                appearance="geist"
+              />
+            </div>
           )}
 
           <ContinueBtn
@@ -927,16 +896,16 @@ export default function ScheduledPostCollectionPage() {
           />
         </StepCard>
 
-        {/* ── Step 4: Schedule & Publish ── */}
+        {/* Step 4 — Schedule & Publish */}
         <StepCard
-          step={4}
           title={step4Title}
           description={step4Description}
           complete={step4Complete}
           locked={reachedStep < 4}
           isOpen={activeStep === 4}
-          onToggle={reachedStep >= 4 ? () => toggleStep(4) : undefined}
+          onOpen={() => editStep(4)}
           summary={step4Summary ?? undefined}
+          elevated={step3Complete}
         >
           <ScheduleDateTimePicker
             date={date}
@@ -964,12 +933,12 @@ export default function ScheduledPostCollectionPage() {
                     value={approvalModeOverrideInput}
                     onChange={(event) =>
                       setApprovalModeOverrideInput(
-                        event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE
+                        event.target.value as WorkspaceApprovalMode | typeof DEFAULT_APPROVAL_OVERRIDE,
                       )
                     }
                     className={cn(
                       "flex h-10 w-full rounded-md border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] transition-colors",
-                      focusRingClassName
+                      focusRingClassName,
                     )}
                   >
                     <option value={DEFAULT_APPROVAL_OVERRIDE}>Use workspace rules</option>
@@ -990,7 +959,8 @@ export default function ScheduledPostCollectionPage() {
             </div>
           ) : null}
 
-          <div className="flex gap-2 mt-6">
+          {/* Actions */}
+          <div className="mt-6 flex gap-2">
             <Button
               onClick={saveDraft}
               disabled={draftLoading || submitLoading || hasAnyCharError || validatingMedia}
@@ -1003,7 +973,14 @@ export default function ScheduledPostCollectionPage() {
             </Button>
             <Button
               onClick={submit}
-              disabled={submitLoading || draftLoading || selectedAccountIds.length === 0 || hasAnyCharError || (postType !== "TEXT" && hasMediaErrors) || validatingMedia}
+              disabled={
+                submitLoading ||
+                draftLoading ||
+                selectedAccountIds.length === 0 ||
+                hasAnyCharError ||
+                (postType !== "TEXT" && hasMediaErrors) ||
+                validatingMedia
+              }
               className="h-11 flex-1 gap-2 border-transparent bg-[var(--ds-blue-600)] text-label-14 text-white shadow-none hover:bg-[var(--ds-blue-700)]"
               size="lg"
             >

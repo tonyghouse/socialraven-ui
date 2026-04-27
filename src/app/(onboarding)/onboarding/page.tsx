@@ -27,7 +27,7 @@ type Step = "choose-type" | "company-details" | "agency-workspaces";
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { getToken } = useAuth();
+  const { getToken, isLoaded } = useAuth();
 
   const [step, setStep] = useState<Step>("choose-type");
   const [selectedType, setSelectedType] = useState<UserType | null>(null);
@@ -51,6 +51,8 @@ export default function OnboardingPage() {
   }
 
   async function handleInfluencerSelect() {
+    if (!isLoaded) return;
+
     setSelectedType("INFLUENCER");
     setLoading(true);
     try {
@@ -90,6 +92,8 @@ export default function OnboardingPage() {
 
   async function handleAgencySubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!isLoaded) return;
+
     const validNames = workspaceNames.map((n) => n.trim()).filter(Boolean);
     if (validNames.length === 0) {
       toast.error("At least one workspace (brand) name is required.");
@@ -145,7 +149,7 @@ export default function OnboardingPage() {
               {/* Influencer card */}
               <button
                 onClick={handleInfluencerSelect}
-                disabled={loading}
+                disabled={loading || !isLoaded}
                 className={cn(
                   "group relative flex flex-col items-start gap-4 rounded-2xl border p-6 text-left shadow-none transition-[border-color,background-color,color]",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] hover:border-[var(--ds-blue-600)] hover:bg-[var(--ds-gray-100)]",
@@ -172,10 +176,10 @@ export default function OnboardingPage() {
                     <span className="text-[var(--ds-blue-600)]">✓</span> Single personal workspace
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-[var(--ds-blue-600)]">✓</span> Up to 15 connected accounts
+                    <span className="text-[var(--ds-blue-600)]">✓</span> Up to 30 connected accounts
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-[var(--ds-blue-600)]">✓</span> 500 posts / month
+                    <span className="text-[var(--ds-blue-600)]">✓</span> Unlimited scheduled posts
                   </li>
                 </ul>
                 <ArrowRight className="absolute right-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[var(--ds-gray-900)]/40 transition-colors group-hover:text-[var(--ds-blue-600)]" />
@@ -184,7 +188,7 @@ export default function OnboardingPage() {
               {/* Agency card */}
               <button
                 onClick={handleAgencySelect}
-                disabled={loading}
+                disabled={loading || !isLoaded}
                 className={cn(
                   "group relative flex flex-col items-start gap-4 rounded-2xl border p-6 text-left shadow-none transition-[border-color,background-color,color]",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)] hover:border-[var(--ds-blue-600)] hover:bg-[var(--ds-gray-100)]",
