@@ -1,0 +1,12 @@
+export { LandingPageFaqSection } from "@/components/landing-page/faq-section";
+export { LandingPageFeaturesSection } from "@/components/landing-page/features-section";
+export { LandingPageFinalCtaSection } from "@/components/landing-page/final-cta-section";
+export { LandingPageHeroSection } from "@/components/landing-page/hero-section";
+export { LandingPageHowItWorksSection } from "@/components/landing-page/how-it-works-section";
+export { LANDING_PAGE_KEYFRAMES } from "@/components/landing-page/landing-page-constants";
+export { LandingPagePersonasSection } from "@/components/landing-page/personas-section";
+export { LandingPagePlatformHubSection } from "@/components/landing-page/platform-hub-section";
+export { LandingPagePricingSection } from "@/components/landing-page/pricing-section";
+export { LandingPageStatsBarSection } from "@/components/landing-page/stats-bar-section";
+export { LandingPageTestimonialsSection } from "@/components/landing-page/testimonials-section";
+export { LandingPageUnifiedInboxSection } from "@/components/landing-page/unified-inbox-section";
