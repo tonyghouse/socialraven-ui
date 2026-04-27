@@ -50,7 +50,6 @@ export default function LandingPage() {
         <LandingPageFaqSection />
         <LandingPageFinalCtaSection />
       </div>
-
       <PublicSiteFooter contentClassName="max-w-[88rem] px-6 py-14 md:px-10" />
     </>
   );
