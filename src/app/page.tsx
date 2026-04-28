@@ -16,7 +16,6 @@ import {
   LandingPagePricingSection,
   LandingPageStatsBarSection,
   LandingPageTestimonialsSection,
-  LandingPageUnifiedInboxSection,
 } from "@/components/landing-page";
 import Navbar from "@/components/navbar/navbar";
 import { PublicSiteFooter } from "@/components/public/public-site-footer";
@@ -44,7 +43,6 @@ export default function LandingPage() {
         <LandingPagePlatformHubSection />
         <LandingPageHowItWorksSection />
         <LandingPagePersonasSection />
-        <LandingPageUnifiedInboxSection />
         <LandingPageTestimonialsSection />
         <LandingPagePricingSection />
         <LandingPageFaqSection />

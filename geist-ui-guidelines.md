@@ -993,6 +993,18 @@ Rules:
 - Settings pages: `max-w-2xl` or `max-w-3xl` for form content
 - Full-bleed only for dashboards with charts that benefit from width
 
+**Width consistency rule:** Before constraining a section to a narrow width, check what is above and below it. A narrow block next to a full-width block looks broken, not readable. If surrounding sections are full container width, the section must match — or every section on the page must share the same constraint.
+
+Narrow `max-w-*` constraints are for:
+- Long-form prose: articles, terms, privacy policy, documentation
+- Single-column form layouts: settings, onboarding steps
+
+Do not apply narrow width constraints to:
+- Structured lists, FAQ rows, divider-separated items — these read fine at full width
+- Any section that sits directly above or below a full-width grid or table
+
+If a layout looks visually unbalanced — one section narrow, the next full-width — fix the alignment before shipping. Do not leave it because "readability" says narrow is better for text. Visual consistency with the surrounding layout takes priority over isolated readability rules.
+
 ---
 
 ## 15. Settings and Configuration Page Patterns
@@ -1202,3 +1214,251 @@ A UI task is not complete unless the result is:
 - using targeted, fast transitions (100–200ms) not `transition-all`
 - every disabled state paired with a tooltip
 - appropriate for a mature B2B product
+
+---
+
+## 21. Content Discipline
+
+Every word, section, and element on a page must justify its existence. If removing it loses no meaning, remove it.
+
+### 21.1 The rule
+
+Before adding any content block, ask: does the user need this to complete their task, or does it exist to fill space?
+
+If it exists to fill space — cut it.
+
+### 21.2 No filler sections
+
+Do not add sections that restate what is already visible elsewhere on the page.
+
+Do not add:
+- "What's included with every plan" when the plan cards already list it
+- "How it works" when the interface makes it obvious
+- "Why choose us" on any product page inside the protected app
+- Section introductions that describe what the section below already shows
+
+### 21.3 No eyebrow + title + description stacking
+
+Pick one level of hierarchy above the content. Stacking an eyebrow label, a heading, and a description paragraph to introduce a single grid of items is three times more words than needed.
+
+Prefer:
+- heading alone when the content is self-evident
+- heading + one short sentence when context genuinely helps
+- eyebrow label only when the page has multiple parallel sections that need differentiation
+
+Do not use all three together as a default template for every section.
+
+### 21.4 Labels and data, not prose
+
+Use structured elements — badges, lists, inline values — instead of sentences that explain what the data already shows.
+
+Do:
+```
+14-day trial · Cancel anytime · USD
+```
+
+Do not:
+```
+All plans include a 14-day free trial. You can cancel at any time and all prices are listed in USD.
+```
+
+### 21.5 Progressive disclosure for fine print
+
+Legal, billing, and policy detail belongs behind a link, not inline on the page.
+
+- Refund policy → link to `/refund-policy`
+- Terms → link to `/terms-of-service`
+- Billing edge cases → FAQ section with collapsed answers, not a card grid
+
+Do not surface fine print as a primary content section. Users who need it will find the link.
+
+### 21.6 One primary action per screen
+
+Each page or major section has one primary CTA. Supporting links go in secondary positions or the footer.
+
+Do not line up multiple primary buttons and call them all equally important.
+
+### 21.7 Trust the user
+
+Do not explain controls, features, or concepts that a reasonably capable adult can infer from the label and context.
+
+Do not add:
+- a description paragraph below a search input
+- an explanation of what "Cancel anytime" means
+- a note clarifying that USD means US dollars
+- a tooltip on a button whose label already says exactly what it does
+
+---
+
+## 22. Interaction Philosophy
+
+### 22.1 Controls are self-evident
+
+A control communicates its purpose through its shape, icon, and placement — not through surrounding text.
+
+The moment you add a description paragraph to explain a UI control, the control has failed. Fix the icon or label choice, not by adding prose.
+
+Rules:
+- Sort control: sort icon + dropdown. No "Sort by" label needed if placement is obvious.
+- Filter control: filter icon, opens inline options. No "Filter your results" heading.
+- Search: input with magnifying glass icon. Placeholder is "Search" — not "Search your posts by title, platform, or status".
+- Empty after filter: "No results" + clear action. Not a paragraph.
+
+### 22.2 Decide, don't delegate
+
+Make the default choice for the user. Do not add a configuration control because you haven't built the underlying logic yet.
+
+- If posts should default to newest-first, show them newest-first. Do not add a sort dropdown to compensate for not having a ranking algorithm.
+- If a filter has an obvious default state, apply it. Do not expose the control until the user demonstrates they need it.
+
+A control that exists because the developer didn't make a decision is worse than no control. It puts the burden on the user.
+
+### 22.3 Surface state, don't require search
+
+Bring important information to the user. Do not make them hunt for it.
+
+- Failed posts: badge on the nav item showing count — user sees the problem without filtering
+- Drafts needing attention: surfaced at the top of the list, not buried in a filter
+- Limits approaching: inline indicator on the relevant control, not a separate settings page alert
+
+### 22.4 Contextual actions, not permanent toolbars
+
+Do not show every possible action for every item at all times.
+
+For list rows and cards:
+- Show the one most likely action inline
+- Show secondary actions on hover or in a `…` menu
+- Destructive actions always in the `…` menu, never inline
+
+This is not laziness — it is prioritization. A row with five always-visible action buttons is harder to scan than a row with one.
+
+### 22.5 No tombstones
+
+Never show a disabled "Coming Soon" button or a locked feature placeholder in the main product flow.
+
+If a feature is not built:
+- Do not show it as a disabled control
+- Do not add a "Coming Soon" badge to a nav item
+- Remove it from the layout entirely until it ships
+
+A disabled control with no delivery date tells the user "we didn't build this." That is worse than the feature not existing.
+
+### 22.6 Smart empty states
+
+Every empty state is a single action, not a description.
+
+Do:
+```
+[Create your first post]   ← one button
+```
+
+Do not:
+```
+No posts yet.
+Posts you create and schedule will appear here once you get started.
+[Create post]
+```
+
+The button IS the explanation. The description adds nothing.
+
+### 22.7 Good defaults that hold under real data
+
+The UI must look correct with 1 item and with 500 items without the user adjusting anything.
+
+- Truncation, date formatting, platform badge overflow — all pre-decided
+- Layout must not break or feel empty at either extreme
+- If it breaks at scale, fix the default — do not add a "density" setting
+
+---
+
+## 23. Visual and Product Philosophy
+
+These principles govern how SocialRaven should feel, informed by the visual discipline of Instagram, TikTok, and the revamped Facebook. The goal: stunning through restraint, not through decoration.
+
+### 23.1 Content supremacy
+
+The user's actual content — their post image, caption, scheduled time, metric — is the most important visual element on screen. UI chrome (buttons, labels, metadata, borders) recedes around it.
+
+Rules:
+- Post images and captions should visually dominate their cards
+- Platform icons, timestamps, and status badges are secondary — smaller, lower contrast
+- In analytics, the metric number dominates; the label is small and quiet
+- Never let the container (card border, header, action row) compete visually with the content inside it
+
+If the chrome is louder than the content, the chrome is wrong.
+
+### 23.2 Numbers speak through size
+
+A large number next to a small label communicates hierarchy without any surrounding decoration.
+
+Do:
+```
+48px number
+12px label beneath it
+```
+
+Do not:
+- wrap it in a card with a header
+- add a border or background fill to make it feel "important"
+- repeat the label as a section heading above the number
+
+Size contrast IS the design. Do not add structure that size already provides.
+
+### 23.3 Optimistic UI
+
+The interface responds to user actions immediately. API calls happen silently in the background.
+
+Rules:
+- When a user schedules a post, it appears in the calendar at once — do not wait for the server response
+- When a user deletes an item, remove it from the list immediately — restore on failure with an error toast
+- When a user toggles a setting, reflect the new state instantly
+- Never show a spinner blocking the UI for an action the user just took
+
+If the operation fails: roll back the UI state and surface a clear error. Do not make users wait to see the result of their own action.
+
+### 23.4 One delight per screen
+
+Each screen may have one moment that feels intentional and considered — a satisfying status transition, a well-crafted empty state, a smooth panel animation. One.
+
+Do not stack multiple animated elements, decorative transitions, or clever interactions on the same screen. When everything is special, nothing is.
+
+The delight must serve the user's task — it cannot be purely decorative.
+
+### 23.5 System state is never ambiguous
+
+The user always knows what the system is doing.
+
+| System state | How to surface it |
+|---|---|
+| Post queued for publishing | Status badge: `Queued` |
+| Post currently publishing | Live indicator + `Publishing…` |
+| Post published | `Published` badge + timestamp |
+| Post failed | `Failed` badge surfaced immediately, one clear retry action |
+| Background sync in progress | Subtle `LoadingDots` in a non-blocking position |
+| Network offline | Persistent inline note — not a full-page block |
+
+Silent states feel broken even when nothing is wrong. Never let the UI sit in an ambiguous in-between state without communicating it.
+
+### 23.6 Consistency is the polish
+
+The feeling of quality in a mature app comes from discipline, not decoration.
+
+- Same corner radius on every card — always `12px`
+- Same icon stroke weight across every screen — always Geist Icons
+- Same spacing unit repeated throughout — always Tailwind scale
+- Same type size for the same role on every screen — always Geist type classes
+
+Variation feels like a bug. A single screen that uses a different radius, a different icon style, or an invented spacing value breaks the sense that the product is a coherent system.
+
+Before shipping a screen: scan it against three nearby screens. If it feels like it belongs to a different app, find the inconsistency and fix it.
+
+### 23.7 Zero-explanation core flows
+
+The primary user journey — create post → schedule → publish — must be completable on first use without reading any instructions.
+
+Rules:
+- The main action on any screen is visually obvious from placement and hierarchy alone
+- New users should never need a tooltip, onboarding modal, or help text to complete the core flow
+- If the primary action requires explanation, the layout has failed — fix the layout, not by adding explanation
+
+Advanced features may require discovery. Core flows may not.
