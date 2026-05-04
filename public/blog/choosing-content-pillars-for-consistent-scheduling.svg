@@ -1,0 +1,27 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="32" fill="#FAFAF9"/>
+  <rect x="56" y="56" width="1088" height="518" rx="28" fill="white" stroke="#D6D3D1" stroke-width="2"/>
+  <rect x="108" y="132" width="212" height="332" rx="28" fill="#E0F2FE"/>
+  <rect x="352" y="98" width="212" height="366" rx="28" fill="#F5F3FF"/>
+  <rect x="596" y="160" width="212" height="304" rx="28" fill="#DCFCE7"/>
+  <rect x="840" y="118" width="212" height="346" rx="28" fill="#FEF3C7"/>
+  <text x="152" y="208" fill="#0C4A6E" font-family="Arial, sans-serif" font-size="26" font-weight="700">
+    Educate
+  </text>
+  <text x="396" y="174" fill="#5B21B6" font-family="Arial, sans-serif" font-size="26" font-weight="700">
+    Prove
+  </text>
+  <text x="640" y="236" fill="#166534" font-family="Arial, sans-serif" font-size="26" font-weight="700">
+    Opinion
+  </text>
+  <text x="884" y="194" fill="#92400E" font-family="Arial, sans-serif" font-size="26" font-weight="700">
+    Offer
+  </text>
+  <text x="108" y="530" fill="#111827" font-family="Arial, sans-serif" font-size="56" font-weight="700">
+    Content pillars that support scheduling
+  </text>
+  <rect x="814" y="486" width="218" height="46" rx="23" fill="#111827"/>
+  <text x="858" y="516" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="700">
+    SocialRaven Blog
+  </text>
+</svg>

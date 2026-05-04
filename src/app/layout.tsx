@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import ClientToaster from "@/components/generic/ClientToaster";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { getMetadataBase } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,7 +19,26 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SocialRaven",
-  description: "Social Media Automation & Management tool",
+  description:
+    "Social media scheduling, publishing, and approval workflows for creators, agencies, and operations-focused teams.",
+  metadataBase: getMetadataBase(),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    title: "SocialRaven",
+    description:
+      "Social media scheduling, publishing, and approval workflows for creators, agencies, and operations-focused teams.",
+    siteName: "SocialRaven",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SocialRaven",
+    description:
+      "Social media scheduling, publishing, and approval workflows for creators, agencies, and operations-focused teams.",
+  },
 };
 
 export default function RootLayout({

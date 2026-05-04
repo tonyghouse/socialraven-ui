@@ -1,171 +1,206 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import {
-  TrendingUp,
-  Zap,
-  Users,
-  Shield,
-  PenTool,
-  BarChart,
-  Clock,
-} from "lucide-react";
+import { ArrowRight, Clock3 } from "lucide-react";
 
+import { BlogRecentPostsList } from "./_components/blog-recent-posts-list";
 import {
-  PublicLozenge,
-  PublicPrimaryLinkButton,
-} from "@/components/public/public-site-primitives";
-import {
-  PublicCard,
-  PublicHero,
-  PublicInsetCard,
-  PublicPageShell,
-  PublicSection,
-} from "@/components/public/public-layout";
+  blogIndexDescription,
+  blogPosts,
+  formatBlogDate,
+  recentBlogPosts,
+  topBlogPosts,
+} from "./posts";
+import { PublicPageShell } from "@/components/public/public-layout";
+import { SITE_NAME, absoluteUrl, toJsonLd } from "@/lib/site";
+import { cn } from "@/lib/utils";
+
+const socialImagePost = topBlogPosts[0] ?? blogPosts[0];
 
 export const metadata: Metadata = {
-  title: "Blog | Social Raven",
-  description:
-    "Insights on social media strategy, scheduling, and growth from the Social Raven team.",
+  title: `Blog | ${SITE_NAME}`,
+  description: blogIndexDescription,
+  keywords: [
+    "social media blog",
+    "social media scheduling tips",
+    "content operations blog",
+    "social media workflow advice",
+  ],
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    type: "website",
+    title: `Blog | ${SITE_NAME}`,
+    description: blogIndexDescription,
+    url: "/blog",
+    images: [
+      {
+        url: socialImagePost.coverImage,
+        width: 1200,
+        height: 630,
+        alt: socialImagePost.coverImageAlt,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Blog | ${SITE_NAME}`,
+    description: blogIndexDescription,
+    images: [socialImagePost.coverImage],
+  },
 };
 
-const CATEGORIES = [
-  {
-    icon: TrendingUp,
-    title: "Publishing Workflows",
-    description:
-      "Practical ways to plan campaigns, manage calendars, and keep recurring publishing work organized.",
-  },
-  {
-    icon: Zap,
-    title: "Automation & Scheduling",
-    description:
-      "Batch content, prepare approvals, and keep scheduled publishing running smoothly.",
-  },
-  {
-    icon: BarChart,
-    title: "Analytics & Reporting",
-    description:
-      "Understand your numbers. Learn which posts work, when to post, and why.",
-  },
-  {
-    icon: Users,
-    title: "Agency Playbooks",
-    description:
-      "Tools, templates, and frameworks for agencies managing multiple client accounts.",
-  },
-  {
-    icon: PenTool,
-    title: "Content Operations",
-    description:
-      "Caption review, asset handoff, and repeatable campaign processes for content teams.",
-    },
-  {
-    icon: Shield,
-    title: "Compliance & Privacy",
-    description:
-      "Staying GDPR and CCPA-compliant as regulations and platform policies continue to evolve.",
-  },
-];
-
-const COMING_SOON = [
-  {
-    category: "Publishing Workflows",
-    title: "How to Plan a Month of Content Without Losing Track of Reviews",
-    excerpt:
-      "A practical operating rhythm for planning, reviewing, and scheduling recurring content without spreadsheet chaos.",
-    readTime: "7 min read",
-  },
-  {
-    category: "Automation & Scheduling",
-    title: "How to Batch-Create a Month of Content in One Afternoon",
-    excerpt:
-      "A step-by-step workflow for planning, creating, and scheduling 30 days of cross-platform content in a single focused session.",
-    readTime: "5 min read",
-  },
-  {
-    category: "Agency Playbooks",
-    title: "Managing Multiple Brand Workspaces Without Losing Context",
-    excerpt:
-      "The naming, review, and handoff patterns that help agencies stay organized across client workspaces.",
-    readTime: "8 min read",
-  },
-];
-
 export default function BlogPage() {
+  const [featuredTopPost, ...secondaryTopPosts] = topBlogPosts;
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: `${SITE_NAME} Blog`,
+    description: blogIndexDescription,
+    url: absoluteUrl("/blog"),
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      logo: {
+        "@type": "ImageObject",
+        url: absoluteUrl("/SocialRavenLogo.svg"),
+      },
+    },
+    blogPost: blogPosts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.description,
+      url: absoluteUrl(`/blog/${post.slug}`),
+      datePublished: post.publishedAt,
+      dateModified: post.updatedAt ?? post.publishedAt,
+      image: absoluteUrl(post.coverImage),
+    })),
+  };
+
   return (
-    <PublicPageShell>
-      <PublicHero
-        topSlot={
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: toJsonLd(blogSchema) }}
+      />
+      <PublicPageShell>
+        <div className="mx-auto w-full max-w-7xl px-5 pb-8 pt-8 md:px-8 md:pb-10 md:pt-10">
           <Link
             href="/"
             className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
           >
             ← Back
           </Link>
-        }
-        eyebrow="Blog"
-        title="Insights for modern social media teams."
-        description="Strategy, tools, and tactics for creators, agencies, and brands who take social seriously. First articles dropping soon — get notified when we publish."
-        actions={
-          <PublicPrimaryLinkButton href="mailto:team+blog@socialraven.io?subject=Blog%20Notifications">
-            Notify me when we publish
-          </PublicPrimaryLinkButton>
-        }
-      />
-
-      <PublicSection eyebrow="Coming soon" title="First articles in the works">
-        <div className="grid gap-5 md:grid-cols-3">
-          {COMING_SOON.map(({ category, title, excerpt, readTime }) => (
-            <PublicCard key={title} className="space-y-4 p-6">
-              <div className="flex items-center justify-between gap-3">
-                <PublicLozenge appearance="inprogress">{category}</PublicLozenge>
-                <div className="flex items-center gap-1 text-label-12 text-[var(--ds-gray-900)]">
-                  <Clock className="h-3 w-3" />
-                  {readTime}
-                </div>
-              </div>
-              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
-              <p className="text-copy-14 text-[var(--ds-gray-900)]">{excerpt}</p>
-              <PublicLozenge appearance="default">Publishing soon</PublicLozenge>
-            </PublicCard>
-          ))}
+          <h1 className="mt-4 text-heading-24 text-[var(--ds-gray-1000)]">
+            Blog
+          </h1>
         </div>
-      </PublicSection>
 
-      <PublicSection eyebrow="Topics" title="What we&apos;ll cover" surface="surface">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {CATEGORIES.map(({ icon: Icon, title, description }) => (
-            <PublicInsetCard key={title} className="space-y-3 p-6">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
-                <Icon className="h-5 w-5" />
-              </div>
-              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
-              <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
-            </PublicInsetCard>
-          ))}
-        </div>
-      </PublicSection>
-
-      <PublicSection>
-        <PublicCard className="px-8 py-10 text-center md:px-14 md:py-14">
-          <div className="mx-auto max-w-2xl space-y-5">
-            <p className="text-label-12 text-[var(--ds-gray-900)]">
-              Stay in the loop
-            </p>
-            <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
-              Be the first to read our articles.
-            </h2>
-            <p className="text-copy-14 text-[var(--ds-gray-900)]">
-              Drop us an email and we&apos;ll notify you as soon as the first posts go live. No spam, unsubscribe any time.
-            </p>
-            <div className="flex justify-center">
-              <PublicPrimaryLinkButton href="mailto:team+blog@socialraven.io?subject=Blog%20Notifications">
-                Get notified
-              </PublicPrimaryLinkButton>
+        {featuredTopPost ? (
+          <section className="mx-auto w-full max-w-7xl px-5 pb-12 md:px-8 md:pb-14">
+            <div className="mb-6">
+              <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">
+                Top posts
+              </h2>
             </div>
-          </div>
-        </PublicCard>
-      </PublicSection>
-    </PublicPageShell>
+
+            <div
+              className={cn(
+                "grid gap-8",
+                secondaryTopPosts.length > 0 && "lg:grid-cols-[minmax(0,1fr)_21rem]",
+              )}
+            >
+              <Link href={`/blog/${featuredTopPost.slug}`} className="group block">
+                <article className="grid gap-5 lg:grid-cols-[minmax(18rem,24rem)_1fr] lg:items-center lg:gap-8">
+                  <div className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                    <Image
+                      src={featuredTopPost.coverImage}
+                      alt={featuredTopPost.coverImageAlt}
+                      width={1200}
+                      height={630}
+                      priority
+                      className="aspect-[1.3/1] w-full object-cover"
+                    />
+                  </div>
+
+                  <div className="space-y-5">
+                    <div className="space-y-3">
+                      <p className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
+                        <span>{featuredTopPost.category}</span>
+                        <span>{formatBlogDate(featuredTopPost.publishedAt)}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Clock3 className="h-3.5 w-3.5" />
+                          {featuredTopPost.readTime}
+                        </span>
+                      </p>
+                      <h2 className="text-heading-32 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
+                        {featuredTopPost.title}
+                      </h2>
+                      <p className="max-w-2xl text-copy-16 text-[var(--ds-gray-900)]">
+                        {featuredTopPost.description}
+                      </p>
+                    </div>
+
+                    <span className="inline-flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
+                      Read post
+                      <ArrowRight className="h-4 w-4 transition-transform duration-100 group-hover:translate-x-0.5" />
+                    </span>
+                  </div>
+                </article>
+              </Link>
+
+              {secondaryTopPosts.length > 0 ? (
+                <div className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]">
+                  {secondaryTopPosts.map((post, index) => (
+                    <Link
+                      key={post.slug}
+                      href={`/blog/${post.slug}`}
+                      className={cn(
+                        "group block px-5 py-5 transition-colors hover:bg-[var(--ds-gray-100)]",
+                        index > 0 && "border-t border-[var(--ds-gray-400)]",
+                      )}
+                    >
+                      <article className="space-y-3">
+                        <p className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
+                          <span>{post.category}</span>
+                          <span>{formatBlogDate(post.publishedAt)}</span>
+                        </p>
+                        <div className="space-y-2">
+                          <h3 className="text-heading-16 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
+                            {post.title}
+                          </h3>
+                          <p className="text-copy-14 text-[var(--ds-gray-900)]">
+                            {post.excerpt}
+                          </p>
+                        </div>
+                      </article>
+                    </Link>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </section>
+        ) : null}
+
+        {recentBlogPosts.length > 0 ? (
+          <section className="bg-[var(--ds-background-200)]">
+            <div className="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-14">
+              <div className="mb-6">
+                <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">
+                  Recent posts
+                </h2>
+              </div>
+
+              <BlogRecentPostsList
+                posts={recentBlogPosts}
+                initialVisibleCount={2}
+                pageSize={2}
+              />
+            </div>
+          </section>
+        ) : null}
+      </PublicPageShell>
+    </>
   );
 }

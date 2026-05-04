@@ -1,0 +1,29 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="32" fill="#F7F7F7"/>
+  <rect x="56" y="56" width="1088" height="518" rx="28" fill="white" stroke="#D4D4D4" stroke-width="2"/>
+  <rect x="104" y="108" width="372" height="414" rx="24" fill="#0F172A"/>
+  <rect x="152" y="166" width="156" height="18" rx="9" fill="#60A5FA"/>
+  <rect x="152" y="214" width="236" height="28" rx="14" fill="#E5E7EB"/>
+  <rect x="152" y="262" width="180" height="12" rx="6" fill="#334155"/>
+  <rect x="152" y="290" width="220" height="12" rx="6" fill="#334155"/>
+  <rect x="152" y="318" width="196" height="12" rx="6" fill="#334155"/>
+  <rect x="152" y="372" width="164" height="84" rx="18" fill="#1D4ED8"/>
+  <rect x="340" y="372" width="88" height="84" rx="18" fill="#1E293B"/>
+  <rect x="528" y="138" width="560" height="72" rx="18" fill="#EFF6FF"/>
+  <text x="568" y="182" fill="#1E3A8A" font-family="Arial, sans-serif" font-size="28" font-weight="700">
+    Batch a month of content
+  </text>
+  <text x="568" y="228" fill="#111827" font-family="Arial, sans-serif" font-size="56" font-weight="700">
+    Without losing quality
+  </text>
+  <text x="568" y="290" fill="#4B5563" font-family="Arial, sans-serif" font-size="24">
+    Plan first. Draft second. Schedule last.
+  </text>
+  <rect x="568" y="340" width="472" height="18" rx="9" fill="#E5E7EB"/>
+  <rect x="568" y="376" width="420" height="18" rx="9" fill="#E5E7EB"/>
+  <rect x="568" y="412" width="454" height="18" rx="9" fill="#E5E7EB"/>
+  <rect x="568" y="468" width="212" height="46" rx="23" fill="#111827"/>
+  <text x="610" y="498" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="700">
+    SocialRaven Blog
+  </text>
+</svg>

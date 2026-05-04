@@ -1,0 +1,31 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="32" fill="#F3F4F6"/>
+  <rect x="56" y="56" width="1088" height="518" rx="28" fill="white" stroke="#D4D4D4" stroke-width="2"/>
+  <rect x="112" y="126" width="252" height="116" rx="24" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="2"/>
+  <rect x="420" y="126" width="252" height="116" rx="24" fill="#F9FAFB" stroke="#D1D5DB" stroke-width="2"/>
+  <rect x="728" y="126" width="252" height="116" rx="24" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="2"/>
+  <path d="M364 184H420" stroke="#94A3B8" stroke-width="10" stroke-linecap="round"/>
+  <path d="M672 184H728" stroke="#94A3B8" stroke-width="10" stroke-linecap="round"/>
+  <text x="148" y="176" fill="#1D4ED8" font-family="Arial, sans-serif" font-size="24" font-weight="700">
+    Draft
+  </text>
+  <text x="456" y="176" fill="#111827" font-family="Arial, sans-serif" font-size="24" font-weight="700">
+    Review
+  </text>
+  <text x="764" y="176" fill="#047857" font-family="Arial, sans-serif" font-size="24" font-weight="700">
+    Approve
+  </text>
+  <text x="112" y="318" fill="#111827" font-family="Arial, sans-serif" font-size="56" font-weight="700">
+    A lightweight approval workflow
+  </text>
+  <text x="112" y="384" fill="#4B5563" font-family="Arial, sans-serif" font-size="24">
+    Small teams need faster reviews, not more review stages.
+  </text>
+  <rect x="112" y="430" width="520" height="18" rx="9" fill="#E5E7EB"/>
+  <rect x="112" y="466" width="472" height="18" rx="9" fill="#E5E7EB"/>
+  <rect x="112" y="502" width="418" height="18" rx="9" fill="#E5E7EB"/>
+  <rect x="794" y="356" width="218" height="46" rx="23" fill="#111827"/>
+  <text x="838" y="386" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="700">
+    SocialRaven Blog
+  </text>
+</svg>

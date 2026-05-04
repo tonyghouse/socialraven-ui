@@ -17,6 +17,8 @@ npm run lint     # ESLint
 
 No test scripts configured yet — add Playwright for e2e as features are introduced.
 
+Before making visual changes, read `ui-guidelines.md`. It is the canonical UI design guide for this frontend.
+
 ## Current State (Barebones)
 
 This project has been stripped to a clean foundation. What exists:
