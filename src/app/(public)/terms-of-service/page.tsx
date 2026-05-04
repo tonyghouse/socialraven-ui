@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
 import {
+  PublicBackLink,
   PublicPrimaryLinkButton,
   PublicSectionMessage,
 } from "@/components/public/public-site-primitives";
@@ -46,12 +46,7 @@ export default function TermsOfServicePage() {
     <PublicPageShell>
       <PublicHero
         topSlot={
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
-          >
-            ← Back
-          </Link>
+          <PublicBackLink href="/" />
         }
         eyebrow="Legal"
         title="Terms of Service"

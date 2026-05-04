@@ -45,7 +45,6 @@ export async function generateMetadata({
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt ?? post.publishedAt,
       authors: [post.authorName],
-      tags: post.tags,
       images: [
         {
           url: post.coverImage,
@@ -82,7 +81,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
     datePublished: post.publishedAt,
     dateModified: post.updatedAt ?? post.publishedAt,
-    articleSection: post.category,
     keywords: post.keywords.join(", "),
     author: {
       "@type": "Organization",

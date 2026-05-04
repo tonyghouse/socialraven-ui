@@ -46,33 +46,14 @@ export function getBlogPostBySlug(slug: string) {
 }
 
 export function getRelatedBlogPosts(slug: string, limit = 2) {
-  const currentPost = getBlogPostBySlug(slug);
-
-  if (!currentPost) {
+  if (!getBlogPostBySlug(slug)) {
     return [];
   }
 
   return blogPosts
     .filter((post) => post.slug !== slug)
-    .sort((left, right) => {
-      const leftScore = Number(left.category === currentPost.category);
-      const rightScore = Number(right.category === currentPost.category);
-
-      if (leftScore !== rightScore) {
-        return rightScore - leftScore;
-      }
-
-      return right.publishedAt.localeCompare(left.publishedAt);
-    })
+    .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt))
     .slice(0, limit);
-}
-
-export function getAllBlogTags() {
-  return Array.from(new Set(blogPosts.flatMap((post) => post.tags)));
-}
-
-export function getAllBlogCategories() {
-  return Array.from(new Set(blogPosts.map((post) => post.category)));
 }
 
 export type { BlogPost, BlogPostSection } from "./types";

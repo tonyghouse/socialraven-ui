@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { CalendarDays, Clock3 } from "lucide-react";
 
 import {
@@ -10,7 +9,7 @@ import {
   PublicToc,
 } from "@/components/public/public-layout";
 import {
-  PublicLozenge,
+  PublicBackLink,
   PublicPrimaryLinkButton,
   PublicSubtleLinkButton,
 } from "@/components/public/public-site-primitives";
@@ -29,18 +28,9 @@ export function BlogArticleLayout({ post }: { post: BlogPost }) {
     <PublicPageShell>
       <PublicHero
         topSlot={
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
-          >
-            ← Back to blog
-          </Link>
+          <PublicBackLink href="/blog">Back to blog</PublicBackLink>
         }
-        eyebrow={
-          <span className="inline-flex items-center gap-2">
-            <PublicLozenge appearance="information">{post.category}</PublicLozenge>
-          </span>
-        }
+        eyebrow="Blog"
         title={post.title}
         meta={
           <span className="flex flex-wrap items-center gap-3">
@@ -74,16 +64,6 @@ export function BlogArticleLayout({ post }: { post: BlogPost }) {
                 <p className="mt-2 text-copy-14 text-[var(--ds-gray-900)]">
                   Short, practical guidance you can expand into a repeatable workflow.
                 </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]"
-                  >
-                    {tag}
-                  </span>
-                ))}
               </div>
             </div>
           </PublicCard>

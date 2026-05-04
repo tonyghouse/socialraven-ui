@@ -11,12 +11,10 @@ export const post: BlogPost = {
   publishedAt: "2026-05-01",
   updatedAt: "2026-05-01",
   authorName: "SocialRaven Editorial",
-  category: "Content Operations",
   readTime: "4 min read",
   coverImage: "/blog/how-to-batch-a-month-of-social-content.svg",
   coverImageAlt:
     "Editorial illustration for batching a month of social content in a focused workflow.",
-  tags: ["Batching", "Content calendar", "Scheduling"],
   keywords: [
     "batch social media content",
     "monthly content calendar",

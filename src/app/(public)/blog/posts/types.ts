@@ -15,11 +15,9 @@ export type BlogPost = {
   publishedAt: string;
   updatedAt?: string;
   authorName: string;
-  category: string;
   readTime: string;
   coverImage: string;
   coverImageAlt: string;
-  tags: string[];
   keywords: string[];
   sections: BlogPostSection[];
 };

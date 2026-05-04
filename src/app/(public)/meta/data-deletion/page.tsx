@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { PublicBackLink } from "@/components/public/public-site-primitives";
 import { PublicCard, PublicHero, PublicPageShell, PublicSection } from "@/components/public/public-layout";
 
 export default function MetaDataDeletionPage() {
@@ -7,12 +8,7 @@ export default function MetaDataDeletionPage() {
     <PublicPageShell>
       <PublicHero
         topSlot={
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
-          >
-            ← Back
-          </Link>
+          <PublicBackLink href="/" />
         }
         eyebrow="Meta Compliance"
         title="Meta Data Deletion"

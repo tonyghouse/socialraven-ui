@@ -10,12 +10,10 @@ export const post: BlogPost = {
   publishedAt: "2026-04-20",
   updatedAt: "2026-04-20",
   authorName: "SocialRaven Editorial",
-  category: "Strategy & Planning",
   readTime: "4 min read",
   coverImage: "/blog/choosing-content-pillars-for-consistent-scheduling.svg",
   coverImageAlt:
     "Editorial illustration for choosing content pillars that support recurring scheduling.",
-  tags: ["Content strategy", "Planning", "Recurring formats"],
   keywords: [
     "content pillars for social media",
     "social media planning",

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowRight, Clock3 } from "lucide-react";
 
 import { PublicCard } from "@/components/public/public-layout";
-import { PublicLozenge } from "@/components/public/public-site-primitives";
 import { cn } from "@/lib/utils";
 
 import type { BlogPost } from "../posts";
@@ -38,9 +37,9 @@ export function BlogPostCard({
 
             <div className="flex h-full flex-col justify-between gap-6 p-7">
               <div className="space-y-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <PublicLozenge appearance="information">{post.category}</PublicLozenge>
-                  <span className="flex items-center gap-1 text-label-12 text-[var(--ds-gray-900)]">
+                <div className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
+                  <span>{formatBlogDate(post.publishedAt)}</span>
+                  <span className="flex items-center gap-1">
                     <Clock3 className="h-3.5 w-3.5" />
                     {post.readTime}
                   </span>
@@ -57,20 +56,9 @@ export function BlogPostCard({
 
               <div className="space-y-4 border-t border-[var(--ds-gray-400)] pt-4">
                 <div className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
-                  <span>{formatBlogDate(post.publishedAt)}</span>
                   <span>By {post.authorName}</span>
                 </div>
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                <div className="flex items-center justify-end gap-4">
                   <span className="inline-flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
                     Read post
                     <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
@@ -99,9 +87,9 @@ export function BlogPostCard({
         </div>
 
         <div className="flex flex-1 flex-col gap-4 p-6">
-          <div className="flex flex-wrap items-center gap-3">
-            <PublicLozenge appearance="default">{post.category}</PublicLozenge>
-            <span className="flex items-center gap-1 text-label-12 text-[var(--ds-gray-900)]">
+          <div className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
+            <span>{formatBlogDate(post.publishedAt)}</span>
+            <span className="flex items-center gap-1">
               <Clock3 className="h-3.5 w-3.5" />
               {post.readTime}
             </span>

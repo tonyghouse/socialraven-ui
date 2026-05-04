@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   Target,
   Shield,
@@ -13,6 +12,7 @@ import {
 } from "lucide-react";
 
 import {
+  PublicBackLink,
   PublicPrimaryLinkButton,
   PublicSubtleLinkButton,
 } from "@/components/public/public-site-primitives";
@@ -101,12 +101,7 @@ export default function AboutPage() {
   return (
     <PublicPageShell>
       <div className="mx-auto w-full max-w-7xl px-6 pt-4 md:px-10">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-900)] transition-colors hover:text-[var(--ds-gray-1000)]"
-        >
-          ← Back
-        </Link>
+        <PublicBackLink href="/" />
       </div>
       <PublicHero
         eyebrow="Our story"

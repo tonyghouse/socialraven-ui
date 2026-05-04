@@ -11,12 +11,10 @@ export const post: BlogPost = {
   publishedAt: "2026-04-27",
   updatedAt: "2026-04-27",
   authorName: "SocialRaven Editorial",
-  category: "Publishing Workflows",
   readTime: "3 min read",
   coverImage: "/blog/lightweight-approval-workflow-for-social-teams.svg",
   coverImageAlt:
     "Editorial illustration for a lightweight approval workflow used by social teams.",
-  tags: ["Approvals", "Team workflow", "Brand review"],
   keywords: [
     "social media approval workflow",
     "content review process",

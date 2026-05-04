@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,12 @@ const publicPrimaryButtonClassName = cn(
 const publicSubtleButtonClassName = cn(
   publicButtonClassName,
   "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+);
+
+const publicBackLinkClassName = cn(
+  "inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] shadow-none transition-colors",
+  "hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
 );
 
 function isExternalHref(href: string) {
@@ -115,6 +122,21 @@ export function PublicSubtleLinkButton({
     <Button asChild variant="ghost" size="sm" className={publicSubtleButtonClassName}>
       <Link href={href}>{children}</Link>
     </Button>
+  );
+}
+
+export function PublicBackLink({
+  href,
+  children = "Back",
+}: {
+  href: string;
+  children?: ReactNode;
+}) {
+  return (
+    <Link href={href} className={publicBackLinkClassName}>
+      <ChevronLeft className="h-4 w-4 text-[var(--ds-gray-900)]" />
+      <span>{children}</span>
+    </Link>
   );
 }
 
