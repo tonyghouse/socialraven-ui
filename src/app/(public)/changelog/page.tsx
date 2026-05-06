@@ -13,12 +13,12 @@ import {
 
 export const metadata: Metadata = {
   title: "Changelog | Social Raven",
-  description: "What's new in Social Raven — feature releases, improvements, and fixes.",
+  description: "Changelog for Social Raven with product updates, fixes, and improvements.",
 };
 
 const ENTRIES = [
   {
-    version: "v0.1 — Beta",
+    version: "v0.1",
     date: "February 2026",
     badge: "New",
     items: [
@@ -39,9 +39,9 @@ export default function ChangelogPage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Changelog"
-        title="What&apos;s new"
-        description="Every improvement, fix, and new feature — documented."
+        eyebrow="Product updates"
+        title="Changelog"
+        description="New features, fixes, and improvements in one place."
       />
 
       <PublicSection>

@@ -11,7 +11,6 @@ const FOOTER_GROUPS = [
     links: [
       { label: "Features", href: "/#features" },
       { label: "Pricing", href: "/pricing" },
-      { label: "Integrations", href: "/#integrations" },
       { label: "Changelog", href: "/changelog" },
     ],
   },
@@ -32,6 +31,8 @@ const FOOTER_GROUPS = [
     ],
   },
 ];
+
+export const LANDING_FOOTER_CONTENT_CLASS = "max-w-[88rem] px-6 py-14 md:px-10";
 
 export function PublicSiteFooter({
   contentClassName = "max-w-7xl px-6 py-14",

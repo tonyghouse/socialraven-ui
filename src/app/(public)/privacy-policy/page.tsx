@@ -57,17 +57,15 @@ export default function PrivacyPolicyPage() {
         <div className="items-start lg:grid lg:grid-cols-[13.75rem_1fr] lg:gap-14">
           <PublicToc items={TOC} />
 
-          <div className="min-w-0 space-y-10">
-            <PublicCard id="data-controller" className="space-y-4 p-8">
+          <PublicCard className="min-w-0 overflow-hidden">
+            <div className="divide-y divide-[var(--ds-gray-400)]">
+            <section id="data-controller" className="space-y-4 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">1. Data Controller</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 The data controller responsible for your personal data is:
               </p>
-              <PublicInsetCard className="space-y-1 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <p className="font-bold text-[var(--ds-gray-1000)]">Kammullu Ghouse</p>
-                <p>Business form: Sole proprietor</p>
+              <PublicInsetCard className="max-w-xl space-y-1 p-4 text-copy-14 text-[var(--ds-gray-900)]">
                 <p>Trading name: Social Raven</p>
-                <p>Country: India</p>
                 <p>
                   Email:{" "}
                   <a
@@ -83,70 +81,72 @@ export default function PrivacyPolicyPage() {
                 For EU residents, if you have questions about how we process your data or wish to exercise
                 your rights, contact us at the address above.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="information-collected" className="space-y-5 p-8">
+            <section id="information-collected" className="space-y-5 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">2. Information We Collect</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 We collect only the minimum data required to deliver, secure, and improve our service.
               </p>
 
-              <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.1 Account Information</h3>
-                <ul className="ml-5 list-disc space-y-1">
-                  <li>Full name and email address (provided during registration)</li>
-                  <li>Authentication identifiers managed by Clerk</li>
-                  <li>Subscription and billing status (if applicable)</li>
-                </ul>
-              </PublicInsetCard>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
+                  <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.1 Account Information</h3>
+                  <ul className="ml-5 list-disc space-y-1">
+                    <li>Full name and email address (provided during registration)</li>
+                    <li>Authentication identifiers managed by Clerk</li>
+                    <li>Subscription and billing status (if applicable)</li>
+                  </ul>
+                </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.2 Connected Social Media Accounts</h3>
-                <p>
-                  When you connect a social account (Instagram, Facebook, YouTube, LinkedIn, X/Twitter), we
-                  store:
-                </p>
-                <ul className="ml-5 list-disc space-y-1">
-                  <li>OAuth access tokens and refresh tokens</li>
-                  <li>Platform-assigned user IDs and display names</li>
-                  <li>Page/channel IDs for Business accounts</li>
-                </ul>
-                <p>
-                  These tokens are used exclusively to publish posts, retrieve analytics, and manage
-                  scheduled content on your behalf. We never access private messages, followers&apos; data,
-                  or any information outside explicitly granted OAuth scopes.
-                </p>
-              </PublicInsetCard>
+                <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)] lg:col-span-2">
+                  <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.2 Connected Social Media Accounts</h3>
+                  <p>
+                    When you connect a social account (Instagram, Facebook, YouTube, LinkedIn, X/Twitter), we
+                    store:
+                  </p>
+                  <ul className="ml-5 list-disc space-y-1">
+                    <li>OAuth access tokens and refresh tokens</li>
+                    <li>Platform-assigned user IDs and display names</li>
+                    <li>Page/channel IDs for Business accounts</li>
+                  </ul>
+                  <p>
+                    These tokens are used exclusively to publish posts, retrieve analytics, and manage
+                    scheduled content on your behalf. We never access private messages, followers&apos; data,
+                    or any information outside explicitly granted OAuth scopes.
+                  </p>
+                </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.3 Content You Create</h3>
-                <ul className="ml-5 list-disc space-y-1">
-                  <li>Post drafts, captions, hashtags, and scheduling metadata</li>
-                  <li>Images and videos uploaded for scheduling (stored temporarily on our servers and/or AWS S3)</li>
-                </ul>
-              </PublicInsetCard>
+                <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
+                  <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.3 Content You Create</h3>
+                  <ul className="ml-5 list-disc space-y-1">
+                    <li>Post drafts, captions, hashtags, and scheduling metadata</li>
+                    <li>Images and videos uploaded for scheduling (stored temporarily on our servers and/or AWS S3)</li>
+                  </ul>
+                </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.4 Usage and Technical Data</h3>
-                <ul className="ml-5 list-disc space-y-1">
-                  <li>IP address, browser type, device type, and operating system</li>
-                  <li>Pages visited, features used, and session duration</li>
-                  <li>Error logs and performance diagnostics</li>
-                </ul>
-              </PublicInsetCard>
+                <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
+                  <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.4 Usage and Technical Data</h3>
+                  <ul className="ml-5 list-disc space-y-1">
+                    <li>IP address, browser type, device type, and operating system</li>
+                    <li>Pages visited, features used, and session duration</li>
+                    <li>Error logs and performance diagnostics</li>
+                  </ul>
+                </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.5 Cookies &amp; Tracking</h3>
-                <p>
-                  We use strictly necessary cookies for session management and authentication. We may also
-                  use analytics cookies (e.g., anonymised analytics) to understand how users interact with
-                  the platform. You may disable non-essential cookies in your browser settings; this will
-                  not affect core functionality.
-                </p>
-              </PublicInsetCard>
-            </PublicCard>
+                <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)] lg:col-span-2">
+                  <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">2.5 Cookies &amp; Tracking</h3>
+                  <p>
+                    We use strictly necessary cookies for session management and authentication. We may also
+                    use analytics cookies (e.g., anonymised analytics) to understand how users interact with
+                    the platform. You may disable non-essential cookies in your browser settings; this will
+                    not affect core functionality.
+                  </p>
+                </PublicInsetCard>
+              </div>
+            </section>
 
-            <PublicCard id="legal-basis" className="space-y-5 p-8">
+            <section id="legal-basis" className="space-y-5 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">
                 3. Legal Basis for Processing (GDPR – EU/EEA Users)
               </h2>
@@ -164,9 +164,9 @@ export default function PrivacyPolicyPage() {
                   ["Compliance with legal obligations", "Legal obligation (Art. 6(1)(c))"],
                 ]}
               />
-            </PublicCard>
+            </section>
 
-            <PublicCard id="how-we-use" className="space-y-5 p-8">
+            <section id="how-we-use" className="space-y-5 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">4. How We Use Your Information</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 We use your data solely for the following purposes:
@@ -194,9 +194,9 @@ export default function PrivacyPolicyPage() {
                   <li>Monetize your profile or social media presence</li>
                 </ul>
               </PublicInsetCard>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="data-sharing" className="space-y-5 p-8">
+            <section id="data-sharing" className="space-y-5 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">5. Data Sharing &amp; Third-Party Services</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 We share data only with trusted sub-processors necessary to operate our service:
@@ -218,9 +218,9 @@ export default function PrivacyPolicyPage() {
                 accordance with applicable law. Each integration uses the official platform API and
                 operates within the scopes you explicitly authorise.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="international-transfers" className="space-y-4 p-8">
+            <section id="international-transfers" className="space-y-4 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">6. International Data Transfers</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 Social Raven operates globally. Your data may be transferred to and processed in countries
@@ -232,9 +232,9 @@ export default function PrivacyPolicyPage() {
                 <li>Transfers to countries with an EU adequacy decision</li>
                 <li>Binding Corporate Rules or other recognised legal mechanisms where applicable</li>
               </ul>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="data-storage" className="space-y-4 p-8">
+            <section id="data-storage" className="space-y-4 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">7. Data Storage &amp; Security</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 We implement industry-standard technical and organisational security measures to protect
@@ -251,9 +251,9 @@ export default function PrivacyPolicyPage() {
                 While we take all reasonable precautions, no internet-based service is 100% secure. We
                 encourage you to use strong passwords and report any suspected security issues promptly.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="data-retention" className="space-y-5 p-8">
+            <section id="data-retention" className="space-y-5 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">8. Data Retention</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 We retain personal data only as long as necessary for the purposes for which it was
@@ -273,39 +273,41 @@ export default function PrivacyPolicyPage() {
                 Upon account deletion, all personal data is permanently erased within{" "}
                 <span className="font-bold">30 days</span>, except where retention is required by law.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="your-rights" className="space-y-5 p-8">
+            <section id="your-rights" className="space-y-5 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">9. Your Privacy Rights</h2>
 
-              <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">9.1 Rights Under GDPR (EU/EEA Residents)</h3>
-                <p>Under the GDPR, you have the following rights:</p>
-                <ul className="ml-5 list-disc space-y-1">
-                  <li><strong>Right of Access (Art. 15):</strong> Request a copy of the personal data we hold about you.</li>
-                  <li><strong>Right to Rectification (Art. 16):</strong> Request correction of inaccurate or incomplete data.</li>
-                  <li><strong>Right to Erasure / &quot;Right to be Forgotten&quot; (Art. 17):</strong> Request deletion of your personal data under certain conditions.</li>
-                  <li><strong>Right to Restriction of Processing (Art. 18):</strong> Request that we limit how we use your data.</li>
-                  <li><strong>Right to Data Portability (Art. 20):</strong> Receive your data in a structured, machine-readable format.</li>
-                  <li><strong>Right to Object (Art. 21):</strong> Object to processing based on legitimate interests or for direct marketing.</li>
-                  <li><strong>Rights Related to Automated Decision-Making (Art. 22):</strong> We do not make solely automated decisions that produce legal or similarly significant effects.</li>
-                  <li><strong>Right to Withdraw Consent:</strong> Where processing is based on consent, you may withdraw it at any time.</li>
-                  <li><strong>Right to Lodge a Complaint:</strong> You have the right to complain to your national Data Protection Authority (DPA). A list of EU DPAs is available at edpb.europa.eu.</li>
-                </ul>
-              </PublicInsetCard>
+              <div className="grid gap-4 xl:grid-cols-2">
+                <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
+                  <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">9.1 Rights Under GDPR (EU/EEA Residents)</h3>
+                  <p>Under the GDPR, you have the following rights:</p>
+                  <ul className="ml-5 list-disc space-y-1">
+                    <li><strong>Right of Access (Art. 15):</strong> Request a copy of the personal data we hold about you.</li>
+                    <li><strong>Right to Rectification (Art. 16):</strong> Request correction of inaccurate or incomplete data.</li>
+                    <li><strong>Right to Erasure / &quot;Right to be Forgotten&quot; (Art. 17):</strong> Request deletion of your personal data under certain conditions.</li>
+                    <li><strong>Right to Restriction of Processing (Art. 18):</strong> Request that we limit how we use your data.</li>
+                    <li><strong>Right to Data Portability (Art. 20):</strong> Receive your data in a structured, machine-readable format.</li>
+                    <li><strong>Right to Object (Art. 21):</strong> Object to processing based on legitimate interests or for direct marketing.</li>
+                    <li><strong>Rights Related to Automated Decision-Making (Art. 22):</strong> We do not make solely automated decisions that produce legal or similarly significant effects.</li>
+                    <li><strong>Right to Withdraw Consent:</strong> Where processing is based on consent, you may withdraw it at any time.</li>
+                    <li><strong>Right to Lodge a Complaint:</strong> You have the right to complain to your national Data Protection Authority (DPA). A list of EU DPAs is available at edpb.europa.eu.</li>
+                  </ul>
+                </PublicInsetCard>
 
-              <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
-                <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">9.2 Rights Under CCPA (California Residents)</h3>
-                <p>If you are a California resident, you have the following rights under the CCPA/CPRA:</p>
-                <ul className="ml-5 list-disc space-y-1">
-                  <li><strong>Right to Know:</strong> Request disclosure of the categories and specific pieces of personal information we have collected.</li>
-                  <li><strong>Right to Delete:</strong> Request deletion of personal information we have collected, subject to certain exceptions.</li>
-                  <li><strong>Right to Correct:</strong> Request correction of inaccurate personal information.</li>
-                  <li><strong>Right to Opt-Out of Sale / Sharing:</strong> We do not sell or share personal information for cross-context behavioural advertising.</li>
-                  <li><strong>Right to Limit Use of Sensitive Information:</strong> We do not use sensitive personal information beyond what is necessary for providing the service.</li>
-                  <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising any CCPA rights.</li>
-                </ul>
-              </PublicInsetCard>
+                <PublicInsetCard className="space-y-3 p-4 text-copy-14 text-[var(--ds-gray-900)]">
+                  <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">9.2 Rights Under CCPA (California Residents)</h3>
+                  <p>If you are a California resident, you have the following rights under the CCPA/CPRA:</p>
+                  <ul className="ml-5 list-disc space-y-1">
+                    <li><strong>Right to Know:</strong> Request disclosure of the categories and specific pieces of personal information we have collected.</li>
+                    <li><strong>Right to Delete:</strong> Request deletion of personal information we have collected, subject to certain exceptions.</li>
+                    <li><strong>Right to Correct:</strong> Request correction of inaccurate personal information.</li>
+                    <li><strong>Right to Opt-Out of Sale / Sharing:</strong> We do not sell or share personal information for cross-context behavioural advertising.</li>
+                    <li><strong>Right to Limit Use of Sensitive Information:</strong> We do not use sensitive personal information beyond what is necessary for providing the service.</li>
+                    <li><strong>Right to Non-Discrimination:</strong> We will not discriminate against you for exercising any CCPA rights.</li>
+                  </ul>
+                </PublicInsetCard>
+              </div>
 
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 To exercise any of the above rights, contact us at{" "}
@@ -317,9 +319,9 @@ export default function PrivacyPolicyPage() {
                 </a>. We will respond within <span className="font-bold">30 days</span> (or 45 days for
                 CCPA requests where permitted). We may require identity verification before processing requests.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="data-deletion" className="space-y-4 p-8">
+            <section id="data-deletion" className="space-y-4 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">10. Data Deletion Requests</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 To request deletion of your data, email us with the subject line{" "}
@@ -343,9 +345,9 @@ export default function PrivacyPolicyPage() {
                 Deletion is completed within <span className="font-bold">30 days</span> of verification.
                 We will confirm completion via email.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="children" className="space-y-4 p-8">
+            <section id="children" className="space-y-4 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">11. Children&apos;s Privacy</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 Social Raven is not directed at individuals under the age of{" "}
@@ -361,9 +363,9 @@ export default function PrivacyPolicyPage() {
                 </a>{" "}
                 immediately.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="updates" className="space-y-4 p-8">
+            <section id="updates" className="space-y-4 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">12. Updates to This Privacy Policy</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 We may update this Privacy Policy periodically to reflect changes to our practices,
@@ -376,9 +378,9 @@ export default function PrivacyPolicyPage() {
                 Continued use of Social Raven after the effective date of changes constitutes acceptance
                 of the revised policy.
               </p>
-            </PublicCard>
+            </section>
 
-            <PublicCard id="contact" className="space-y-4 p-8">
+            <section id="contact" className="space-y-4 px-7 py-8 md:px-8">
               <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">13. Contact Us</h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
                 For questions, complaints, or to exercise your data rights:
@@ -390,8 +392,9 @@ export default function PrivacyPolicyPage() {
                 We aim to respond to all privacy-related enquiries within{" "}
                 <span className="font-bold">72 hours</span>.
               </p>
-            </PublicCard>
-          </div>
+            </section>
+            </div>
+          </PublicCard>
         </div>
       </PublicSection>
     </PublicPageShell>

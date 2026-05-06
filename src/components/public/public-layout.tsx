@@ -1,7 +1,10 @@
 import type { HTMLAttributes, ReactNode } from "react";
 
-import Navbar from "@/components/navbar/navbar";
-import { PublicSiteFooter } from "@/components/public/public-site-footer";
+import Navbar, { LANDING_NAVBAR_CONTENT_CLASS } from "@/components/navbar/navbar";
+import {
+  LANDING_FOOTER_CONTENT_CLASS,
+  PublicSiteFooter,
+} from "@/components/public/public-site-footer";
 import { cn } from "@/lib/utils";
 
 export function PublicPageShell({
@@ -16,7 +19,7 @@ export function PublicPageShell({
   return (
     <>
       <div className={cn(hideChromeOnPrint && "print:hidden")}>
-        <Navbar />
+        <Navbar contentClassName={LANDING_NAVBAR_CONTENT_CLASS} size="landing" />
       </div>
       <main
         className={cn(
@@ -27,7 +30,7 @@ export function PublicPageShell({
         {children}
       </main>
       <div className={cn(hideChromeOnPrint && "print:hidden")}>
-        <PublicSiteFooter />
+        <PublicSiteFooter contentClassName={LANDING_FOOTER_CONTENT_CLASS} />
       </div>
     </>
   );
@@ -52,21 +55,36 @@ export function PublicHero({
 }) {
   return (
     <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] print:border-b-0 print:bg-white">
-      <div className="mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 md:px-8 lg:grid-cols-[minmax(0,1.2fr)_minmax(17.5rem,0.8fr)] lg:items-start lg:py-16 print:gap-6 print:px-0 print:py-8">
+      <div
+        className={cn(
+          "mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 md:px-8 lg:py-16 print:gap-6 print:px-0 print:py-8",
+          aside && "lg:grid-cols-[minmax(0,1.2fr)_minmax(17.5rem,0.8fr)] lg:items-start",
+        )}
+      >
         <div className="space-y-4">
           {topSlot ? <div>{topSlot}</div> : null}
           <p className="text-label-12 text-[var(--ds-gray-900)]">
             {eyebrow}
           </p>
           <div className="space-y-3">
-            <h1 className="max-w-4xl text-4xl leading-tight font-bold tracking-[-0.04em] text-[var(--ds-gray-1000)] md:text-[2.85rem] md:leading-[1.02] lg:text-[3rem]">
+            <h1
+              className={cn(
+                "text-4xl leading-tight font-bold tracking-[-0.04em] text-[var(--ds-gray-1000)] md:text-[2.85rem] md:leading-[1.02] lg:text-[3rem]",
+                aside ? "max-w-4xl" : "max-w-none",
+              )}
+            >
               {title}
             </h1>
             {meta ? (
               <div className="text-label-14 text-[var(--ds-gray-900)]">{meta}</div>
             ) : null}
             {description ? (
-              <p className="max-w-3xl text-copy-16 text-[var(--ds-gray-900)]">
+              <p
+                className={cn(
+                  "text-copy-16 text-[var(--ds-gray-900)]",
+                  aside ? "max-w-3xl" : "max-w-none",
+                )}
+              >
                 {description}
               </p>
             ) : null}

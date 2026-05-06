@@ -7,7 +7,6 @@ import {
   Building2,
   Shield,
   Globe,
-  Zap,
 } from "lucide-react";
 
 import {
@@ -69,36 +68,20 @@ const CONTACTS = [
 ];
 
 const TRUST = [
-  { icon: Zap, label: "Public pricing", sub: "Plan and billing details are available before checkout" },
-  { icon: Globe, label: "Public website", sub: "Product, pricing, and policy pages are live on the main domain" },
-  { icon: Shield, label: "Policy links", sub: "Privacy, terms, and refund policies are publicly accessible" },
-  { icon: CheckCircle2, label: "Clear product scope", sub: "The site explains supported platforms and publishing workflows" },
-];
-
-const FAQS = [
   {
-    q: "How do I cancel my subscription?",
-    a: "Cancellation and refund terms are described on our refund policy and terms pages. Contact support if you need help with a billing or account issue.",
+    icon: MessageCircle,
+    label: "Direct team inboxes",
+    sub: "Support, sales, privacy, and partnership requests go to the right place.",
   },
   {
-    q: "How do I request deletion of my data?",
-    a: "Email team+privacy@socialraven.io with 'Data Deletion Request' in the subject. All personal data is permanently erased within 30 days of verification.",
+    icon: Shield,
+    label: "Clear public information",
+    sub: "Pricing, privacy, terms, and refund details stay accessible before you contact us.",
   },
   {
-    q: "Do you offer a free trial?",
-    a: "Yes — start with our Trial plan, no credit card required. Explore the platform fully before deciding. Upgrade to Pro anytime.",
-  },
-  {
-    q: "Can I manage multiple client accounts?",
-    a: "Absolutely. Our Pro and Agency plans are designed for agencies. Manage all your clients from a single, clean dashboard.",
-  },
-  {
-    q: "Which platforms does Social Raven support?",
-    a: "We support Instagram, Threads, Twitter/X, LinkedIn, YouTube, and Facebook. TikTok and more platforms are actively in development.",
-  },
-  {
-    q: "Is my data safe with Social Raven?",
-    a: "We use scoped OAuth connections, publish our privacy policy publicly, and limit data use to operating the service and supporting your account.",
+    icon: Globe,
+    label: "Built for real teams",
+    sub: "We help solo operators, agencies, and in-house teams with practical guidance.",
   },
 ];
 
@@ -119,16 +102,19 @@ export default function ContactPage() {
           <PublicBackLink href="/" />
         }
         eyebrow="Contact"
-        title="We&apos;re here when you need us."
-        description="Reach the right team directly — whether it&apos;s a support question, an agency enquiry, or a legal matter. Social Raven is operated by Kammullu Ghouse, a sole proprietor trading as Social Raven."
+        title="Talk to the right team."
+        description="Contact Social Raven for support, sales, privacy, or partnership questions. We keep the route clear so your message reaches the right team faster."
         aside={
-          <PublicCard className="grid gap-4 p-6 sm:grid-cols-2">
+          <PublicCard className="space-y-4 p-6">
             {TRUST.map(({ icon: Icon, label, sub }) => (
-              <div key={label} className="flex items-start gap-3">
+              <div
+                key={label}
+                className="flex items-start gap-3 border-b border-[var(--ds-gray-400)] pb-4 last:border-b-0 last:pb-0"
+              >
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
                   <Icon className="h-4 w-4" />
                 </div>
-                <div>
+                <div className="space-y-1">
                   <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
                   <p className="text-label-12 text-[var(--ds-gray-900)]">{sub}</p>
                 </div>
@@ -154,17 +140,6 @@ export default function ContactPage() {
               </p>
               <PublicPrimaryLinkButton href={`mailto:${email}`}>{email}</PublicPrimaryLinkButton>
             </PublicCard>
-          ))}
-        </div>
-      </PublicSection>
-
-      <PublicSection eyebrow="Quick answers" title="Before you write" surface="surface">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FAQS.map(({ q, a }) => (
-            <PublicInsetCard key={q} className="space-y-3 p-6">
-              <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{q}</h3>
-              <p className="text-copy-14 text-[var(--ds-gray-900)]">{a}</p>
-            </PublicInsetCard>
           ))}
         </div>
       </PublicSection>

@@ -14,6 +14,8 @@ const LANDING_NAV = [
   { label: "Pricing",   href: "/pricing"    },
 ];
 
+export const LANDING_NAVBAR_CONTENT_CLASS = "max-w-[88rem] px-4 sm:px-6";
+
 export default function Navbar({
   contentClassName = "max-w-7xl px-4 sm:px-5",
   size = "default",
