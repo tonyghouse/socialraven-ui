@@ -67,24 +67,6 @@ const CONTACTS = [
   },
 ];
 
-const TRUST = [
-  {
-    icon: MessageCircle,
-    label: "Direct team inboxes",
-    sub: "Support, sales, privacy, and partnership requests go to the right place.",
-  },
-  {
-    icon: Shield,
-    label: "Clear public information",
-    sub: "Pricing, privacy, terms, and refund details stay accessible before you contact us.",
-  },
-  {
-    icon: Globe,
-    label: "Built for real teams",
-    sub: "We help solo operators, agencies, and in-house teams with practical guidance.",
-  },
-];
-
 const AGENCY_FEATURES = [
   "Multi-workspace planning",
   "Connected account setup guidance",
@@ -101,27 +83,8 @@ export default function ContactPage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Contact"
         title="Talk to the right team."
         description="Contact Social Raven for support, sales, privacy, or partnership questions. We keep the route clear so your message reaches the right team faster."
-        aside={
-          <PublicCard className="space-y-4 p-6">
-            {TRUST.map(({ icon: Icon, label, sub }) => (
-              <div
-                key={label}
-                className="flex items-start gap-3 border-b border-[var(--ds-gray-400)] pb-4 last:border-b-0 last:pb-0"
-              >
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
-                  <Icon className="h-4 w-4" />
-                </div>
-                <div className="space-y-1">
-                  <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
-                  <p className="text-label-12 text-[var(--ds-gray-900)]">{sub}</p>
-                </div>
-              </div>
-            ))}
-          </PublicCard>
-        }
       />
 
       <PublicSection eyebrow="Get in touch" title="Contact the right team">

@@ -38,7 +38,6 @@ export function PublicPageShell({
 
 export function PublicHero({
   topSlot,
-  eyebrow,
   title,
   description,
   meta,
@@ -46,7 +45,6 @@ export function PublicHero({
   aside,
 }: {
   topSlot?: ReactNode;
-  eyebrow: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   meta?: ReactNode;
@@ -57,15 +55,12 @@ export function PublicHero({
     <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] print:border-b-0 print:bg-white">
       <div
         className={cn(
-          "mx-auto grid w-full max-w-7xl gap-8 px-5 py-14 md:px-8 lg:py-16 print:gap-6 print:px-0 print:py-8",
+          "mx-auto grid w-full max-w-7xl gap-8 px-5 pt-14 pb-8 md:px-8 lg:pt-16 lg:pb-10 print:gap-6 print:px-0 print:py-8",
           aside && "lg:grid-cols-[minmax(0,1.2fr)_minmax(17.5rem,0.8fr)] lg:items-start",
         )}
       >
         <div className="space-y-4">
           {topSlot ? <div>{topSlot}</div> : null}
-          <p className="text-label-12 text-[var(--ds-gray-900)]">
-            {eyebrow}
-          </p>
           <div className="space-y-3">
             <h1
               className={cn(

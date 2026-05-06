@@ -39,7 +39,6 @@ export default function ChangelogPage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Product updates"
         title="Changelog"
         description="New features, fixes, and improvements in one place."
       />

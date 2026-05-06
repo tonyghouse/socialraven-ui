@@ -33,7 +33,6 @@ export default function RefundPolicyPage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Legal"
         title="Refund Policy"
         meta={
           <>

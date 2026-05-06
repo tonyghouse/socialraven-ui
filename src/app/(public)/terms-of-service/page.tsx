@@ -48,7 +48,6 @@ export default function TermsOfServicePage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Legal"
         title="Terms of Service"
         meta={
           <>

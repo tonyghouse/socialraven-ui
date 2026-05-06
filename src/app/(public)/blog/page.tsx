@@ -11,7 +11,7 @@ import {
   recentBlogPosts,
   topBlogPosts,
 } from "./posts";
-import { PublicPageShell } from "@/components/public/public-layout";
+import { PublicHero, PublicPageShell } from "@/components/public/public-layout";
 import {
   PublicBackLink,
   PublicSubtleLinkButton,
@@ -88,78 +88,79 @@ export default function BlogPage() {
         dangerouslySetInnerHTML={{ __html: toJsonLd(blogSchema) }}
       />
       <PublicPageShell>
-        <div className="mx-auto w-full max-w-7xl px-5 pb-8 pt-8 md:px-8 md:pb-10 md:pt-10">
-          <PublicBackLink href="/" />
-          <h1 className="mt-4 text-heading-24 text-[var(--ds-gray-1000)]">
-            Blog
-          </h1>
-        </div>
+        <PublicHero
+          topSlot={<PublicBackLink href="/" />}
+          title="Blog"
+          description={blogIndexDescription}
+        />
 
         {featuredTopPost ? (
-          <section className="mx-auto w-full max-w-7xl px-5 pb-12 md:px-8 md:pb-14">
-            <div className="mb-6">
-              <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">
-                Top posts
-              </h2>
-            </div>
+          <section className="border-b border-[var(--ds-gray-400)]">
+            <div className="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-14">
+              <div className="mb-6">
+                <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">
+                  Top posts
+                </h2>
+              </div>
 
-            <div className="grid gap-5 md:grid-cols-2">
-              {[featuredTopPost, ...secondaryTopPosts].map((post, index) => (
-                <article
-                  key={post.slug}
-                  className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
-                >
-                  <Link href={`/blog/${post.slug}`} className="group block">
-                    <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
-                      <Image
-                        src={post.coverImage}
-                        alt={post.coverImageAlt}
-                        width={1200}
-                        height={630}
-                        priority={index === 0}
-                        className="aspect-[1.91/1] w-full object-cover transition-transform duration-100 group-hover:scale-[1.01]"
-                      />
-                    </div>
-                  </Link>
+              <div className="grid gap-5 md:grid-cols-2">
+                {[featuredTopPost, ...secondaryTopPosts].map((post, index) => (
+                  <article
+                    key={post.slug}
+                    className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
+                  >
+                    <Link href={`/blog/${post.slug}`} className="group block">
+                      <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
+                        <Image
+                          src={post.coverImage}
+                          alt={post.coverImageAlt}
+                          width={1200}
+                          height={630}
+                          priority={index === 0}
+                          className="aspect-[1.91/1] w-full object-cover transition-transform duration-100 group-hover:scale-[1.01]"
+                        />
+                      </div>
+                    </Link>
 
-                  <div className="space-y-4 p-5">
-                    <p className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
-                      <span>{formatBlogDate(post.publishedAt)}</span>
-                      <span className="inline-flex items-center gap-1">
-                        <Clock3 className="h-3.5 w-3.5" />
-                        {post.readTime}
-                      </span>
-                    </p>
-
-                    <div className="space-y-2">
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="group block"
-                      >
-                        <h3 className="text-heading-20 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
-                          {post.title}
-                        </h3>
-                      </Link>
-                      <p className="text-copy-14 text-[var(--ds-gray-900)]">
-                        {post.excerpt}
+                    <div className="space-y-4 p-5">
+                      <p className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
+                        <span>{formatBlogDate(post.publishedAt)}</span>
+                        <span className="inline-flex items-center gap-1">
+                          <Clock3 className="h-3.5 w-3.5" />
+                          {post.readTime}
+                        </span>
                       </p>
-                    </div>
 
-                    <div>
-                      <PublicSubtleLinkButton href={`/blog/${post.slug}`}>
-                        Read post
-                        <ArrowRight />
-                      </PublicSubtleLinkButton>
+                      <div className="space-y-2">
+                        <Link
+                          href={`/blog/${post.slug}`}
+                          className="group block"
+                        >
+                          <h3 className="text-heading-20 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
+                            {post.title}
+                          </h3>
+                        </Link>
+                        <p className="text-copy-14 text-[var(--ds-gray-900)]">
+                          {post.excerpt}
+                        </p>
+                      </div>
+
+                      <div>
+                        <PublicSubtleLinkButton href={`/blog/${post.slug}`}>
+                          Read post
+                          <ArrowRight />
+                        </PublicSubtleLinkButton>
+                      </div>
                     </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
         ) : null}
 
         {recentBlogPosts.length > 0 ? (
-          <section className="bg-[var(--ds-background-200)]">
+          <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-200)]">
             <div className="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-14">
               <div className="mb-6">
                 <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">

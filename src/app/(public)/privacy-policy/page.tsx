@@ -43,7 +43,6 @@ export default function PrivacyPolicyPage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Legal"
         title="Privacy Policy"
         meta={
           <>

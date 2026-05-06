@@ -30,7 +30,6 @@ export function BlogArticleLayout({ post }: { post: BlogPost }) {
         topSlot={
           <PublicBackLink href="/blog">Back to blog</PublicBackLink>
         }
-        eyebrow="Blog"
         title={post.title}
         meta={
           <span className="flex flex-wrap items-center gap-3">

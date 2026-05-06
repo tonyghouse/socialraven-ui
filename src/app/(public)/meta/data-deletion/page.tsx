@@ -12,7 +12,6 @@ export default function MetaDataDeletionPage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Meta compliance"
         title="Meta data deletion"
         description="How Social Raven handles deletion requests related to Meta-connected accounts."
       />

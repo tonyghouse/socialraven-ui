@@ -106,7 +106,6 @@ export default function AboutPage() {
         topSlot={
           <PublicBackLink href="/" />
         }
-        eyebrow="Our story"
         title="Built for teams who take social media seriously."
         description="Social Raven is built by a team of developers focused on making planning, publishing, approvals, and reporting simpler for modern social teams."
       />
@@ -118,7 +117,7 @@ export default function AboutPage() {
               <section id="mission" className="space-y-6 px-7 py-8 md:px-8">
                 <div className="space-y-1.5">
                   <p className="text-label-12 text-[var(--ds-gray-900)]">Our mission</p>
-                  <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
+                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">
                     Give serious teams a simpler way to run social.
                   </h2>
                 </div>
@@ -160,7 +159,7 @@ export default function AboutPage() {
               <section id="principles" className="space-y-6 px-7 py-8 md:px-8">
                 <div className="space-y-1.5">
                   <p className="text-label-12 text-[var(--ds-gray-900)]">What we stand for</p>
-                  <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">The principles we build by</h2>
+                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">The principles we build by</h2>
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -181,7 +180,7 @@ export default function AboutPage() {
               <section id="teams" className="space-y-6 px-7 py-8 md:px-8">
                 <div className="space-y-1.5">
                   <p className="text-label-12 text-[var(--ds-gray-900)]">Who we build for</p>
-                  <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">One platform. Every team.</h2>
+                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">One platform. Every team.</h2>
                   <p className="text-copy-14 text-[var(--ds-gray-900)]">
                     Different teams run social in different ways. The platform is designed to stay clear
                     for solo operators, structured for client work, and dependable for in-house teams.
@@ -217,7 +216,7 @@ export default function AboutPage() {
               <section id="get-started" className="px-7 py-8 text-center md:px-8">
                 <div className="space-y-5">
                   <p className="text-label-12 text-[var(--ds-gray-900)]">Get started</p>
-                  <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">Ready to take back your time?</h2>
+                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">Ready to take back your time?</h2>
                   <p className="text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
                     Start with a trial workspace and see whether Social Raven fits the way your team plans
                     and publishes content.
