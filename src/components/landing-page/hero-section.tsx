@@ -110,7 +110,7 @@ export function LandingPageHeroSection() {
           initial={{ opacity: 0, x: -24, y: 12 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 0.7, delay: 1.0, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-a pointer-events-none absolute left-0 top-20 hidden xl:block"
+          className="float-a pointer-events-none absolute left-0 top-20 hidden origin-top-left scale-[0.955] xl:block"
           style={{ animationDelay: "0s" }}
           aria-hidden="true"
         >
@@ -139,7 +139,7 @@ export function LandingPageHeroSection() {
           initial={{ opacity: 0, x: 24, y: 12 }}
           animate={{ opacity: 1, x: 0, y: 0 }}
           transition={{ duration: 0.7, delay: 1.15, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-b pointer-events-none absolute right-0 top-12 hidden xl:block"
+          className="float-b pointer-events-none absolute right-0 top-12 hidden origin-top-right scale-[0.955] xl:block"
           style={{ animationDelay: "1.5s" }}
           aria-hidden="true"
         >
@@ -162,7 +162,7 @@ export function LandingPageHeroSection() {
           initial={{ opacity: 0, x: -24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 1.3, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-b pointer-events-none absolute bottom-52 left-0 hidden xl:block"
+          className="float-b pointer-events-none absolute bottom-52 left-0 hidden origin-bottom-left scale-[0.955] xl:block"
           style={{ animationDelay: "3s" }}
           aria-hidden="true"
         >
@@ -182,7 +182,7 @@ export function LandingPageHeroSection() {
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.7, delay: 1.45, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-a pointer-events-none absolute bottom-60 right-0 hidden xl:block"
+          className="float-a pointer-events-none absolute bottom-60 right-0 hidden origin-bottom-right scale-[0.955] xl:block"
           style={{ animationDelay: "4s" }}
           aria-hidden="true"
         >
@@ -245,7 +245,7 @@ export function LandingPageHeroSection() {
           initial={{ opacity: 0, y: 48, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.55, ease: LANDING_PAGE_EASE_OUT }}
-          className="relative mx-auto mt-16 max-w-[58rem]"
+          className="relative mx-auto mt-16 max-w-[56rem]"
         >
           <div className="pointer-events-none absolute -inset-x-8 -bottom-8 h-28 blur-3xl" style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(212 86% 55% / 0.22) 0%, transparent 70%)" }} aria-hidden="true" />
           <DashboardMock />
