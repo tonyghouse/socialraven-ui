@@ -30,62 +30,50 @@ export const metadata: Metadata = {
     "Learn about Social Raven, the team behind it, and the mission to simplify professional social media management.",
 };
 
-
-
 const VALUES = [
   {
     icon: Target,
     title: "Simplicity first",
-    description:
-      "We cut through the noise. Every feature earns its place — if it doesn't make your workflow faster, it doesn't ship.",
+    description: "Every feature earns its place — if it doesn't make your workflow faster, it doesn't ship.",
   },
   {
     icon: Shield,
     title: "Privacy by design",
-    description:
-      "We publish clear policy pages, limit data use to operating the service, and keep connected accounts scoped to official OAuth permissions.",
+    description: "Data use is limited to operating the service. Connected accounts stay scoped to official OAuth permissions.",
   },
   {
     icon: Zap,
-    title: "Reliability you can count on",
-    description:
-      "Scheduling tools should be predictable. We focus on clear workflows, visible status, and fewer operational surprises.",
+    title: "Reliable by default",
+    description: "Clear workflows, visible status, and fewer operational surprises.",
   },
   {
     icon: Globe,
     title: "Built for global teams",
-    description:
-      "Whether you're a solo operator or a multi-brand team, Social Raven is designed for distributed publishing work across regions and time zones.",
+    description: "Designed for distributed publishing across regions, time zones, and team sizes.",
   },
 ];
 
 const PERSONAS = [
   {
     title: "Creators & Influencers",
-    description:
-      "Plan a week of content faster, publish across channels in one workflow, and stay focused on making the work itself.",
     bullets: [
       "Multi-platform publishing in one step",
       "Clear calendar visibility",
-      "Performance tracking that stays readable",
+      "Readable performance tracking",
     ],
   },
   {
     title: "Agencies & Freelancers",
-    description:
-      "Run multiple client brands from one place without juggling tabs, login handoffs, or scattered review steps.",
     bullets: [
       "Workspace-based client separation",
-      "Review flows for internal and client sign-off",
+      "Review flows for internal sign-off",
       "Scheduling built for repeatable delivery",
     ],
   },
   {
     title: "Brands & Businesses",
-    description:
-      "Keep planning, approvals, publishing, and reporting aligned even when a small team is handling a growing social presence.",
     bullets: [
-      "A more consistent publishing process",
+      "Consistent publishing process",
       "Cross-platform reporting in one view",
       "Controls that support growing teams",
     ],
@@ -103,34 +91,25 @@ export default function AboutPage() {
   return (
     <PublicPageShell>
       <PublicHero
-        topSlot={
-          <PublicBackLink href="/" />
-        }
+        topSlot={<PublicBackLink href="/" />}
         title="Built for teams who take social media seriously."
-        description="Social Raven is built by a team of developers focused on making planning, publishing, approvals, and reporting simpler for modern social teams."
       />
 
       <PublicSection>
         <div>
           <PublicCard className="overflow-hidden">
             <div className="divide-y divide-[var(--ds-gray-400)]">
-              <section id="mission" className="space-y-6 px-7 py-8 md:px-8">
-                <div className="space-y-1.5">
-                  <p className="text-label-12 text-[var(--ds-gray-900)]">Our mission</p>
-                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">
-                    Give serious teams a simpler way to run social.
-                  </h2>
-                </div>
 
+              {/* Mission */}
+              <section id="mission" className="px-7 py-8 md:px-8">
                 <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-start">
                   <div className="space-y-5">
+                    <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">
+                      Give serious teams a simpler way to run social.
+                    </h2>
                     <p className="text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
-                      Social teams should not need bloated software or messy workarounds just to stay
-                      consistent across platforms.
-                    </p>
-                    <p className="text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
-                      We are building Social Raven to make scheduling, collaboration, and reporting clear
-                      enough for small teams and strong enough for growing ones.
+                      Social Raven makes scheduling, collaboration, and reporting clear enough for small
+                      teams and strong enough for growing ones — without the bloat.
                     </p>
                     <div>
                       <PublicPrimaryLinkButton href="/sign-up">Start for free</PublicPrimaryLinkButton>
@@ -146,7 +125,7 @@ export default function AboutPage() {
                         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
                           <Icon className="h-4 w-4" />
                         </div>
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                           <p className="text-label-14 text-[var(--ds-gray-1000)]">{label}</p>
                           <p className="text-label-12 text-[var(--ds-gray-900)]">{value}</p>
                         </div>
@@ -156,48 +135,35 @@ export default function AboutPage() {
                 </div>
               </section>
 
-              <section id="principles" className="space-y-6 px-7 py-8 md:px-8">
-                <div className="space-y-1.5">
-                  <p className="text-label-12 text-[var(--ds-gray-900)]">What we stand for</p>
-                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">The principles we build by</h2>
-                </div>
-
+              {/* Principles */}
+              <section id="principles" className="space-y-5 px-7 py-8 md:px-8">
+                <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">The principles we build by</h2>
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                   {VALUES.map(({ icon: Icon, title, description }) => (
                     <PublicInsetCard key={title} className="h-full space-y-4 p-5">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-blue-600)]">
                         <Icon className="h-4 w-4" />
                       </div>
-                      <div className="space-y-2.5">
+                      <div className="space-y-2">
                         <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
-                        <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
+                        <p className="text-copy-13 text-[var(--ds-gray-900)]">{description}</p>
                       </div>
                     </PublicInsetCard>
                   ))}
                 </div>
               </section>
 
-              <section id="teams" className="space-y-6 px-7 py-8 md:px-8">
-                <div className="space-y-1.5">
-                  <p className="text-label-12 text-[var(--ds-gray-900)]">Who we build for</p>
-                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">One platform. Every team.</h2>
-                  <p className="text-copy-14 text-[var(--ds-gray-900)]">
-                    Different teams run social in different ways. The platform is designed to stay clear
-                    for solo operators, structured for client work, and dependable for in-house teams.
-                  </p>
-                </div>
-
+              {/* Teams */}
+              <section id="teams" className="space-y-5 px-7 py-8 md:px-8">
+                <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">One platform. Every team.</h2>
                 <div className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] md:grid md:grid-cols-3 md:divide-x md:divide-[var(--ds-gray-400)]">
-                  {PERSONAS.map(({ title, description, bullets }) => (
+                  {PERSONAS.map(({ title, bullets }) => (
                     <div
                       key={title}
                       className="space-y-4 border-b border-[var(--ds-gray-400)] p-5 last:border-b-0 md:border-b-0"
                     >
-                      <div className="space-y-3">
-                        <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
-                        <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
-                      </div>
-                      <ul className="space-y-2.5 pt-1">
+                      <h3 className="text-heading-16 text-[var(--ds-gray-1000)]">{title}</h3>
+                      <ul className="space-y-2.5">
                         {bullets.map((bullet) => (
                           <li
                             key={bullet}
@@ -213,20 +179,18 @@ export default function AboutPage() {
                 </div>
               </section>
 
-              <section id="get-started" className="px-7 py-8 text-center md:px-8">
-                <div className="space-y-5">
-                  <p className="text-label-12 text-[var(--ds-gray-900)]">Get started</p>
-                  <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">Ready to take back your time?</h2>
-                  <p className="text-copy-14 text-[var(--ds-gray-900)] md:text-[1rem] md:leading-6">
-                    Start with a trial workspace and see whether Social Raven fits the way your team plans
-                    and publishes content.
-                  </p>
-                  <div className="flex flex-wrap justify-center gap-3 pt-2">
-                    <PublicPrimaryLinkButton href="/sign-up">Start free trial</PublicPrimaryLinkButton>
-                    <PublicSubtleLinkButton href="/contact">Talk to us</PublicSubtleLinkButton>
-                  </div>
+              {/* CTA row */}
+              <section
+                id="get-started"
+                className="flex flex-wrap items-center justify-between gap-4 px-7 py-6 md:px-8"
+              >
+                <p className="text-heading-16 text-[var(--ds-gray-1000)]">Ready to get started?</p>
+                <div className="flex flex-wrap gap-3">
+                  <PublicPrimaryLinkButton href="/sign-up">Start free trial</PublicPrimaryLinkButton>
+                  <PublicSubtleLinkButton href="/contact">Talk to us</PublicSubtleLinkButton>
                 </div>
               </section>
+
             </div>
           </PublicCard>
         </div>

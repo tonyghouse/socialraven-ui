@@ -31,7 +31,7 @@ export function BlogPostCard({
                 width={1200}
                 height={630}
                 priority={priority}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.015]"
+                className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.015]"
               />
             </div>
 
@@ -54,16 +54,14 @@ export function BlogPostCard({
                 </div>
               </div>
 
-              <div className="space-y-4 border-t border-[var(--ds-gray-400)] pt-4">
-                <div className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
-                  <span>By {post.authorName}</span>
-                </div>
-                <div className="flex items-center justify-end gap-4">
-                  <span className="inline-flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
-                    Read post
-                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-                  </span>
-                </div>
+              <div className="flex items-center justify-between gap-4 border-t border-[var(--ds-gray-400)] pt-4">
+                <span className="text-label-12 text-[var(--ds-gray-900)]">
+                  By {post.authorName}
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-label-14 text-[var(--ds-gray-1000)]">
+                  Read post
+                  <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" />
+                </span>
               </div>
             </div>
           </div>
@@ -82,7 +80,7 @@ export function BlogPostCard({
             width={1200}
             height={630}
             priority={priority}
-            className="aspect-[1.91/1] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            className="aspect-[1.91/1] w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
           />
         </div>
 
@@ -102,13 +100,10 @@ export function BlogPostCard({
             <p className="text-copy-14 text-[var(--ds-gray-900)]">{post.excerpt}</p>
           </div>
 
-          <div className="mt-auto flex items-center justify-between gap-4 border-t border-[var(--ds-gray-400)] pt-4">
-            <span className="text-label-12 text-[var(--ds-gray-900)]">
-              {formatBlogDate(post.publishedAt)}
-            </span>
+          <div className="mt-auto flex items-center justify-end gap-4 border-t border-[var(--ds-gray-400)] pt-4">
             <span className="inline-flex items-center gap-1 text-label-14 text-[var(--ds-gray-1000)]">
-              Open
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              Read post
+              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-0.5" />
             </span>
           </div>
         </div>

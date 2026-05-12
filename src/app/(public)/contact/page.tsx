@@ -5,8 +5,6 @@ import {
   Handshake,
   CheckCircle2,
   Building2,
-  Shield,
-  Globe,
 } from "lucide-react";
 
 import {
@@ -33,8 +31,6 @@ const CONTACTS = [
     label: "General Support",
     description:
       "Questions about your account, troubleshooting, or how to use Social Raven.",
-    detail:
-      "Billing questions, feature how-tos, post scheduling issues, connected account problems — we handle it all.",
     email: "team+support@socialraven.io",
     icon: MessageCircle,
   },
@@ -42,8 +38,6 @@ const CONTACTS = [
     label: "Sales & Agency",
     description:
       "Custom plans, workspace setup, or agency onboarding.",
-    detail:
-      "We can help you choose the right plan and rollout path for multi-brand teams.",
     email: "team+sales@socialraven.io",
     icon: Building2,
   },
@@ -51,8 +45,6 @@ const CONTACTS = [
     label: "Privacy & Legal",
     description:
       "Data deletion requests, GDPR/CCPA queries, legal notices, or compliance questions.",
-    detail:
-      "GDPR requests processed within 30 days. CCPA requests within 45 days. Legal notices handled promptly.",
     email: "team+privacy@socialraven.io",
     icon: Lock,
   },
@@ -60,8 +52,6 @@ const CONTACTS = [
     label: "Press & Partnerships",
     description:
       "Media enquiries, press kit requests, or partnership opportunities.",
-    detail:
-      "We're open to integration partnerships, co-marketing campaigns, and media coverage. Let's connect.",
     email: "team+press@socialraven.io",
     icon: Handshake,
   },
@@ -80,53 +70,51 @@ export default function ContactPage() {
   return (
     <PublicPageShell>
       <PublicHero
-        topSlot={
-          <PublicBackLink href="/" />
-        }
+        topSlot={<PublicBackLink href="/" />}
         title="Talk to the right team."
-        description="Contact Social Raven for support, sales, privacy, or partnership questions. We keep the route clear so your message reaches the right team faster."
       />
 
-      <PublicSection eyebrow="Get in touch" title="Contact the right team">
+      <PublicSection>
         <div className="grid gap-5 sm:grid-cols-2">
-          {CONTACTS.map(({ label, description, detail, email, icon: Icon }) => (
-            <PublicCard key={label} className="space-y-4 p-7">
-              <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
-                <Icon className="h-5 w-5" />
+          {CONTACTS.map(({ label, description, email, icon: Icon }) => (
+            <PublicCard key={label} className="space-y-5 p-6">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-blue-600)]">
+                <Icon className="h-4 w-4" />
               </div>
               <div className="space-y-2">
                 <h2 className="text-heading-16 text-[var(--ds-gray-1000)]">{label}</h2>
                 <p className="text-copy-14 text-[var(--ds-gray-900)]">{description}</p>
               </div>
-              <p className="border-t border-[var(--ds-gray-400)] pt-4 text-copy-14 text-[var(--ds-gray-900)]">
-                {detail}
-              </p>
-              <PublicPrimaryLinkButton href={`mailto:${email}`}>{email}</PublicPrimaryLinkButton>
+              <PublicPrimaryLinkButton href={`mailto:${email}`}>
+                {email}
+              </PublicPrimaryLinkButton>
             </PublicCard>
           ))}
         </div>
       </PublicSection>
 
       <PublicSection>
-        <PublicCard className="p-10 md:p-14">
+        <PublicCard className="px-7 py-8 md:px-10 md:py-10">
           <div className="grid items-center gap-10 md:grid-cols-2">
-            <div className="space-y-4">
-              <PublicLozenge appearance="inprogress">Agency</PublicLozenge>
-              <h2 className="text-heading-32 text-[var(--ds-gray-1000)]">
+            <div className="space-y-5">
+              <PublicLozenge appearance="information">Agency</PublicLozenge>
+              <h2 className="text-heading-24 text-[var(--ds-gray-1000)]">
                 Need something built for scale?
               </h2>
               <p className="text-copy-14 text-[var(--ds-gray-900)]">
-                Dedicated onboarding, workspace planning, and support for multi-brand teams that need more guidance than a standard self-serve setup.
+                Dedicated onboarding, workspace planning, and support for multi-brand teams that need more than a self-serve setup.
               </p>
-              <PublicPrimaryLinkButton href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry">
-                Talk to sales
-              </PublicPrimaryLinkButton>
+              <div>
+                <PublicPrimaryLinkButton href="mailto:team+sales@socialraven.io?subject=Agency%20Enquiry">
+                  Talk to sales
+                </PublicPrimaryLinkButton>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {AGENCY_FEATURES.map((feature) => (
                 <PublicInsetCard
                   key={feature}
-                  className="flex items-center gap-2.5 p-4 text-copy-14 text-[var(--ds-gray-900)]"
+                  className="flex items-center gap-2.5 p-4 text-copy-13 text-[var(--ds-gray-900)]"
                 >
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--ds-blue-600)]" />
                   {feature}

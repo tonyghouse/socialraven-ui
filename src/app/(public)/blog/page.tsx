@@ -97,11 +97,7 @@ export default function BlogPage() {
         {featuredTopPost ? (
           <section className="border-b border-[var(--ds-gray-400)]">
             <div className="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-14">
-              <div className="mb-6">
-                <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">
-                  Top posts
-                </h2>
-              </div>
+              <h2 className="mb-5 text-heading-20 text-[var(--ds-gray-1000)]">Top posts</h2>
 
               <div className="grid gap-5 md:grid-cols-2">
                 {[featuredTopPost, ...secondaryTopPosts].map((post, index) => (
@@ -117,7 +113,7 @@ export default function BlogPage() {
                           width={1200}
                           height={630}
                           priority={index === 0}
-                          className="aspect-[1.91/1] w-full object-cover transition-transform duration-100 group-hover:scale-[1.01]"
+                          className="aspect-[1.91/1] w-full object-cover transition-transform duration-150 group-hover:scale-[1.01]"
                         />
                       </div>
                     </Link>
@@ -132,10 +128,7 @@ export default function BlogPage() {
                       </p>
 
                       <div className="space-y-2">
-                        <Link
-                          href={`/blog/${post.slug}`}
-                          className="group block"
-                        >
+                        <Link href={`/blog/${post.slug}`} className="group block">
                           <h3 className="text-heading-20 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
                             {post.title}
                           </h3>
@@ -162,11 +155,7 @@ export default function BlogPage() {
         {recentBlogPosts.length > 0 ? (
           <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-200)]">
             <div className="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-14">
-              <div className="mb-6">
-                <h2 className="text-heading-20 text-[var(--ds-gray-1000)]">
-                  Recent posts
-                </h2>
-              </div>
+              <h2 className="mb-5 text-heading-20 text-[var(--ds-gray-1000)]">Recent posts</h2>
 
               <BlogRecentPostsList
                 posts={recentBlogPosts}
