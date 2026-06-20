@@ -1,4 +1,6 @@
+import { Quote } from "@vibe/icons";
 import { motion } from "framer-motion";
+import { Star } from "lucide-react";
 
 import {
   LANDING_PAGE_CONTAINER_CLASS,
@@ -7,15 +9,25 @@ import {
   LANDING_PAGE_VIEWPORT,
   TESTIMONIALS,
 } from "@/components/landing-page/landing-page-constants";
-import { LandingPageLabel } from "@/components/landing-page/landing-page-label";
 
-function Stars() {
+const REVIEW_AVATAR_CLASSES = [
+  "bg-[var(--primary-selected-color)] text-[var(--primary-color)]",
+  "bg-[color-mix(in_srgb,var(--color-aquamarine)_20%,var(--primary-background-color))] text-[var(--color-teal)]",
+  "bg-[var(--positive-color-selected)] text-[var(--positive-color)]",
+  "bg-[color-mix(in_srgb,var(--color-working_orange)_20%,var(--primary-background-color))] text-[var(--color-dark-orange)]",
+  "bg-[color-mix(in_srgb,var(--color-bazooka)_18%,var(--primary-background-color))] text-[var(--color-dark-red)]",
+] as const;
+
+function Rating({ size = "small" }: { size?: "small" | "medium" }) {
+  const iconClassName =
+    size === "medium"
+      ? "h-4 w-4 fill-[var(--warning-color)] text-[var(--warning-color)]"
+      : "h-3.5 w-3.5 fill-[var(--warning-color)] text-[var(--warning-color)]";
+
   return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <svg key={i} className="h-3.5 w-3.5 fill-amber-400" viewBox="0 0 20 20" aria-hidden="true">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.172c.969 0 1.371 1.24.588 1.81l-3.374 2.452a1 1 0 00-.364 1.118l1.287 3.967c.3.922-.755 1.688-1.54 1.118L10 14.347l-3.957 2.872c-.784.57-1.838-.196-1.539-1.118l1.287-3.967a1 1 0 00-.364-1.118L2.054 9.394c-.783-.57-.38-1.81.588-1.81h4.172a1 1 0 00.95-.69l1.285-3.967z" />
-        </svg>
+    <div className="flex items-center gap-0.5" aria-label="5 out of 5 stars">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <Star key={index} className={iconClassName} aria-hidden="true" />
       ))}
     </div>
   );
@@ -23,46 +35,87 @@ function Stars() {
 
 export function LandingPageTestimonialsSection() {
   return (
-    <section className="py-24">
+    <section
+      id="testimonials"
+      className="scroll-mt-16 border-b border-[var(--layout-border-color)] bg-[var(--allgrey-background-color)] py-20 sm:py-24"
+    >
       <div className={LANDING_PAGE_CONTAINER_CLASS}>
-        <motion.div initial="hidden" whileInView="visible" viewport={LANDING_PAGE_VIEWPORT} variants={LANDING_PAGE_STAGGER_VARIANT} className="mb-14 flex flex-col items-center text-center">
-          <motion.div variants={LANDING_PAGE_FADE_VARIANT}><LandingPageLabel>Testimonials</LandingPageLabel></motion.div>
-          <motion.h2 variants={LANDING_PAGE_FADE_VARIANT} className="mt-4 max-w-xl text-[clamp(1.875rem,4vw,2.875rem)] font-black leading-[1.04] tracking-[-0.04em] text-[var(--ds-gray-1000)]">
-            Trusted by teams that publish every day.
-          </motion.h2>
-        </motion.div>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={LANDING_PAGE_VIEWPORT}
+          variants={LANDING_PAGE_STAGGER_VARIANT}
+        >
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-end">
+            <div>
+              <motion.div variants={LANDING_PAGE_FADE_VARIANT}>
+                <span className="inline-flex items-center gap-2 rounded-[0.75rem] border border-[var(--ui-border-color)] bg-[var(--primary-background-color)] px-3 py-1.5 text-[0.6875rem] font-semibold text-[var(--secondary-text-color)]">
+                  <Quote className="h-3.5 w-3.5 text-[var(--primary-color)]" />
+                  Customer reviews
+                </span>
+              </motion.div>
+              <motion.h2
+                variants={LANDING_PAGE_FADE_VARIANT}
+                className="mt-5 max-w-2xl font-[var(--font-vibe-title)] text-[2rem] font-bold leading-[1.15] tracking-normal text-[var(--primary-text-color)] sm:text-[2.5rem]"
+              >
+                What social teams say.
+              </motion.h2>
+            </div>
 
-        <motion.div initial="hidden" whileInView="visible" viewport={LANDING_PAGE_VIEWPORT} variants={LANDING_PAGE_STAGGER_VARIANT}>
-          <div className="grid gap-4 md:grid-cols-3">
-            {TESTIMONIALS.slice(0, 3).map((t) => (
-              <motion.div key={t.name} variants={LANDING_PAGE_FADE_VARIANT} className="flex flex-col rounded-2xl border border-[var(--ds-gray-200)] bg-white p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-200 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:border-[var(--ds-gray-400)] dark:bg-[var(--ds-background-100)]">
-                <Stars />
-                <blockquote className="mt-4 flex-1 text-[0.9375rem] leading-[1.65] text-[var(--ds-gray-800)]">&ldquo;{t.quote}&rdquo;</blockquote>
-                <div className="mt-5 flex items-center gap-3 border-t border-[var(--ds-gray-100)] pt-5 dark:border-[var(--ds-gray-400)]">
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.6875rem] font-bold ${t.avatarBg}`}>{t.initials}</div>
-                  <div>
-                    <p className="text-[0.875rem] font-semibold text-[var(--ds-gray-1000)]">{t.name}</p>
-                    <p className="text-[0.75rem] text-[var(--ds-gray-500)]">{t.role} · {t.company}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            <motion.div
+              variants={LANDING_PAGE_FADE_VARIANT}
+              className="flex items-center gap-3 lg:justify-end"
+            >
+              <Rating size="medium" />
+              <span className="text-[0.8125rem] font-medium text-[var(--secondary-text-color)]">
+                Feedback from early users
+              </span>
+            </motion.div>
           </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            {TESTIMONIALS.slice(3, 5).map((t) => (
-              <motion.div key={t.name} variants={LANDING_PAGE_FADE_VARIANT} className="flex flex-col rounded-2xl border border-[var(--ds-gray-200)] bg-white p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-200 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:border-[var(--ds-gray-400)] dark:bg-[var(--ds-background-100)]">
-                <Stars />
-                <blockquote className="mt-4 flex-1 text-[0.9375rem] leading-[1.65] text-[var(--ds-gray-800)]">&ldquo;{t.quote}&rdquo;</blockquote>
-                <div className="mt-5 flex items-center gap-3 border-t border-[var(--ds-gray-100)] pt-5 dark:border-[var(--ds-gray-400)]">
-                  <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.6875rem] font-bold ${t.avatarBg}`}>{t.initials}</div>
-                  <div>
-                    <p className="text-[0.875rem] font-semibold text-[var(--ds-gray-1000)]">{t.name}</p>
-                    <p className="text-[0.75rem] text-[var(--ds-gray-500)]">{t.role} · {t.company}</p>
-                  </div>
+
+          <motion.div
+            variants={LANDING_PAGE_FADE_VARIANT}
+            className="mt-9 grid grid-cols-1 gap-px border-y border-[var(--layout-border-color)] bg-[var(--layout-border-color)] md:grid-cols-2 lg:grid-cols-6"
+          >
+            {TESTIMONIALS.map((testimonial, index) => (
+              <motion.figure
+                key={testimonial.name}
+                variants={LANDING_PAGE_FADE_VARIANT}
+                className={`flex flex-col bg-[var(--allgrey-background-color)] px-1 py-6 sm:p-6 ${
+                  index < 3
+                    ? "md:col-span-1 lg:col-span-2"
+                    : index === 3
+                      ? "md:col-span-1 lg:col-span-3"
+                      : "md:col-span-2 lg:col-span-3"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <Rating />
+                  <Quote className="h-5 w-5 text-[var(--ui-border-color)]" />
                 </div>
-              </motion.div>
+
+                <blockquote className="mt-5 flex-1 text-[0.9375rem] leading-6 text-[var(--primary-text-color)]">
+                  &ldquo;{testimonial.quote}&rdquo;
+                </blockquote>
+
+                <figcaption className="mt-6 flex items-center gap-3">
+                  <span
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[0.6875rem] font-bold ${REVIEW_AVATAR_CLASSES[index]}`}
+                  >
+                    {testimonial.initials}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate text-[0.8125rem] font-semibold text-[var(--primary-text-color)]">
+                      {testimonial.name}
+                    </span>
+                    <span className="mt-0.5 block truncate text-[0.6875rem] text-[var(--secondary-text-color)]">
+                      {testimonial.role} · {testimonial.company}
+                    </span>
+                  </span>
+                </figcaption>
+              </motion.figure>
             ))}
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>

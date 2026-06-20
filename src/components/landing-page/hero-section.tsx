@@ -1,6 +1,17 @@
+"use client";
+
+import {
+  Board,
+  Calendar,
+  Chart,
+  Check,
+  NavigationChevronRight,
+  Team,
+  Time,
+} from "@vibe/icons";
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle2, Clock, Globe } from "lucide-react";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import {
   LANDING_PAGE_CONTAINER_CLASS,
@@ -8,252 +19,437 @@ import {
   LANDING_PAGE_FADE_VARIANT,
   LANDING_PAGE_STAGGER_VARIANT,
   LIVE_PLATFORM_COUNT,
-  LIVE_PLATFORM_NAMES,
   LIVE_PLATFORMS,
-  MOCK_POSTS,
-  STATUS_CONFIG,
 } from "@/components/landing-page/landing-page-constants";
 
-function DashboardMock() {
-  const NAV_PATHS = [
-    { d: "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z", active: false },
-    { d: "M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01", active: true },
-    { d: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z", active: false },
-    { d: "M4 6h16M4 12h16M4 18h16", active: false },
-  ];
+const CALENDAR_DAYS = [
+  {
+    day: "Mon",
+    date: "7",
+    post: {
+      title: "Launch teaser",
+      time: "9:00 AM",
+      platforms: [0, 1],
+      label: "Scheduled",
+      rail: "bg-[var(--color-bright-blue)]",
+      tone: "bg-[var(--primary-selected-color)] text-[var(--primary-color)]",
+    },
+  },
+  {
+    day: "Tue",
+    date: "8",
+    post: {
+      title: "Behind the scenes",
+      time: "12:30 PM",
+      platforms: [3, 4],
+      label: "Review",
+      rail: "bg-[var(--warning-color)]",
+      tone:
+        "bg-[var(--warning-color-selected)] text-[var(--fixed-dark-color)]",
+    },
+  },
+  {
+    day: "Wed",
+    date: "9",
+    post: {
+      title: "Creator spotlight",
+      time: "10:00 AM",
+      platforms: [0, 2],
+      label: "Draft",
+      rail: "bg-[var(--color-winter)]",
+      tone:
+        "bg-[var(--allgrey-background-color)] text-[var(--secondary-text-color)]",
+    },
+  },
+  {
+    day: "Thu",
+    date: "10",
+    post: {
+      title: "Product reveal",
+      time: "4:00 PM",
+      platforms: [0, 1, 2],
+      label: "Scheduled",
+      rail: "bg-[var(--color-bright-blue)]",
+      tone: "bg-[var(--primary-selected-color)] text-[var(--primary-color)]",
+    },
+  },
+  {
+    day: "Fri",
+    date: "11",
+    post: {
+      title: "Launch roundup",
+      time: "6:30 PM",
+      platforms: [0, 1, 2, 3],
+      label: "Approved",
+      rail: "bg-[var(--color-done-green)]",
+      tone:
+        "bg-[var(--positive-color-selected)] text-[var(--positive-color-hover)] dark:text-white",
+    },
+  },
+] as const;
 
+const PRODUCT_NAV = [
+  { Icon: Calendar, label: "Calendar", active: true },
+  { Icon: Board, label: "Queue", active: false },
+  { Icon: Team, label: "Approvals", active: false },
+  { Icon: Chart, label: "Reports", active: false },
+] as const;
+
+const WEEKLY_ACTIVITY = [55, 40, 75, 50, 85, 65, 100] as const;
+
+function PlatformIcons({ indexes }: { indexes: readonly number[] }) {
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-[var(--ds-gray-200)] bg-white shadow-[0_32px_80px_rgba(0,0,0,0.10),0_4px_16px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-[hsl(222_28%_8%)] dark:shadow-[0_48px_120px_-20px_rgba(0,0,0,0.72)]">
-      <div className="flex items-center gap-3 border-b border-[var(--ds-gray-100)] bg-[var(--ds-background-100)] px-4 py-3 dark:border-white/[0.06] dark:bg-[hsl(222_28%_6%)]">
-        <div className="flex gap-1.5" aria-hidden="true">
-          <div className="h-3 w-3 rounded-full bg-[#FF5F56]" />
-          <div className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
-          <div className="h-3 w-3 rounded-full bg-[#27C840]" />
-        </div>
-        <div className="mx-auto flex w-52 items-center justify-center rounded-md bg-[var(--ds-gray-100)] px-3 py-1 text-[0.6875rem] text-[var(--ds-gray-500)] dark:bg-white/[0.06] dark:text-white/30">
-          app.socialraven.io
-        </div>
-        <div className="w-14" aria-hidden="true" />
-      </div>
-      <div className="flex">
-        <div className="hidden w-12 flex-col items-center gap-1 border-r border-[var(--ds-gray-100)] bg-[var(--ds-background-100)] py-3 dark:border-white/[0.05] dark:bg-[hsl(222_28%_6%)] sm:flex" aria-hidden="true">
-          {NAV_PATHS.map(({ d, active }, i) => (
-            <button key={i} tabIndex={-1} className={`flex h-9 w-9 items-center justify-center rounded-lg ${active ? "bg-[var(--ds-blue-100)] text-[var(--ds-blue-600)] dark:bg-white/10 dark:text-white/80" : "text-[var(--ds-gray-400)] dark:text-white/20"}`}>
-              <svg className="h-[0.875rem] w-[0.875rem]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
-            </button>
-          ))}
-        </div>
-        <div className="flex-1 p-4">
-          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Scheduled posts</p>
-              <p className="mt-0.5 text-[0.625rem] text-[var(--ds-gray-500)]">April 2026 · 48 posts queued</p>
-            </div>
-            <button tabIndex={-1} className="self-start rounded-lg bg-[hsl(212_86%_50%)] px-2.5 py-1.5 text-[0.6875rem] font-semibold text-white sm:self-auto">+ New post</button>
-          </div>
-          <div className="space-y-1.5">
-            {MOCK_POSTS.map((post, i) => {
-              const cfg = STATUS_CONFIG[post.status];
+    <div className="flex -space-x-1" aria-label={`${indexes.length} channels`}>
+      {indexes.slice(0, 3).map((platformIndex) => {
+        const platform = LIVE_PLATFORMS[platformIndex];
+        if (!platform) return null;
+        const { Icon, name } = platform;
 
-              return (
-                <div key={i} className="flex flex-col gap-2 rounded-xl border border-[var(--ds-gray-100)] bg-white px-3 py-2.5 hover:bg-[var(--ds-gray-50)] dark:border-white/[0.05] dark:bg-white/[0.025] dark:hover:bg-white/[0.05] sm:flex-row sm:items-center sm:gap-3">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex shrink-0 gap-1">
-                      {post.platforms.slice(0, 3).map((Icon, j) => (
-                        <div key={j} className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)] dark:border-white/10 dark:bg-white/[0.06]">
-                          <Icon className="h-2.5 w-2.5 text-[var(--ds-gray-600)] dark:text-white/55" />
-                        </div>
-                      ))}
-                      {post.platforms.length > 3 && (
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)] dark:border-white/10 dark:bg-white/[0.06]">
-                          <span className="text-[0.5rem] text-[var(--ds-gray-500)] dark:text-white/40">+{post.platforms.length - 3}</span>
-                        </div>
-                      )}
-                    </div>
-                    <p className="min-w-0 flex-1 truncate text-[0.6875rem] text-[var(--ds-gray-900)] dark:text-white/65">{post.title}</p>
-                  </div>
-                  <div className="flex w-full items-center justify-between gap-3 pl-7 sm:ml-auto sm:w-auto sm:pl-0">
-                    <span className="min-w-0 truncate text-[0.625rem] text-[var(--ds-gray-400)] dark:text-white/28">{post.time}</span>
-                    <div className="flex shrink-0 items-center gap-1">
-                      <div className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
-                      <span className={`text-[0.625rem] font-medium ${cfg.text}`}>{cfg.label}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        return (
+          <span
+            key={name}
+            className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--primary-background-color)] bg-[var(--allgrey-background-color)] text-[var(--secondary-text-color)]"
+            title={name}
+          >
+            <Icon className="h-2.5 w-2.5" />
+          </span>
+        );
+      })}
+      {indexes.length > 3 && (
+        <span className="flex h-5 min-w-5 items-center justify-center rounded-full border border-[var(--primary-background-color)] bg-[var(--ui-background-color)] px-1 text-[0.5625rem] font-semibold text-[var(--secondary-text-color)]">
+          +{indexes.length - 3}
+        </span>
+      )}
+    </div>
+  );
+}
+
+function CalendarPost({
+  post,
+}: {
+  post: (typeof CALENDAR_DAYS)[number]["post"];
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-[0.875rem] border border-[var(--ui-border-color)] bg-[var(--primary-background-color)] p-2.5 pl-3.5 shadow-[0_0.25rem_0.75rem_rgba(41,47,76,0.05)]">
+      <span className={`absolute inset-y-0 left-0 w-1 ${post.rail}`} aria-hidden="true" />
+      <p className="truncate text-label-12 font-semibold text-[var(--primary-text-color)]">
+        {post.title}
+      </p>
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1 text-[0.625rem] text-[var(--secondary-text-color)]">
+          <Time className="h-3 w-3" />
+          {post.time}
+        </div>
+        <PlatformIcons indexes={post.platforms} />
+      </div>
+      <span className={`mt-2 inline-flex rounded-full px-2 py-0.5 text-[0.625rem] font-semibold ${post.tone}`}>
+        {post.label}
+      </span>
+    </div>
+  );
+}
+
+function MiniWidgetShell({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`rounded-[1rem] border border-[var(--layout-border-color)] bg-[var(--primary-background-color)] p-3 shadow-[0_1rem_2.5rem_rgba(41,47,76,0.12)] ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function CampaignLiveWidget() {
+  return (
+    <MiniWidgetShell>
+      <div className="flex items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-[0.75rem] bg-[var(--positive-color-selected)] text-[var(--positive-color-hover)] dark:text-white">
+          <Check className="h-4 w-4" />
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-heading-14 text-[var(--primary-text-color)]">Campaign live</p>
+          <p className="truncate text-label-12 text-[var(--secondary-text-color)]">Published just now</p>
+        </div>
+      </div>
+      <div className="mt-3 flex items-center justify-between gap-3 border-t border-[var(--ui-border-color)] pt-3">
+        <PlatformIcons indexes={[0, 1, 2, 3]} />
+        <span className="shrink-0 text-label-12 font-semibold text-[var(--positive-color)]">
+          {LIVE_PLATFORM_COUNT} channels
+        </span>
+      </div>
+    </MiniWidgetShell>
+  );
+}
+
+function ReviewQueueWidget() {
+  return (
+    <MiniWidgetShell>
+      <div className="flex items-center gap-2.5">
+        <span className="flex h-8 w-8 items-center justify-center rounded-[0.7rem] bg-[var(--warning-color-selected)] text-[var(--fixed-dark-color)]">
+          <Team className="h-4 w-4" />
+        </span>
+        <div className="min-w-0">
+          <p className="truncate text-heading-14 text-[var(--primary-text-color)]">Review queue</p>
+          <p className="truncate text-label-12 text-[var(--secondary-text-color)]">3 posts need sign-off</p>
+        </div>
+      </div>
+      <div className="mt-3 h-2 overflow-hidden rounded-full bg-[var(--ui-background-color)]">
+        <div className="h-full w-[72%] rounded-full bg-[var(--warning-color)]" />
+      </div>
+      <p className="mt-2 text-right text-[0.6875rem] text-[var(--secondary-text-color)]">8 of 11 approved</p>
+    </MiniWidgetShell>
+  );
+}
+
+function WeeklyActivityWidget() {
+  return (
+    <MiniWidgetShell>
+      <div className="flex items-center gap-2">
+        <span className="flex h-7 w-7 items-center justify-center rounded-[0.65rem] bg-[var(--primary-selected-color)] text-[var(--primary-color)]">
+          <Chart className="h-3.5 w-3.5" />
+        </span>
+        <p className="text-label-12 font-semibold text-[var(--secondary-text-color)]">Posts this week</p>
+      </div>
+      <p className="mt-1 text-[1.45rem] font-bold leading-none tracking-[-0.04em] text-[var(--primary-text-color)]">48</p>
+      <div className="mt-2.5 flex h-9 items-end gap-1">
+        {WEEKLY_ACTIVITY.map((height, index) => (
+          <span
+            key={height}
+            className="flex-1 rounded-[0.1875rem] bg-[var(--primary-color)]"
+            style={{
+              height: `${height}%`,
+              opacity: 0.24 + index * 0.1,
+            }}
+          />
+        ))}
+      </div>
+      <p className="mt-1.5 text-[0.625rem] font-semibold text-[var(--positive-color)]">↑ 28% vs last week</p>
+    </MiniWidgetShell>
+  );
+}
+
+function ConnectedAccountsWidget() {
+  return (
+    <MiniWidgetShell>
+      <div className="mb-2.5 flex items-center gap-2">
+        <span className="flex h-7 w-7 items-center justify-center rounded-[0.65rem] bg-[var(--primary-selected-color)] text-[var(--primary-color)]">
+          <Board className="h-3.5 w-3.5" />
+        </span>
+        <p className="truncate text-label-12 font-semibold text-[var(--primary-text-color)]">Connected accounts</p>
+      </div>
+      <div className="space-y-1">
+        {LIVE_PLATFORMS.slice(0, 4).map(({ Icon, name, dot }) => (
+          <div key={name} className="flex items-center gap-2">
+            <Icon className="h-3 w-3 text-[var(--secondary-text-color)]" />
+            <span className="min-w-0 flex-1 truncate text-[0.625rem] text-[var(--secondary-text-color)]">{name}</span>
+            <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
           </div>
-          <div className="mt-3 flex items-center justify-between rounded-xl border border-amber-100 bg-amber-50 px-3 py-2 dark:border-amber-500/15 dark:bg-amber-500/[0.05]">
-            <div className="flex items-center gap-2">
-              <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-              <span className="text-[0.6875rem] text-amber-700 dark:text-amber-300/80">3 posts awaiting approval</span>
+        ))}
+      </div>
+    </MiniWidgetShell>
+  );
+}
+
+function PublishingCalendarPreview() {
+  return (
+    <div className="relative mx-auto max-w-[62rem] px-3 sm:px-5 lg:px-6">
+      <div
+        className="absolute inset-x-2 bottom-[-1rem] top-[3rem] rounded-[1.5rem] bg-[color-mix(in_srgb,var(--primary-color)_7%,var(--primary-background-color))] sm:inset-x-3 sm:bottom-[-1.5rem] lg:inset-x-4"
+        aria-hidden="true"
+      />
+
+      <motion.div
+        initial={{ opacity: 0, x: -18, y: 8 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.78, ease: LANDING_PAGE_EASE_OUT }}
+        className="absolute -left-[14rem] top-[5.5rem] z-20 hidden w-[14.5rem] origin-top-left 2xl:block"
+      >
+        <CampaignLiveWidget />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, x: 18, y: 8 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.92, ease: LANDING_PAGE_EASE_OUT }}
+        className="absolute -right-[14rem] top-[5.5rem] z-20 hidden w-[14rem] origin-top-right 2xl:block"
+      >
+        <ReviewQueueWidget />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, x: -18, y: 10 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 0.55, delay: 1.04, ease: LANDING_PAGE_EASE_OUT }}
+        className="absolute -left-[13rem] bottom-2 z-20 hidden w-[12rem] 2xl:block"
+      >
+        <WeeklyActivityWidget />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, x: 18, y: 10 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        transition={{ duration: 0.55, delay: 1.16, ease: LANDING_PAGE_EASE_OUT }}
+        className="absolute -right-[13rem] bottom-2 z-20 hidden w-[13rem] 2xl:block"
+      >
+        <ConnectedAccountsWidget />
+      </motion.div>
+
+      <div className="relative overflow-hidden rounded-[1.25rem] border border-[var(--layout-border-color)] bg-[var(--primary-background-color)] shadow-[0_1.5rem_4rem_rgba(41,47,76,0.14)] dark:shadow-[0_1.5rem_4rem_rgba(0,0,0,0.34)]">
+        <div className="flex min-h-[4.25rem] items-center gap-3 border-b border-[var(--layout-border-color)] px-3.5 sm:px-5">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[0.75rem] bg-[var(--primary-selected-color)] text-[var(--primary-color)]">
+            <Calendar className="h-[1.125rem] w-[1.125rem]" />
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-heading-14 text-[var(--primary-text-color)]">Publishing calendar</p>
+            <p className="truncate text-label-12 text-[var(--secondary-text-color)]">Spring launch · {LIVE_PLATFORM_COUNT} channels</p>
+          </div>
+          <div className="ml-auto hidden items-center gap-2 sm:flex">
+            <span className="inline-flex h-9 items-center rounded-[0.75rem] border border-[var(--ui-border-color)] px-3 text-label-13 text-[var(--primary-text-color)]">Apr 7–11</span>
+            <span className="inline-flex h-9 items-center rounded-[0.75rem] border border-[var(--primary-color)] bg-[var(--primary-color)] px-3.5 text-label-13 font-semibold text-white">+ New post</span>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-[4rem_minmax(0,1fr)]">
+          <aside className="hidden border-r border-[var(--layout-border-color)] bg-[var(--allgrey-background-color)] px-2 py-4 sm:block">
+            <div className="space-y-2">
+              {PRODUCT_NAV.map(({ Icon, label, active }) => (
+                <div
+                  key={label}
+                  title={label}
+                  className={`flex h-10 items-center justify-center rounded-[0.75rem] ${
+                    active
+                      ? "bg-[var(--primary-selected-color)] text-[var(--primary-color)]"
+                      : "text-[var(--secondary-text-color)]"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                </div>
+              ))}
             </div>
-            <button tabIndex={-1} className="text-[0.625rem] font-semibold text-amber-600 hover:text-amber-700 dark:text-amber-400/70">Review →</button>
+          </aside>
+
+          <div className="min-w-0 bg-[var(--allgrey-background-color)] p-3 sm:p-4 lg:p-5">
+            <div className="mb-4 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-heading-16 text-[var(--primary-text-color)]">Spring product launch</p>
+                <p className="mt-0.5 text-label-12 text-[var(--secondary-text-color)]">12 scheduled posts · 3 awaiting approval</p>
+              </div>
+              <div className="hidden items-center gap-2 text-label-12 text-[var(--secondary-text-color)] lg:flex">
+                <span className="h-2 w-2 rounded-full bg-[var(--color-done-green)]" />
+                75% ready
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5 md:grid-cols-5">
+              {CALENDAR_DAYS.map(({ day, date, post }, dayIndex) => (
+                <div
+                  key={day}
+                  className={`min-h-[13.5rem] rounded-[1rem] border border-[var(--layout-border-color)] bg-[var(--primary-background-color)] p-2.5 ${
+                    dayIndex > 1 ? "hidden md:block" : ""
+                  }`}
+                >
+                  <div className="mb-3 flex items-center justify-between px-0.5">
+                    <span className="text-label-12 font-semibold uppercase tracking-[0.08em] text-[var(--secondary-text-color)]">{day}</span>
+                    <span className={`flex h-7 w-7 items-center justify-center rounded-full text-label-12 font-semibold ${dayIndex === 0 ? "bg-[var(--primary-color)] text-white" : "bg-[var(--allgrey-background-color)] text-[var(--primary-text-color)]"}`}>{date}</span>
+                  </div>
+                  <CalendarPost post={post} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.55, delay: 0.78, ease: LANDING_PAGE_EASE_OUT }}
+        className="relative z-10 mt-4 hidden grid-cols-2 gap-3 lg:grid xl:grid-cols-4 2xl:hidden"
+      >
+        <CampaignLiveWidget />
+        <ReviewQueueWidget />
+        <WeeklyActivityWidget />
+        <ConnectedAccountsWidget />
+      </motion.div>
     </div>
   );
 }
 
 export function LandingPageHeroSection() {
   return (
-    <section className="relative mx-auto max-w-[88rem] overflow-hidden pb-0 pt-28">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] dark:hidden" style={{ background: "radial-gradient(ellipse 70% 45% at 50% 0%, hsl(212 86% 82% / 0.20) 0%, transparent 56%)" }} aria-hidden="true" />
-      <div className="glow-pulse pointer-events-none absolute inset-x-0 top-0 hidden h-[44rem] dark:block" style={{ background: "radial-gradient(ellipse 80% 55% at 50% -5%, hsl(212 86% 54% / 0.22) 0%, transparent 61%)" }} aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.28] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(214 18% 46% / 0.68) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 56%, transparent 81%)" }} aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-[0.34] dark:hidden" style={{ backgroundImage: "radial-gradient(circle, hsl(212 82% 66% / 0.44) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", WebkitMaskImage: "radial-gradient(ellipse 76% 54% at 50% 8%, black 0%, transparent 69%)", filter: "blur(0.55px) drop-shadow(0 0 8px hsl(212 86% 66% / 0.16))" }} aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundImage: "radial-gradient(circle, hsl(212 86% 72% / 0.55) 1.75px, transparent 1.75px)", backgroundSize: "1.75rem 1.75rem", maskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 46%, transparent 68%)", filter: "blur(0.4px) drop-shadow(0 0 3px hsl(212 86% 65% / 0.6))" }} aria-hidden="true" />
+    <section className="relative overflow-hidden border-b border-[var(--layout-border-color)] bg-[var(--primary-background-color)] pb-20 pt-[8.5rem] sm:pb-24 sm:pt-[9.5rem]">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.38] dark:opacity-[0.16]"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, color-mix(in srgb, var(--layout-border-color) 72%, transparent) 0.125rem, transparent 0.13rem)",
+          backgroundSize: "1.9rem 1.9rem",
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, black 12%, black 78%, transparent 100%)",
+        }}
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-[34rem] bg-[radial-gradient(ellipse_at_top,color-mix(in_srgb,var(--primary-color)_9%,transparent),transparent_67%)]"
+        aria-hidden="true"
+      />
 
       <div className={`${LANDING_PAGE_CONTAINER_CLASS} relative`}>
         <motion.div
-          initial={{ opacity: 0, x: -24, y: 12 }}
-          animate={{ opacity: 1, x: 0, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.0, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-a pointer-events-none absolute left-8 top-20 hidden origin-top-left scale-[0.8] xl:block"
-          style={{ animationDelay: "0s" }}
-          aria-hidden="true"
+          initial="hidden"
+          animate="visible"
+          variants={LANDING_PAGE_STAGGER_VARIANT}
+          className="mx-auto flex max-w-[49rem] flex-col items-center text-center"
         >
-          <div className="w-56 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
-            <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/40">
-                <CheckCircle2 className="h-4.5 w-4.5 h-[1.125rem] w-[1.125rem] text-emerald-600" />
-              </span>
-              <div>
-                <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Campaign live</p>
-                <p className="text-[0.625rem] text-[var(--ds-gray-500)]">Published to {LIVE_PLATFORM_COUNT} platforms</p>
-              </div>
-            </div>
-            <div className="mt-3 flex items-center gap-1.5">
-              {LIVE_PLATFORMS.map(({ Icon }, k) => (
-                <div key={k} className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--ds-gray-200)] bg-[var(--ds-background-100)]">
-                  <Icon className="h-2.5 w-2.5 text-[var(--ds-gray-600)]" />
-                </div>
-              ))}
-              <span className="ml-auto text-[0.5625rem] font-semibold text-emerald-600">just now</span>
-            </div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 24, y: 12 }}
-          animate={{ opacity: 1, x: 0, y: 0 }}
-          transition={{ duration: 0.7, delay: 1.15, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-b pointer-events-none absolute right-8 top-12 hidden origin-top-right scale-[0.8] xl:block"
-          style={{ animationDelay: "1.5s" }}
-          aria-hidden="true"
-        >
-          <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/40">
-                <Clock className="h-4 w-4 text-amber-600" />
-              </span>
-              <p className="text-[0.75rem] font-semibold text-[var(--ds-gray-1000)]">Review needed</p>
-            </div>
-            <p className="mt-2 text-[0.625rem] leading-relaxed text-[var(--ds-gray-500)]">3 posts awaiting client approval before publishing</p>
-            <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-[var(--ds-gray-100)]">
-              <div className="h-full w-[62%] rounded-full bg-amber-400" />
-            </div>
-            <p className="mt-1 text-right text-[0.5625rem] text-[var(--ds-gray-400)]">5 / 8 approved</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: -24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 1.3, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-b pointer-events-none absolute bottom-52 left-8 hidden origin-bottom-left scale-[0.8] xl:block"
-          style={{ animationDelay: "3s" }}
-          aria-hidden="true"
-        >
-          <div className="w-48 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
-            <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-700)]">Posts this week</p>
-            <p className="mt-0.5 text-[1.5rem] font-black tracking-tight text-[var(--ds-gray-1000)]">48</p>
-            <div className="mt-2.5 flex items-end gap-1" style={{ height: "2.5rem" }}>
-              {[55, 40, 75, 50, 85, 65, 100].map((h, k) => (
-                <div key={k} className="flex-1 rounded-sm bg-[hsl(212_86%_50%)]" style={{ height: `${h}%`, opacity: k === 6 ? 1 : 0.25 + k * 0.1 }} />
-              ))}
-            </div>
-            <p className="mt-1.5 text-[0.5625rem] font-semibold text-emerald-600">↑ 28% vs last week</p>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 24 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 1.45, ease: LANDING_PAGE_EASE_OUT }}
-          className="float-a pointer-events-none absolute bottom-60 right-8 hidden origin-bottom-right scale-[0.8] xl:block"
-          style={{ animationDelay: "4s" }}
-          aria-hidden="true"
-        >
-          <div className="w-52 rounded-2xl border border-[var(--ds-gray-200)] bg-white p-4 shadow-[0_12px_40px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-[var(--ds-background-100)]">
-            <div className="mb-3 flex items-center gap-2">
-              <Globe className="h-4 w-4 text-[hsl(212_86%_50%)]" />
-              <p className="text-[0.6875rem] font-semibold text-[var(--ds-gray-900)]">Connected accounts</p>
-            </div>
-            {LIVE_PLATFORMS.map(({ Icon, name, dot }, k) => (
-              <div key={k} className="flex items-center gap-2 py-0.5">
-                <Icon className="h-3 w-3 text-[var(--ds-gray-600)]" />
-                <span className="flex-1 text-[0.5625rem] text-[var(--ds-gray-600)]">{name}</span>
-                <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        <motion.div initial="hidden" animate="visible" variants={LANDING_PAGE_STAGGER_VARIANT} className="mx-auto flex max-w-2xl flex-col items-center text-center">
-          <motion.div variants={LANDING_PAGE_FADE_VARIANT}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--ds-gray-300)] bg-white/90 px-3.5 py-1.5 text-[0.75rem] font-medium text-[var(--ds-gray-900)] backdrop-blur-sm dark:border-white/10 dark:bg-white/[0.06] dark:text-white/80">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-              Live on {LIVE_PLATFORM_COUNT} platforms · 14-day trial, no card needed
-            </span>
-          </motion.div>
-
-          <motion.h1 variants={LANDING_PAGE_FADE_VARIANT} className="mt-7 text-[clamp(3rem,7vw,5.5rem)] font-black leading-[0.9] tracking-[-0.048em] text-[var(--ds-gray-1000)]">
-            Post to every
-            <br />
-            platform.
-            <br />
-            <span className="gradient-text">From one place.</span>
+          <motion.h1
+            variants={LANDING_PAGE_FADE_VARIANT}
+            className="max-w-[48rem] font-[var(--font-vibe-title)] text-[clamp(2.65rem,5vw,4.55rem)] font-bold leading-[0.96] tracking-[-0.052em] text-[var(--primary-text-color)]"
+          >
+            The Intelligence Layer for{" "}
+            <span className="text-[var(--primary-color)]">Social Media</span>
           </motion.h1>
 
-          <motion.p variants={LANDING_PAGE_FADE_VARIANT} className="mt-7 max-w-[30rem] text-[1.0625rem] leading-[1.72] text-[var(--ds-gray-700)]">
-            Schedule, publish, and get approvals across {LIVE_PLATFORM_NAMES} — without switching tabs or copy-pasting captions.
+          <motion.p
+            variants={LANDING_PAGE_FADE_VARIANT}
+            className="mt-6 max-w-[38rem] text-[1.0625rem] leading-[1.7] text-[var(--secondary-text-color)] sm:text-[1.125rem]"
+          >
+            Plan content, manage conversations, track performance, and spot what is coming next across every social media channel.
           </motion.p>
 
-          <motion.div variants={LANDING_PAGE_FADE_VARIANT} className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+          <motion.div variants={LANDING_PAGE_FADE_VARIANT} className="mt-8 flex w-full flex-col items-center justify-center gap-3 sm:w-auto sm:flex-row">
             <Link
               href="/sign-up"
-              className="inline-flex h-12 items-center gap-2 rounded-xl bg-[hsl(212_86%_48%)] px-8 text-[0.9375rem] font-semibold text-white shadow-[0_4px_16px_hsl(212_86%_48%/0.38)] transition-all duration-150 hover:bg-[hsl(212_86%_43%)] hover:shadow-[0_6px_24px_hsl(212_86%_48%/0.48)]"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[0.875rem] border border-[var(--primary-color)] bg-[var(--primary-color)] px-6 text-label-16 font-semibold text-white transition-colors hover:border-[var(--primary-hover-color)] hover:bg-[var(--primary-hover-color)] focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--primary-background-color)] sm:w-auto"
             >
-              Start for free <ArrowRight className="h-4 w-4" />
+              Start for free
+              <NavigationChevronRight className="h-4 w-4" />
             </Link>
             <Link
               href="/pricing"
-              className="inline-flex h-12 items-center rounded-xl border border-[var(--ds-gray-300)] bg-white px-8 text-[0.9375rem] font-medium text-[var(--ds-gray-900)] transition-all duration-150 hover:border-[var(--ds-gray-400)] hover:shadow-sm dark:bg-white/5 dark:hover:bg-white/10"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-[0.875rem] border border-[var(--ui-border-color)] bg-[var(--primary-background-color)] px-6 text-label-16 font-semibold text-[var(--primary-text-color)] transition-colors hover:border-[var(--primary-text-color)] hover:bg-[var(--primary-background-hover-color)] focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--primary-background-color)] sm:w-auto"
             >
               View pricing
             </Link>
           </motion.div>
-
-          <motion.p variants={LANDING_PAGE_FADE_VARIANT} className="mt-4 text-[0.75rem] text-[var(--ds-gray-500)]">
-            No credit card · GDPR-conscious · OAuth-secured
-          </motion.p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 48, scale: 0.97 }}
+          initial={{ opacity: 0, y: 34, scale: 0.985 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.9, delay: 0.55, ease: LANDING_PAGE_EASE_OUT }}
-          className="relative mx-auto mt-16 max-w-[49rem]"
+          transition={{ duration: 0.8, delay: 0.38, ease: LANDING_PAGE_EASE_OUT }}
+          className="mt-14 sm:mt-16"
         >
-          <div className="pointer-events-none absolute -inset-x-8 -bottom-8 h-28 blur-3xl" style={{ background: "radial-gradient(ellipse at 50% 100%, hsl(212 86% 55% / 0.22) 0%, transparent 70%)" }} aria-hidden="true" />
-          <DashboardMock />
+          <PublishingCalendarPreview />
         </motion.div>
       </div>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 dark:hidden" style={{ background: "linear-gradient(to bottom, transparent, hsl(40 6% 96%))" }} aria-hidden="true" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden h-24 dark:block" style={{ background: "linear-gradient(to bottom, transparent, var(--ds-background-100))" }} aria-hidden="true" />
     </section>
   );
 }

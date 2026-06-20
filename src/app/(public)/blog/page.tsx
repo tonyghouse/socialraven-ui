@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clock3 } from "lucide-react";
+import { Doc, MoveArrowRight } from "@vibe/icons";
 
+import { BlogPostCard } from "./_components/blog-post-card";
 import { BlogRecentPostsList } from "./_components/blog-recent-posts-list";
+import { getBlogAccentStyle } from "./_components/blog-theme";
 import {
+  formatBlogDate,
   blogIndexDescription,
   blogPosts,
-  formatBlogDate,
   recentBlogPosts,
   topBlogPosts,
 } from "./posts";
-import { PublicHero, PublicPageShell } from "@/components/public/public-layout";
 import {
-  PublicBackLink,
-  PublicSubtleLinkButton,
-} from "@/components/public/public-site-primitives";
+  PublicCard,
+  PublicHero,
+  PublicPageShell,
+  PublicSection,
+} from "@/components/public/public-layout";
+import { PublicBackLink } from "@/components/public/public-site-primitives";
 import { SITE_NAME, absoluteUrl, toJsonLd } from "@/lib/site";
 
 const socialImagePost = topBlogPosts[0] ?? blogPosts[0];
@@ -54,6 +57,61 @@ export const metadata: Metadata = {
   },
 };
 
+function EditorialDesk() {
+  return (
+    <PublicCard className="depth-soft min-w-0 overflow-hidden p-0">
+      <div className="flex items-center justify-between gap-4 border-b border-[var(--ui-border-color)] bg-[var(--primary-background-color)] px-5 py-4">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-[0.85rem] border border-[var(--ui-border-color)] bg-[var(--allgrey-background-color)] text-[var(--primary-color)]">
+            <Doc className="h-4 w-4" />
+          </span>
+          <div>
+            <p className="text-label-12 uppercase tracking-[0.12em] text-[var(--secondary-text-color)]">
+              Publishing desk
+            </p>
+            <p className="mt-0.5 text-label-14 text-[var(--primary-text-color)]">
+              Practical systems for social teams
+            </p>
+          </div>
+        </div>
+        <span className="h-2 w-2 rounded-full bg-[var(--color-done-green)] opacity-70" />
+      </div>
+
+      <div className="bg-[var(--allgrey-background-color)] p-3">
+        <div className="overflow-hidden rounded-[1rem] border border-[var(--layout-border-color)] bg-[var(--primary-background-color)]">
+          <div className="grid grid-cols-[minmax(0,1fr)_5.25rem] border-b border-[var(--ui-border-color)] bg-[var(--allgrey-background-color)] px-4 py-2.5 text-label-12 uppercase tracking-[0.08em] text-[var(--secondary-text-color)]">
+            <span>Editorial queue</span>
+            <span className="text-right">Read</span>
+          </div>
+
+          {blogPosts.slice(0, 3).map((post, index) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="group grid grid-cols-[0.2rem_minmax(0,1fr)_5.25rem] items-center gap-3 border-b border-[var(--ui-border-color)] px-4 py-3.5 last:border-b-0 hover:bg-[var(--blog-accent-soft)]"
+              style={getBlogAccentStyle(post.slug)}
+            >
+              <span className="h-9 rounded-full bg-[var(--blog-accent)] opacity-55" />
+              <span className="min-w-0">
+                <span className="block truncate text-label-14 text-[var(--primary-text-color)]">
+                  {post.title}
+                </span>
+                <span className="mt-1 block text-label-12 text-[var(--secondary-text-color)]">
+                  {formatBlogDate(post.publishedAt)}
+                </span>
+              </span>
+              <span className="flex items-center justify-end gap-1 text-label-12 text-[var(--secondary-text-color)] group-hover:text-[var(--primary-color)]">
+                {post.readTime.replace(" read", "")}
+                <MoveArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+              </span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </PublicCard>
+  );
+}
+
 export default function BlogPage() {
   const [featuredTopPost, ...secondaryTopPosts] = topBlogPosts;
   const blogSchema = {
@@ -87,83 +145,47 @@ export default function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: toJsonLd(blogSchema) }}
       />
-      <PublicPageShell>
+      <PublicPageShell mainClassName="bg-[linear-gradient(180deg,var(--primary-background-color)_0%,var(--allgrey-background-color)_24%,var(--primary-background-color)_58%,var(--allgrey-background-color)_100%)]">
         <PublicHero
           topSlot={<PublicBackLink href="/" />}
           title="Blog"
           description={blogIndexDescription}
+          aside={<EditorialDesk />}
         />
 
         {featuredTopPost ? (
-          <section className="border-b border-[var(--ds-gray-400)]">
-            <div className="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-14">
-              <h2 className="mb-5 text-heading-20 text-[var(--ds-gray-1000)]">Top posts</h2>
-
-              <div className="grid gap-5 md:grid-cols-2">
-                {[featuredTopPost, ...secondaryTopPosts].map((post, index) => (
-                  <article
-                    key={post.slug}
-                    className="overflow-hidden rounded-xl border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)]"
-                  >
-                    <Link href={`/blog/${post.slug}`} className="group block">
-                      <div className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)]">
-                        <Image
-                          src={post.coverImage}
-                          alt={post.coverImageAlt}
-                          width={1200}
-                          height={630}
-                          priority={index === 0}
-                          className="aspect-[1.91/1] w-full object-cover transition-transform duration-150 group-hover:scale-[1.01]"
-                        />
-                      </div>
-                    </Link>
-
-                    <div className="space-y-4 p-5">
-                      <p className="flex flex-wrap items-center gap-3 text-label-12 text-[var(--ds-gray-900)]">
-                        <span>{formatBlogDate(post.publishedAt)}</span>
-                        <span className="inline-flex items-center gap-1">
-                          <Clock3 className="h-3.5 w-3.5" />
-                          {post.readTime}
-                        </span>
-                      </p>
-
-                      <div className="space-y-2">
-                        <Link href={`/blog/${post.slug}`} className="group block">
-                          <h3 className="text-heading-20 text-[var(--ds-gray-1000)] transition-colors group-hover:text-[var(--ds-blue-700)]">
-                            {post.title}
-                          </h3>
-                        </Link>
-                        <p className="text-copy-14 text-[var(--ds-gray-900)]">
-                          {post.excerpt}
-                        </p>
-                      </div>
-
-                      <div>
-                        <PublicSubtleLinkButton href={`/blog/${post.slug}`}>
-                          Read post
-                          <ArrowRight />
-                        </PublicSubtleLinkButton>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
+          <PublicSection
+            eyebrow="Top posts"
+            title="Operational advice, not filler content."
+            description="The most useful workflow pieces stay pinned here first."
+            surface="surface"
+          >
+            <div className="space-y-5">
+              <BlogPostCard post={featuredTopPost} featured priority />
+              {secondaryTopPosts.length > 0 ? (
+                <div className="grid gap-5 md:grid-cols-2">
+                  {secondaryTopPosts.map((post) => (
+                    <BlogPostCard key={post.slug} post={post} />
+                  ))}
+                </div>
+              ) : null}
             </div>
-          </section>
+          </PublicSection>
         ) : null}
 
         {recentBlogPosts.length > 0 ? (
-          <section className="border-b border-[var(--ds-gray-400)] bg-[var(--ds-background-200)]">
-            <div className="mx-auto w-full max-w-7xl px-5 py-12 md:px-8 md:py-14">
-              <h2 className="mb-5 text-heading-20 text-[var(--ds-gray-1000)]">Recent posts</h2>
-
+          <PublicSection
+            eyebrow="Recent"
+            title="Fresh publishing and workflow notes."
+          >
+            <div className="mx-auto w-full max-w-6xl">
               <BlogRecentPostsList
                 posts={recentBlogPosts}
                 initialVisibleCount={2}
                 pageSize={2}
               />
             </div>
-          </section>
+          </PublicSection>
         ) : null}
       </PublicPageShell>
     </>

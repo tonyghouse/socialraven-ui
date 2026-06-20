@@ -2,28 +2,28 @@
 
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+import { AttentionBox, Button } from "@vibe/core";
+import { NavigationChevronLeft } from "@vibe/icons";
 
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const publicButtonClassName =
-  "h-10 rounded-md px-4 text-label-14 shadow-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2";
+  "inline-flex min-h-10 items-center justify-center rounded-[0.875rem] px-4 text-label-14 shadow-none transition-colors focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2";
 
 const publicPrimaryButtonClassName = cn(
   publicButtonClassName,
-  "border border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-white hover:border-[hsl(var(--accent-active))] hover:bg-[hsl(var(--accent-active))]"
+  "border border-[var(--primary-color)] bg-[var(--primary-color)] text-white hover:border-[var(--primary-hover-color)] hover:bg-[var(--primary-hover-color)]"
 );
 
 const publicSubtleButtonClassName = cn(
   publicButtonClassName,
-  "border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-1000)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]"
+  "border border-[var(--ui-border-color)] bg-[var(--primary-background-color)] text-[var(--primary-text-color)] hover:border-[var(--primary-text-color)] hover:bg-[var(--primary-background-hover-color)]"
 );
 
 const publicBackLinkClassName = cn(
-  "inline-flex h-9 items-center gap-1.5 rounded-lg border border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] px-3 text-label-14 text-[var(--ds-gray-1000)] shadow-none transition-colors",
-  "hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)]",
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-600)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]"
+  "inline-flex h-9 items-center gap-1.5 rounded-[0.875rem] border border-[var(--ui-border-color)] bg-[var(--primary-background-color)] px-3 text-label-14 text-[var(--primary-text-color)] shadow-none transition-colors",
+  "hover:border-[var(--primary-text-color)] hover:bg-[var(--primary-background-hover-color)]",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--primary-background-color)]"
 );
 
 function isExternalHref(href: string) {
@@ -43,19 +43,19 @@ function lozengeToneClassName(
 ) {
   switch (appearance) {
     case "success":
-      return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-700)]";
+      return "border-[var(--positive-color-selected)] bg-[var(--positive-color-selected)] text-[var(--positive-color-hover)]";
     case "removed":
-      return "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-700)]";
+      return "border-[var(--negative-color-selected)] bg-[var(--negative-color-selected)] text-[var(--negative-color-hover)]";
     case "warning":
     case "inprogress":
-      return "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-700)]";
+      return "border-[var(--warning-color-selected)] bg-[var(--warning-color-selected)] text-[var(--fixed-dark-color)]";
     case "information":
     case "new":
     case "moved":
-      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--accent))]";
+      return "border-[var(--primary-selected-color)] bg-[var(--primary-selected-color)] text-[var(--primary-color)]";
     case "default":
     default:
-      return "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-900)]";
+      return "border-[var(--ui-border-color)] bg-[var(--allgrey-background-color)] text-[var(--secondary-text-color)]";
   }
 }
 
@@ -64,16 +64,16 @@ function sectionToneClassName(
 ) {
   switch (appearance) {
     case "success":
-      return "border-[var(--ds-green-200)] bg-[var(--ds-green-100)] text-[var(--ds-green-1000)]";
+      return "text-[var(--positive-color-hover)]";
     case "error":
-      return "border-[var(--ds-red-200)] bg-[var(--ds-red-100)] text-[var(--ds-red-1000)]";
+      return "text-[var(--negative-color-hover)]";
     case "warning":
-      return "border-[var(--ds-amber-200)] bg-[var(--ds-amber-100)] text-[var(--ds-amber-1000)]";
+      return "text-[var(--fixed-dark-color)]";
     case "discovery":
-      return "border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.10)] text-[hsl(var(--foreground))]";
+      return "text-[var(--primary-text-color)]";
     case "information":
     default:
-      return "border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] text-[var(--ds-gray-1000)]";
+      return "text-[var(--primary-text-color)]";
   }
 }
 
@@ -88,16 +88,16 @@ export function PublicPrimaryLinkButton({
 }) {
   if (download || isExternalHref(href)) {
     return (
-      <Button asChild size="sm" className={publicPrimaryButtonClassName}>
-        <a href={href} download={download}>{children}</a>
-      </Button>
+      <a className={publicPrimaryButtonClassName} href={href} download={download}>
+        {children}
+      </a>
     );
   }
 
   return (
-    <Button asChild size="sm" className={publicPrimaryButtonClassName}>
-      <Link href={href}>{children}</Link>
-    </Button>
+    <Link className={publicPrimaryButtonClassName} href={href}>
+      {children}
+    </Link>
   );
 }
 
@@ -112,16 +112,16 @@ export function PublicSubtleLinkButton({
 }) {
   if (download || isExternalHref(href)) {
     return (
-      <Button asChild variant="ghost" size="sm" className={publicSubtleButtonClassName}>
-        <a href={href} download={download}>{children}</a>
-      </Button>
+      <a className={publicSubtleButtonClassName} href={href} download={download}>
+        {children}
+      </a>
     );
   }
 
   return (
-    <Button asChild variant="ghost" size="sm" className={publicSubtleButtonClassName}>
-      <Link href={href}>{children}</Link>
-    </Button>
+    <Link className={publicSubtleButtonClassName} href={href}>
+      {children}
+    </Link>
   );
 }
 
@@ -134,7 +134,7 @@ export function PublicBackLink({
 }) {
   return (
     <Link href={href} className={publicBackLinkClassName}>
-      <ChevronLeft className="h-4 w-4 text-[var(--ds-gray-900)]" />
+      <NavigationChevronLeft className="h-4 w-4 text-[var(--secondary-text-color)]" />
       <span>{children}</span>
     </Link>
   );
@@ -150,7 +150,13 @@ export function PublicPrimaryButton({
   children: ReactNode;
 }) {
   return (
-    <Button type="button" size="sm" className={publicPrimaryButtonClassName} disabled={disabled} onClick={onClick}>
+    <Button
+      type="button"
+      size="medium"
+      disabled={disabled}
+      onClick={onClick}
+      className="!rounded-[0.875rem]"
+    >
       {children}
     </Button>
   );
@@ -168,9 +174,9 @@ export function PublicSubtleButton({
   return (
     <Button
       type="button"
-      variant="ghost"
-      size="sm"
-      className={publicSubtleButtonClassName}
+      kind="secondary"
+      size="medium"
+      className="!rounded-[0.875rem] !border-[var(--ui-border-color)] !bg-[var(--primary-background-color)] !text-[var(--primary-text-color)] hover:!border-[var(--primary-text-color)] hover:!bg-[var(--primary-background-hover-color)]"
       disabled={disabled}
       onClick={onClick}
     >
@@ -191,7 +197,7 @@ export function PublicLozenge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 text-label-12",
+        "inline-flex min-w-0 max-w-full items-start rounded-full border px-2.5 py-1 text-left text-label-12 leading-[1.1] whitespace-normal [overflow-wrap:anywhere]",
         isBold && "font-semibold",
         lozengeToneClassName(appearance)
       )}
@@ -203,7 +209,7 @@ export function PublicLozenge({
 
 export function PublicTag({ text }: { text: string }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-[var(--ds-gray-400)] bg-[var(--ds-gray-100)] px-2.5 py-1 text-label-12 text-[var(--ds-gray-900)]">
+    <span className="inline-flex min-w-0 max-w-full items-start rounded-full border border-[var(--ui-border-color)] bg-[var(--allgrey-background-color)] px-2.5 py-1 text-left text-label-12 leading-[1.1] text-[var(--secondary-text-color)] whitespace-normal [overflow-wrap:anywhere]">
       {text}
     </span>
   );
@@ -218,17 +224,34 @@ export function PublicSectionMessage({
   title?: string;
   children: ReactNode;
 }) {
+  const type =
+    appearance === "error"
+      ? "negative"
+      : appearance === "success"
+        ? "positive"
+        : appearance === "warning"
+          ? "warning"
+          : "primary";
+
+  const content = <div className={cn("space-y-2", sectionToneClassName(appearance))}>{children}</div>;
+  const className = cn(
+    "[&_a]:text-[var(--primary-color)] [&_a]:underline [&_a]:underline-offset-2",
+    "[&_li]:text-copy-14 [&_li]:text-current [&_p]:text-copy-14 [&_p]:text-current [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5",
+    "[&_[class*='singleLineEllipsis']]:!overflow-visible [&_[class*='singleLineEllipsis']]:!whitespace-normal [&_[class*='singleLineEllipsis']]:!text-clip",
+    appearance === "discovery" && "border border-[var(--ui-border-color)] bg-[var(--primary-highlighted-color)]"
+  );
+
+  if (title) {
+    return (
+      <AttentionBox animate={false} type={type} title={title} className={className}>
+        {content}
+      </AttentionBox>
+    );
+  }
+
   return (
-    <div
-      className={cn(
-        "space-y-2 rounded-xl border px-4 py-4",
-        "[&_a]:text-[hsl(var(--accent))] [&_a]:underline [&_a]:underline-offset-2",
-        "[&_li]:text-copy-14 [&_li]:text-current [&_p]:text-copy-14 [&_p]:text-current [&_ul]:list-disc [&_ul]:space-y-1.5 [&_ul]:pl-5",
-        sectionToneClassName(appearance)
-      )}
-    >
-      {title ? <p className="text-label-14 text-current">{title}</p> : null}
-      <div>{children}</div>
-    </div>
+    <AttentionBox animate={false} compact type={type} className={className}>
+      {content}
+    </AttentionBox>
   );
 }

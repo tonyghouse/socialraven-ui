@@ -4,6 +4,7 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+import Navbar, { LANDING_NAVBAR_CONTENT_CLASS } from "@/components/navbar/navbar";
 import {
   LANDING_PAGE_KEYFRAMES,
   LandingPageFaqSection,
@@ -13,11 +14,10 @@ import {
   LandingPageHowItWorksSection,
   LandingPagePersonasSection,
   LandingPagePlatformHubSection,
-  LandingPagePricingSection,
   LandingPageStatsBarSection,
   LandingPageTestimonialsSection,
+  LandingPageUnifiedInboxSection,
 } from "@/components/landing-page";
-import Navbar, { LANDING_NAVBAR_CONTENT_CLASS } from "@/components/navbar/navbar";
 import {
   LANDING_FOOTER_CONTENT_CLASS,
   PublicSiteFooter,
@@ -36,21 +36,22 @@ export default function LandingPage() {
 
   return (
     <>
-      <style>{LANDING_PAGE_KEYFRAMES}</style>
+      <style jsx global>{LANDING_PAGE_KEYFRAMES}</style>
       <Navbar contentClassName={LANDING_NAVBAR_CONTENT_CLASS} size="landing" />
 
-      <div className="overflow-x-hidden bg-[hsl(40_6%_96%)] text-[var(--ds-gray-1000)] dark:bg-[var(--ds-background-100)]">
+      <main className="overflow-x-hidden bg-[var(--allgrey-background-color)] text-[var(--primary-text-color)]">
         <LandingPageHeroSection />
         <LandingPageStatsBarSection />
         <LandingPageFeaturesSection />
-        <LandingPagePlatformHubSection />
         <LandingPageHowItWorksSection />
         <LandingPagePersonasSection />
+        <LandingPagePlatformHubSection />
+        <LandingPageUnifiedInboxSection />
         <LandingPageTestimonialsSection />
-        <LandingPagePricingSection />
         <LandingPageFaqSection />
         <LandingPageFinalCtaSection />
-      </div>
+      </main>
+
       <PublicSiteFooter contentClassName={LANDING_FOOTER_CONTENT_CLASS} />
     </>
   );

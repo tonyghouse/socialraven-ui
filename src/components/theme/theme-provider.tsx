@@ -14,6 +14,11 @@ export function ThemeProvider({
       defaultTheme="light"
       enableSystem={false}
       disableTransitionOnChange
+      themes={["light", "dark"]}
+      value={{
+        light: "default-app-theme",
+        dark: "black-app-theme",
+      }}
     >
       {children}
     </NextThemesProvider>
