@@ -1,8 +1,10 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Button } from "@vibe/core";
+import { Moon, Sun } from "@vibe/icons";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+
 import { cn } from "@/lib/utils";
 
 type ThemeSwitcherProps = {
@@ -24,67 +26,58 @@ export function ThemeSwitcher({
   }, []);
 
   const isDark = mounted && resolvedTheme === "dark";
+  const ThemeIcon = isDark ? Moon : Sun;
 
   function toggleTheme() {
     setTheme(isDark ? "light" : "dark");
   }
 
   return (
-    <button
+    <Button
       type="button"
-      role="switch"
-      aria-checked={isDark}
+      kind="secondary"
+      size={compact ? "small" : "medium"}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-pressed={isDark}
       onClick={toggleTheme}
       className={cn(
-        "group inline-flex items-center border transition-[background-color,border-color,color,transform] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ds-blue-500)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ds-background-100)]",
+        "justify-center !border-[var(--ui-border-color)] !bg-[var(--primary-background-color)] !text-[var(--primary-text-color)] hover:!border-[var(--primary-text-color)] hover:!bg-[var(--primary-background-hover-color)]",
         compact
-          ? "h-9 w-9 justify-center rounded-md border-[var(--ds-gray-400)] bg-[var(--ds-background-100)] text-[var(--ds-gray-900)] hover:border-[var(--ds-gray-500)] hover:bg-[var(--ds-gray-100)] hover:text-[var(--ds-gray-1000)]"
-          : "h-9 w-full justify-between rounded-lg border-border/70 bg-background/70 px-3 text-foreground hover:bg-muted",
+          ? "!h-9 !w-9 !rounded-[0.875rem] !px-0"
+          : "min-w-[10rem] !rounded-[0.875rem]",
+        align === "start" && "justify-start",
+        align === "center" && "justify-center",
+        align === "end" && !compact && "justify-between",
         className
       )}
-      data-align={align}
     >
-      {!compact && (
-        <span className="text-[0.8125rem] font-medium text-foreground/80">
-          {isDark ? "Dark mode" : "Light mode"}
-        </span>
-      )}
-
       {compact ? (
-        <span className="relative h-4 w-4">
-          <Sun
-            className={cn(
-              "absolute inset-0 h-4 w-4 transition-all duration-200",
-              isDark ? "scale-75 rotate-45 opacity-0" : "scale-100 rotate-0 opacity-100"
-            )}
-          />
-          <Moon
-            className={cn(
-              "absolute inset-0 h-4 w-4 transition-all duration-200",
-              isDark ? "scale-100 rotate-0 opacity-100" : "scale-75 -rotate-45 opacity-0"
-            )}
-          />
-        </span>
+        <ThemeIcon className="h-4 w-4" />
       ) : (
-        <span
-          className={cn(
-            "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors",
-            isDark
-              ? "border-[hsl(var(--accent))]/30 bg-[hsl(var(--accent))]/85"
-              : "border-border bg-[hsl(var(--surface-raised))]"
-          )}
-        >
+        <span className="flex w-full items-center justify-between gap-3">
+          <span className="inline-flex items-center gap-2">
+            <ThemeIcon className="h-4 w-4" />
+            <span>{isDark ? "Dark mode" : "Light mode"}</span>
+          </span>
           <span
             className={cn(
-              "absolute left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[hsl(var(--accent))] shadow-sm transition-transform",
-              isDark && "translate-x-4"
+              "relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border transition-colors",
+              isDark
+                ? "border-[var(--primary-color)] bg-[var(--primary-color)]"
+                : "border-[var(--ui-border-color)] bg-[var(--allgrey-background-color)]"
             )}
           >
-            {isDark ? <Moon size={10} /> : <Sun size={10} />}
+            <span
+              className={cn(
+                "absolute left-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[var(--primary-color)] shadow-sm transition-transform",
+                isDark && "translate-x-4"
+              )}
+            >
+              <ThemeIcon className="h-3 w-3" />
+            </span>
           </span>
         </span>
       )}
-    </button>
+    </Button>
   );
 }

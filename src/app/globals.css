@@ -1,3 +1,5 @@
+@import "@vibe/style/dist/index.min.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -15,42 +17,46 @@
   padding: 0.0625rem;
   background: linear-gradient(
     180deg,
-    hsl(var(--border-subtle) / 0.96),
-    hsl(var(--border) / 0.82)
+    hsl(var(--border-subtle) / 0.94),
+    hsl(var(--border) / 0.8)
   );
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
-          mask-composite: exclude;
+  mask-composite: exclude;
   pointer-events: none;
 }
 
 .depth-soft {
   box-shadow:
-    0 0.0625rem 0.0625rem rgb(0 0 0 / 0.04),
-    0 0.25rem 0.625rem rgb(0 0 0 / 0.08);
+    0 0.0625rem 0.0625rem rgb(41 47 76 / 0.06),
+    0 0.625rem 1.75rem rgb(41 47 76 / 0.08);
 }
 
 .page-bg {
   background-color: hsl(var(--background));
   background-image: radial-gradient(
     circle,
-    hsl(var(--border) / 0.9) 0.0625rem,
+    rgb(208 212 228 / 0.9) 0.0625rem,
     transparent 0.0625rem
   );
   background-size: 1.375rem 1.375rem;
 }
 
-.dark .page-bg {
+.black-app-theme .page-bg {
   background-image:
     linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-sunken))),
-    radial-gradient(circle, hsl(var(--border) / 0.45) 0.0625rem, transparent 0.0625rem);
+    radial-gradient(circle, rgb(160 160 160 / 0.24) 0.0625rem, transparent 0.0625rem);
   background-size: auto, 1.5rem 1.5rem;
 }
 
 .card-hover {
-  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+  transition:
+    box-shadow 0.18s ease,
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    background-color 0.18s ease;
 }
 
 .card-hover:hover {
@@ -60,9 +66,11 @@
 }
 
 @keyframes pricingShine {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
@@ -72,11 +80,11 @@
   display: inline-block;
   background-image: linear-gradient(
     110deg,
-    var(--ds-blue-700) 0%,
-    var(--ds-blue-600) 28%,
-    var(--ds-gray-1000) 50%,
-    var(--ds-blue-600) 72%,
-    var(--ds-blue-700) 100%
+    var(--primary-hover-color) 0%,
+    var(--primary-color) 30%,
+    var(--primary-text-color) 52%,
+    var(--primary-color) 72%,
+    var(--primary-hover-color) 100%
   );
   background-size: 220% auto;
   background-clip: text;
@@ -86,29 +94,31 @@
 }
 
 .blog-prose {
-  color: var(--ds-gray-900);
+  color: var(--secondary-text-color);
 }
 
 .blog-prose h2 {
+  font-family: var(--font-vibe-title), sans-serif;
   font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
   line-height: 1.08;
   font-weight: 700;
   letter-spacing: -0.035em;
-  color: var(--ds-gray-1000);
+  color: var(--primary-text-color);
 }
 
 .blog-prose h3 {
+  font-family: var(--font-vibe-title), sans-serif;
   font-size: 1.1875rem;
   line-height: 1.35;
   font-weight: 600;
-  color: var(--ds-gray-1000);
+  color: var(--primary-text-color);
 }
 
 .blog-prose p,
 .blog-prose li {
   font-size: 1rem;
   line-height: 1.78;
-  color: var(--ds-gray-900);
+  color: var(--secondary-text-color);
 }
 
 .blog-prose p + p {
@@ -131,254 +141,222 @@
 }
 
 .blog-prose blockquote {
-  border-left: 0.1875rem solid var(--ds-blue-600);
+  border-left: 0.1875rem solid var(--primary-color);
   padding-left: 1rem;
   font-size: 1rem;
   line-height: 1.7;
-  color: var(--ds-gray-1000);
+  color: var(--primary-text-color);
 }
 
 .blog-prose strong {
   font-weight: 600;
-  color: var(--ds-gray-1000);
+  color: var(--primary-text-color);
 }
 
 .blog-prose a {
-  color: var(--ds-blue-700);
+  color: var(--primary-color);
   text-decoration: underline;
   text-underline-offset: 0.125rem;
 }
 
 .blog-prose code {
-  border: 0.0625rem solid var(--ds-gray-400);
+  border: 0.0625rem solid var(--ui-border-color);
   border-radius: 0.375rem;
-  background: var(--ds-gray-100);
+  background: var(--allgrey-background-color);
   padding: 0.125rem 0.375rem;
-  font-family: var(--font-geist-mono), monospace;
+  font-family: var(--font-vibe-mono), ui-monospace, monospace;
   font-size: 0.9em;
-  color: var(--ds-gray-1000);
+  color: var(--primary-text-color);
 }
 
 :root {
-  /* === Geist --ds-* design tokens (light) === */
+  --ds-background-100: var(--primary-background-color);
+  --ds-background-200: var(--allgrey-background-color);
 
-  /* Backgrounds */
-  --ds-background-100: hsl(0 0% 100%);
-  --ds-background-200: hsl(0 0% 98%);
+  --ds-gray-100: var(--allgrey-background-color);
+  --ds-gray-200: var(--ui-background-color);
+  --ds-gray-300: var(--primary-background-hover-color);
+  --ds-gray-400: var(--ui-border-color);
+  --ds-gray-500: var(--layout-border-color);
+  --ds-gray-600: var(--placeholder-color);
+  --ds-gray-700: var(--icon-color);
+  --ds-gray-800: var(--secondary-text-color);
+  --ds-gray-900: var(--secondary-text-color);
+  --ds-gray-1000: var(--primary-text-color);
 
-  /* Gray scale */
-  --ds-gray-100: hsl(0 0% 96%);
-  --ds-gray-200: hsl(0 0% 92%);
-  --ds-gray-300: hsl(0 0% 88%);
-  --ds-gray-400: hsl(0 0% 81%);
-  --ds-gray-500: hsl(0 0% 68%);
-  --ds-gray-600: hsl(0 0% 54%);
-  --ds-gray-700: hsl(0 0% 40%);
-  --ds-gray-800: hsl(0 0% 30%);
-  --ds-gray-900: hsl(0 0% 22%);
-  --ds-gray-1000: hsl(0 0% 9%);
+  --ds-gray-alpha-100: rgb(41 47 76 / 0.04);
+  --ds-gray-alpha-200: rgb(41 47 76 / 0.08);
+  --ds-gray-alpha-300: rgb(41 47 76 / 0.14);
+  --ds-gray-alpha-400: rgb(41 47 76 / 0.22);
 
-  /* Alpha grays */
-  --ds-gray-alpha-100: rgb(0 0 0 / 0.04);
-  --ds-gray-alpha-200: rgb(0 0 0 / 0.08);
-  --ds-gray-alpha-300: rgb(0 0 0 / 0.12);
-  --ds-gray-alpha-400: rgb(0 0 0 / 0.20);
+  --ds-blue-100: var(--primary-selected-color);
+  --ds-blue-200: var(--primary-selected-hover-color);
+  --ds-blue-300: var(--primary-highlighted-color);
+  --ds-blue-400: var(--primary-color);
+  --ds-blue-500: var(--primary-color);
+  --ds-blue-600: var(--primary-color);
+  --ds-blue-700: var(--primary-hover-color);
+  --ds-blue-800: var(--primary-hover-color);
+  --ds-blue-900: var(--primary-hover-color);
+  --ds-blue-1000: var(--primary-text-color);
 
-  /* Blue (brand / primary accent) */
-  --ds-blue-100: hsl(212 100% 97%);
-  --ds-blue-200: hsl(212 96% 93%);
-  --ds-blue-300: hsl(212 94% 87%);
-  --ds-blue-400: hsl(212 92% 78%);
-  --ds-blue-500: hsl(212 89% 66%);
-  --ds-blue-600: hsl(212 86% 54%);
-  --ds-blue-700: hsl(212 88% 46%);
-  --ds-blue-800: hsl(212 92% 38%);
-  --ds-blue-900: hsl(212 96% 30%);
-  --ds-blue-1000: hsl(212 100% 20%);
+  --ds-red-100: var(--negative-color-selected);
+  --ds-red-200: var(--negative-color-selected-hover);
+  --ds-red-600: var(--negative-color);
+  --ds-red-700: var(--negative-color-hover);
+  --ds-red-1000: var(--negative-color);
 
-  /* Red */
-  --ds-red-100: hsl(12 100% 97%);
-  --ds-red-200: hsl(12 100% 92%);
-  --ds-red-600: hsl(12 91% 46%);
-  --ds-red-700: hsl(12 91% 38%);
-  --ds-red-1000: hsl(12 91% 18%);
+  --ds-green-100: var(--positive-color-selected);
+  --ds-green-200: var(--positive-color-selected-hover);
+  --ds-green-600: var(--positive-color);
+  --ds-green-700: var(--positive-color-hover);
+  --ds-green-1000: var(--positive-color);
 
-  /* Green */
-  --ds-green-100: hsl(155 60% 95%);
-  --ds-green-200: hsl(155 60% 88%);
-  --ds-green-600: hsl(155 54% 40%);
-  --ds-green-700: hsl(155 54% 33%);
-  --ds-green-1000: hsl(155 54% 16%);
+  --ds-amber-100: var(--warning-color-selected);
+  --ds-amber-200: var(--warning-color-selected-hover);
+  --ds-amber-600: var(--warning-color);
+  --ds-amber-700: var(--warning-color-hover);
+  --ds-amber-1000: var(--warning-color);
 
-  /* Amber */
-  --ds-amber-100: hsl(40 100% 95%);
-  --ds-amber-200: hsl(40 100% 86%);
-  --ds-amber-600: hsl(40 90% 44%);
-  --ds-amber-700: hsl(40 90% 36%);
-  --ds-amber-1000: hsl(40 90% 18%);
+  --ds-teal-600: var(--color-teal);
+  --ds-purple-600: var(--color-dark_purple);
+  --ds-pink-600: var(--color-sofia_pink);
 
-  /* Teal / Purple / Pink */
-  --ds-teal-600: hsl(180 60% 36%);
-  --ds-purple-600: hsl(270 60% 48%);
-  --ds-pink-600: hsl(328 60% 48%);
+  --geist-success: var(--positive-color);
+  --geist-error: var(--negative-color);
+  --geist-warning: var(--warning-color);
 
-  /* Semantic aliases */
-  --geist-success: var(--ds-green-600);
-  --geist-error: var(--ds-red-600);
-  --geist-warning: var(--ds-amber-600);
+  --chart-brand: var(--primary-color);
+  --chart-neutral: var(--secondary-text-color);
+  --chart-categorical-1: var(--primary-color);
+  --chart-categorical-2: var(--color-teal);
+  --chart-categorical-3: var(--color-dark_purple);
+  --chart-categorical-4: var(--color-sofia_pink);
+  --chart-categorical-5: var(--warning-color);
+  --chart-categorical-6: var(--positive-color);
+  --chart-success: var(--positive-color);
+  --chart-warning: var(--warning-color);
+  --chart-danger: var(--negative-color);
 
-  /* Chart tokens */
-  --chart-brand: var(--ds-blue-600);
-  --chart-neutral: var(--ds-gray-700);
-  --chart-categorical-1: var(--ds-blue-600);
-  --chart-categorical-2: var(--ds-teal-600);
-  --chart-categorical-3: var(--ds-purple-600);
-  --chart-categorical-4: var(--ds-pink-600);
-  --chart-categorical-5: var(--ds-amber-600);
-  --chart-categorical-6: var(--ds-green-600);
-  --chart-success: var(--geist-success);
-  --chart-warning: var(--geist-warning);
-  --chart-danger: var(--geist-error);
+  --ds-surface-invert: var(--inverted-color-background);
 
-  /* Marketing inverted surface */
-  --ds-surface-invert: hsl(0 0% 10%);
-
-  /* === Existing tokens (used by protected app) === */
-  --background: 0 0% 98%;
+  --background: 220 20% 99%;
   --surface: 0 0% 100%;
-  --surface-raised: 0 0% 96%;
-  --surface-sunken: 0 0% 94%;
-  --foreground: 0 0% 10%;
-  --foreground-muted: 0 0% 35%;
-  --foreground-subtle: 0 0% 48%;
+  --surface-raised: 228 33% 97%;
+  --surface-sunken: 228 22% 95%;
+  --foreground: 226 6% 21%;
+  --foreground-muted: 231 8% 41%;
+  --foreground-subtle: 231 8% 50%;
   --card: var(--surface);
   --card-foreground: var(--foreground);
   --popover: var(--surface);
   --popover-foreground: var(--foreground);
 
-  --primary: 212 86% 54%;
+  --primary: 210 100% 46%;
   --primary-foreground: 0 0% 100%;
-  --accent: 212 86% 54%;
-  --accent-hover: 212 88% 46%;
-  --accent-active: 212 92% 40%;
+  --accent: 210 100% 46%;
+  --accent-hover: 209 100% 36%;
+  --accent-active: 209 100% 32%;
   --accent-foreground: 0 0% 100%;
 
   --secondary: var(--surface-raised);
   --secondary-foreground: var(--foreground);
-  --muted: 0 0% 95%;
+  --muted: 228 22% 95%;
   --muted-foreground: var(--foreground-muted);
 
-  --destructive: 12 91% 46%;
+  --destructive: 349 66% 54%;
   --destructive-foreground: 0 0% 100%;
-  --success: 155 54% 46%;
-  --warning: 40 100% 50%;
-  --info: 212 86% 54%;
+  --success: 154 100% 26%;
+  --warning: 48 100% 50%;
+  --info: 210 100% 46%;
 
-  --border: 0 0% 86%;
-  --border-subtle: 0 0% 92%;
-  --input: 0 0% 86%;
+  --border: 230 27% 84%;
+  --border-subtle: 228 22% 91%;
+  --input: 230 27% 84%;
   --ring: var(--accent);
 
-  --chart-1: 212 86% 54%;
-  --chart-2: 155 54% 46%;
-  --chart-3: 40 100% 50%;
-  --chart-4: 212 92% 78%;
-  --chart-5: 0 0% 35%;
+  --chart-1: 210 100% 46%;
+  --chart-2: 154 100% 26%;
+  --chart-3: 48 100% 50%;
+  --chart-4: 199 100% 36%;
+  --chart-5: 231 8% 41%;
 
   --sidebar-background: var(--surface);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--accent);
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 0 0% 96%;
+  --sidebar-accent: 228 33% 97%;
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--accent);
 
-  --radius: 0.6875rem;
-  --shadow-xs: 0 0.0625rem 0.125rem rgb(0 0 0 / 0.04);
-  --shadow-sm: 0 0.0625rem 0.125rem rgb(0 0 0 / 0.05), 0 0.0625rem 0.25rem rgb(0 0 0 / 0.03);
-  --shadow-md: 0 0.1875rem 0.5rem rgb(0 0 0 / 0.08), 0 0.0625rem 0.125rem rgb(0 0 0 / 0.05);
-  --shadow-lg: 0 0.5rem 1.125rem rgb(0 0 0 / 0.10), 0 0.125rem 0.3125rem rgb(0 0 0 / 0.05);
-  --shadow-xl: 0 0.875rem 1.875rem rgb(0 0 0 / 0.14);
-  --shadow-2xl: 0 1.25rem 2.75rem rgb(0 0 0 / 0.18);
+  --radius: 0.625rem;
+  --shadow-xs: 0 0.0625rem 0.125rem rgb(41 47 76 / 0.05);
+  --shadow-sm: 0 0.125rem 0.3125rem rgb(41 47 76 / 0.06);
+  --shadow-md: 0 0.875rem 2rem rgb(41 47 76 / 0.10);
+  --shadow-lg: 0 1.5rem 3rem rgb(41 47 76 / 0.16);
+  --shadow-xl: 0 2rem 4rem rgb(41 47 76 / 0.18);
+  --shadow-2xl: 0 2.5rem 5rem rgb(41 47 76 / 0.22);
 
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
 
-.dark {
-  /* === Geist --ds-* design tokens (dark) === */
-  --ds-background-100: hsl(0 0% 0%);
-  --ds-background-200: hsl(0 0% 5%);
-  --ds-gray-100: hsl(0 0% 9%);
-  --ds-gray-200: hsl(0 0% 14%);
-  --ds-gray-300: hsl(0 0% 19%);
-  --ds-gray-400: hsl(0 0% 28%);
-  --ds-gray-500: hsl(0 0% 42%);
-  --ds-gray-600: hsl(0 0% 56%);
-  --ds-gray-700: hsl(0 0% 68%);
-  --ds-gray-800: hsl(0 0% 78%);
-  --ds-gray-900: hsl(0 0% 83%);
-  --ds-gray-1000: hsl(0 0% 93%);
+.black-app-theme {
+  --primary-surface-color: #161616;
+  --primary-text-color: #f3f4f6;
+  --secondary-text-color: #a0a7b3;
+  --text-color-on-inverted: #121212;
+  --fixed-dark-color: #121212;
+  --primary-background-color: #121212;
+  --primary-background-hover-color: rgb(255 255 255 / 0.06);
+  --secondary-background-color: #181818;
+  --allgrey-background-color: #161616;
+  --backdrop-color: rgb(0 0 0 / 0.76);
+  --ui-border-color: #2b2b2b;
+  --ui-background-color: #1c1c1c;
+  --ui-background-hover-color: #232323;
+  --layout-border-color: #242424;
+  --placeholder-color: #878f9c;
+  --icon-color: #878f9c;
+  --disabled-background-color: #1a1a1a;
+  --grey-background-color: #121212;
+  --color-surface: #1a1a1a;
+  --primary-background-color-rgb: 18,18,18;
+  --secondary-background-color-rgb: 24,24,24;
+  --primary-background-hover-on-secondary-color: rgb(255 255 255 / 0.08);
+  --primary-text-on-secondary-color: #f3f4f6;
+  --secondary-text-on-secondary-color: #a0a7b3;
+  --modal-background-color: #161616;
+  --dark-background-color: #181818;
+  --dark-background-on-secondary-color: #202020;
+  --dialog-background-color: #181818;
+  --label-background-color: #102f55;
+  --label-background-on-secondary-color: #102f55;
+  --icon-on-secondary-color: #a0a7b3;
+  --placeholder-color-with-opacity: rgb(160 167 179 / 0.14);
+  --placeholder-on-secondary-color: #878f9c;
+  --ui-border-on-secondary-color: #2b2b2b;
+  --layout-border-on-secondary-color: #242424;
+  --disabled-background-on-secondary-color: #1a1a1a;
 
-  --ds-gray-alpha-100: rgb(255 255 255 / 0.04);
-  --ds-gray-alpha-200: rgb(255 255 255 / 0.08);
-  --ds-gray-alpha-300: rgb(255 255 255 / 0.12);
-  --ds-gray-alpha-400: rgb(255 255 255 / 0.20);
-
-  --ds-blue-100: hsl(212 55% 14%);
-  --ds-blue-200: hsl(212 56% 20%);
-  --ds-blue-300: hsl(212 60% 28%);
-  --ds-blue-400: hsl(212 67% 40%);
-  --ds-blue-500: hsl(212 78% 55%);
-  --ds-blue-600: hsl(212 88% 68%);
-  --ds-blue-700: hsl(212 94% 76%);
-  --ds-blue-800: hsl(212 100% 84%);
-  --ds-blue-900: hsl(212 100% 90%);
-  --ds-blue-1000: hsl(212 100% 95%);
-
-  --ds-red-100: hsl(12 60% 10%);
-  --ds-red-200: hsl(12 60% 16%);
-  --ds-red-600: hsl(12 91% 56%);
-  --ds-red-700: hsl(12 91% 66%);
-  --ds-red-1000: hsl(12 91% 88%);
-
-  --ds-green-100: hsl(155 40% 10%);
-  --ds-green-200: hsl(155 40% 16%);
-  --ds-green-600: hsl(155 54% 52%);
-  --ds-green-700: hsl(155 54% 64%);
-  --ds-green-1000: hsl(155 54% 88%);
-
-  --ds-amber-100: hsl(40 60% 10%);
-  --ds-amber-200: hsl(40 60% 16%);
-  --ds-amber-600: hsl(40 90% 56%);
-  --ds-amber-700: hsl(40 90% 66%);
-  --ds-amber-1000: hsl(40 90% 88%);
-
-  --ds-teal-600: hsl(180 60% 54%);
-  --ds-purple-600: hsl(270 60% 66%);
-  --ds-pink-600: hsl(328 60% 64%);
-
-  --ds-surface-invert: hsl(0 0% 14%);
-
-  /* === Existing tokens (used by protected app) === */
-  --background: 0 0% 6%;
+  --background: 0 0% 7%;
   --surface: 0 0% 9%;
   --surface-raised: 0 0% 12%;
-  --surface-sunken: 0 0% 4%;
-  --foreground: 0 0% 94%;
-  --foreground-muted: 0 0% 70%;
-  --foreground-subtle: 0 0% 60%;
+  --surface-sunken: 0 0% 6%;
+  --foreground: 0 0% 96%;
+  --foreground-muted: 0 0% 68%;
+  --foreground-subtle: 0 0% 79%;
   --card: var(--surface);
   --card-foreground: var(--foreground);
   --popover: var(--surface);
   --popover-foreground: var(--foreground);
 
-  --primary: 212 88% 68%;
+  --primary: 210 100% 46%;
   --primary-foreground: 0 0% 100%;
-  --accent: 212 88% 68%;
-  --accent-hover: 212 94% 76%;
-  --accent-active: 212 82% 60%;
+  --accent: 210 100% 46%;
+  --accent-hover: 209 100% 36%;
+  --accent-active: 209 100% 32%;
   --accent-foreground: 0 0% 100%;
 
   --secondary: var(--surface-raised);
@@ -386,54 +364,45 @@
   --muted: 0 0% 12%;
   --muted-foreground: var(--foreground-muted);
 
-  --destructive: 12 91% 56%;
+  --destructive: 349 66% 54%;
   --destructive-foreground: 0 0% 100%;
-  --success: 155 54% 46%;
-  --warning: 40 100% 50%;
-  --info: 212 88% 68%;
+  --success: 154 100% 26%;
+  --warning: 48 100% 50%;
+  --info: 210 100% 46%;
 
-  --border: 0 0% 20%;
-  --border-subtle: 0 0% 15%;
-  --input: 0 0% 20%;
+  --border: 0 0% 17%;
+  --border-subtle: 0 0% 14%;
+  --input: 0 0% 17%;
   --ring: var(--accent);
 
-  --chart-1: 212 88% 68%;
-  --chart-2: 155 54% 46%;
-  --chart-3: 40 100% 50%;
-  --chart-4: 212 94% 76%;
-  --chart-5: 0 0% 60%;
+  --chart-1: 210 100% 46%;
+  --chart-2: 154 100% 26%;
+  --chart-3: 48 100% 50%;
+  --chart-4: 199 100% 36%;
+  --chart-5: 0 0% 68%;
 
   --sidebar-background: var(--surface);
   --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--accent);
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 0 0% 14%;
+  --sidebar-accent: 0 0% 10%;
   --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--border);
   --sidebar-ring: var(--accent);
 
-  /* Legacy bridge tokens used by layered datetime picker UI */
-  --ds-background-input: hsl(var(--surface));
-  --ds-background-input-hovered: hsl(var(--surface-raised));
-  --ds-background-input-pressed: hsl(var(--surface-raised));
-  --ds-background-disabled: hsl(var(--surface-raised));
-  --ds-surface-overlay: hsl(var(--surface));
-  --ds-border-input: hsl(var(--border));
-  --ds-border-focused: hsl(var(--accent));
-  --ds-border-danger: hsl(var(--destructive));
-  --ds-text: hsl(var(--foreground));
-  --ds-text-subtle: hsl(var(--foreground-muted));
-  --ds-text-subtlest: hsl(var(--foreground-subtle));
-  --ds-text-disabled: hsl(var(--foreground-subtle));
-  --ds-text-selected: hsl(var(--accent-foreground));
-  --ds-background-selected: hsl(var(--accent));
-  --ds-background-selected-hovered: hsl(var(--accent-hover));
-  --ds-background-neutral-subtle-hovered: hsl(var(--surface-raised));
-  --ds-background-neutral-subtle-pressed: hsl(var(--surface-raised));
-  --ds-shadow-overlay: var(--shadow-lg);
+  --ds-gray-alpha-100: rgb(255 255 255 / 0.03);
+  --ds-gray-alpha-200: rgb(255 255 255 / 0.06);
+  --ds-gray-alpha-300: rgb(255 255 255 / 0.12);
+  --ds-gray-alpha-400: rgb(255 255 255 / 0.18);
 }
 
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   * {
     @apply border-border;
   }
@@ -443,7 +412,7 @@
     font-size: 100%;
   }
 
-  html.dark {
+  html.black-app-theme {
     color-scheme: dark;
   }
 
@@ -455,13 +424,12 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "cv11", "ss01";
-    /* Bridge Geist font variables to the names Tailwind expects.
-       Must be here (body) not in :root, because --font-geist-* are
-       set on body by the Next.js font class — CSS vars can't be
-       referenced from ancestor elements. */
-    --font-sans: var(--font-geist-sans);
-    --font-mono: var(--font-geist-mono);
+    font-family: var(--font-vibe-sans), Roboto, sans-serif;
+    --font-family: var(--font-vibe-sans), Roboto, sans-serif;
+    --title-font-family: var(--font-vibe-title), Roboto, sans-serif;
+    --font-sans: var(--font-vibe-sans);
+    --font-heading: var(--font-vibe-title);
+    --font-mono: var(--font-vibe-mono);
   }
 
   ::selection {
@@ -527,12 +495,12 @@
 
   .sidebar-scroll-fade-top {
     top: 0;
-    background: linear-gradient(180deg, var(--ds-background-100) 18%, transparent 100%);
+    background: linear-gradient(180deg, var(--primary-background-color) 18%, transparent 100%);
   }
 
   .sidebar-scroll-fade-bottom {
     bottom: 0;
-    background: linear-gradient(0deg, var(--ds-background-100) 22%, transparent 100%);
+    background: linear-gradient(0deg, var(--primary-background-color) 22%, transparent 100%);
   }
 
   .sidebar-scroll-cue {
@@ -566,29 +534,115 @@
     transform-origin: left center;
   }
 
-  /* === Geist type scale === */
+  .text-heading-32 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 2rem;
+    line-height: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
 
-  /* Heading scale (bold) */
-  .text-heading-32 { font-size: 2rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -0.025em; }
-  .text-heading-24 { font-size: 1.5rem; line-height: 1.875rem; font-weight: 700; letter-spacing: -0.02em; }
-  .text-heading-20 { font-size: 1.25rem; line-height: 1.625rem; font-weight: 700; letter-spacing: -0.015em; }
-  .text-heading-16 { font-size: 1rem; line-height: 1.375rem; font-weight: 700; letter-spacing: -0.01em; }
-  .text-heading-14 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 700; letter-spacing: -0.005em; }
+  .text-heading-24 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 1.5rem;
+    line-height: 1.9rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
 
-  /* Label scale (medium, single-line) */
-  .text-label-16 { font-size: 1rem; line-height: 1.375rem; font-weight: 500; }
-  .text-label-14 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; }
-  .text-label-14-mono { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; font-family: var(--font-mono), ui-monospace, monospace; }
-  .text-label-13 { font-size: 0.8125rem; line-height: 1.125rem; font-weight: 500; }
-  .text-label-13-mono { font-size: 0.8125rem; line-height: 1.125rem; font-weight: 500; font-family: var(--font-mono), ui-monospace, monospace; }
-  .text-label-12 { font-size: 0.75rem; line-height: 1rem; font-weight: 500; }
-  .text-label-12-mono { font-size: 0.75rem; line-height: 1rem; font-weight: 500; font-family: var(--font-mono), ui-monospace, monospace; }
+  .text-heading-20 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 1.25rem;
+    line-height: 1.6rem;
+    font-weight: 600;
+    letter-spacing: -0.018em;
+  }
 
-  /* Copy scale (regular, multi-line) */
-  .text-copy-16 { font-size: 1rem; line-height: 1.75rem; font-weight: 400; }
-  .text-copy-14 { font-size: 0.875rem; line-height: 1.5625rem; font-weight: 400; }
-  .text-copy-13 { font-size: 0.8125rem; line-height: 1.375rem; font-weight: 400; }
-  .text-copy-13-mono { font-size: 0.8125rem; line-height: 1.375rem; font-weight: 400; font-family: var(--font-mono), ui-monospace, monospace; }
+  .text-heading-16 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 1rem;
+    line-height: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+  }
+
+  .text-heading-14 {
+    font-family: var(--font-heading), sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.008em;
+  }
+
+  .text-label-16 {
+    font-size: 1rem;
+    line-height: 1.375rem;
+    font-weight: 500;
+  }
+
+  .text-label-14 {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+  }
+
+  .text-label-14-mono {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  .text-label-13 {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    font-weight: 500;
+  }
+
+  .text-label-13-mono {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+    font-weight: 500;
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  .text-label-12 {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+  }
+
+  .text-label-12-mono {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
+
+  .text-copy-16 {
+    font-size: 1rem;
+    line-height: 1.75rem;
+    font-weight: 400;
+  }
+
+  .text-copy-14 {
+    font-size: 0.875rem;
+    line-height: 1.5625rem;
+    font-weight: 400;
+  }
+
+  .text-copy-13 {
+    font-size: 0.8125rem;
+    line-height: 1.375rem;
+    font-weight: 400;
+  }
+
+  .text-copy-13-mono {
+    font-size: 0.8125rem;
+    line-height: 1.375rem;
+    font-weight: 400;
+    font-family: var(--font-mono), ui-monospace, monospace;
+  }
 }
 
 @media print {
@@ -604,10 +658,10 @@
   }
 }
 
-.dark .schedule-date-picker button svg {
+.black-app-theme .schedule-date-picker button svg {
   color: hsl(var(--foreground-muted));
 }
 
-.dark .schedule-date-picker button:hover svg {
+.black-app-theme .schedule-date-picker button:hover svg {
   color: hsl(var(--foreground));
 }

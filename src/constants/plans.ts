@@ -1,4 +1,4 @@
-import { Clock, Star, Crown, Building2, Briefcase, Rocket, Infinity } from "lucide-react";
+import { Custom, Favorite, Person, Team, Time, Work, Workspace } from "@vibe/icons";
 
 export type PlanType =
   | "INFLUENCER_TRIAL"
@@ -143,11 +143,11 @@ export const PLANS: Plan[] = [
 ];
 
 export const PLAN_ICONS: Record<PlanType, React.ElementType> = {
-  INFLUENCER_TRIAL: Clock,
-  INFLUENCER_BASE: Star,
-  INFLUENCER_PRO: Crown,
-  AGENCY_TRIAL: Building2,
-  AGENCY_BASE: Briefcase,
-  AGENCY_PRO: Rocket,
-  AGENCY_CUSTOM: Infinity,
+  INFLUENCER_TRIAL: Time,
+  INFLUENCER_BASE: Person,
+  INFLUENCER_PRO: Favorite,
+  AGENCY_TRIAL: Time,
+  AGENCY_BASE: Work,
+  AGENCY_PRO: Team,
+  AGENCY_CUSTOM: Custom,
 };

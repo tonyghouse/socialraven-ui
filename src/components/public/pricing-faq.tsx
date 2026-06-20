@@ -1,3 +1,9 @@
+"use client";
+
+import { Accordion, AccordionItem, Text } from "@vibe/core";
+
+import { PublicCard } from "@/components/public/public-layout";
+
 const FAQ_ITEMS = [
   {
     q: "When does billing start?",
@@ -19,41 +25,56 @@ const FAQ_ITEMS = [
 
 export function PricingFaq() {
   return (
-    <div>
-      <p className="mb-4 text-label-12 text-[var(--ds-gray-900)]">FAQ</p>
-      <div className="divide-y divide-[var(--ds-gray-400)]">
-        {FAQ_ITEMS.map(({ q, a }) => (
-          <details key={q} className="group py-4">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-label-14 text-[var(--ds-gray-1000)]">
-              {q}
-              <span className="shrink-0 text-[var(--ds-gray-900)] transition-transform duration-150 group-open:rotate-45">
-                +
-              </span>
-            </summary>
-            <p className="mt-3 text-copy-14 text-[var(--ds-gray-900)]">{a}</p>
-          </details>
-        ))}
+    <PublicCard className="overflow-hidden p-0">
+      <div className="border-b border-[var(--ui-border-color)] bg-[var(--allgrey-background-color)] px-6 py-5">
+        <Text
+          type="text3"
+          weight="medium"
+          element="p"
+          className="uppercase tracking-[0.12em] text-[var(--secondary-text-color)]"
+        >
+          FAQ
+        </Text>
       </div>
-      <div className="mt-8 flex flex-wrap gap-x-4 gap-y-1">
-        <a
-          href="/refund-policy"
-          className="text-label-14 text-[var(--ds-gray-900)] underline underline-offset-2 transition-colors hover:text-[var(--ds-gray-1000)]"
-        >
-          Refund policy
-        </a>
-        <a
-          href="/terms-of-service"
-          className="text-label-14 text-[var(--ds-gray-900)] underline underline-offset-2 transition-colors hover:text-[var(--ds-gray-1000)]"
-        >
-          Terms of service
-        </a>
-        <a
-          href="mailto:team+sales@socialraven.io"
-          className="text-label-14 text-[var(--ds-gray-900)] underline underline-offset-2 transition-colors hover:text-[var(--ds-gray-1000)]"
-        >
-          Talk to sales
-        </a>
+
+      <div className="px-5 py-2">
+        <Accordion className="bg-transparent px-0 py-0">
+          {FAQ_ITEMS.map(({ q, a }, index) => (
+            <AccordionItem
+              key={q}
+              title={q}
+              hideBorder={index === FAQ_ITEMS.length - 1}
+              contentClassName="pb-4 pt-1 text-copy-14 text-[var(--secondary-text-color)]"
+              headerClassName="text-label-14 text-[var(--primary-text-color)]"
+            >
+              {a}
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
-    </div>
+
+      <div className="border-t border-[var(--ui-border-color)] px-6 py-4">
+        <div className="flex flex-wrap gap-x-4 gap-y-2">
+          <a
+            href="/refund-policy"
+            className="text-label-14 text-[var(--secondary-text-color)] underline underline-offset-2 transition-colors hover:text-[var(--primary-text-color)]"
+          >
+            Refund policy
+          </a>
+          <a
+            href="/terms-of-service"
+            className="text-label-14 text-[var(--secondary-text-color)] underline underline-offset-2 transition-colors hover:text-[var(--primary-text-color)]"
+          >
+            Terms of service
+          </a>
+          <a
+            href="mailto:team+sales@socialraven.io"
+            className="text-label-14 text-[var(--secondary-text-color)] underline underline-offset-2 transition-colors hover:text-[var(--primary-text-color)]"
+          >
+            Talk to sales
+          </a>
+        </div>
+      </div>
+    </PublicCard>
   );
 }

@@ -12,6 +12,7 @@ const isPublicRoute = createRouteMatcher([
   '/blog(.*)',
   '/careers',
   '/contact',
+  '/change-log',
   '/changelog',
   '/invite',
   '/review(.*)',
@@ -30,8 +31,14 @@ const isPublicRoute = createRouteMatcher([
   '/api/meta/threads/delete',
 ])
 
+const isProtectedRoute = createRouteMatcher([
+  '/dashboard(.*)',
+  '/api(.*)',
+  '/trpc(.*)',
+])
+
 export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
+  if (!isPublicRoute(request) && isProtectedRoute(request)) {
     await auth.protect()
   }
 })
